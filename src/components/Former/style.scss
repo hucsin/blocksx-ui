@@ -1,0 +1,48 @@
+.former-column-one {
+  
+  .former-object {
+    .former-object-item {
+      width: 100%;
+      &.former-column-colspan-two {
+        width: 100%;
+      } 
+      &.former-column-colspan-three {
+        width: 100%;
+      }
+    }
+  }
+}
+.former-column-two {
+  .former-object {
+    .former-object-item {
+      width: 50%;
+      .ant-select {
+        min-width: 100%;
+        max-width: 100%;
+      }
+      &.former-object-colspan-two {
+        width: 100%;
+      } 
+      &.former-column-colspan-three {
+        width: 100%;
+      }
+    }
+  }
+}
+.former-column-three {
+  .former-object {
+    .former-object-item {
+      width: 33.33%;
+      .ant-select {
+        min-width: 100%;
+        max-width: 100%;
+      }
+      &.former-column-colspan-two {
+        width: 66.66%;
+      } 
+      &.former-column-colspan-three {
+        width: 100%;
+      }
+    }
+  }  
+}

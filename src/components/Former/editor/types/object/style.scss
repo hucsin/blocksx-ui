@@ -1,0 +1,149 @@
+.former-object-wrapper {
+  position: relative;
+  padding-left: 12px;
+  transition: all .3s;
+  .former-object-wrapper2 {
+    padding-left: 0px;
+    .former-object-left {
+      left: -14px;
+    }
+  }
+  .former-object-left {
+    width: 4px;
+    position: absolute;
+    top:0;
+    left: 0px;
+    height: 100%;
+    background:#f1f1f1;
+    cursor: pointer;
+
+    
+    &:hover {
+      background: #ccc;
+      >.anticon-plus-circle {
+        color:#ccc;
+        display:block;
+        opacity: 1;
+
+      }
+    }
+  }
+  .anticon-plus-circle {
+    position: absolute;
+    top: 50%;
+    font-size:16px;
+    left: -6px;
+    margin-top: -8px;
+    color:#f1f1f1;
+    transition: all .3s;
+    opacity: 0;
+    background-color: #fff;
+    border-radius: 8px;
+
+    transition: all .3s;
+    &:hover {
+      transform:rotate(180deg);
+      color:#999;
+    }
+  }
+  &:Hover {
+    >.former-object-left  {
+
+     background: #ddd;
+      
+    }
+  }
+}
+.former-editor-object-item {
+  position: relative;
+  padding-left: 15px;
+  margin: 4px 0;
+  background-color: #fff;
+  margin-bottom: 8px;
+  border-bottom: 1px dashed #d2d2d2;
+  .former-column-two {
+    padding-bottom: 16px;
+    .former-group-item-title {
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+  }
+  .former-group-item-content {
+    padding-top: 8px;
+  }
+  .former-group .former-group-item-title {
+    padding-top: 4px;
+    line-height: 25px;
+    font-size:12px;
+    .former-group-collapse {
+      top: 4px;
+    }
+  }
+  .former-object-item {
+    font-size: 12px;
+  }
+  &:last-child{
+    margin-bottom: 4px;
+    border-bottom:none;
+  }
+  transition: background-color .3s;
+  &:hover {
+    >.former-editor-block {
+      background:#fcfcfc;
+    }
+    .anticon-close {
+      opacity: 0.4;
+    }
+  }
+  .anticon-close {
+    position: absolute;
+    font-size:12px;
+    top:-4px;
+    cursor: pointer;
+    color:red;
+    opacity: 0;
+    right: -4px;
+    transition: all .3s;
+
+    &:hover {
+      transform:rotate(180deg);
+    }
+  }
+
+  .former-editor-object-draghandle {
+    position: absolute;
+    width: 9px;
+    height: 8px;
+    left: 0;
+    top:7px;
+    border-top: 2px solid #ccc;
+    border-bottom: 2px solid #ccc;
+    cursor: move;
+
+    &:before {
+      content: " ";
+      position:absolute;
+      display:block;
+      height:2px ;
+      width: 100%;
+      top: 50%;
+      margin-top: -1px;
+      left: 0;
+      background:#ccc;
+    }
+  }
+}
+.former-object-adder {
+  border: 1px dashed #ccc;
+  border-radius: 3px;
+  height:25px;
+  line-height: 25px;
+  cursor: pointer;
+  text-align: center;
+  color: #aaa;
+  transition: all .2;
+  &:hover {
+    border: 1px dashed #888;
+    color:#888
+  }
+}

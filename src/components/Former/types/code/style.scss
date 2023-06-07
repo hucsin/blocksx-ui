@@ -1,0 +1,55 @@
+
+.former-code-wraper {
+  .ant-drawer-body{
+      padding: 1px;
+  }
+
+  .ant-drawer-header{
+      padding:8px;
+  }
+  .react-monaco-editor-container{
+      opacity:.9;
+  }
+  .former-code-tool{
+      position:absolute;
+      height:40px;
+      top:0px;
+      right:0px;
+
+      width: 100%;
+      line-height: 40px;
+      padding-right:8px;
+      text-align:right;
+
+      i {
+          cursor: pointer;
+      }
+  }
+}
+
+.former-code {
+  height: 50px;
+  cursor: pointer;
+  position: relative;;
+
+  border-radius: 3px;
+  overflow: hidden;
+  opacity: .6;
+  .former-code-number {
+      position:absolute;
+      width: 12px;
+      height:100%;
+      top:0;
+      left:0;
+      background:rgba(30, 30, 30,0.9);
+  }
+
+  p {
+      margin-left: 12px;
+      height:100%;
+      overflow:hidden;
+      background:rgba(30, 30, 30,0.8);
+      color:#d4d4d4;
+      padding:4px;
+  }
+}

@@ -1,0 +1,24 @@
+.former-field-title{
+  .former-field-icon {
+    color: #ccc;
+    margin-left: 5px;
+    cursor: pointer;
+    opacity: 0;
+    transition: all .2s;
+  }
+  &:hover {
+    .former-field-icon {
+      opacity: 1;
+    }
+  }
+  .former-field-title-space {
+    color:#ccc;
+    padding: 0 5px;
+  }
+
+  .former-field-type {
+    color:#ccc;
+    margin-left: 4px;
+    cursor: pointer;
+  }
+}

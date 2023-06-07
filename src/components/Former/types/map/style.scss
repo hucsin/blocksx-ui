@@ -1,0 +1,120 @@
+.former-map {
+    position: relative;
+    border: 1px solid #d9d9d9;
+    
+    min-height: 30px;
+    border-radius: 3px;
+    &:Hover {
+
+        > .former-map-add {
+            > span {
+                opacity: 0.4;
+            }
+        }
+    }
+    .former-map-empty {
+        font-size: 12px;
+        text-align:center;
+        line-height: 30px;
+        color:#d9d9d9;
+        background:#fff;
+        cursor: pointer;
+        &:hover {
+            color:#888;
+        }
+    }
+    .former-map-item {
+        position: relative;
+        padding: 8px;
+        padding-left: 10px;
+        translate: all .4s;
+        background:#fff;
+        border-bottom: 1px dashed #eee;
+        .former-map-item-right ,
+        .former-map-item-left {
+            width: 50%;
+            box-sizing: border-box;
+            position: relative;
+            display:inline-block;
+        }
+        .former-map-item-left {
+            padding-right: 4px;
+            &:after {
+                content: ":";
+                position: absolute;
+                width: 4px;
+                height: 20px;
+                line-height:20px;
+                top:50%;
+                margin-top: -10px;
+                right: -2px;
+                z-index: 1;
+                color:#d9d9d9;
+            }
+        }
+        .former-map-item-right {
+            padding-left: 4px;
+        }
+        &:last-child {
+            border-bottom: none;
+        }
+        &:hover {
+            background: #f9f9f9;
+            >.former-map-item-remove {
+                display:block;
+                opacity: 1;
+            }
+        }
+        .former-map-item-remove {
+            position: absolute;
+            top: -10px;
+            right: -6px;
+            display:none;
+            translate: all .6;
+            opacity: 0;
+            span {
+                font-size:12px;
+                transition: all .4s;
+                cursor: pointer;
+                color:red;
+                background:#fff;
+                border-radius: 6px;
+                opacity: 0.5;
+                &:hover {
+                    transform:rotate(180deg);
+                    opacity: 1;
+                }
+            }
+        }
+    }
+    .former-map-add {
+        position: absolute;
+        height: 100%;
+        width: 6px;
+        top:0;
+        left: -1px;
+        z-index: 1;
+        border-left: 3px solid #d9d9d9;
+        border-radius: 3px;
+        cursor: pointer;
+        transition:all .2s;
+        &:hover {
+            border-left-color:#aaa;
+            span {
+                opacity: 1;
+                transform:rotate(90deg);
+            }
+        }
+        span {
+            position: absolute;
+            top: 50%;
+            margin-top:-6px;
+            left: -8px;
+            font-size:12px;
+            opacity: 0;
+            transition: all .4s;
+            background:#fff;
+            border-radius: 6px;
+        }
+    }
+}
