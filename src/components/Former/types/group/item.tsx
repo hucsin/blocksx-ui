@@ -2,7 +2,8 @@ import React from 'react';
 import classnames from 'classnames';
 import { DownOutlined, RightOutlined } from '@ant-design/icons';
 
-export default class FormerGroupItem extends React.Component<{title:string,groupType: any},{collapse:boolean}> {
+export default class FormerGroupItem extends React.Component<{title:string,
+  children?:any,groupType: any},{collapse:boolean}> {
     public constructor(props:any) {
         super(props);
         this.state = {

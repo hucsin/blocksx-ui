@@ -13,7 +13,7 @@ import { Drawer, Button, message } from "antd";
 import MonacoEditor from 'react-monaco-editor';
 
 import { utils } from '@blocksx/core';
-import './style';
+import './style.scss';
 
 interface FormerCodeProps extends IFormerBase {
   title: string;

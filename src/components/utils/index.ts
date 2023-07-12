@@ -1,6 +1,83 @@
 
 class Utils {
 
+  /**
+   * 查找并自动打补丁
+   * eg1:
+   * object : [{a:1,b:4}, {a:2, b: 3}]
+   * find : {a:1, b:4}
+   * patch: {cc: 2}
+   * 
+   * return: [{a:1,b:4, cc: 2}, {a:2, b: 3}]
+   * 
+   * 
+   * @param object 
+   * @param find 
+   * @param patch 
+   */
+  findArrayPatch(object: any[] , find:object, patch: any) {
+    if (Array.isArray(object)) {
+      object.forEach(it => {
+        if (this.isMatchObject(it, find)) {
+          // 
+          /**
+           * {
+           *   $patch: true,
+           *   target: string;
+           *   find: {},
+           *   patch: any
+           * }
+           */
+          if (patch && patch.$patch) {
+            
+            this.findArrayPatch(it[patch.target], patch.find, patch.patch)
+
+          } else {
+            Object.assign(it, patch);
+          }
+        }
+      })
+    }
+  }
+  /**
+   * 查找并自动删除
+   * 
+   * @param object 
+   * @param find 
+   * @param patch 
+   */
+  findArrayRemove(object: any[], find:object, patch?: any) {
+    if (Array.isArray(object)) {
+      object.forEach((it:any, index:number) => {
+        if (this.isMatchObject(it, find)) {
+          if (patch) {
+            /**
+             * {
+             *   $patch: true,
+             *   target: string;
+             *   find: {},
+             *   patch: any
+             * }
+             */
+            this.findArrayRemove(it[patch.target], patch.find, patch.patch)
+          // 删除内部元素
+          } else {
+            object.splice(index,1)
+          }
+        }
+      })
+    }
+  }
+  isMatchObject(object: any , find: object) {
+
+    for(let p in find) {
+      if (find[p] != object[p]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   getClientWidth() {
     return document.body.clientWidth
   }

@@ -16,7 +16,7 @@ import { IFormerBase } from '../../typings';
 
 import UtilsDatasource from '../../../utils/datasource';
 
-import './style.less'
+import './style.scss'
 
 
 export interface IFormerLabel extends IFormerBase {

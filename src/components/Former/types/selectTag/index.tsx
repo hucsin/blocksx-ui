@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
 import { Request } from '@blocksx/swap';
 import classnames from 'classnames';
-import './style';
+import './style.scss';
 
 import { IFormerBase } from '../../typings';
 
-import { PlusCircleOutlined } from '../../../icons'
+import { PlusCircleOutlined } from '../../../Icons'
 
 import { Select, Button, Divider, Input, Spin } from 'antd';
 

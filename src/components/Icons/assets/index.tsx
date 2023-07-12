@@ -4,7 +4,7 @@
  * @LastEditTime: 2022-03-01 11:39:08
  * @LastEditors: Please set LastEditors
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- * @FilePath: /packages/design-components/src/icons/icons/index.tsx
+
  */
 export { default as ToolbarBack } from './toolbarBack';
 export { default as ToolbarEnlarge } from './toolbarEnlarge';
@@ -41,6 +41,7 @@ export { default as Variable } from './variable';
 export { default as Monitor } from './monitor';
 
 export { default as Table } from './table';
+export { default as TableAdd } from './tableAdd';
 export { default as Indexs } from './indexs';
 export { default as Key } from './key';
 export { default as History } from './history';
@@ -53,5 +54,6 @@ export { default as RelyRelated } from './relyRelated';
 export { default as Remove } from './remove';
 export { default as Edit } from './edit';
 export { default as Up } from './up';
+
 
 

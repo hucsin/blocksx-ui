@@ -90,6 +90,8 @@ export interface IFormerBase {
     description?: string, // 数据项描述
     defaultValue?: any, // 默认值
     value:any,
+    runtimeValue?: any;
+
     disabled?: boolean,
     path?: any,
     parentPath?: any,

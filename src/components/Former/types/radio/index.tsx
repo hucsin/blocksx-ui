@@ -7,7 +7,7 @@
  import { IFormerBase } from '../../typings';
  import * as FormerIcon from '../../../Icons';
  import { Radio } from 'antd';
- import './style';
+ import './style.scss';
 
  interface IFormerRadio extends IFormerBase {
     onChangeValue: Function;

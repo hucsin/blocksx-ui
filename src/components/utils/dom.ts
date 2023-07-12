@@ -36,3 +36,24 @@ export const isDisplayBlock = (dom: any) => {
         return value.value == 'block'
     }
 }
+
+export const getElementById = (id: any) => {
+    return document.getElementById(id);
+}
+
+export const replaceClassName = (dom: any ,sourceClass: any, targetClass?: string) => {
+    
+        dom.className = targetClass 
+            ?  dom.className.replace(sourceClass, targetClass) 
+            :  Array.isArray(sourceClass) 
+                ? sourceClass.join(' ')
+                : sourceClass;
+    
+}
+
+export const createEmptyElement = (className: any, nodeName = 'div')  => {
+    let ele: any = document.createElement(nodeName);
+
+    ele.className = className;
+    return ele;
+}

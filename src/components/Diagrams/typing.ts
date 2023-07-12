@@ -1,7 +1,7 @@
 
 export interface DiagramsTableField {
     
-    type: 'field' | 'virtual' | 'union' | 'relation';
+    type: 'field' | 'virtual' | 'union' | 'relation' | 'relationAt';
 
     fieldKey: string;
     fieldName?: string; // 中文注释
@@ -25,6 +25,8 @@ export interface DiagramsTableField {
 }
 
 export interface DiagramsTableObject {
+    left?: number;
+    top?: number;
     
     color?: string;
 
@@ -44,5 +46,9 @@ export interface DiagramsTableObject {
 
     dataRules?: any;
 
-    fields: DiagramsTableField[]
+    fields: DiagramsTableField[];
+
+
+    onGetTableList?: Function;
+    onChange?: Function;
 }

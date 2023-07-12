@@ -18,7 +18,7 @@ root.render(
     <div className="demo-wraper-left">
       <DemoSidebar/>
     </div>
-    <div className="demo-wraper-center" style={{padding: '40px'}}>
+    <div className="demo-wraper-center" >
         <DemoDiagrams/>
     </div>
   </div>

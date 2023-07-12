@@ -5,11 +5,13 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 import FormerMapItem from './item';
 import { IFormerArray } from '../../typings';
 
-import "./style";
+import "./style.scss";
 
 interface IFormerMap extends IFormerArray {
     value: any,
-    onChangeValue: Function
+    onChangeValue: Function;
+
+    children?:any;
 }
 
 export default class FormerMap extends React.Component<IFormerMap, { value: any, originValue: any }> {

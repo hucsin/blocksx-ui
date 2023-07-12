@@ -7,6 +7,7 @@ interface IMapItem extends IFormerBase {
     value: any;
     index: number;
     onMapItemRemove: Function;
+    children?:any;
 }
 
 

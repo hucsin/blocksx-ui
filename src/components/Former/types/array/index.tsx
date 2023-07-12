@@ -14,11 +14,13 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 import FormerArrayItem from './item';
 import { IFormerArray } from '../../typings';
 
-import "./style.less";
+import "./style.scss";
 
 interface IFormerArrays extends IFormerArray {
     value: any[],
-    onChangeValue: Function
+    onChangeValue: Function;
+
+    children?:any;
 }
 
 export default class FormerArray extends React.Component<IFormerArrays, { value: any }> {

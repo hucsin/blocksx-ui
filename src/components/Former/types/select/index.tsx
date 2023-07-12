@@ -15,6 +15,8 @@ import UtilsDatasource from '../../../utils/datasource';
 import { utils } from '@blocksx/core';
 import { Select } from 'antd';
 
+import './style.scss';
+
 interface IFormerSelect extends IFormerBase {
   value: any,
   size: any,
@@ -24,28 +26,28 @@ interface IFormerSelect extends IFormerBase {
   dataSource?:any;
 }
 
-import './style.less';
 
 
 export interface SFormerSelect {
-  value: any,
-  dataSource: any[],
-  relyon: any,
-  loading: boolean,
-  multiple: boolean
+  value: any;
+  dataSource: any[];
+  relyon: any;
+  loading: boolean;
+  multiple: boolean;
+  runtimeValue?: any;
 }
 
 export default class FormerSelect extends React.Component<IFormerSelect, SFormerSelect> {
   public constructor(props: IFormerSelect) {
     super(props);
     let isMultiple: boolean = this.isMultiple();
-
     this.state = {
       value: isMultiple ? this.fixedMultipleValue(props.value) : props.value,
       dataSource: [],
       relyon: props.relyon || {},
       loading: false,
-      multiple: isMultiple
+      multiple: isMultiple,
+      runtimeValue: props.runtimeValue
     };
 
   }
@@ -60,11 +62,12 @@ export default class FormerSelect extends React.Component<IFormerSelect, SFormer
       })
     }
     
-    if (newProps.relyon != this.state.relyon) {
+    if (newProps.runtimeValue != this.state.runtimeValue) {
       this.setState({
-        relyon: newProps.relyon
+        runtimeValue: newProps.runtimeValue
       })
     }
+
   }
 
   private fixedMultipleValue(value) {
@@ -98,12 +101,10 @@ export default class FormerSelect extends React.Component<IFormerSelect, SFormer
     let { dataSource } = this.props['x-type-props'] || {};
     let source: any = data || dataSource || this.props.dataSource;
 
-    console.log()
-
     if (source) {
       this.setLoading(true);
-
-      UtilsDatasource.getSource(source, this.state.relyon).then((data: any) => {
+      
+      UtilsDatasource.getSource(source, this.state.runtimeValue).then((data: any) => {
         this.setState({
           dataSource: data, 
           loading: false
@@ -139,6 +140,7 @@ export default class FormerSelect extends React.Component<IFormerSelect, SFormer
         onFocus={() => {
           this.fetchData();
         }}
+        showSearch={true}
         disabled={this.props.disabled}  
         loading={this.state.loading}
         onChange = {this.onChange}

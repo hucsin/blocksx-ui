@@ -3,10 +3,17 @@ import React from 'react';
 
 import { DiagramsTableObject, DiagramsTableField } from '../components/Diagrams/typing';
 import DiagramsTable from '../components/Diagrams/table';
+import Diagrams from '../components/Diagrams';
+import Former from '../components/Former';
+import Pick from '../components/Pick';
+
+import { message } from 'antd';
 
 let tables: DiagramsTableObject[] = [
     {
+      color: '#4338CA',
       objectKey: 'Hooks',
+      left: 500,
       objectName: '钩子',
       fields: [
         {
@@ -28,8 +35,11 @@ let tables: DiagramsTableObject[] = [
       ]
     },
     {
+      color: '#7B1FA2',
       objectKey: 'City',
       objectName: '城市',
+      left: 50,
+      top: 300,
       fields: [
         {
           fieldKey: 'cityCode',
@@ -58,6 +68,7 @@ let tables: DiagramsTableObject[] = [
       isVersioned: true,
       isHistoryed: true,
       isRecorded: true,
+      left: 300,
       geography: {
         type: 'field',
         value: 'point'
@@ -70,7 +81,8 @@ let tables: DiagramsTableObject[] = [
           fieldType: 'one',
           fieldLength: 32,
           fieldConfig: {
-            objectKey: 'City'
+            objectKey: 'City',
+            fieldKey: 'cityCode'
           }
         },
         {
@@ -139,16 +151,6 @@ let tables: DiagramsTableObject[] = [
           }
         },
         {
-          fieldKey: 'piles',
-          fieldName: '充电枪集合',
-          type: 'relation',
-          fieldType: 'rely_onem',
-          fieldLength: 32,
-          fieldConfig: {
-            objectKey: 'Pile'
-          }
-        },
-        {
           fieldKey: 'json', 
           fieldName: '描述表',
           type: 'field',
@@ -160,6 +162,8 @@ let tables: DiagramsTableObject[] = [
     {
       objectKey: 'Pile',
       objectName: '充电枪',
+      color: '#3F51B5',
+      left: 500,
       fields: [
         {
           fieldKey: 'code',
@@ -175,32 +179,47 @@ let tables: DiagramsTableObject[] = [
           isIndexed: true,
           fieldType: 'string',
           fieldLength: 32
-        },
-        {
-          fieldKey: 'sid',
-          fieldName: '抢站唯一标识',
-          type: 'union',
-          fieldType: 'string',
-          fieldLength: 32,
-          isUniqued: true,
-          fieldConfig: {
-            type: 'join',
-            value: [
-              'stacode',
-              'code'
-            ],
-            params: '-'
-          }
         }
       ]
     }
   ]
 
-export default class DemoDiagrams extends React.Component {
+
+export default class DemoDiagrams extends React.Component<{}, {visible: boolean,tableList:any}> {
+    public constructor(props: any) {
+      super(props);
+
+      let table: any = localStorage.getItem('__diagrams');
+
+      if (table) {
+        table = JSON.parse(table);
+      }
+
+      this.state ={
+        visible: false,
+        tableList: table || tables
+      }
+
+      setTimeout(() => {
+        this.setState({
+          visible: true
+        })
+      }, 4000);
+    }
     public render() {
         return (
-            <div>
-                <DiagramsTable {...tables[2]} />
+            <div style={{height: '100%'}}>
+                <div style={{float: 'left',opacity: .3}}>
+                 
+                </div>
+                <div style={{height: '100%'}}>
+                  <Diagrams 
+                    tableList={this.state.tableList}
+                    onChange = {(v) => {
+                      localStorage.setItem('__diagrams', JSON.stringify(v))
+                    }}
+                  ></Diagrams>
+                </div>
             </div>
         )
     }

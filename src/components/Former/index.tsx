@@ -19,6 +19,9 @@ export interface FormerProps {
   // 获取 依赖的参数
   onGetDependentParameters?: Function;
   onSave?: Function;
+
+  onInit?: Function;
+
   visible?: boolean;
   id?: any;
   title?: string;
@@ -36,6 +39,7 @@ export interface FormerProps {
 }
 
 interface FormerState {
+  runtimeValue?: any;
   value: any;
   type?: string;
   schema: any;
@@ -91,6 +95,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
     this.emitter = new EventEmitter();
     this.emitter.setMaxListeners(1000);
+
+    if (this.props.onInit) {
+      this.props.onInit(this);
+    }
   }
   public UNSAFE_componentWillReceiveProps(newProps: FormerProps) {
     
@@ -188,7 +196,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     return false;
   }
   private onChangeValue = (value: any, type?: string) => {
-
+    
     if (!type) {
       if (this.timer) {
         clearInterval(this.timer);
@@ -197,7 +205,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
       this.timer = setTimeout(() => {
 
         this.setState({
-          value
+          value,
+          runtimeValue:value
         });
         if (this.state.type === 'default') {
           if (this.props.onChangeValue) {
@@ -219,9 +228,11 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
       this.emitter.on('checked', this.helper = (e) => {
         
+
         if (!e){
           isBreak = true;
         }
+
 
         if ( --count <= 0) {
           if (!isBreak) {
@@ -277,12 +288,12 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                   <Leaf
                     key={this.getUniqKey(it)}
                     size={this.props.size}
+                    runtimeValue={this.state.value}
                     value={classifyValue[index] || {}}
                     {...it}
                     rootEmitter={this.emitter}
-                    onChangeValue={() => {
-
-                    }}
+                    
+                    onChangeValue={this.onChangeValue}
                   ></Leaf>
                 </Tabs.TabPane>
               )
@@ -311,6 +322,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         <Leaf
           key={this.getUniqKey(schema)}
           size={this.props.size}
+          runtimeValue={this.state.value || {}}
           value={this.state.value}
           {...this.state.schema}
           rootEmitter={this.emitter}

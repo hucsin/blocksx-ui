@@ -1,6 +1,7 @@
 
 import React from 'react';
-
+import { clone } from 'lodash';
+import classnames from 'classnames';
 import { Popover } from 'antd';
 
 import OneOf from './oneOf';
@@ -16,6 +17,7 @@ export interface ILeaf {
   path: string;
   parentPath?: string;
   value: string;
+  runtimeValue?: any;
   defaultValue: any;
   groupType?: string;
   rootEmitter?: EventEmitter;
@@ -29,6 +31,7 @@ export interface ILeaf {
   properties?: any;
   items?: any;
   size?: string;
+  dataSource?: any;
 
   viewer?: boolean;
   onGetDependentParameters?: Function
@@ -37,6 +40,7 @@ export interface ILeaf {
 interface TLeaf {
   // 特殊值，__oneOf__prop: string;
   value: any;
+  runtimeValue?: any;
   validation?: any;
 
   originValue: any[];
@@ -83,7 +87,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
     this.path = props.path || '$';
     this.parentPath = props.parentPath || '';
-
+    
     this.leafProps = props;
     this.type = props['x-type'] || props.type;
 
@@ -97,6 +101,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     this.state = {
       value: value,
       properties: props.properties,
+      runtimeValue: props.runtimeValue,
       items: props.items,
       type: this.type,
       controlHide: [],
@@ -168,6 +173,13 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     if (newProps.properties != this.state.properties) {
       this.setState({
         properties: this.properties = newProps.properties
+      })
+    }
+
+    if (newProps.runtimeValue != this.state.runtimeValue) {
+      
+      this.setState({
+        runtimeValue: newProps.runtimeValue
       })
     }
     
@@ -282,7 +294,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     return this.state.type === type;
   }
   private clone(target: any) {
-    return target ? JSON.parse(JSON.stringify(target)) : target;
+    return clone(target);
+    //return target ? JSON.parse(JSON.stringify(target)) : target;
   }
   private getObjectByKeyValue(originValue: any[]) {
     let object = {};
@@ -316,6 +329,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     this.setState({
       value: value,
       validationState: false,
+      validationMessage: null,
       originValue: originValue ? originValue : this.state.originValue
     });
 
@@ -625,6 +639,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         {...properties}
                         path={prop}
                         parentPath={this.path}
+                        runtimeValue={this.state.runtimeValue}
                         value={this.getValueByProps(value[prop], properties)}
                         onDealControl={(control: IControl) => {
                           this.onDealControl(control)
@@ -672,6 +687,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
               {...keyProperties}
               path="key"
               parentPath={this.path}
+              runtimeValue={this.state.runtimeValue}
               value={prop}
               key="1"
               viewer={this.state.viewer}
@@ -691,6 +707,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
               viewer={this.state.viewer}
               parentPath={this.path}
               rootEmitter={this.props.rootEmitter}
+              runtimeValue={this.state.runtimeValue}
               value={this.getValueByProps(value[prop], valueProperties)}
               onChangeValue={(valVal: any, type?: string) => {
                 origin.value = valVal;
@@ -745,6 +762,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
                   viewer={this.state.viewer}
                   value={it}
+                  runtimeValue={this.state.runtimeValue}
                   onChangeValue={(val: any, type?: string) => {
                     // 数组里面的项值变化
                     value.splice(index, 1, val);
@@ -782,11 +800,14 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
   private renderFeaturesNode(children: any = null, type?: string) {
     let View = this.getNodeByType();
     if (View) {
+      
       return (
         <Popover
           placement="topLeft"
           content={this.state.validationMessage}
-          visible={this.state.validationState}
+        >
+        <span 
+          className={classnames({'former-open-error': this.state.validationState})}
         >
           <View
             key={this.leafProps.index || this.leafProps['x-index'] || this.leafProps.path}
@@ -795,9 +816,10 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             size={this.props.size}
             value={this.getValueByProps(this.state.value, { value: this.getDefaultValue() })}
             originValue={this.state.originValue}
+            runtimeValue={this.state.runtimeValue}
             disabled={!this.isAllowModify()}
             onChangeValue={(val: any, type?: string, originValue?: any) => this.onChangeValue(val, type, originValue)}
-          />
+          /></span>
         </Popover>
       )
     }

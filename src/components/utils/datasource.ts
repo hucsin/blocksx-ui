@@ -13,6 +13,7 @@ import { utils } from '@blocksx/core';
 
 class Datasource {
   getSource(datasource: any, params: any) {
+    
     // 如果是数组直接返回
     if (utils.isArray(datasource)) {
       return new Promise((resolve, reject) => {
@@ -26,6 +27,7 @@ class Datasource {
     } else {
       
       // 如果是函数
+      
       if (utils.isFunction(datasource)) {
         let source: any  = datasource(params);
         

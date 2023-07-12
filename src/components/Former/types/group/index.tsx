@@ -2,9 +2,10 @@ import React from 'react';
 import classnames from 'classnames';
 
 import FormerGroupItem from './item';
-import "./style";
+import "./style.scss";
 
-export default class FormerObject extends React.Component<{}, {}> {
+export default class FormerObject extends React.Component<{
+    children?:any;}, {}> {
 
     static Item = FormerGroupItem;
 

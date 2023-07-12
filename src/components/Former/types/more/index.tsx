@@ -11,7 +11,7 @@ import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
 import Former from '../../index';
 import * as Icons from '../../../Icons';
-import './style';
+import './style.scss';
 
 
 interface FormerMoreProps extends IFormerBase {

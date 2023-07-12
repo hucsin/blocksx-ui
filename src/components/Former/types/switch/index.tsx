@@ -10,7 +10,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
 import { Switch } from 'antd';
-import './style';
+import './style.scss';
 
 interface IFormerSwitch extends IFormerBase {
     value: any,

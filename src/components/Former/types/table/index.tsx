@@ -14,9 +14,7 @@ import Leaf from '../../leaf';
 
 import { utils } from '@blocksx/core';
 
-import './style';
-import { number } from '..';
-
+import './style.scss';
 
 interface IFormerTable extends IFormerBase {
   
@@ -426,18 +424,16 @@ export default class FormerTable extends React.Component<IFormerTable, {
           }
 
         >
+          
           <Leaf
             path="root"
             defaultValue={{}}
             value={this.state.record}
             onChangeValue={this.onChangeValue}
-            {...{
-              type: 'object',
-              "x-type": 'object',
-              properties: this.props.properties
-            }}>
-
-          </Leaf>
+            type = "object"
+            properties= {this.props.properties}
+            
+          />
         </Drawer>
       </div>
     )

@@ -6,6 +6,8 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 interface IFormerArrayItem extends IFormerBase {
     index: number;
     onArrayItemRemove: Function;
+
+    children?:any;
 }
 
 export default class FormerArrayItem extends React.Component<IFormerArrayItem, {}> {

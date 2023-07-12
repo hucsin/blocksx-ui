@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
 import ReactCrop from 'react-image-crop';
 import classnames from 'classnames';
-import './style';
+import './style.scss';
 
 import { IFormerBase } from '../../typings';
 
 import { Popover, Button } from 'antd';
-import { UploadImage, CloseOutlined } from '../../../icons'
+import { UploadImage, CloseOutlined } from '../../../Icons'
 
 interface IconProp extends IFormerBase {
   // 限制比例，宽/高
@@ -163,7 +163,8 @@ export default class Icon extends PureComponent<IconProp, IconState> {
           fontSize: 12
         }}>请先剪切图片再保存</p>
         <ReactCrop
-            src={this.state.src}
+          // @ts-ignore
+            src={this.state.src as any}
             crop={this.state.crop}
             ruleOfThirds
             keepSelection

@@ -31,6 +31,8 @@ interface IFormerObjectItemS extends IFormerObjectItem {
     onChangeValue: Function;
     'x-model-switch'?: boolean;
 
+    children?: any;
+
 }
 
 export default class FormerObjectItem  extends React.Component<IFormerObjectItemS, TFormerObjectItem> {

@@ -4,11 +4,13 @@ import classnames from 'classnames';
 import FormerObjectItem from './item';
 import { IFormerObject } from '../../typings';
 
-import "./style";
+import "./style.scss";
 
 interface IFormerObjectS extends IFormerObject {
   size: any;
-  value: any
+  value: any;
+
+  children?:any;
 }
 export default class FormerObject extends React.Component<IFormerObjectS, {}> {
 
