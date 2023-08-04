@@ -48,7 +48,4 @@ export interface DiagramsTableObject {
 
     fields: DiagramsTableField[];
 
-
-    onGetTableList?: Function;
-    onChange?: Function;
 }

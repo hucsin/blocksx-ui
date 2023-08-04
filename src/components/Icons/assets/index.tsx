@@ -49,7 +49,7 @@ export { default as Version } from './version';
 export { default as Action } from './action';
 export { default as Record } from './record';
 export { default as Related } from './related';
-export { default as RelyRelated } from './relyRelated';
+export { default as ReverseRelated } from './reverseRelated';
 
 export { default as Remove } from './remove';
 export { default as Edit } from './edit';

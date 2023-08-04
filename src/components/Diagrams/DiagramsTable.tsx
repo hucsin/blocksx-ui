@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 
 import i18n from '@blocksx/i18n'
-import { Tooltip, Popconfirm, Typography, Button, Popover, Dropdown } from 'antd';
+import { Tooltip, Popconfirm, Typography, Button, Popover, Dropdown, ColorPicker } from 'antd';
 import { 
     DiagramsTableObject, 
     DiagramsTableField 
@@ -18,7 +18,7 @@ import {
     Record, 
     Indexs, 
     Related, 
-    RelyRelated, 
+    ReverseRelated, 
     Remove, 
     EditOutlined,
     PlusCircleOutlined 
@@ -54,30 +54,32 @@ interface DiagramsTableState {
     fieldValue?: any;
     fieldIndex?: number;
     formerErrorTips?: string;
+    hidden?: boolean;
 }
 
-export default class DiagramsTable extends React.Component<DiagramsTableObject, DiagramsTableState> {
+interface DiagramsTableProps extends DiagramsTableObject {
+
+    onGetTableList?: Function;
+    onChange?: Function;
+
+    instance?: any;
+    hidden?:any;
+    colorList?: any[];
+
+    diagrams: any;
+}
+export default class DiagramsTable extends React.Component<DiagramsTableProps, DiagramsTableState> {
     private formerInsntance:any ;
     private fieldTypeMap: any = {
         field: 'CommonField',
         relation: 'RelatedField'
     };
-    private colorList: any[] = [
-        '#FA5151',
-        '#4338CA',
-        '#CD0074',
-        '#00C322',
-        '#6A0AAB',
-        '#A6A300',
-        '#388E3C',
-        '#FF6F00',
-        '#4E342E',
-        '#F44336',
-        '#7B1FA2',
-        '#673AB7',
-        '#3F51B5',
-        '#827717'
-    ];
+
+    private objectRef: any;
+
+    private instance: any ;
+
+    private colorList: any[] ;
     private defaultFiledMap: any[] = [
         'guid',
         'createdBy',
@@ -118,9 +120,12 @@ export default class DiagramsTable extends React.Component<DiagramsTableObject, 
             name: i18n.translate('数据版本号')
         }
     ];
-    public constructor(props: DiagramsTableObject) {
+    public constructor(props: DiagramsTableProps) {
         super(props);
 
+        this.instance = props.instance;
+        this.colorList = props.colorList;
+        this.objectRef = React.createRef();
         this.state = {
             fields: props.fields,
             more: false,
@@ -133,21 +138,125 @@ export default class DiagramsTable extends React.Component<DiagramsTableObject, 
             objectKey: props.objectKey,
             objectName: props.objectName,
             left: props.left,
-            top: props.top
+            top: props.top,
+            hidden: props.hidden
         }
     }
+
+    public componentDidMount() {
+        this.initObjectDraggable();
+    }
+
+    public initObjectDraggable() {
+
+        if (this.instance) {
+            let objectDOM: any = this.objectRef.current;
+            let fieldsWrapper: any = objectDOM.querySelector('ul');
+            
+            this.resetObjectFieldDraggable();
+            this.instance.draggable(objectDOM, {
+                canDrag: (e) => {
+                    if (e) {
+                        let target: any = e.target;
+                        return target.getAttribute('data-draggable')
+                    }
+                },
+                start: (e) => {
+                    let objectDOM: any = this.objectRef.current;
+                    objectDOM.style.zIndex = this.props.diagrams.getZindex();
+                },
+                drag: () => {
+                    this.instance.repaintEverything();
+                },
+                stop: (e) => {
+                    this.onTableChange({
+                        changeType: 'resizeTable',
+                        left: e.pos[0],
+                        top: e.pos[1]
+                    })
+                }
+            });
+
+            this.instance.addList(fieldsWrapper, {
+                endpoint:["Rectangle", { width:20, height:20 }]
+
+            });
+        }
+    }
+
+    public resetObjectFieldDraggable() {
+        let objectDOM: any = this.objectRef.current;
+        let fieldsWrapper: any = objectDOM.querySelector('ul');
+            
+        fieldsWrapper.querySelectorAll('li:not([data-sourceed])').forEach((it) => {
+            it.setAttribute('data-sourceed', true);
+            if (it.getAttribute('data-fieldkey')) {
+
+                this.instance.makeSource(it, {
+                    allowLoopback: false,
+                    anchor: ["Left", "Right" ],
+                    endpoint: "Dot",
+                    paintStyle: {
+                        fill: "#ffa500", radius: 5
+                    },
+                    canDrag: (e)=> {
+                        let target: any = e.target;
+                        let nodeName: string = target.nodeName.toLowerCase()
+                        // != 'svg'
+                        console.log(target)
+                        return ['li', 'span'].indexOf(nodeName) > -1;
+                    },
+                    connector: [ "Flowchart", 
+                        { stub: [40, 60], gap: 10, cornerRadius: 5, alwaysRespectStubs: true } 
+                    ],
+                    //connectorStyle: connectorPaintStyle,
+                    //hoverPaintStyle: endpointHoverStyle,
+                    // connectorHoverStyle: connectorHoverStyle,
+                    dragOptions: {}
+                });
+    
+                this.instance.makeTarget(it, {
+                    anchor: ["Left", "Right" ],
+                    endpoint: "Dot",
+                    paintStyle: {
+                        stroke: "#ffa500",
+                        radius: 5,
+                        strokeWidth: 2
+                    },
+                    //hoverPaintStyle: endpointHoverStyle,
+                    maxConnections: -1,
+                    dropOptions: { hoverClass: "hover", activeClass: "active" }
+                });
+            }
+        })
+    }
+
     public UNSAFE_componentWillReceiveProps(newProps: any) {
         
         if (newProps.style ) {
             
         }
+        
+        if (newProps.instance != this.instance) {
+            this.instance = newProps.instance;
+            this.initObjectDraggable();
+        }
+        
+        if(newProps.hidden != this.state.hidden) {
+            
+            this.setState({
+                hidden: newProps.hidden
+            })
+        }
     }
     private resetValue(obj: any ) {
-        this.setState(obj)
+        //this.setState(obj);
+        this.onTableChange(obj)
+    
     }
 
-    private isRelyRelated (type: string) {
-        return type && type.indexOf('rely_') > -1;
+    private isRelyReverseRelated (type: string) {
+        return type == 'relationAt'
     }
     private renderTools() {
         
@@ -216,21 +325,21 @@ export default class DiagramsTable extends React.Component<DiagramsTableObject, 
             </span>
         )
     }
-    private renderFieldAction(index: number) {
+    private renderFieldAction(index: number, noEdit?: boolean) {
         let fields: any = this.state.fields;
         let field: any = fields[index];
         return (
             <div className='hoofs-diagrams-field-action'>
-                <EditOutlined onClick={()=> {
+                {noEdit !== true &&<EditOutlined  onClick={()=> {
                     this.setState({
                         fieldType: this.fieldTypeMap[field.type],
                         fieldValue: field,
                         fieldIndex: index
                     })
-                }}/>
+                }}/>}
                 <Popconfirm 
                     overlayClassName="hoofs-diagrams-popconfirm"
-                    placement="right"
+                    placement="bottomRight"
                     title={i18n.translate('你确认删除字段《{key}》么?', {key: field.fieldKey})}
                     okText={i18n.translate('删除')}
                     cancelText={i18n.translate('取消')}
@@ -246,7 +355,7 @@ export default class DiagramsTable extends React.Component<DiagramsTableObject, 
             </div>
         )
     }
-    private saveUpdateField(value: any, defaultType:string) {
+    private saveUpdateField(value: any,changeType: string, defaultType:string, cb?: Function) {
 
         let fields: any = this.state.fields;
         
@@ -257,23 +366,24 @@ export default class DiagramsTable extends React.Component<DiagramsTableObject, 
             value.type = defaultType;
             fields.push(value)
         }
-
-        this.onChange({
-            changeType: defaultType,
+        
+        this.onTableChange({
+            changeType: changeType,
             changeValue: value,
             fields: fields,
             fieldIndex: undefined,
             fieldValue: undefined,
             fieldType: undefined
-        })
+        }, cb)
 
     
     }
-    private onChange(value: any ) {
+    private onTableChange(value: any, cb?: Function ) {
         this.setState(value, () => {
             if (this.props.onChange) {
                 this.props.onChange(this.state, value);
             }
+            cb && cb();
         });
     }
     private isVerifyField(value:any, cb: Function) {
@@ -312,32 +422,34 @@ export default class DiagramsTable extends React.Component<DiagramsTableObject, 
         switch(this.state.fieldType) {
             case 'CommonField':
                 this.isVerifyField(value, ()=> {
-                    this.saveUpdateField(value, 'field')
+                    this.saveUpdateField(value, 'addTableRecored', 'field', () => {
+                        this.resetObjectFieldDraggable();
+                    })
                 })
                 break;
             case 'RelatedField':
                 this.isVerifyField(value, ()=> {
-                    this.saveUpdateField(value, 'related')
+                    this.saveUpdateField(value, 'addRelated', 'relation')
                 })
                 break;
             case 'TableInfo':
                 this.isVerifyField(value, ()=> {
-                    this.onChange({
+                    this.onTableChange({
                         objectKey: value.objectKey,
                         objectName: value.objectName,
                         fieldType: '',
-                        changeType: 'TableInfo'
+                        changeType: 'editTableInfo'
                     })
                 })
                 break;
             case 'TableRecored':
                 this.isVerifyField(value, ()=> {
-                    this.onChange({
+                    this.onTableChange({
                         geography: value.geography,
                         subject: value.subject,
                         fieldType: '',
                         isRecorded: true,
-                        changeType: 'TableRecored'
+                        changeType: 'editTableRecored'
                     })
                 })
                 break;
@@ -351,10 +463,15 @@ export default class DiagramsTable extends React.Component<DiagramsTableObject, 
 
         return (
             <div 
+                ref={this.objectRef}
                 id={this.state.objectKey}
+                key={this.state.objectKey}
                 style={{
                     left: this.state.left,
-                    top: this.state.top
+                    top: this.state.top,
+                    
+                    visibility: this.state.hidden ? 'hidden' : 'initial'
+                    
                 }}
                 data-objectkey = {this.state.objectKey}
                 className={
@@ -366,31 +483,29 @@ export default class DiagramsTable extends React.Component<DiagramsTableObject, 
             >
                 <div className='hoofs-diagrams-header' data-draggable style={{borderTopColor: color}}>
                     <h3 data-draggable><Table data-draggable /> {this.state.objectKey}</h3>
-                    {this.state.objectName && <p data-draggable>{this.state.objectName}</p>}
+                    {this.state.objectName && <Typography.Text data-draggable>{this.state.objectName}</Typography.Text>}
 
-                    {this.state.showColor && <div data-draggable className='hoofs-diagrams-colorList'>
-                        {this.colorList.map((it,i) => {
-                            return (<div key={i} onClick={() => {
-                                this.resetValue({
-                                    color:it
-                                })
-                                this.setState({
-                                    showColor: false
-                                })
-                            }} style={{backgroundColor: it}}></div>)
-                        })}
-                        
-                    </div>}
 
                     <div  className='hoofs-diagrams-tools'>
                         
                         {this.renderTools()}
                         <span className='hoofs-diagrams-hr'></span>
-                        <span className='hoofs-diagrams-color' onClick={()=> {
-                            this.setState({
-                                showColor: true
-                            })
-                        }} style={{backgroundColor:color}}></span>
+                         <ColorPicker 
+                            arrow={false}
+                            value={color} 
+                            presets={[
+                                {
+                                    label: '预设',
+                                    colors: this.colorList
+                                }
+                            ]}
+                            onChange={(it)=> {
+                                this.resetValue({
+                                    color:it.toHexString()
+                                })
+                            }}
+                         />
+
                         <Dropdown 
                             menu={{
                                 items:[
@@ -417,7 +532,7 @@ export default class DiagramsTable extends React.Component<DiagramsTableObject, 
                     </div>
                 </div>
                 <div className='hoofs-diagrams-fields'>
-                    <ul jtk-scrollable-list="true">
+                    <ul jtk-scrollable-list="true" key={'ul' + this.state.objectKey}>
                         <li className='hoofs-diagrams-default'><Key/> guid<span>{i18n.translate('数据主键')}</span></li>
                         {this.state.fields.map((it: DiagramsTableField, index:number)=> {
                             let key: string = this.state.objectKey + '.' + it.fieldKey;
@@ -435,14 +550,17 @@ export default class DiagramsTable extends React.Component<DiagramsTableObject, 
                                 )
                             } else {
                                 // 关系字段
-                                if (it.type = 'relation') {
+                                if (['relation', 'relationAt'].indexOf(it.type) > -1) {
                                     return (
                                         <li  id={key} key={key} className='hoofs-diagrams-relation'>
                                             
                                             {it.fieldKey}<span className='title'>{it.fieldName}</span>
-                                            {this.isRelyRelated(it.fieldType) ? <RelyRelated/> : <Related/>}
+                                            
+                                            {this.isRelyReverseRelated(it.type) 
+                                                ? <Tooltip title={i18n.translate('被“{objectKey}.{fieldKey}”关联', it.fieldConfig)}><Related/></Tooltip> 
+                                                : <Tooltip title={i18n.translate('关联“{objectKey}.{fieldKey}”', it.fieldConfig)}><ReverseRelated/></Tooltip>}
 
-                                            {this.renderFieldAction(index)}
+                                            {this.renderFieldAction(index,true)}
                                         </li>
                                     )
                                 }

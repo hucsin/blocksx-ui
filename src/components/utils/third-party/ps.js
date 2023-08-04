@@ -587,6 +587,7 @@ var PLUMB_JS =  {};
                 console.trace();
             }
             catch (e) {
+                //
             }
         }
     }
@@ -613,14 +614,18 @@ var PLUMB_JS =  {};
                 }
             }
             catch (e) {
+                console.log(e, newFunction)
                 log("jsPlumb function failed : " + e);
+                
             }
             if ((wrappedFunction != null) && (returnOnThisValue == null || (r !== returnOnThisValue))) {
                 try {
                     r = wrappedFunction.apply(this, arguments);
                 }
                 catch (e) {
+                    
                     log("wrapped function failed : " + e);
+                    
                 }
             }
             return r;
@@ -669,6 +674,7 @@ var PLUMB_JS =  {};
                                         ret = this._listeners[event][i].apply(this, [value, originalEvent]);
                                     }
                                     catch (e) {
+                                        
                                         log("jsPlumb: fire failed for event " + event + " : " + e);
                                     }
                                 }
@@ -729,6 +735,7 @@ var PLUMB_JS =  {};
                     fn();
                 }
                 catch (e) {
+                    
                     log("Cannot execute silent function " + e);
                 }
                 _this.setSuspendEvents(false);
@@ -2734,6 +2741,7 @@ var PLUMB_JS =  {};
         this.moveListener = function(e) {
             if (downAt) {
                 if (!moving) {
+                    
                     var _continue = _dispatch("start", {el:this.el, pos:posAtDown, e:e, drag:this});
                     if (_continue !== false) {
                         if (!downAt) {
@@ -3996,6 +4004,7 @@ var PLUMB_JS =  {};
                     fn.apply(obj[i], [ obj[i] ]);
                 }
                 catch (e) {
+                    
                     _ju.log(".each iteration failed : " + e);
                 }
             }
@@ -4138,7 +4147,9 @@ var PLUMB_JS =  {};
                         r = this._jsPlumb.beforeDetach(connection);
                     }
                     catch (e) {
+                        
                         _ju.log("jsPlumb: beforeDetach callback failed", e);
+                        
                     }
                 }
                 return r;
@@ -4168,6 +4179,7 @@ var PLUMB_JS =  {};
                     }
                     catch (e) {
                         _ju.log("jsPlumb: beforeDrop callback failed", e);
+                        
                     }
                 }
                 return r;
@@ -5234,7 +5246,9 @@ var PLUMB_JS =  {};
                     }
                 }
                 catch (e) {
+                    
                     _ju.log(_currentInstance, "cannot check condition [" + conditionName + "]" + e);
+                    
                 }
             }
             return r;
@@ -6326,7 +6340,7 @@ var PLUMB_JS =  {};
                     // and use the endpoint definition if found.
                     var elid = elInfo.id,
                         _del = this.getElement(elInfo.el);
-
+                    
                     this.sourceEndpointDefinitions[elid] = this.sourceEndpointDefinitions[elid] || {};
                     _ensureContainer(elid);
 
@@ -6356,6 +6370,7 @@ var PLUMB_JS =  {};
 
                     // set scope if its not set in dragOptions but was passed in in params
                     dragOptions.scope = dragOptions.scope || p.scope;
+                    
 
                     dragOptions[dragEvent] = _ju.wrap(dragOptions[dragEvent], function () {
                         if (existingDrag) {
@@ -6408,6 +6423,12 @@ var PLUMB_JS =  {};
                         // on right mouse button, abort.
                         if (e.which === 3 || e.button === 2) {
                             return;
+                        }
+
+                        if (p.canDrag) {
+                            if (!p.canDrag(e)) {
+                                return ;
+                            }
                         }
 
                         elid = this.getId(this.getElement(elInfo.el)); // elid might have changed since this method was called to configure the element.
@@ -7040,7 +7061,9 @@ var PLUMB_JS =  {};
                 fn();
             }
             catch (e) {
+                
                 _ju.log("Function run while suspended failed", e);
+                
             }
             if (!_wasSuspended) {
                 this.setSuspendDrawing(false, !doNotRepaintAfterwards);
@@ -13390,7 +13413,9 @@ var PLUMB_JS =  {};
                         try {
                             self.getDragArea().removeChild(__el);
                         } catch (e) {
+                            
                             jsPlumbUtil.log("Could not remove element from Group " + e);
+                            
                         }
                     }
                     _unbindDragHandlers(__el);
@@ -15591,8 +15616,10 @@ var PLUMB_JS =  {};
                 }
             }
             catch(e) {
+                
                 // not fatal
                 _ju.log("JSPLUMB: cannot set class list", e);
+
             }
         },
         _getClassName = function (el) {

@@ -2,7 +2,7 @@ import React from 'react';
 
 
 import { DiagramsTableObject, DiagramsTableField } from '../components/Diagrams/typing';
-import DiagramsTable from '../components/Diagrams/table';
+import DiagramsTable from '../components/Diagrams/DiagramsTable';
 import Diagrams from '../components/Diagrams';
 import Former from '../components/Former';
 import Pick from '../components/Pick';
@@ -44,7 +44,11 @@ let tables: DiagramsTableObject[] = [
         {
           fieldKey: 'cityCode',
           fieldName: '城市编码',
-          type: 'field',
+          type: 'relationAt',
+          fieldConfig: {
+            objectKey: 'Station',
+            fieldKey: 'city'
+          },
           fieldType: 'string',
           fieldLength: 32,
           isUniqued: true,
@@ -190,14 +194,14 @@ export default class DemoDiagrams extends React.Component<{}, {visible: boolean,
       super(props);
 
       let table: any = localStorage.getItem('__diagrams');
-
+      
       if (table) {
         table = JSON.parse(table);
       }
-
+      
       this.state ={
         visible: false,
-        tableList: table || tables
+        tableList: table || tables.splice(0,2)
       }
 
       setTimeout(() => {

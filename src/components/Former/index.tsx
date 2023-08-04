@@ -10,6 +10,7 @@ export interface FormerProps {
   type?: string;
   value?: any;
   schema: any;
+  className?: string;
   classifyType?: 'tabs' | 'step' | 'verticalTabs';
   groupType?: 'accordion' | 'more',
   schemaClassifySort?: any;
@@ -407,7 +408,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
           <Drawer
             title={this.state.title || '编辑数据'}
             onClose={this.onCloseLayer}
-            visible={this.state.visible}
+            open={this.state.visible}
+            rootClassName={this.props.className}
             width={this.state.width || 450}
             maskClosable={!this.props.keep}
             footer={

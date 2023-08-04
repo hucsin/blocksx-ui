@@ -29,9 +29,15 @@ class Utils {
            * }
            */
           if (patch && patch.$patch) {
-            
-            this.findArrayPatch(it[patch.target], patch.find, patch.patch)
-
+            // 追加模式
+            if (patch.$patch == 'append') {
+              if (Array.isArray(it[patch.target])) {
+                it[patch.target].push(patch.patch)
+              }
+            // 递归模式
+            } else {
+              this.findArrayPatch(it[patch.target], patch.find, patch.patch)
+            }
           } else {
             Object.assign(it, patch);
           }

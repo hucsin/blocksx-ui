@@ -170,6 +170,11 @@
     }
 
 }
+
+.jtk-endpoint {
+    z-index: 100000;
+}
+
 .hoofs-diagrams-former-select {
     .ant-dropdown-menu  
     .ant-dropdown-menu-item,
@@ -340,6 +345,21 @@
             right: 16px;
             text-align: right;
             color:#ccc;
+            .ant-color-picker-trigger {
+                display:inline-block;
+                width:10px;
+                margin-left: 4px;
+                height: 10px;
+                border: none;
+                &.ant-color-picker-trigger-active {
+                    border-color:none;
+                }
+                .ant-color-picker-color-block {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 0;
+                }
+            }
             span {
                 margin-left:4px;
                 
@@ -527,7 +547,7 @@
         margin: 0;
     }
 
-    p {
+    .ant-typography {
         display: block;
         padding-left: 22px;
         color:#aaa;
@@ -637,9 +657,10 @@
 
 // wraper
 .hoofs-diagrams-wrapper {
-    position: relative;
+    position: absolute;
     width: 100%;
     height: 100%;
+
 }
 
 .jtk-connector {

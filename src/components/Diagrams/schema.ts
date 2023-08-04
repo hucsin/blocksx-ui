@@ -306,7 +306,7 @@ export default  {
     TableInfo: (props: any, info: any) => {
         return {
             type: "object",
-            title: "普通字段",
+            title: "表基本信息修改",
             properties: {
                 objectKey: {
                     type: 'string',
@@ -374,6 +374,4 @@ export default  {
             }
         }
     }
-
-
 }

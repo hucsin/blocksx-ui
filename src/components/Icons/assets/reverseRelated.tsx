@@ -1,6 +1,6 @@
 import React from 'react';
 import Icon from '@ant-design/icons';
-import relyRelatedsvg from './svg/relyRelated.svg'; // path to your '*.svg' file.
+import relyRelatedsvg from './svg/reverseRelated.svg'; // path to your '*.svg' file.
 
 
 export default class RelyRelated extends React.Component {

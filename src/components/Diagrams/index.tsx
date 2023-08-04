@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { utils } from '@blocksx/core';
 
@@ -6,19 +6,26 @@ import jsplumb  from '../utils/third-party/jsplumb';
 
 import { createEmptyElement, replaceClassName } from '../utils/dom';
 import innerUtils from '../utils/index'
+import CanvasDraggable from '../utils/CanvasDraggable';
 
 
-import DiagramsTable from './table';
+import DiagramsTable from './DiagramsTable';
 import ToolFilter from './toolFilter';
 import ToolAction from './toolAction';
 import Pick from '../Pick';
+import Former from '../Former';
+import FormerSchema from './schema';
 import { DiagramsTableObject, DiagramsTableField } from './typing';
+
 
 const  jsPlumb: any = jsplumb.jsPlumb;
 
 interface DiagramsProps  {
     tableList: DiagramsTableObject[]
     onChange?: Function;
+
+    canvasZoom: number;
+    canvasPosition: any;
 }
 interface DiagramsState {
     tableList: DiagramsTableObject[];
@@ -29,6 +36,15 @@ interface DiagramsState {
     pickValue?: any;
 
     filterValue: any;
+
+    instance?: any;
+
+    canvasZoom: number;
+    canvasPosition: any;
+
+
+    objectNumber:number;
+
 }
 
 export default class Diagrams extends React.Component<DiagramsProps, DiagramsState> {
@@ -36,32 +52,61 @@ export default class Diagrams extends React.Component<DiagramsProps, DiagramsSta
     private canvas: any;
     private instance: any;
     private tableMap: any;
+    private shouldComponentUpdated: any;
+    private canvasDraggable: any;
+    private zIndex: number;
+    private colorList: any[] = [
+        '#FA5151',
+        '#4338CA',
+        '#CD0074',
+        '#00C322',
+        '#6A0AAB',
+        '#A6A300',
+        '#388E3C',
+        '#FF6F00',
+        '#4E342E',
+        '#F44336',
+        '#7B1FA2',
+        '#673AB7',
+        '#3F51B5',
+        '#827717'
+    ];
     private relatedLabelMap: any = {
         one: '1 v 1',
-        onem: '1 v n',
+        onem: '1 v m',
         rely_one: '1 v 1 (rely)',
-        rely_onem: '1 v n (rely)'
+        rely_onem: '1 v m (rely)'
     };
 
     public constructor(props: DiagramsProps) {
         super(props);
 
-        this.uuid = utils.uniq('diagrams')
+        this.uuid = utils.uniq('diagrams');
+        this.zIndex = 1;
+        this.canvas = React.createRef();
+
         this.tableMap = {};
+        this.shouldComponentUpdated = true;
 
         this.state = {
             tableList: props.tableList,
             filterTableList: props.tableList.slice(0, props.tableList.length),
             pickTarget: '',
-            filterValue: []
+            filterValue: [],
+            canvasZoom: 1,
+            canvasPosition: props.canvasPosition || {
+                left: 0,
+                top: 0
+            },
+            objectNumber: props.tableList.length || 0
         }
+
+        this.canvasDraggable = new CanvasDraggable(this);
     }
 
-    public componentDidMount() {
+    public getInstance() {
 
-        let { tableList } = this.state;
-
-        this.instance = jsPlumb.getInstance({
+        return jsPlumb.getInstance({
             Connector: "Straight",
             PaintStyle: { strokeWidth: 3, stroke: "#ffa500" },
             Endpoint: [ "Dot", { radius: 5 } ],
@@ -94,12 +139,12 @@ export default class Diagrams extends React.Component<DiagramsProps, DiagramsSta
                     events:{
                         tap:(e) => {
                             let map: any = this.tableMap[e.component.sourceId];
+                            
                             if (map ) {
-                                console.log(map)
                                 this.setState({
                                     pickTarget: e.component.sourceId,
                                     pickVisible: true,
-                                    pickValue: map.relatedType
+                                    pickValue: map.field.fieldType
                                 })
                             }
                         }
@@ -107,58 +152,77 @@ export default class Diagrams extends React.Component<DiagramsProps, DiagramsSta
                 }]
             ],
         });
+    }
 
-        jsPlumb.ready(() => {
+    public componentDidMount() {
+
+        this.setState({
+            instance: this.getInstance()
+        }, () => {
             jsPlumb.setContainer(this.uuid);
-            
-            this.instance.bind("connection",  (connInfo, originalEvent) => {
-                let { connection } = connInfo;
+        
+            jsPlumb.ready(() => {
+                let { tableList, instance } = this.state;
+                
+                instance.bind('beforeDrop', (connInfo)=> {
+                    let { connection } = connInfo;
+                    if (this.getObjectKey(connection.sourceId)  == this.getObjectKey(connection.targetId)) {
+                        // 删除自身
+                        return false;
+                    } 
+                    return true;
+                })
 
-                if (this.getObjectKey(connection.sourceId)  == this.getObjectKey(connection.targetId)) {
-                    // 删除自身
-                    this.instance.deleteConnection(connection)
-                }  else {
+                instance.bind("connection",  (connInfo, originalEvent) => {
+                    let { connection } = connInfo;
 
-
-                    let tableMap:any = this.tableMap[connection.sourceId];
-
-                    // 
-                    if (!this.isRelayNode(tableMap.field)) {
-                        this.resetDefaultRelayConnect(tableMap, connection)
-                    }
-
-                    if(tableMap ) {
-                        // 1vm 
-                        setTimeout(() => {
-                            // 目标节点
-                            // 修改label
-                            this.resetRelatedLabel(connection.getOverlay('label'), this.getRelayLabel(tableMap.field))
-                            this.resetRelatedSourceTargetPoint(
-                                connection.getOverlay('sourcePoint'), 
-                                connection.getOverlay('targetPoint'), 
-                                tableMap.field
-                            )
-                        }, 0)
+                    if (connection.source && connection.target) {
                         
-                        Object.assign(tableMap, {
-                            connection
-                        })
+                        let tableMap:any = this.tableMap[connection.sourceId];
+                        // 
+                        if (!this.isRelayNode(tableMap.field)) {
+                            
+                            this.resetDefaultRelayConnect(tableMap, connection)
+                        }
+
+                        if(tableMap ) {
+                            // 1vm 
+                            setTimeout(() => {
+                                // 目标节点
+                                // 修改label
+                                this.resetRelatedLabel(connection.getOverlay('label'), this.getRelayLabel(tableMap.field))
+                                this.resetRelatedSourceTargetPoint(
+                                    connection.getOverlay('sourcePoint'), 
+                                    connection.getOverlay('targetPoint'), 
+                                    tableMap.field
+                                )
+                            }, 0)
+                            
+                            Object.assign(tableMap, {
+                                connection
+                            })
+                        }
+                        
                     }
-                }
-            });
+                });
 
-            this.instance.bind('connectionDetached', (connInfo) => {
-                let { sourceId , targetId } = connInfo;
-                let sourceObject: string = sourceId.split('.');
-                let targetObject: string = targetId.split('.');
+                instance.bind('connectionDetached', (connInfo: any,event?:any) => {
+                    let { sourceId , targetId } = connInfo;
+                    if (event) {
+                        let sourceObject: string = sourceId.split('.');
+                        let targetObject: string = targetId.split('.');
 
-                this.removeFieldByKeys(sourceObject[0], sourceObject[1])
-                this.removeFieldByKeys(targetObject[0], targetObject[1]);
-                this.onChangeObjectList();
+                        this.removeFieldByKeys(sourceObject[0], sourceObject[1])
+                        this.removeFieldByKeys(targetObject[0], targetObject[1]);
+                        this.onChangeObjectList(true);
+                    }
+                })
+                
+                this.flushTableConnect();
+                this.canvasDraggable.init();
             })
-
-            this.flushTableConnect();
         })
+        
     }
     public removeFieldByKeys(objectKey: string, fieldKey: string) {
         let { tableList } = this.state;
@@ -172,73 +236,87 @@ export default class Diagrams extends React.Component<DiagramsProps, DiagramsSta
         })
     }
 
-    public flushTableConnect () {
-        let { filterTableList } = this.state;
-        let instance: any = this.instance;
+    public flushTableConnect (isDeleteAll?: boolean) {
+        let { filterTableList, instance } = this.state;
 
-        // 先删除之前的连线
-        instance.getAllConnections().forEach(conn => {
-            instance.deleteConnection(conn);
-        })
-
+        if (isDeleteAll) {
+            instance.getAllConnections().forEach(it => {
+                instance.deleteConnection(it)
+            })
+        }
+        
         setTimeout( () => {
             filterTableList.forEach((table) => {
-                this.initObjectNodeByObjectKey(table.objectKey);
+                //ignoreTable != true && this.initObjectNodeByObjectKey(table.objectKey);
                 
                 table.fields.forEach(field => {
-                    this.connectFieldRelay(field, table)
+                    this.connectFieldRelay(field, table, isDeleteAll)
                 })
             });
         }, 0)
     }
 
-    public onChangeObjectList() {
-        
+    public onChangeObjectList(force?: boolean, cb?: Function) {
+        this.shouldComponentUpdated =  force !==undefined ?  force :  true;
+
         this.setState({
             tableList: this.state.tableList
         }, () => {
+            this.shouldComponentUpdated = true;
             this.props.onChange && this.props.onChange(this.state.tableList);
+            cb && cb();
         })
     }
 
+    public shouldComponentUpdate() {
+        return this.shouldComponentUpdated ;
+    }
     public componentDidUpdate() {
-        console.log(3333)
+        
     }
     
-    
-    public connectFieldRelay(field: any, objectNode:any) {
+    public hasExportObject(objectKey: string) {
+        let { filterTableList } = this.state;
+        return !!filterTableList.filter(it => it.objectKey === objectKey);
+    }
+    public connectFieldRelay(field: any, objectNode:any, force?: boolean) {
         let source: any = [objectNode.objectKey, field.fieldKey].join('.');
         let { filterValue } = this.state;
         
-        if (field.type == 'relation') {
-            let fieldConfig: any = field.fieldConfig;
-            let target: any = [fieldConfig.objectKey, fieldConfig.fieldKey].join('.');
-            
-            // 没有过滤或则已经哎过滤的时候
-            if (filterValue.length == 0 || filterValue.indexOf(fieldConfig.objectKey) > -1) {
-                //cache source 
-                this.tableMap[source] = {
-                    field: field,
-                    source,
-                    target,
-                    relatedType: field.fieldType
-                }
+        if (force === true || !this.tableMap[source] || !this.tableMap[source].connection) {
 
-                this.instance.connect({
-                    source: source,
-                    target: target,
-                    anchor: ["Left", "Right" ],
-                    connector: [ "Flowchart", 
-                        { stub: [40, 60], gap: 10, cornerRadius: 5, alwaysRespectStubs: true } 
-                    ],
-                });
+            if (field.type == 'relation') {
+                
+                let fieldConfig: any = field.fieldConfig;
+                let target: any = [fieldConfig.objectKey, fieldConfig.fieldKey].join('.');
+                
+                // 没有过滤或则已经哎过滤的时候
+                if (filterValue.length == 0 || filterValue.indexOf(fieldConfig.objectKey) > -1) {
+                    //cache source 
+                    this.tableMap[source] = Object.assign(this.tableMap[source] || {}, {
+                        field: field,
+                        source,
+                        target
+                    })
+                    // 看下有没有目标段的对象存在
+                    if ( this.hasExportObject(fieldConfig.objectKey)) {
+                        this.state.instance.connect({
+                            source: source,
+                            target: target,
+                            anchor: ["Left", "Right" ],
+                            connector: [ "Flowchart", 
+                                { stub: [40, 60], gap: 10, cornerRadius: 5, alwaysRespectStubs: true } 
+                            ],
+                        });
+                    }
+                }
+            } else {
+                //cache source
+                this.tableMap[source] = Object.assign(this.tableMap[source] || {}, {
+                    field: field,
+                    source
+                })
             }
-        } else {
-           //cache source 
-           this.tableMap[source] = {
-                field: field,
-                source
-           }
         }
     }
     
@@ -246,164 +324,123 @@ export default class Diagrams extends React.Component<DiagramsProps, DiagramsSta
         return field.type === 'relation';
     }
     private resetDefaultRelayConnect(tableMap: any, connection: any) {
-        let target: any = connection.targetId.split('.');
-        let source: any = connection.sourceId.split('.');
-        
-        tableMap.relatedType = 'one';
-        
-        tableMap.target = connection.targetId;
-        tableMap.field.type = 'relation';
-        tableMap.field.fieldType = 'one';
-        tableMap.field.fieldConfig = {
-            objectKey: target[0],
-            fieldKey: target[1]
-        }
-
-        // TODO 更新
-    }
-
-    public initFieldNodeByNode(it:any) {
-        let instance: any = this.instance;
-
-        if (it.getAttribute('data-fieldkey')) {
-
-            instance.makeSource(it, {
-                allowLoopback: false,
-                anchor: ["Left", "Right" ],
-                endpoint: "Dot",
-                paintStyle: {
-                    fill: "#ffa500", radius: 5
-                },
-                connector: [ "Flowchart", 
-                    { stub: [40, 60], gap: 10, cornerRadius: 5, alwaysRespectStubs: true } 
-                ],
-                //connectorStyle: connectorPaintStyle,
-                //hoverPaintStyle: endpointHoverStyle,
-                // connectorHoverStyle: connectorHoverStyle,
-                dragOptions: {}
-            });
-
-            instance.makeTarget(it, {
-                anchor: ["Left", "Right" ],
-                endpoint: "Dot",
-                paintStyle: {
-                    stroke: "#ffa500",
-                    radius: 5,
-                    strokeWidth: 2
-                },
-                //hoverPaintStyle: endpointHoverStyle,
-                maxConnections: -1,
-                dropOptions: { hoverClass: "hover", activeClass: "active" }
-            });
-        }
-    }
-
-    public initObjectNodeByObjectKey(objectKey: any) {
-        let tableMap: any = this.tableMap[objectKey];
-        
-        if (tableMap) {
-            let objectDOM: any = tableMap.dom;
-            let fieldsWrapper: any = objectDOM.querySelector('ul');
-            
-            fieldsWrapper.querySelectorAll('li:not([data-sourceed])').forEach((it) => {
-                it.setAttribute('data-sourceed', true);
-                this.initFieldNodeByNode(it);
-            })
-            
-            if (!tableMap.initDraggable) {
-                this.instance.draggable(objectDOM, {
-                    canDrag: (e) => {
-                        let target: any = e.target;
-                        return target.getAttribute('data-draggable')
-                    },
-                    stop: (e) => {
-                        let { tableList } = this.state;
-                        let { el, pos } = e;
-                        innerUtils.findArrayPatch(tableList, {objectKey: el.id}, {
-                            left: pos[0],
-                            top: pos[1]
-                        });
-                        
-                        this.onChangeObjectList()
-                    }
-                });
-                this.instance.addList(fieldsWrapper, {
-                    endpoint:["Rectangle", {width:20, height:20}]
-                });
-                tableMap.initDraggable = true;
+       let target: any = connection.targetId.split('.');
+       Object.assign(tableMap, {
+          target: connection.targetId,
+          source: connection.sourceId,
+          field: Object.assign(tableMap.field, {
+            type: 'relation',
+            fieldType: 'one',
+            fieldConfig: {
+                objectKey: target[0],
+                fieldKey: target[1]
             }
-        }
+          })
+       });
+
+       this.updateConnectionNodesByKeys(connection.sourceId, connection.targetId, 'one')
+       
+       this.onChangeObjectList(true, () => {
+            this.flushTableConnect();
+       });
     }
 
-    public onTableValueChange =(table:DiagramsTableObject, tableValue: any, changeValue: any)=> {
+    public onTableValueChange =(table:DiagramsTableObject, tableValue: any, change: any)=> {
+        //更新表基本数据
+        if ( change.changeType == 'editTableInfo') {
+            // 更新
+            innerUtils.findArrayPatch(this.state.tableList, 
+                { objectKey: table.objectKey }, tableValue);
 
-        switch(tableValue.changeType) {
-            case 'field':
-                this.initObjectNodeByObjectKey(table.objectKey)
-                break;
-            case 'related':
-                this.connectFieldRelay(tableValue.changeValue, table)
-                break;
+            this.onChangeObjectList();
+        } else {
+            switch (change.changeType) {
+                case 'resizeTable':
+
+                    innerUtils.findArrayPatch(this.state.tableList, {
+                        objectKey: table.objectKey
+                    }, {
+                        left: change.left,
+                        top: change.top
+                    })
+                   
+                    break;
+                case 'addRelated':
+
+                    let { fieldKey, objectKey } = tableValue.fieldConfig;
+                    // 添加
+                    this.updateConnectionNodesByKeys([table.objectKey, tableValue.fieldKey].join('.'),
+                        [objectKey, fieldKey].join('.'),
+                        tableValue.fieldType
+                    )
+                    break;
+                case 'editTableRecored':
+                    // patch
+
+                    break;
+                
+            }
+
+            this.onChangeObjectList(true, ()=> {
+                // 
+                console.log('ontavlevalue')
+                this.flushTableConnect()
+            })
+
         }
-
-
-        // 更新
-        innerUtils.findArrayPatch(this.state.tableList, {objectKey: table.objectKey}, table)
-
-        this.onChangeObjectList();
     }
 
     public resetRelatedType (relatedType: string) {
         let map: any = this.tableMap[this.state.pickTarget];
         let connection: any = map.connection;
-        let source: any = map.source.split('.');
-        let target: any = map.target.split('.');
-       
+
         if (map && connection) {
 
             map.field.fieldType = relatedType;
-            map.relatedType = relatedType;
-
+            
             this.resetRelatedLabel(connection.getOverlay('label'), this.relatedLabelMap[relatedType])
             this.resetRelatedSourceTargetPoint(
                 connection.getOverlay('sourcePoint'), 
                 connection.getOverlay('targetPoint'), 
                 map.field
             )
-
+            
             // 更新
-            console.log(map, connection)
             // 更新原端
-            this.updateRelayNodesByKeys(source[0], source[1], {
-                type: 'relation',
-                fieldType: relatedType,
-                fieldConfig: {
-                    objectKey: target[0],
-                    fieldKey: target[1]
-                }
-            })
-            // 更新目标段
-            this.updateRelayNodesByKeys(target[0], target[1], {
-                type: 'relationAt',
-                fieldType: relatedType,
-                fieldConfig: {
-                    objectKey: source[0],
-                    fieldKey: source[1]
-                }
-            })
+            this.updateConnectionNodesByKeys(map.source, map.target, relatedType)
 
-            this.onChangeObjectList();
+            this.onChangeObjectList(true);
+
         }
-
-        
     }
 
-    public updateRelayNodesByKeys(objectKey:string, fieldKey:string, value: any) {
-        console.log(objectKey, fieldKey, value, 2222)
-        innerUtils.findArrayPatch(this.state.tableList, {
-            find: {
-                objectKey: objectKey
+    public updateConnectionNodesByKeys( source: string, target:string, relatedType: string) {
+        let [sourceObjectKey, sourceFieldKey]  = source.split('.');
+        let [targetObjectKey, targetFieldKey] = target.split('.');
+
+        
+        this.updateRelayNodeByKey(sourceObjectKey, sourceFieldKey, {
+            type: 'relation',
+            fieldType: relatedType,
+            fieldConfig: {
+                objectKey: targetObjectKey,
+                fieldKey: targetFieldKey
             }
+        });
+
+        this.updateRelayNodeByKey(targetObjectKey, targetFieldKey, {
+            type: 'relationAt',
+            fieldType: relatedType,
+            fieldConfig: {
+                objectKey: sourceObjectKey,
+                fieldKey: sourceFieldKey
+            }
+        });
+    }
+
+    public updateRelayNodeByKey(objectKey:string, fieldKey:string, value: any) {
+        innerUtils.findArrayPatch(this.state.tableList, {
+            objectKey: objectKey
         }, {
             $patch: true,
             target: 'fields',
@@ -412,7 +449,6 @@ export default class Diagrams extends React.Component<DiagramsProps, DiagramsSta
             },
             patch: value
         })
-        console.log(this.state.tableList, 9999)
     }
 
     public resetRelatedLabel(labelArrow:any , label: string) {
@@ -445,10 +481,57 @@ export default class Diagrams extends React.Component<DiagramsProps, DiagramsSta
             }
         })
     }
+    public setZoom(dir:number) {
+        let { canvasZoom } = this.state;
+        this.setState({
+            canvasZoom: canvasZoom  +  dir * 0.1
+        }, ()=> {
+            this.state.instance.setZoom(this.state.canvasZoom, true)
+        })
+    }
+    /**
+     * 添加一个表格
+     */
+    public addTable() {
+        let defaultObjectNumber:number = this.getDefaultObjectNumber();
+        let defaultObjectKey: string = 'object' + defaultObjectNumber;
+        let tableList: any = this.state.tableList;
+
+
+        tableList.push({
+            objectKey: defaultObjectKey,
+            objectName: defaultObjectKey,
+            fields: [],
+            color: this.colorList[defaultObjectNumber % this.colorList.length],
+            left: 20 + defaultObjectNumber * 20,
+            top: 20 + defaultObjectNumber * 20
+        })
+
+        console.log(tableList)
+    
+        this.onChangeObjectList()
+        
+    }
+    public getDefaultObjectNumber() {
+        let objectNumber: number = 1;//this.state.objectNumber;
+         
+        while (this.hasObjectKey('object' + objectNumber)) {
+            objectNumber = objectNumber + 1;
+        }
+        return objectNumber;
+    }
+    public hasObjectKey(key:string) {
+        return this.state.tableList.filter(it => {
+            return it.objectKey == key;
+        }).length > 0;
+    }
+    public getZindex() {
+        return this.zIndex++;
+    }
     public render() {
         
         return (
-            <div className='hoofs-diagrams-canvans'>
+            <div className='hoofs-diagrams-canvans' draggable="true">
 
                 <ToolFilter 
                     tagsList={this.getFilterTagsList()}
@@ -461,13 +544,14 @@ export default class Diagrams extends React.Component<DiagramsProps, DiagramsSta
                                 : this.state.tableList
                         }, () => {
                             // 刷新flushTableConnect
-                            this.flushTableConnect();
+                            this.flushTableConnect(true);
                         })
 
                     }}
                 />
+                
 
-                <ToolAction />
+                <ToolAction diag={this} zoom={this.state.canvasZoom}/>
 
                 <Pick 
                     title="修改关联类型"
@@ -490,22 +574,28 @@ export default class Diagrams extends React.Component<DiagramsProps, DiagramsSta
                 />
 
                 <div 
-                    className='hoofs-diagrams-wrapper'
-                    ref={(dom)=> {this.canvas = dom;}}
-                    id={this.uuid}
+                    className = 'hoofs-diagrams-wrapper'
+                    ref = {this.canvas}
+                    id = {this.uuid}
+                    style = {{
+                        transform: `scale(${this.state.canvasZoom})`,
+                        left: this.state.canvasPosition.left,
+                        top: this.state.canvasPosition.top
+                    }}
                 >
-                    {this.state.filterTableList.map((it:DiagramsTableObject ,index:number)=> {
-                        return (
+                    {this.state.tableList.map((it:DiagramsTableObject ,index:number)=> {
+                       
+                       return (
                             <DiagramsTable 
+                                colorList={this.colorList}
+                                diagrams = {this}
+                                hidden= {this.isHidden(it.objectKey)}
+                                instance={this.state.instance}
                                 key={it.objectKey}
-                                ref={(e) => { this.tableMap[it.objectKey] = {
-                                    diagramsTable: e,
-                                    dom: ReactDOM.findDOMNode(e)
-                                }}}
                                 {...it}
                                 left={it.left || (10 + index * 30) }
                                 top={it.top || (10+ index* 40)}
-                                onChange={(data: any, value: any)=> {this.onTableValueChange(it, data,value)}}
+                                onChange={(data: any, value: any)=> {this.onTableValueChange(it, value.changeValue, value)}}
                                 onGetTableList={()=> { return this.state.filterTableList }}
                             />
                         )
@@ -515,6 +605,15 @@ export default class Diagrams extends React.Component<DiagramsProps, DiagramsSta
         )
     }
 
+    private isHidden(objectKey: string) {
+        let { filterValue } = this.state;
+
+        if(filterValue.length == 0 || filterValue.indexOf(objectKey) > -1) {
+            return false
+        }
+        return true;
+    }
+    
     private getObjectKey(path: string) {
         let current: any = path.split('.');
         return current[0];

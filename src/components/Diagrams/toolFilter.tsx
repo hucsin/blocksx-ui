@@ -68,6 +68,12 @@ export default class Filter extends React.Component<FilterProps, FilterState> {
                               && this.props.onChange(this.state.selectedTags);
                         }
                     }}
+                    onDeselect={()=> {
+                        setTimeout(() => {    
+                            this.props.onChange
+                            && this.props.onChange(this.state.selectedTags);
+                        }, 0);
+                    }}
                     onChange={(v:any) => {
                         this.setState({
                             selectedTags:v
