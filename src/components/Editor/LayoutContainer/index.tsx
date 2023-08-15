@@ -1,7 +1,7 @@
 import React from 'react';
-import { StateX, StateComponent } from '../StateX';
-import SplitPane, { Pane } from '../SplitPane';
-import { EditorLayoutState } from './states';
+import { StateX, StateComponent } from '../../StateX';
+import SplitPane, { Pane } from '../../SplitPane';
+import { EditorLayoutState } from '../states';
 import './style.scss';
 
 interface EditorLayoutContainerProps {

@@ -2,6 +2,9 @@
  * 右键菜单
  */
  import React from 'react';
+ import ReactDOM from 'react-dom';
+ import { utils } from '@blocksx/core';
+
  import {
     Menu,
     Item,
@@ -10,12 +13,13 @@
     useContextMenu,
   } from "react-contexify";
  
- import { StateX, StateComponent } from '../StateX';
+ import { StateX, StateComponent } from '../../StateX';
 
- import { pluginManager } from './manager/index';
- import PluginBase, {ContextMenuItem } from './core/Plugin';
+ import { pluginManager } from '../core/manager/index';
+ import Workspace from '../states/Workspace';
  import "react-contexify/dist/ReactContexify.css";
 
+ import "./style.scss";
 
  interface ContextMenuProps {
     namespace: string;
@@ -59,28 +63,35 @@
     }
     public renderChildrenMenu(menu?: any) {
         let renderMenu: any[] = menu || this.state.menu;
-        return renderMenu.map((it) => {
+        
+        return renderMenu.map((it,i) => {
             if (it ) {
                 // subitem
                 if (it.children) {
                     return (
-                        <Submenu label={it.name}>{this.renderChildrenMenu(it.children)}</Submenu>
+                        <Submenu key={i} label={it.name}>{this.renderChildrenMenu(it.children)}</Submenu>
                     )
                 } else {
                     return (
-                        <Item>{it.name}</Item>
+                        <Item onClick={()=> {
+                            // test
+                            let mode:any = StateX.findModel(Workspace);
+                            let uniq: any = utils.uniq();
+                            
+                            mode.register(uniq, 'coder', uniq, {})
+                        }} key={it.key}>{it.name}</Item>
                     )
                 }
             } else {
-                return <Separator/>
+                return <Separator key={i}/>
             }
         })
     }
     public render() {
         return (
-            <Menu id={this.props.namespace}>
+            ReactDOM.createPortal(<Menu id={this.props.namespace}>
                 {this.renderChildrenMenu()}
-            </Menu>
+            </Menu>, document.body)
         )
     }
  }

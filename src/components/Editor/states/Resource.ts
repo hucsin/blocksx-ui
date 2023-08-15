@@ -1,6 +1,4 @@
-import { utils } from '@blocksx/core';
 import StateModel from '../../StateX/Model';
-import StateX from '../../StateX/StateX';
 
 // 数据库类型范围
 export type ResourceDatabaseType = 'datasource' | 'database' | 'schema' | 'table' | 'view' | 'procedure' | 'trigger' | 'function' | 'user';

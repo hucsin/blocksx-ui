@@ -1,4 +1,4 @@
-import PluginBase, { PluginPipeline } from '../core/Plugin';
+import PluginBase, { PluginPipeline } from '../../core/Plugin';
 
 
 /**

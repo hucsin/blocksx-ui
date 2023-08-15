@@ -57,6 +57,12 @@ export { default as Edit } from './edit';
 export { default as Up } from './up';
 export { default as Down } from './down';
 
+export { default as DBQuery } from './dbquery';
+export { default as DBQueryMini } from './dbqueryMini'
+
+export { default as Workspace } from './workspace';
+export { default as Plugin } from './plugin';
+
 export { default as Mysql } from './mysql';
 export { default as PostgreSQL } from './postgresql';
 

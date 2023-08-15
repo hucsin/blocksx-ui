@@ -1,5 +1,11 @@
 import React from 'react';
-import { EditorLayoutContainer, EditorResourceTree, resourceManager } from '../components/Editor/index';
+
+import { Button } from 'antd';
+import { Plugin, Workspace, Datasource, Record, DBQuery, DBQueryMini, Setting } from '../components/Icons'
+
+import EditorLayoutContainer from '../components/Editor/LayoutContainer';
+import EditorResourceTree from '../components/Editor/ResourceTree';
+import EditorWorkspace from '../components/Editor/Workspace';
 
 import { StateX } from '../components/StateX/index';
 import { EditorLayoutState } from '../components/Editor/states';
@@ -190,33 +196,46 @@ export default class LayoutContainerDemo extends React.Component {
         super(props)
     }
     public render() {
+        /*
+         <button onClick ={()=> {
+                                        ct.showResource()
+                                    }}>资源</button>
+                                    <button onClick ={()=> {
+                                        
+                                        ct.showResourceExtend()
+                                    }}>扩展</button>
+                                    <button onClick ={()=> {
+                                        ct.foldResource()
+                                    }}>隐藏</button>
+        */
         return (
-            <EditorLayoutContainer
-                LeftChinampa={<div style={{height: '100%', background: '#fcc'}}>
-                    <button onClick ={()=> {
-                        ct.showResource()
-                    }}>资源</button>
-                    <button onClick ={()=> {
-                        
-                        ct.showResourceExtend()
-                    }}>扩展</button>
-                    <button onClick ={()=> {
-                        ct.foldResource()
-                    }}>隐藏</button>
-                </div>}
-                RightChinampa={<div style={{height: '100%', background: '#fcc'}}>left<br/>c</div>}
-                Resource={<EditorResourceTree namespace='resource' tree={sourceTree} />}
-                Product={<div>product-dev</div>}
-                Workspace={<div>workspace<button onClick={()=>{
-                    ct.toggleFeedbackDisplay()
-                    if (Math.random() > 0.4 ) {
-                        ct.toggle('RightChinampaDisplay', 'show')
-                    }
-                }} >dd</button></div>}
-                Feedback={<div>feedback</div>}
-                StatusBar={<div style={{height: '30px', background:'#ffc'}}>StatusBar</div>}
-                ResourceExtend={<div>resoutextend</div>}
-            />
+            <div className='layout'>
+                <div  className='header'>
+                    <DBQuery/> <DBQueryMini/>
+                    <div></div>
+                </div>
+                <div className="content">
+                    <EditorLayoutContainer
+                                LeftChinampa={<div className='nav' style={{height: '100%'}}>
+                                    <Button className='select' size="small" type="text"><Workspace/></Button>
+                                    <Button size="small" type="text"><Datasource/></Button>
+                                    <Button size="small" type="text"><Record/></Button>
+                                    <Button size="small" type="text"><Plugin/></Button>
+
+                                    <Button size="small" className='bottom' type="text"><Setting/></Button>
+
+                                </div>}
+                                RightChinampa={<div style={{height: '100%', background: '#fcc'}}>left<br/>c</div>}
+                                Resource={<EditorResourceTree namespace='resource' tree={sourceTree} />}
+                                Product={<EditorResourceTree namespace='product' tree={sourceTree.slice(1,2)} />}
+                                Workspace={<EditorWorkspace/>}
+                                Feedback={<div>feedback</div>}
+                                StatusBar={<div className='statusbar' style={{height: '30px', background:'#fff',borderTop: '1px solid #e0e2ec'}}>StatusBar</div>}
+                                ResourceExtend={<div>resoutextend</div>}
+                            />
+                </div>
+            </div>
+
         )
     }
 }

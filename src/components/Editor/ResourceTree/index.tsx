@@ -3,14 +3,15 @@
  */
 import React from 'react';
 import { Tree, Button } from 'antd';
-import { Down, Menu } from '../Icons';
+import { Down, Menu } from '../../Icons';
 
-import { StateX, StateComponent } from '../StateX';
-import EditorResourceState , { ResourceItem } from './states/Resource';
-import { resourceManager, pluginManager } from './manager/index';
-import ContextMenu from './ContextMenu';
+import { StateX, StateComponent } from '../../StateX';
+import EditorResourceState , { ResourceItem } from '../states/Resource';
+import { resourceManager, pluginManager } from '../core/manager/index';
+import ContextMenu from '../ContextMenu';
 
-import './ResourceTree/index';
+import './boot';
+import './style.scss';
 
 
 interface EditorResourceTreeProps {
@@ -21,6 +22,10 @@ interface EditorResourceTreeProps {
 
 
 export default class EditorResourceTree extends StateComponent<EditorResourceTreeProps, { height: number}> {
+    private nameMap: any = {
+        resource: '资源',
+        product: '任务'
+    }
     private namespace: string;
     private resourceState: any;
     private resourceTree: any;
@@ -31,6 +36,7 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
         }))
 
         this.resourceState = StateX.findModel(EditorResourceState, this.namespace);
+
         this.state = {
             height: 0
         }
@@ -53,17 +59,25 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
     }
     public render() {
         return (
-            <div className='resourcetree-wrapper' data-height={this.state.height-20} >
-                <ContextMenu namespace={this.props.namespace} />
+            <div className='resourcetree-wrapper' >
+                <ContextMenu namespace={this.namespace} />
+                
                 <div ref={(e)=> this.resourceTree = e}>
+                    <div className='resourcetree-header'>
+                        <span>{this.nameMap[this.namespace]}</span>
+                        <div className='resourcetree-toolbar'>
+                            {this.renderToolbar()}
+                        </div>
+                    </div>
                     {this.state.height && <Tree
                         showIcon
                         blockNode
+                        onRightClick={(e: any)=> {return this.showContextMenu(e.event,e.node)}}
                         onExpand={(e)=>{
                             this.resourceState.setExpandedKeys(e)
                         }}
                         expandedKeys={this.resourceState.getExpandedKeys()}
-                        height={this.state.height-1}
+                        height={this.state.height-35}
                         
                         titleRender={(nodeData) => { return this.renderTitle(nodeData.title, nodeData);}}
                         defaultSelectedKeys={['0-0-0']}
@@ -75,13 +89,39 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
             </div>
         )
     }
+    private renderToolbar() {
+        
+        let toolbar: any = pluginManager.getWidget(['RESOURCETREE', this.namespace,'TOOLBAR'], 'toolbar') || [];
+        
+        return toolbar.map((it,i) => {
+            if (it) {
+                return it.render({key:i})
+            } else {
+                return <span></span>
+            }
+        });
+    }
     private renderTitle(title: any,nodeData: any) {
         return (
             <div className='resourcetree-item'>
                 <div><span>{title}</span></div>
-                <Button type="text" size="small" onClick={()=>{ console.log(nodeData)}}><Menu/></Button>
+                <Button 
+                    type="text" 
+                    size="small" 
+                    onClick={
+                        (event)=>{
+                            this.showContextMenu(event,nodeData);
+                        }
+                    }
+                >
+                    <Menu/>
+                </Button>
             </div>
         )
+    }
+    private showContextMenu = (event: any, context: any) => {
+        event.stopPropagation();
+        ContextMenu.showContextMenu(this.namespace, event, context)
     }
     /**
      * 清洗数据  RESOURCETREE.RESOURCE.WASH

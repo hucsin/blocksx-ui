@@ -1,4 +1,4 @@
-import Plugin from '../core/Plugin';
+import Plugin from '../Plugin';
 import { keypath, utils } from '@blocksx/core';
 
 type NamespaceType = string | string[];
@@ -79,17 +79,35 @@ class PluginManager {
     }
 
     /**
-     * 获取
+     * 获取 菜单
      * @param namespace 
      */
     public getContextMenu(namespace: NamespaceType) {
         let menu: any[] = [];
         this.walk(namespace, (plugin: any) => {
             if (plugin.hasContextMenu()) {
-                menu = menu.concat(null,plugin.contextMenu)
+                // 显示指定分组
+                if (menu.length>0) {
+                    menu.push(null)
+                }
+                menu = menu.concat(plugin.contextMenu)
             }
         })
         return menu;
+    }
+
+    public getWidget(namespace: NamespaceType, widgetName?: string) {
+        let widgets: any[] = [];
+        this.walk(namespace, (plugin: any) => {
+            if (plugin.hasWidget(widgetName)) {
+                // 显示指定分组
+                if (widgets.length>0) {
+                    widgets.push(null)
+                }
+                widgets = widgets.concat(plugin.findWidget(widgetName))
+            }
+        })
+        return widgets;
     }
 
     /**

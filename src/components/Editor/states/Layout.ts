@@ -29,7 +29,7 @@ export default class EditorLayoutState extends StateModel<LayoutState> {
     public constructor(state: LayoutState) {
         super(Object.assign({
             LeftChinampaDisplay: 'show',
-            LeftChinampaWidth: 35,
+            LeftChinampaWidth: 45,
             RightChinampaWidth: 35,
             RightChinampaDisplay: 'hide',
             ResourceDisplay: 'show',

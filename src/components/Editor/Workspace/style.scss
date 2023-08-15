@@ -1,0 +1,77 @@
+.workspace-wrapper {
+    height: 100%;
+    .ant-tabs {
+        padding-top: 41px;
+        position: relative;
+        height: 100%;
+        .ant-tabs-nav {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0
+        }
+        .ant-tabs-content-holder {
+            height: 100%;
+        }
+    }
+    .ant-tabs-card >.ant-tabs-nav{
+        background-color: #f2f4f6;  
+        margin-bottom: 0;
+        .ant-tabs-nav-wrap {
+            padding-left: 8px;
+        }
+        .ant-tabs-tab {
+            background:transparent;
+            border: none;
+            margin-left: 8px;
+            margin-top: 8px;
+            margin-bottom: -1px;
+            padding: 6px 8px;
+            button {
+                font-size: 12px;
+            }
+            &:not(.ant-tabs-tab-active) {
+                &::after {
+                    content: " ";
+                    position:absolute;
+                    width: 1px;
+                    background:#ccc;
+                    height: 12px;
+                    left: -4px;
+                    top: 10px;
+                    opacity: .5;
+                }
+                &:first-child  {
+                    &::after {
+                        display:None;
+                    }
+                }
+            }
+
+            &.ant-tabs-tab-active {
+                background-color: #fff;
+                z-index: 1;
+                &::after,
+                &::before {
+                    content: " ";
+                    display: block;
+                    position: absolute;
+                    width: 16px;
+                    height: 25px;
+                    border-bottom-right-radius: 8px;
+                    box-shadow: 8px 0 0 0 #fff;
+                    left: -16px;
+                    bottom: 0;
+                    background-color: transparent;
+                }
+                &::before {
+                    left: auto;
+                    right: -16px;
+                    border-bottom-right-radius: 0;
+                    border-bottom-left-radius: 8px;
+                    box-shadow: 0  8px 0 0 #fff;
+                }
+            }
+        }
+    }
+}

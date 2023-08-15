@@ -1,8 +1,19 @@
 .resourcetree-wrapper {
     height: 100%;
     box-sizing: border-box;
-    padding: 8px;
+    padding:8px 12px ;
     overflow: hidden;
+    .resourcetree-header {
+        position: relative;
+        font-weight: bold;
+        line-height: 34px;
+        .resourcetree-toolbar {
+            position: absolute;
+            top: 0;
+            right: 0;
+            
+        }
+    }
     > div {
         height: 100%;
     }

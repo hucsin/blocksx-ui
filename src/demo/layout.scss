@@ -1,3 +1,73 @@
 body,html {
     color:#253852;
+    font-size:14px;
+}
+.statusbar {
+    box-sizing: border-box;
+    font-size:12px;
+    padding: 4px;
+    padding-left: 8px;
+}
+.layout {
+    position: relative;
+    padding-top: 42px;
+    height: 100%;
+    box-sizing: border-box;
+    .nav {
+        text-align: center;
+        padding-top: 8px;
+        border-right: 1px solid #e0e2ec;
+    }
+    .nav .ant-btn.ant-btn-sm{
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 8px;
+        padding: 0 5px;
+        &.select {
+            background-color: #006bf8;
+            color:#fff;
+        }
+        &.bottom {
+            position:absolute;
+            bottom: 0px;
+            left: 8px;
+        }
+    }
+    .content {
+        height: 100%;
+        position: relative;
+    }
+    .header {
+        height: 42px;
+        width: 100%;
+        
+        position: absolute;
+        top: 0;
+        left: 0;
+        color:#fff;
+        background: rgb(50,38,199);
+        background: linear-gradient(144deg, rgba(50,38,199,1) 0%, rgba(80,70,209,1) 29%, rgba(56,123,202,1) 100%);
+        div {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background-color: #fff;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            &::after {
+                content: "admin";
+                display:block;
+                position: absolute;
+                right: 32px;
+                top: 0;
+                line-height: 24px;;
+            }
+        }
+
+        span {
+            
+            font-size:24px;
+        }
+    }
 }
