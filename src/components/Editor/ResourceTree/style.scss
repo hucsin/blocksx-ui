@@ -1,0 +1,88 @@
+.resourcetree-wrapper {
+    height: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    overflow: hidden;
+    > div {
+        height: 100%;
+    }
+    .ant-tree {
+        .ant-tree-list-scrollbar  {
+            margin-right: -4px;
+            opacity: .4;
+            &:hover {
+                opacity: .8;
+            }
+        }
+        .ant-tree-icon__docu {
+
+        }
+        .ant-tree-switcher {
+            width: 12px;
+            color:#ababaf;
+            
+        }
+        &.ant-tree-block-node .ant-tree-list-holder-inner .ant-tree-node-content-wrapper:hover {
+            background-color: transparent;
+        }
+        .ant-tree-treenode{
+            padding: 2px;
+            &:not(.ant-tree-treenode-selected):hover {
+                background-color: #F4F4F4;
+            }
+            border-radius: 8px;
+            &:Hover {
+                .resourcetree-item {
+                    button {
+                        display: block;
+                    }
+                }
+            }
+        }
+        .ant-tree-iconEle {
+            font-size:12px;
+            width: 18px;
+            position: relative;
+            top: 0;
+        }
+        .ant-tree-treenode-selected {
+            .ant-tree-node-selected {
+                background-color: transparent;
+                color:#006bf8
+            }
+            background-color: #e6f4ff;
+            
+        }
+        .ant-tree-indent-unit {
+            width: 14px;
+        }
+        .ant-tree-node-content-wrapper{
+            white-space: nowrap;
+            overflow-x: clip;
+            overflow-y: visible;
+        }
+        .resourcetree-item {
+            display:inline-block;
+            width: 80%;
+            box-sizing: border-box;
+            vertical-align: top;
+            span {
+                display: block;
+                width: 100%;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+            button {
+                font-size:12px;
+                position: absolute;
+                top: 2px; 
+                right: 0;
+                padding: 0 4px;
+                height: 20px;
+                display:none;
+            }
+           
+        }
+    }
+}

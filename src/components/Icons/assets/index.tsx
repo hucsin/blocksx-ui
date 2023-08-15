@@ -47,6 +47,7 @@ export { default as Key } from './key';
 export { default as History } from './history';
 export { default as Version } from './version';
 export { default as Action } from './action';
+export { default as Menu } from './menu';
 export { default as Record } from './record';
 export { default as Related } from './related';
 export { default as ReverseRelated } from './reverseRelated';
@@ -54,6 +55,10 @@ export { default as ReverseRelated } from './reverseRelated';
 export { default as Remove } from './remove';
 export { default as Edit } from './edit';
 export { default as Up } from './up';
+export { default as Down } from './down';
+
+export { default as Mysql } from './mysql';
+export { default as PostgreSQL } from './postgresql';
 
 
 

@@ -1,12 +1,13 @@
 import React from 'react';
-import { Panel, PanelGroup, PanelResizeHandle } from "../src/components/ResizablePanel";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 
+
+import LayoutContainerDemo from './demo/Layout'
 import './style.css';
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement!);
+
 // /general/product
 // /setting/other
 
@@ -22,7 +23,7 @@ root.render(0 &&
         <DemoDiagrams/>
     </div>
   </div>
-);*/
+);
 root.render(
   <div style={{height: '80%',margin: 30,width: '90%',background:"#ffc"}}>
     <PanelGroup  direction="horizontal">
@@ -56,5 +57,7 @@ root.render(
       </Panel>
     </PanelGroup>
   </div>
-)
+)*/
+
+root.render(<LayoutContainerDemo/>)
 
