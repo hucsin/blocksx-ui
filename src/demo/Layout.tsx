@@ -6,6 +6,7 @@ import { Plugin, Workspace, Datasource, Record, DBQuery, DBQueryMini, Setting } 
 import EditorLayoutContainer from '../components/Editor/LayoutContainer';
 import EditorResourceTree from '../components/Editor/ResourceTree';
 import EditorWorkspace from '../components/Editor/Workspace';
+import EditorFeedback from '../components/Editor/Feedback';
 
 import { StateX } from '../components/StateX/index';
 import { EditorLayoutState } from '../components/Editor/states';
@@ -36,7 +37,9 @@ let sourceTree: any[] =[
                                 name: 'id',
                                 type: 'field',
                                 record: {
-                                    type: 'int'
+                                    type: 'int',
+                                    length: 23,
+                                    format: 'int(20)'
                                 }
                             },
                             {
@@ -44,7 +47,9 @@ let sourceTree: any[] =[
                                 name: 'name',
                                 type: 'field',
                                 record: {
-                                    type: 'int'
+                                    type: 'int',
+                                    length: 23,
+                                    format: 'varchar(25)'
                                 }
                             },
                             {
@@ -52,7 +57,8 @@ let sourceTree: any[] =[
                                 name: 'username',
                                 type: 'field',
                                 record: {
-                                    type: 'int'
+                                    type: 'int',
+                                    format: 'varchar(25)'
                                 }
                             },
                             {
@@ -168,21 +174,6 @@ let sourceTree: any[] =[
                 key: 'mysql_113',
                 name: 'mysql',
                 type: 'schema'
-            },
-            {
-                key: 'mysql_322',
-                name: 'performance_schema',
-                type: 'schema'
-            },
-            {
-                key: 'mysql_412',
-                name: 'sys',
-                type: 'schema'
-            },
-            {
-                key: 'mysql_521',
-                name: 'test',
-                type: 'schema'
             }
         ]
     }
@@ -211,7 +202,7 @@ export default class LayoutContainerDemo extends React.Component {
         return (
             <div className='layout'>
                 <div  className='header'>
-                    <DBQuery/> <DBQueryMini/>
+                    <span className='mini-logo'><DBQueryMini/></span> <span className='logo'><DBQuery/> </span>
                     <div></div>
                 </div>
                 <div className="content">
@@ -229,7 +220,7 @@ export default class LayoutContainerDemo extends React.Component {
                                 Resource={<EditorResourceTree namespace='resource' tree={sourceTree} />}
                                 Product={<EditorResourceTree namespace='product' tree={sourceTree.slice(1,2)} />}
                                 Workspace={<EditorWorkspace/>}
-                                Feedback={<div>feedback</div>}
+                                Feedback={<EditorFeedback/>}
                                 StatusBar={<div className='statusbar' style={{height: '30px', background:'#fff',borderTop: '1px solid #e0e2ec'}}>StatusBar</div>}
                                 ResourceExtend={<div>resoutextend</div>}
                             />

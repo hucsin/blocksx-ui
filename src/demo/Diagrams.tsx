@@ -1,4 +1,4 @@
-import React from 'react';
+/*import React from 'react';
 
 
 import { DiagramsTableObject, DiagramsTableField } from '../components/Diagrams/typing';
@@ -227,4 +227,4 @@ export default class DemoDiagrams extends React.Component<{}, {visible: boolean,
             </div>
         )
     }
-}
+}*/

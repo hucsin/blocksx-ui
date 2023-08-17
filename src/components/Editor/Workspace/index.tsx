@@ -1,12 +1,16 @@
 import React from 'react';
 import { Tabs } from 'antd';
+import classnames from 'classnames';
 import { utils } from '@blocksx/core';
 
-import { pluginManager } from '../core/manager/index';
-import { StateX, StateComponent } from '../../StateX';
-import EditorWorkspaceState from '../states/Workspace';
+import { pluginManager } from '@blocksx-ui/Editor/core/manager/index';
+import { StateX, StateComponent } from '@blocksx-ui/StateX';
+import EditorWorkspaceState from '@blocksx-ui/Editor/states/Workspace';
+
+import { CloseCircleFilled, CloseOutlined, TableOutlined } from '@blocksx-ui/Icons';
+
 import './style.scss';
-import './plugin/boot';
+import './panel';
 
 interface EditorWorkspaceProps {
 
@@ -21,25 +25,45 @@ export default class EditorWorkspace extends StateComponent<EditorWorkspaceProps
 
     }
 
-    public renderTabChildren(it: any) {
+    public renderPanelChildren(it: any) {
         let plugin: any = pluginManager.find(['WORKSPACE','PANEL', it.type]);
 
         if (plugin) {
             if (utils.isArray(plugin)) {
-                return plugin[0].render(it.data)
+                return plugin[0].render(it, it.key)
             }
-            return plugin.render(it.data)
+            
+            return plugin.render(it, it.key)
         }
 
         return `Please set up workspace component ${it.type}, eg. WORKSPACE.PANEL.${it.type}`
     }
-
+    public renderCloseIcon(it: any) {
+        return (
+            <span className={classnames({
+                'workspace-tab-close': true,
+                'workspace-tab-changed': this.workspaceState.isChanged(it.key)
+            })}>
+                <CloseCircleFilled/>
+                <CloseOutlined/>
+            </span>
+        )
+    }
+    public renderLabel(context: any) {
+        return (
+            <span>
+                <TableOutlined/>
+                {context.name}
+            </span>
+        )
+    }
     public renderChildren() {
         return this.workspaceState.getItems().map((it) => {
             return {
-                label: it.name,
+                label: this.renderLabel(it),
                 key: it.key,
-                children: this.renderTabChildren(it)
+                children: this.renderPanelChildren(it),
+                closeIcon: this.renderCloseIcon(it)
             }
         })
     }
@@ -49,6 +73,9 @@ export default class EditorWorkspace extends StateComponent<EditorWorkspaceProps
                 <Tabs
                     hideAdd
                     animated={false}
+                    className={classnames({
+                        'workspace-tab-only-one': this.workspaceState.getItems().length == 1
+                    })}
                     type="editable-card"
                     activeKey={this.workspaceState.getCurrentKey()}
                     items={this.renderChildren()}

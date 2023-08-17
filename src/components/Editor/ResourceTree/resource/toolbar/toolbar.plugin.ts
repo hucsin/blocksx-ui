@@ -1,4 +1,5 @@
-import PluginBase from '../../../core/Plugin';
+import PluginBase from '@blocksx-ui/Editor/core/Plugin';
+
 import Test from './test';
 
 export default class Toolbar extends PluginBase {

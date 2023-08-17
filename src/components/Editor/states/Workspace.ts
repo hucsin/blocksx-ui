@@ -1,6 +1,7 @@
-import StateModel from '../../StateX/Model';
-import StateX from '../../StateX/StateX';
+import { StateModel, StateX } from '@blocksx-ui/StateX';
 import { utils } from '@blocksx/core';
+import EditorWorkspacePanel from './WorkspacePanel';
+import EditorFeedback from './Feedback';
 
 interface WorkspaceItem {
     key: string;
@@ -12,7 +13,8 @@ interface WorkspaceItem {
 }
 interface WorkspaceState {
     current?: string;
-    items?:  WorkspaceItem[]
+    items?:  WorkspaceItem[];
+    changed?: any
 }
 
 
@@ -27,7 +29,8 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
     public constructor(state: WorkspaceState) {
         super(Object.assign({
             current: state ? getCurrentKey(state.items) : null,
-            items: state ? state.items || [] : []
+            items: state ? state.items || [] : [],
+            changed: {}
         }, state))
 
         this.cache = {};
@@ -84,10 +87,12 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
     }
     /**
      * 添加工作区
-     * @param type 
-     * @param key 
-     * @param name 
-     * @param data 
+     */
+     public add(namespace: string, type: string,  name: string, data?:any) {
+        this.register(namespace, type, name, data)
+     }
+    /**
+     * 添加工作区
      */
     public register(namespace: string, type: string,  name: string, data?:any) {
         let items: any = this.state.items;
@@ -126,12 +131,26 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
     public change(namespace?: string, changed?: boolean) {
         let workspace: any = this.find(namespace);
         if (workspace) {
-            workspace.changed = utils.isUndefined(changed) ? true : changed;
+            let changeds: any = this.state.changed;
+
+            changeds[namespace || this.state.current as any] 
+                = workspace.changed 
+                = utils.isUndefined(changed) ? true : changed;
+            
 
             this.setState({
+                changed: changeds,
                 items: this.state.items
             })
         }
+    }
+    /**
+     * 
+     * @param namespace 
+     * @returns 
+     */
+    public isChanged(namespace?: string) {
+        return this.state.changed[namespace || this.state.current as any]
     }
     /**
      * 删除工作区
@@ -155,6 +174,25 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
             delete this.cache[namespace];
         }
 
+    }
+    /**
+     * 获取当前workspace面板状态
+     * @returns 
+     */
+    public getCurrentPanelState() {
+        return this.getPanelState(this.state.current as string);
+    }
+    public getPanelState(namespace: string) {
+        return StateX.findModel(EditorWorkspacePanel, namespace);
+    }
+    /**
+     * 获取当前的面状态对象
+     * @returns 
+     */
+    public getCurrentFeedbackState() {
+
+        let workspacePanel: EditorWorkspacePanel = this.getCurrentPanelState();
+        return workspacePanel &&  workspacePanel.getFeedbackState()
     }
 }
 

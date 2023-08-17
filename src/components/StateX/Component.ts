@@ -8,7 +8,7 @@ export default abstract class StateComponent<P, S = {}, SS = any> extends React.
     // 填写models 关注的name
     public ListenModels?: string[];
     // hooks一个新的生命周期函数,等价于componentWillUnmount
-    public componentDidUnmount?: Function;
+    //public componentDidUnmount: Function;
     public StateX: any = StateX;
 
     private _unSubscribed: IDisposable;
@@ -30,6 +30,6 @@ export default abstract class StateComponent<P, S = {}, SS = any> extends React.
     }
     public componentWillUnmount() {
         this._unSubscribed();
-        this.componentDidUnmount && this.componentDidUnmount();
+        utils.isFunction(this['destory']) && this['destory']();
     }
 }

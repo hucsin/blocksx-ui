@@ -1,5 +1,52 @@
 .workspace-wrapper {
     height: 100%;
+    .workspace-tab-only-one {
+        .workspace-tab-close {
+            visibility: hidden;
+        }    
+    }
+    .workspace-tab-close {
+        position: relative;
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        transform: scale(.8);
+        opacity: .8;
+        
+
+        &.workspace-tab-changed {
+            .anticon-close {
+                display: none;;
+            }
+            &::after {
+                content:"";
+                width: 12px;
+                height: 12px;
+                background:#ccc;
+                border-radius: 6px;
+                top:2px;
+                left: 1px;
+                display: inline-block;
+                position: absolute;
+                z-index: 11;
+            }
+        }
+
+        .anticon-close-circle{
+            display:none;
+            
+        }
+        &:hover {
+            &::after ,
+            .anticon-close {
+                display:none;  
+            }
+            .anticon-close-circle{
+                display:inline-block;
+            }
+        }
+    }
+
     .ant-tabs {
         padding-top: 41px;
         position: relative;
@@ -10,6 +57,8 @@
             top: 0;
             left: 0
         }
+        .ant-tabs-content,
+        .ant-tabs-tabpane,
         .ant-tabs-content-holder {
             height: 100%;
         }
@@ -29,6 +78,13 @@
             padding: 6px 8px;
             button {
                 font-size: 12px;
+                margin-left: 0;
+            }
+            .ant-tabs-tab-btn {
+                padding-left: 4px;
+                .anticon{
+                    margin-right: 4px;
+                }
             }
             &:not(.ant-tabs-tab-active) {
                 &::after {

@@ -1,4 +1,4 @@
-
+/*
 import React from 'react';
 
 
@@ -96,4 +96,4 @@ let menu: SidebarMenuItem[] = [
               }} />
         )
     }
-  }
+  }*/

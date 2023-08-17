@@ -1,6 +1,6 @@
 import { utils } from '@blocksx/core';
-import StateModel from '../../StateX/Model';
-import StateX from '../../StateX/StateX';
+import StateModel from '@blocksx-ui/StateX/Model';
+import StateX from '@blocksx-ui/StateX/StateX';
 
 type LayoutType = 'show' | 'hide' | 'fold' | 'extend'
 
@@ -20,7 +20,7 @@ interface LayoutState {
 
 const getDefaultHeight = (dir: number, max:number)=> {
     let height: number = window.screen.height;
-    return Math.max(50, Math.min(height, max))
+    return height * dir;
 }
 /**
  * 全局状态类,只能实例化一次
@@ -37,8 +37,8 @@ export default class EditorLayoutState extends StateModel<LayoutState> {
             FeedbackDisplay: 'show',
             StatusBarDisplay: 'show',
             ResourceWidth: 256,
-            ProductHeight: getDefaultHeight(0.3, 190),
-            FeedbackHeight: getDefaultHeight(0.2, 150),
+            ProductHeight: getDefaultHeight(0.5, 190),
+            FeedbackHeight: getDefaultHeight(0.4, 150),
             StatusBarHeight: 25
         }, state || {}));
     }
@@ -66,9 +66,11 @@ export default class EditorLayoutState extends StateModel<LayoutState> {
             display = type as any;
         }
         
-        this.setState({
-            [`${stateKey}`]: display
-        } as any)
+        if (this.state[`${stateKey}`] !== display) {
+            this.setState({
+                [`${stateKey}`]: display
+            } as any)
+        }
     }
     public showResourceExtend() {
         this.toggle('ResourceDisplay', 'extend')
@@ -78,6 +80,14 @@ export default class EditorLayoutState extends StateModel<LayoutState> {
     }
     public foldResource() {
         this.toggle('ResourceDisplay', 'fold')
+    }
+
+
+    public hideFeedbackDisplay() {
+        this.toggleFeedbackDisplay('hide');
+    }
+    public showFeedbackDisplay() {
+        this.toggleFeedbackDisplay('show');
     }
 
     /**

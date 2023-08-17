@@ -1,0 +1,38 @@
+.workspace-coder-panel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding-top: 40px;
+    margin-top: -1px;
+    overflow-y:auto;
+    .editor-toolbar-horizontal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 40px;
+        border-bottom: 1px solid #e0e2ec;
+        z-index: 2;
+        line-height: 40px;
+        padding-left: 16px;
+        box-sizing: border-box;
+        .editor-toolbar-before {
+            padding-left: 12px;
+        }
+        .editor-toolbar-after {
+            padding-right: 12px;
+        }
+    }
+    .monaco-editor .view-overlays .current-line {
+        border: none;
+        background:#f7f8fa;
+    }
+    .react-monaco-editor-container {
+       box-sizing: border-box;
+       
+    }
+    .workspace-coder-panel-inner {
+        height: 100%;   
+    }
+}

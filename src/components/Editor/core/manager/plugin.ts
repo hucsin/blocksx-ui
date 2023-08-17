@@ -37,17 +37,16 @@ class PluginManager {
 
         if (this.has(namespace)) {
             
-            let item:any = this.find(namespace);
-            // 判断之后自己加1
-            if (this.cache[namespace]++ == 1) {
-                item.$$value =  [item.$$value]
-            }
+            let value:any = this.find(namespace);
+            let item: any = utils.isArray(value) ? value : [value];
+            this.cache[namespace] ++;
 
-            item.$$value.push(plugin);
-            keypath.setDataByKeypath(this.map, namespace, item);
+            item.push(plugin);
+            keypath.setDataByKeypath(this.map, namespace, {
+                $$value: item
+            });
 
         } else {
-            
             keypath.setDataByKeypath(this.map, namespace, {
                 $$value: plugin
             });
@@ -95,8 +94,14 @@ class PluginManager {
         })
         return menu;
     }
-
-    public getWidget(namespace: NamespaceType, widgetName?: string) {
+    /**
+     * 通过widgetName获取widget
+     * 
+     * @param namespace 
+     * @param widgetName 
+     * @returns 
+     */
+    public getWidgetByName(namespace: NamespaceType, widgetName: string) {
         let widgets: any[] = [];
         this.walk(namespace, (plugin: any) => {
             if (plugin.hasWidget(widgetName)) {
@@ -111,6 +116,35 @@ class PluginManager {
     }
 
     /**
+     * 通过方向获取widget
+     * @param namespace 
+     * @param direction 
+     * @returns 
+     */
+    public getWidgetByDirection(namespace: NamespaceType, direction: string[]) {
+        let widgets: any[] = [];
+        this.walk(namespace, (plugin: any) => {
+            let allWidgets: any[] = plugin.getAllWidget();
+            let match: any = [];
+
+            allWidgets.forEach(it=> {
+                if (direction.indexOf(it.direction) > -1) {
+                    match.push(it);
+                }
+            });
+
+            if (widgets.length > 0 && match.length > 0) {
+                widgets.push(null)
+            }
+
+            if (match) {
+                widgets = widgets.concat(match)
+            }
+        });
+        return widgets;
+    }
+
+    /**
      * 遍历插件
      * @param namespace 
      * @param fn 
@@ -119,7 +153,6 @@ class PluginManager {
         let pipePlugins: any[] = this.find(namespace);
         
         if (pipePlugins) {
-
             if (utils.isArray(pipePlugins)) {
                 pipePlugins.forEach((it) => {
                     fn(it);

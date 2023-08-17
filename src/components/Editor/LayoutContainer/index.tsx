@@ -1,7 +1,7 @@
 import React from 'react';
-import { StateX, StateComponent } from '../../StateX';
-import SplitPane, { Pane } from '../../SplitPane';
-import { EditorLayoutState } from '../states';
+import { StateX, StateComponent } from '@blocksx-ui/StateX';
+import SplitPane, { Pane } from '@blocksx-ui/SplitPane';
+import { EditorLayoutState } from '@blocksx-ui/Editor/states';
 import './style.scss';
 
 interface EditorLayoutContainerProps {
@@ -40,6 +40,7 @@ export default class EditorLayoutContainer extends StateComponent<EditorLayoutCo
                 split={split}
                 onChange={onChange ? (e) => {
                     onChange(e);
+                    this.layoutState.emit('resize')
                 } : undefined}
                 size={size}
                 primary={primary ? "second" : 'first'}
@@ -63,7 +64,7 @@ export default class EditorLayoutContainer extends StateComponent<EditorLayoutCo
                 (e) => {
                     this.layoutState.resetFeedbackHeight(e)
                 },
-                true
+                false
             )
         }
     }
@@ -78,7 +79,7 @@ export default class EditorLayoutContainer extends StateComponent<EditorLayoutCo
                 'vertical',
                 this.layoutState.state.RightChinampaWidth,
                 null,
-                true
+                false
             )
         }
     }
@@ -97,7 +98,7 @@ export default class EditorLayoutContainer extends StateComponent<EditorLayoutCo
                 (e) => {
                     this.layoutState.resetProductHeight(e);
                 },
-                true
+                false
             )
         }
     }
@@ -141,5 +142,9 @@ export default class EditorLayoutContainer extends StateComponent<EditorLayoutCo
                 true
             )
         }
+    }
+
+    public destory() {
+        this.layoutState.off('resize')
     }
 }

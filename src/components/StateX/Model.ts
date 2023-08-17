@@ -1,11 +1,12 @@
 
 import { utils, HistoryStack } from '@blocksx/core';
+import { EventEmitter } from 'events';
 
 interface IModelsPool {
     [ind: string]: StateModel<any, any>;
 }
 
-export default abstract class StateModel<S, A = {}> {
+export default abstract class StateModel<S, A = {}> extends EventEmitter {
     static defaultNamespace: string = '__';
 
     public namespace?: string;
@@ -19,12 +20,13 @@ export default abstract class StateModel<S, A = {}> {
     private waitingNotify: boolean = false; //通过标志变量控制多次的事件通知在一个 EventLoop 中只触发一次
    
     public constructor(namespace?: any, state?: any) {
-
+        super();
+        
         this.namespace = utils.isString(namespace) 
             ? namespace : StateModel.defaultNamespace;
         this.modelName = this.constructor.name;
         
-        if (!utils.isString(namespace)) {
+        if (utils.isUndefined(state)) {
             state = namespace;
         }
 
@@ -96,6 +98,7 @@ export default abstract class StateModel<S, A = {}> {
         if (this.waitingNotify) return;
         this.waitingNotify = true;
         new Promise<void>((r) => r()).then(() => {
+            console.log(this, this.StateX, 333)
             this.StateX.notifyChangesListeners(this.getId(), this.namespace);
             this.waitingNotify = false;
         });

@@ -1,4 +1,4 @@
-import StateModel from '../../StateX/Model';
+import StateModel from '@blocksx-ui/StateX/Model';
 
 // 数据库类型范围
 export type ResourceDatabaseType = 'datasource' | 'database' | 'schema' | 'table' | 'view' | 'procedure' | 'trigger' | 'function' | 'user';

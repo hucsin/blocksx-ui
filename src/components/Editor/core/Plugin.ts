@@ -4,6 +4,7 @@
  * 2、功能界面
  * 3、右键扩展
  */
+import React from 'react';
 import { utils } from '@blocksx/core';
 import Widget from './Widget';
 
@@ -25,10 +26,10 @@ export interface PluginContextMenu {
 }
 
 export interface PluginPipeline {
-    pipeline: Function;
+    pipeline(value: any, context: any): any | void;
 }
 export interface PluginComponent {
-    render: Function
+    render(props: any, key?: any): React.ReactNode
 }
 export default abstract class PluginBase  {
     private widget:WidgetMap;
@@ -82,9 +83,13 @@ export default abstract class PluginBase  {
 
     private getAllWidget() {
         let keys:string[] = Object.keys(this.widget);
-        return keys.map(it => {
-            return this.widget[it];
+        let widgets: any[]  = [];
+
+        keys.map(it => {
+            widgets = widgets.concat(this.widget[it]);
         })
+        
+        return widgets;
     }
     private toCaseInsensitive(namespace:any) {
 

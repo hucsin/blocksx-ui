@@ -13,6 +13,20 @@ body,html {
     padding-top: 42px;
     height: 100%;
     box-sizing: border-box;
+
+    .mini-logo {
+        padding-left: 10px;
+        
+
+    }
+    .logo {
+        padding-top: 2px;
+        padding-left: 4px;
+        vertical-align: middle;
+        svg {
+            width: 100px !important;
+        }
+    }
     .nav {
         text-align: center;
         padding-top: 8px;
@@ -66,7 +80,8 @@ body,html {
         }
 
         span {
-            
+            display: inline-block;
+            vertical-align: middle;
             font-size:24px;
         }
     }

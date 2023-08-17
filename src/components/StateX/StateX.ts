@@ -46,9 +46,11 @@ class StateX {
         };
     }
 
-    public findModel(modelName: string | any, namespace?:string) {
+    public findModel(modelName: string | any , namespace?:string): any {
         if (!utils.isString(modelName)) {
+            
             modelName = modelName.name;
+            
         }
 
         return this.models[[namespace || StateModel.defaultNamespace, modelName].join('.')]

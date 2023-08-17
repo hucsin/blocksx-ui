@@ -3,12 +3,14 @@
  */
 import React from 'react';
 import { Tree, Button } from 'antd';
-import { Down, Menu } from '../../Icons';
+import { Down, Menu } from '@blocksx-ui/Icons';
+import { addEvent ,removeEvent } from '@blocksx-ui/utils/dom'
 
-import { StateX, StateComponent } from '../../StateX';
-import EditorResourceState , { ResourceItem } from '../states/Resource';
-import { resourceManager, pluginManager } from '../core/manager/index';
-import ContextMenu from '../ContextMenu';
+import { StateX, StateComponent } from '@blocksx-ui/StateX';
+import EditorResourceState , { ResourceItem } from '@blocksx-ui/Editor/states/Resource';
+import { resourceManager, pluginManager } from '@blocksx-ui/Editor/core/manager/index';
+import ContextMenu from '@blocksx-ui/Editor/ContextMenu';
+import { EditorLayoutState } from '@blocksx-ui/Editor/states';
 
 import './boot';
 import './style.scss';
@@ -29,6 +31,7 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
     private namespace: string;
     private resourceState: any;
     private resourceTree: any;
+    private layoutState: any = StateX.findModel(EditorLayoutState);
     public constructor(props: EditorResourceTreeProps) {
         super(props);
         StateX.registerModel(new EditorResourceState(this.namespace = props.namespace, {
@@ -40,11 +43,17 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
         this.state = {
             height: 0
         }
+
+        this.bindEvent();
     }
-    public resetHeight() {
+    public bindEvent() {
+        addEvent(window,'resize', this.resetHeight);
+        //this.layoutState.on('resize', this.resetHeight)
+    }
+    public resetHeight=()=> {
         let height = this.resourceTree.getBoundingClientRect().height;
         let oldHeight = this.state.height;
-
+        
         if (height !=oldHeight) {
             this.setState({
                 height: height
@@ -54,9 +63,14 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
     public componentDidMount() {
         this.resetHeight();
     }
+
     public componentDidUpdate() {
-        this.resetHeight();
+        // this.resetHeight();
     }
+    public destory() {
+        removeEvent(window,'resize', this.resetHeight);
+        //this.layoutState.off('resize', this.resetHeight)
+    };
     public render() {
         return (
             <div className='resourcetree-wrapper' >
@@ -78,6 +92,7 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
                         }}
                         expandedKeys={this.resourceState.getExpandedKeys()}
                         height={this.state.height-35}
+
                         
                         titleRender={(nodeData) => { return this.renderTitle(nodeData.title, nodeData);}}
                         defaultSelectedKeys={['0-0-0']}
@@ -91,7 +106,7 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
     }
     private renderToolbar() {
         
-        let toolbar: any = pluginManager.getWidget(['RESOURCETREE', this.namespace,'TOOLBAR'], 'toolbar') || [];
+        let toolbar: any = pluginManager.getWidgetByName(['RESOURCETREE', this.namespace,'TOOLBAR'], 'toolbar') || [];
         
         return toolbar.map((it,i) => {
             if (it) {
@@ -104,7 +119,13 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
     private renderTitle(title: any,nodeData: any) {
         return (
             <div className='resourcetree-item'>
-                <div><span>{title}</span></div>
+                <div>
+                    <span className='ri-title'>
+                        {title}
+                        {nodeData.slotTitle ? <span className='ri-slot'>{nodeData.slotTitle}</span> : null}
+                    </span>
+                    
+                </div>
                 <Button 
                     type="text" 
                     size="small" 
