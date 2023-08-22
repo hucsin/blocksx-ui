@@ -1,6 +1,7 @@
 
 import { utils, HistoryStack } from '@blocksx/core';
 import { EventEmitter } from 'events';
+import StateX from './StateX';
 
 interface IModelsPool {
     [ind: string]: StateModel<any, any>;
@@ -9,16 +10,16 @@ interface IModelsPool {
 export default abstract class StateModel<S, A = {}> extends EventEmitter {
     static defaultNamespace: string = '__';
 
-    public namespace?: string;
+    public namespace: string;
     public modelName?: string;
     public id: string;
     public state: Readonly<S>;
-    public StateX: any;
+    public StateX: any = StateX;
 
     
     private historyStack: HistoryStack;
     private waitingNotify: boolean = false; //通过标志变量控制多次的事件通知在一个 EventLoop 中只触发一次
-   
+    
     public constructor(namespace?: any, state?: any) {
         super();
         
@@ -68,8 +69,8 @@ export default abstract class StateModel<S, A = {}> extends EventEmitter {
      *
      * @param state 要更新的属性或者函数
      */
-    public setState<K extends keyof S>(
-        state: Pick<S, K> | ((states: S) => Pick<S, K>),
+    public setState(
+        state: any,
         ignoreHistory?:boolean
     ) {
         if (typeof state === "function") {
@@ -98,7 +99,7 @@ export default abstract class StateModel<S, A = {}> extends EventEmitter {
         if (this.waitingNotify) return;
         this.waitingNotify = true;
         new Promise<void>((r) => r()).then(() => {
-            console.log(this, this.StateX, 333)
+
             this.StateX.notifyChangesListeners(this.getId(), this.namespace);
             this.waitingNotify = false;
         });

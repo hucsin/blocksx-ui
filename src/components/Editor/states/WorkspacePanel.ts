@@ -1,31 +1,25 @@
-/**
- * 工作区,panel 数据上下文
- */
  import { StateModel, StateX } from '@blocksx-ui/StateX';
+ import EditorMetaDataState, { MetaDataState } from './MetaData';
  import EditorWorkspaceState from '@blocksx-ui/Editor/states/Workspace';
  import EditorFeedbackState from '@blocksx-ui/Editor/states/Feedback';
 
- interface WorkspacePanelState {
-    value?: any;
- }
 
- export default class EditorWorkspacePanelState extends StateModel<WorkspacePanelState> {
+export default class EditorWorkspacePanelState extends EditorMetaDataState <MetaDataState> {
     private context: any;
-    public workspaceState: EditorWorkspaceState = StateX.findModel(EditorWorkspaceState);
-    public feedback:any;
+    private feedback: any;
 
-    public constructor(namespace: string, state: any) {
-        super(namespace, Object.assign({
-            value: ''
-        }, state));
+    public constructor(namespace: string, props: any, state: any) {
+        super(namespace, props, state);
 
-        StateX.registerModel(this.feedback = new EditorFeedbackState(namespace, {}))
+        this.initFeedback(namespace);
+        
     }
+
     /**
      * 设置上下文
      * @param context 
      */
-    public setContext(context: any) {
+     public setContext(context: any) {
         this.context = context;
     }
     /**
@@ -35,20 +29,33 @@
     public getContext() {
         return this.context;
     }
-    public getValue() {
-        return this.state.value;
-    }
+
     public onChange(value: any) {
         this.setState({
             value: value
         });
-        this.workspaceState.change(this.namespace);
-    }
-    public onSave() {
-        this.workspaceState.save(this.namespace);
+        this.workspaceState.onChange(this.namespace);
     }
 
-    public getFeedbackState() {
+    public onSave() {
+        this.workspaceState.onSave(this.namespace);
+    }
+
+    public getFeedback() {
         return this.feedback;
     }
- }
+
+    public initFeedback(namespace: string) {
+        StateX.registerModel(this.feedback = new EditorFeedbackState(namespace, {}));
+
+        if (this.workspaceState.getCurrentKey() == namespace) {
+            this.toggleFeedback();   
+        }
+    }
+    public toggleFeedback() {
+        this.workspaceState.layoutState.toggle(
+            'FeedbackDisplay', this.feedback.getItems().length > 0 ? 'show' : 'hide'
+        )
+    }
+    
+}

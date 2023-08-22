@@ -13,7 +13,7 @@ export default abstract class  Widget {
     public render(props: any, key?:string) {
         let _props: any = props || {};
         let _key: string = key || _props.namespace || _props.key;
-
+        
         if (this.placeholder) {
             return (<Tooltip 
                         placement="bottom" 

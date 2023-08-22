@@ -20,7 +20,7 @@ interface LayoutState {
 
 const getDefaultHeight = (dir: number, max:number)=> {
     let height: number = window.screen.height;
-    return height * dir;
+    return Math.max(max, height * dir);
 }
 /**
  * 全局状态类,只能实例化一次
@@ -34,11 +34,11 @@ export default class EditorLayoutState extends StateModel<LayoutState> {
             RightChinampaDisplay: 'hide',
             ResourceDisplay: 'show',
             WorkspaceDisplay: 'show',
-            FeedbackDisplay: 'show',
+            FeedbackDisplay: 'hide',
             StatusBarDisplay: 'show',
             ResourceWidth: 256,
-            ProductHeight: getDefaultHeight(0.5, 190),
-            FeedbackHeight: getDefaultHeight(0.4, 150),
+            ProductHeight: getDefaultHeight(0.4, 200),
+            FeedbackHeight: getDefaultHeight(0.3, 150),
             StatusBarHeight: 25
         }, state || {}));
     }

@@ -2,6 +2,8 @@
  * 管理
  */
 import { StateModel, StateX } from '@blocksx-ui/StateX';
+import { utils } from '@blocksx/core';
+import DataMeta from './MetaData'
 
 type FeedbackItemType = 'terminal' | 'history' | 'record' | 'issue' | 'explain';
 
@@ -17,13 +19,17 @@ interface FeedbackItem {
 }
 interface FeedbackState {
     current?: string;
-    items?: FeedbackItem[];
+    items?: any;
 
 }
 
 export default class EditorFeedbackState extends StateModel<FeedbackState> {
-    private protectItemList: any;
-    private otherItemList: any;
+    private protectItemList: any[];
+    private otherItemList: any[];
+
+    private dataMeta: {
+        [key:string]: DataMeta<any>
+    };
     private map: any;
     private cache: any;
 
@@ -35,33 +41,40 @@ export default class EditorFeedbackState extends StateModel<FeedbackState> {
     public constructor(namespace: string,state: FeedbackState) {
         super(namespace, Object.assign({
             items: []
-        }, state));
+        }));
 
         this.protectItemList = [];
         this.otherItemList = [];
+
+        this.dataMeta = {};
         
         this.cache = {};
         this.map = {};
-        this.state && this.initItems();
+
+        this.state.items?.forEach(this.push)
+        
     }
 
-    private initItems() {
-        let items: any = this.state.items || [] ;
+    private push = (meta:any)=> {
+        // 如果是序列化参数
+        if (utils.isPlainObject(meta)) {
+            
+            meta = DataMeta.deserialize(meta);
+        } 
 
-        items.forEach(it=>{
-           this.push(it);
-        })
-    }
-    private push(item:any) {
-        if (item.protect) {
-            this.map[item.key] = {
+        this.dataMeta[meta.namespace] = meta;
+        // 保护的对象
+        if (meta.config('protect')) {
+            this.map[meta.namespace] = {
                 protect: true,
-                valueIndex: this.protectItemList.push(item) - 1
+                namespace: meta.namespace,
+                valueIndex: this.protectItemList.push(meta.serialize()) - 1
             }
         } else {
-            this.map[item.key] = {
+            this.map[meta.namespace] = {
                 protect: false,
-                valueIndex: this.otherItemList.push(item) - 1
+                namespace: meta.namespace,
+                valueIndex: this.otherItemList.push(meta.serialize()) - 1
             }
         }
         
@@ -70,8 +83,11 @@ export default class EditorFeedbackState extends StateModel<FeedbackState> {
      * 获取列表
      * @returns 
      */
-    public getItems() {
-        return this.state.items || [];
+    public getItems(items?: any) {
+        return (items || this.state.items || []).map(it => {
+            
+            return this.dataMeta[it.namespace]
+        });
     }
     public getCurrentKey() {
         return this.state.current;
@@ -88,7 +104,7 @@ export default class EditorFeedbackState extends StateModel<FeedbackState> {
      * @returns 
      */
     public has(namespace:string) {
-        return this.find(namespace)
+        return !!this.map[namespace]
     }
     /**
      * 查找
@@ -97,7 +113,7 @@ export default class EditorFeedbackState extends StateModel<FeedbackState> {
      */
      public findIndex( namespace: string ) {
         return this.state.items?.findIndex(it => {
-           return it.key === namespace;
+           return it.namespace === namespace;
         })
     }
     /**
@@ -112,48 +128,51 @@ export default class EditorFeedbackState extends StateModel<FeedbackState> {
             return this.cache[name]
         }
 
-        return this.cache[name] = this.state.items?.find(it => {
-           return it.key === name;
-        })
+        return this.cache[name] = this.getItems(this.state.items?.find(it => {
+           return it.namespace === name;
+        }))
     }
     /**
-     * 添加工作区
+     * 
      * @param namespace 
-     * @param type 
-     * @param name 
-     * @param data 
+     * @returns 
      */
-    public add(namespace: string, type: FeedbackItemType,  name: string, data?:any) {
-        this.register(namespace, type, name, data);
+    public get(namespace: string) {
+        return this.dataMeta[namespace];
     }
-    public register(namespace: string, type: FeedbackItemType,  name: string, data?:any, noReset?: boolean) {
-        
-        if (this.has(namespace)) {
-            this.setState({current: namespace});
-            //console.info('There is a feedback with the same name!');
+    /**
+     * 必须加入
+     * @param meta 
+     */
+    public register(meta: DataMeta<any>, props?: any) {
+        if (!DataMeta.findMetaModel(meta)) {
+            console.error(`Please register datameta[${meta.toString()}] before using it!`)
+        }
+        let namespace: string = meta.namespace as string;
 
+        if (this.has(namespace)) {
+            this.setCurrentKey(namespace)
         } else {
-            this.push({
-                key: namespace,
-                type: type,
-                name: name,
-                loading: false,
-                data: data,
-                protect: !!this.protectMap[type]
-            })
-            
-            !noReset && this.reset();
+
+            this.push(meta);
+            this.reset(props);
         }
     }
-    public open(namespace: string, type: FeedbackItemType, name: string, data?: any) {
-        this.register(namespace, type, name, data, false);
-        // 打开当前的
-        this.reset({
-            current: namespace
-        })
+
+    /**
+     * 打开一个datameta对象
+     * @param meta 
+     */
+    public open(meta: DataMeta<any>) {
+        this.register(meta, {
+            current: meta.namespace
+        });
+        
     }
+
+
     public reset(data?: any) {
-        let items: any = [].concat(this.protectItemList, this.otherItemList);
+        let items: any = [].concat(this.protectItemList as any, this.otherItemList as any);
         this.setState({
             items: items,
             ...data

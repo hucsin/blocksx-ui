@@ -1,7 +1,9 @@
 import { StateModel, StateX } from '@blocksx-ui/StateX';
 import { utils } from '@blocksx/core';
 import EditorWorkspacePanel from './WorkspacePanel';
+import EditorLayoutState from './Layout';
 import EditorFeedback from './Feedback';
+import EditorMetaData from './MetaData';
 
 interface WorkspaceItem {
     key: string;
@@ -13,19 +15,23 @@ interface WorkspaceItem {
 }
 interface WorkspaceState {
     current?: string;
-    items?:  WorkspaceItem[];
+    items?: EditorMetaData<any>[];
     changed?: any
 }
 
 
-const getCurrentKey = (data?: WorkspaceItem[]) =>{
+const getCurrentKey = (data?: EditorMetaData<any>[]) =>{
     if (data && data[0]) {
-        return data[0].key;
+        return data[0].namespace;
     }
 }
 
 export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
     private cache: any = {};
+    private dataMeta: any;
+
+    public layoutState: EditorLayoutState = StateX.findModel(EditorLayoutState);
+
     public constructor(state: WorkspaceState) {
         super(Object.assign({
             current: state ? getCurrentKey(state.items) : null,
@@ -34,14 +40,45 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
         }, state))
 
         this.cache = {};
+        this.dataMeta = {};
+        
+    }
+    public initWorkspace() {
+        console.log('initworkspace', this.state)
+        this.state.items?.map((it)=>{
+            this.push(it,null, true)
+        })
+    }
+    private  push = (meta: any,props?: any, noset?: boolean) => {
+        // 如果是序列化参数
+        if (utils.isPlainObject(meta)) {
+            meta = EditorMetaData.deserialize(meta);
+        } 
+        if (!this.has(meta.namespace)) {
+            this.dataMeta[meta.namespace] = meta;
+        }
+
+        if (noset !== true) {
+
+            let items: any = this.state.items || [];
+            items.push(EditorMetaData.serialize(meta));
+
+            this.setState({
+                items: items,
+                ...props
+            })
+        }
     }
     /**
      * 获取列表
      * @returns 
      */
     public getItems() {
-        return this.state.items || [];
+        return (this.state.items || []).map(it => {
+            return this.dataMeta[it.namespace]
+        });
     }
+    
     public getCurrentKey() {
         return this.state.current;
     }
@@ -50,14 +87,19 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
         this.setState({
             current: current
         })
+        //this.toggleFeedback();
+        //this.emit('switch');
+
+        this.get(current).toggleFeedback();
     }
+
     /**
      * 判断是否有
      * @param namespace 
      * @returns 
      */
     public has(namespace:string) {
-        return this.find(namespace)
+        return !!this.dataMeta[namespace]
     }
     /**
      * 查找
@@ -66,8 +108,11 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
      */
      public findIndex( namespace: string ) {
         return this.state.items?.findIndex(it => {
-           return it.key === namespace;
+           return it.namespace === namespace;
         })
+    }
+    public get(namespace?: string) {
+        return this.dataMeta[namespace || this.state.current as string] ;
     }
     /**
      * 查找
@@ -82,56 +127,57 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
         }
 
         return this.cache[name] = this.state.items?.find(it => {
-           return it.key === name;
+           return it.namespace === name;
         })
     }
+    
     /**
-     * 添加工作区
+     * 必须加入
+     * @param meta 
      */
-     public add(namespace: string, type: string,  name: string, data?:any) {
-        this.register(namespace, type, name, data)
-     }
-    /**
-     * 添加工作区
-     */
-    public register(namespace: string, type: string,  name: string, data?:any) {
-        let items: any = this.state.items;
-
+     public register(meta: EditorMetaData<any>, props?: any) {
+        if (!EditorMetaData.findMetaModel(meta)) {
+            console.error(`Please register datameta[${meta.toString()}] before using it!`)
+        }
+        let namespace: string = meta.namespace as string;
+        
         if (this.has(namespace)) {
-            this.setState({current: namespace});
-            console.info('There is a workspace with the same name!');
-
+            this.setCurrentKey(namespace)
         } else {
 
-            items.push({
-                key: namespace,
-                name: name, 
-                type: type,
-                data: data
-            });
-
-            this.setState({
-                items: items,
-                current: namespace
-            })
+            this.push(meta, props);
         }
     }
+
+    /**
+     * 打开一个datameta对象
+     * @param meta 
+     */
+    public open(meta: EditorMetaData<any>) {
+        this.register(meta, {
+            current: meta.namespace
+        });
+        
+        this.get(meta.namespace).toggleFeedback();
+    }
+
     /**
      * 保存工作区
      * @param namespace 
      */
-    public save(namespace?: string) {
-        this.change(namespace, false)
+    public onSave(namespace?: string) {
+        this.onChange(namespace, false)
     }
 
     /**
      * 修改工作区
      * @param namespace 
      */
-    public change(namespace?: string, changed?: boolean) {
+    public onChange(namespace?: string, changed?: boolean) {
         let workspace: any = this.find(namespace);
         if (workspace) {
             let changeds: any = this.state.changed;
+            
 
             changeds[namespace || this.state.current as any] 
                 = workspace.changed 
@@ -142,6 +188,7 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
                 changed: changeds,
                 items: this.state.items
             })
+
         }
     }
     /**
@@ -179,20 +226,17 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
      * 获取当前workspace面板状态
      * @returns 
      */
-    public getCurrentPanelState() {
-        return this.getPanelState(this.state.current as string);
-    }
-    public getPanelState(namespace: string) {
-        return StateX.findModel(EditorWorkspacePanel, namespace);
+    public getCurrentPanel() {
+        return this.get(this.state.current as string)
     }
     /**
      * 获取当前的面状态对象
      * @returns 
      */
-    public getCurrentFeedbackState() {
+    public getCurrentFeedback() {
 
-        let workspacePanel: EditorWorkspacePanel = this.getCurrentPanelState();
-        return workspacePanel &&  workspacePanel.getFeedbackState()
+        let currentPanel: any = this.getCurrentPanel();
+        return currentPanel.getFeedback();
     }
 }
 

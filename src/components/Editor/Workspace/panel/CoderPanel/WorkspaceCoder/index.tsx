@@ -1,11 +1,11 @@
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
-import EditorWorkspacePanelState from '@blocksx-ui/Editor/states/WorkspacePanel';
 import Toolbar from '@blocksx-ui/Editor/Toolbar';
 import { pluginManager, resourceManager } from '@blocksx-ui/Editor/core/manager';
 import { addEvent, removeEvent } from '@blocksx-ui/utils/dom';
-import { StateComponent } from '@blocksx-ui/StateX';
-import { StateX } from '@blocksx-ui/StateX'
+import { StateComponent, StateX } from '@blocksx-ui/StateX';
+
+import { EditorWorkspaceState } from '@blocksx-ui/Editor/states';
 
 
 import './style.scss';
@@ -24,8 +24,7 @@ export default class WorkspaceCoder extends StateComponent<WorkspaceCoderProps, 
 }>{
     private staticNamespace: string = 'WORKSPACE.CODER.TOOLBAR';
     private panelCanvas: any;
-    private modelCancel: any;
-    private workspacePanelState: EditorWorkspacePanelState;
+    private workspaceState: EditorWorkspaceState = StateX.findModel(EditorWorkspaceState);
     private editor:any ;
     public constructor(props:WorkspaceCoderProps) {
         super(props);
@@ -38,10 +37,10 @@ export default class WorkspaceCoder extends StateComponent<WorkspaceCoderProps, 
                 theme: 'vs'
             }
         }
+
         
-        this.modelCancel = StateX.registerModel(
-            this.workspacePanelState = new EditorWorkspacePanelState(props.namespace, props.value)
-        )
+       // this.workspaceCoderState = new WorkspaceCoderMeta(props.namespace, {}, { value: props.value })
+        
     }
 
     public bindEvent() {
@@ -61,10 +60,10 @@ export default class WorkspaceCoder extends StateComponent<WorkspaceCoderProps, 
        this.resetHeight();
     }
     public onChange =(e) => {
-
-        this.workspacePanelState.onChange(e);
+        this.workspaceState.get(this.props.namespace).onChange(e)
     }
     public render () {
+        let coderState: any = this.workspaceState.get(this.props.namespace);
         return (
              <div className='workspace-coder-panel' >
                 <Toolbar direction='horizontal' toolbar={this.staticNamespace} namespace={this.props.namespace} />
@@ -76,12 +75,12 @@ export default class WorkspaceCoder extends StateComponent<WorkspaceCoderProps, 
 
                         language="sql"
                         theme={this.state.editorOptions.theme || 'vs'}
-                        value={this.workspacePanelState.getValue()}
+                        value={coderState.getValue()}
                         options={pluginManager.pipeline(this.staticNamespace, this.state.editorOptions, this)}
                         onChange={this.onChange}
                         editorDidMount={(editor)=> {
                             this.editor = editor;
-                            this.workspacePanelState.setContext(editor);
+                            coderState.setContext(this);
                         }}
                     />
                 </div>
@@ -91,6 +90,8 @@ export default class WorkspaceCoder extends StateComponent<WorkspaceCoderProps, 
 
     public destory() {
         removeEvent(window,'resize', this.resetHeight);
-        this.modelCancel && this.modelCancel();
+        //this.modelCancel && this.modelCancel();
+        console.log(333333)
+        //this.workspacePanelState.destory();
     }
 }

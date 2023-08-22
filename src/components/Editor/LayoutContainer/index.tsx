@@ -64,7 +64,7 @@ export default class EditorLayoutContainer extends StateComponent<EditorLayoutCo
                 (e) => {
                     this.layoutState.resetFeedbackHeight(e)
                 },
-                false
+                true
             )
         }
     }
@@ -98,7 +98,7 @@ export default class EditorLayoutContainer extends StateComponent<EditorLayoutCo
                 (e) => {
                     this.layoutState.resetProductHeight(e);
                 },
-                false
+                true
             )
         }
     }

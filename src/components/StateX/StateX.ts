@@ -34,14 +34,15 @@ class StateX {
      * @param model 数据模型 StateModel
      */
     public registerModel(model: StateModel<any>): IDisposable {
-        if (this.models[model.getId()]) {
-            console.error("sorry, you should bind with unque namespace!");
-            delete this.models[model.getId()];
+        if (!this.models[model.getId()]) {
+            //console.error(`sorry, you should bind with unque[${model.getId()}] namespace!`);
+            //delete this.models[model.getId()];
+            this.models[model.getId()] = model;
         }
         model.StateX = this;
-        this.models[model.getId()] = model;
-
+        
         return () => {
+            console.log('333333223')
             delete this.models[model.getId()];
         };
     }
@@ -50,7 +51,6 @@ class StateX {
         if (!utils.isString(modelName)) {
             
             modelName = modelName.name;
-            
         }
 
         return this.models[[namespace || StateModel.defaultNamespace, modelName].join('.')]

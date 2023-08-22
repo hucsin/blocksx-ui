@@ -17,6 +17,7 @@
 
  import { pluginManager } from '../core/manager/index';
  import Workspace from '../states/Workspace';
+ import MetaData from '../states/MetaData';
  import "react-contexify/dist/ReactContexify.css";
 
  import "./style.scss";
@@ -74,11 +75,20 @@
                 } else {
                     return (
                         <Item onClick={()=> {
-                            // test
-                            let mode:any = StateX.findModel(Workspace);
-                            let uniq: any = utils.uniq();
-                            
-                            mode.register(uniq, 'coder', uniq, {})
+                            // test                                 WORKSPACE.PANEL.CODER.META
+
+                            let meta: any = MetaData.findMetaModel('WORKSPACE.PANEL.CODER.META');
+                            console.log(meta)
+                            if (meta) {
+                                let mode:any = StateX.findModel(Workspace);
+                                let uniq: any = utils.uniq();
+                                
+                                mode.open(new meta(uniq, {
+                                    key: uniq,
+                                    name: uniq
+                                }, {}))
+                            }
+
                         }} key={it.key}>{it.name}</Item>
                     )
                 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Tabs, Table } from 'antd';
 import { StateX, StateComponent } from '@blocksx-ui/StateX/index';
+import EditorWorkspaceState from '@blocksx-ui/Editor/states/Workspace';
+
 
 interface HistoryPanelProps {
     namespace: string;
@@ -8,56 +10,47 @@ interface HistoryPanelProps {
 
 
 export default class FeedbackHistoryPanel extends StateComponent<HistoryPanelProps> {
+    private workspaceState: EditorWorkspaceState = StateX.findModel(EditorWorkspaceState);
+    private historyMetadataState: any;
     public constructor(props:HistoryPanelProps) {
-        super(props)
+        super(props);
+        this.historyMetadataState = this.workspaceState.getCurrentFeedback().get(props.namespace);
     }
-
-    public render() {
-        return <Table size="small" columns={[
+    private getColumns(){
+        return [
+            {
+                title: '运行时间',
+                dataIndex: 'time'
+            },
             {
                 title: '状态',
-                dataIndex: 's',
-                key: 's',
-                render: (text) => <span>{text}</span>,
-              },
-              {
-                title: '运行时间',
-                dataIndex: 't',
-                key: 't',
-                render: (text) => <span>{text}</span>,
-              },
-              {
+                dataIndex: 'status',
+                render: (it) => {
+                    return '成功'
+                }
+            },
+            {
                 title: '运行耗时',
-                dataIndex: 'yt',
-                key: 'yt',
-                render: (text) => <span>{text}</span>,
-              },
-              {
-                title: '运行代码',
-                dataIndex: 'c',
-                key: 'c',
-                render: (text) => <span>{text}</span>,
-              }
-        ]} dataSource={[
-            {
-                s: '运行中',
-                t: '2023/08/16 15:13:35',
-                yt: '498 ms',
-                c: 'select * from item'
+                dataIndex: 'cost'
             },
             {
-                s: '运行中',
-                t: '2023/08/16 15:13:35',
-                yt: '498 ms',
-                c: 'select * from item'
-            },
-            {
-                s: '运行中',
-                t: '2023/08/16 15:13:35',
-                yt: '498 ms',
-                c: 'select * from item'
+                title: '代码',
+                dataIndex: 'code'
             }
-
-        ]} />;
+        ]
+    }
+    private getDataSource() {
+        let data: any = this.historyMetadataState.getData() || [];
+        return data.map((it, index)=> {
+            return {
+                ...it,
+                key: index
+            }
+        });
+    }
+    public render() {
+        return (
+            <Table size="small" key={'reder'} columns={this.getColumns()} dataSource={this.getDataSource()} />
+        );
     }
 }

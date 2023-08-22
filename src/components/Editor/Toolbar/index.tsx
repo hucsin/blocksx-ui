@@ -24,6 +24,7 @@ export default class EditorToolbar extends React.Component<EditorToolbarProps> {
 
     public renderBeforeWidget() {
         return this.beforeWidget.map((it, index) => {
+            
             return it ? it.render({namespace: this.props.namespace}, index) : <Divider key={'c'+index} type="vertical" />;
         })
     }

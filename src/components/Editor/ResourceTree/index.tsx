@@ -34,11 +34,11 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
     private layoutState: any = StateX.findModel(EditorLayoutState);
     public constructor(props: EditorResourceTreeProps) {
         super(props);
-        StateX.registerModel(new EditorResourceState(this.namespace = props.namespace, {
+        console.log('initresource-component')
+
+        StateX.registerModel(this.resourceState = new EditorResourceState(this.namespace = props.namespace, {
             tree: props.tree
         }))
-
-        this.resourceState = StateX.findModel(EditorResourceState, this.namespace);
 
         this.state = {
             height: 0
@@ -65,7 +65,7 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
     }
 
     public componentDidUpdate() {
-        // this.resetHeight();
+         this.resetHeight();
     }
     public destory() {
         removeEvent(window,'resize', this.resetHeight);
@@ -172,7 +172,7 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
     private getIconResource(item: ResourceItem) {
         
         if (item.record && item.record.type) {
-            let key2: any = ['RESOURCE.ICON',item.type, item.record.type];
+            let key2: any = ['RESOURCE.ICON', item.type, item.record.type];
             if (resourceManager.has(key2)) {
                 return resourceManager.get(key2);
             }

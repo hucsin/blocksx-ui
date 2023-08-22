@@ -2,4 +2,6 @@ import { pluginManager } from '../../core/manager/index';
 import HistoryPanel from './HistoryPanel';
 
 
-pluginManager.register(['FEEDBACK', 'PANEL', 'HISTORY'], new HistoryPanel())
+pluginManager.register(['FEEDBACK', 'PANEL', 'HISTORY'], new HistoryPanel());
+
+export { default as HistoryMetaData } from './HistoryPanel/meta';

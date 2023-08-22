@@ -12,6 +12,7 @@ import { CloseCircleFilled, CloseOutlined, TableOutlined } from '@blocksx-ui/Ico
 import './style.scss';
 import './panel';
 
+
 interface EditorWorkspaceProps {
 
 }
@@ -21,22 +22,20 @@ export default class EditorWorkspace extends StateComponent<EditorWorkspaceProps
     private workspaceState: any = StateX.findModel(EditorWorkspaceState);
     public constructor(props: EditorWorkspaceProps) {
         super(props);
-
-
+        this.workspaceState.initWorkspace();
     }
 
     public renderPanelChildren(it: any) {
-        let plugin: any = pluginManager.find(['WORKSPACE','PANEL', it.type]);
-
+        let plugin: any = pluginManager.find(['WORKSPACE','PANEL', it.config('type')]);
         if (plugin) {
             if (utils.isArray(plugin)) {
-                return plugin[0].render(it, it.key)
+                return plugin[0].render(it, it.config('key'))
             }
             
-            return plugin.render(it, it.key)
+            return plugin.render(it, it.config('key'))
         }
 
-        return `Please set up workspace component ${it.type}, eg. WORKSPACE.PANEL.${it.type}`
+        return `Please set up workspace component ${it.type}, eg. WORKSPACE.PANEL.${it.config('type')}`
     }
     public renderCloseIcon(it: any) {
         return (
@@ -53,7 +52,7 @@ export default class EditorWorkspace extends StateComponent<EditorWorkspaceProps
         return (
             <span>
                 <TableOutlined/>
-                {context.name}
+                {context.config('name')}
             </span>
         )
     }
@@ -61,7 +60,7 @@ export default class EditorWorkspace extends StateComponent<EditorWorkspaceProps
         return this.workspaceState.getItems().map((it) => {
             return {
                 label: this.renderLabel(it),
-                key: it.key,
+                key: it.config('key'),
                 children: this.renderPanelChildren(it),
                 closeIcon: this.renderCloseIcon(it)
             }

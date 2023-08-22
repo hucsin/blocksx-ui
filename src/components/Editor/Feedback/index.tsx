@@ -14,15 +14,12 @@ export default class EditorFeedback extends StateComponent<{}>{
         super(props);
         this.workspaceState = StateX.findModel(EditorWorkspaceState);
     }
-    public renderText() {
-       
-    }
     
     public renderPanelLabel(item: any) {
-        return item.name
+        return item.config('name')
     }
     public renderPanelChildren(it: any) {
-        let plugin: any = pluginManager.find(['FEEDBACK','PANEL', it.type]);
+        let plugin: any = pluginManager.find(['FEEDBACK','PANEL', it.config('type')]);
 
         if (plugin) {
             if (utils.isArray(plugin)) {
@@ -32,14 +29,16 @@ export default class EditorFeedback extends StateComponent<{}>{
             return plugin.render(it, it.key)
         }
 
-        return `Please set up feedback compo恶nent ${it.type}, eg. FEEDBACK.PANEL.${it.type}`
+        return `Please set up feedback component ${it.type}, eg. FEEDBACK.PANEL.${it.type}`
     }
     public renderChildren() {
-        let feedback: EditorFeedbackState = this.workspaceState.getCurrentFeedbackState();
+        let feedback: EditorFeedbackState = this.workspaceState.getCurrentFeedback();
+        console.log(feedback, 'feedback-wraper')
         if (feedback) {
+            
             return feedback.getItems().map((it: any) => {
                 return {
-                    key: it.key,
+                    key: it.config('key') || it.namespace,
                     label: this.renderPanelLabel(it), 
                     children: this.renderPanelChildren(it)
                 }
@@ -48,7 +47,6 @@ export default class EditorFeedback extends StateComponent<{}>{
     }
     
     public render() {
-        this.renderChildren();
         return (
             <div className='feedback-wrapper'>
                 <Tabs
