@@ -1,5 +1,5 @@
 import { utils } from '@blocksx/core';
-import PluginBase, { PluginPipeline } from '@blocksx-ui/Editor/core/Plugin';
+import PluginBase, { PluginPipeline } from '@blocksx/ui/Editor/core/Plugin';
 
 
 /**

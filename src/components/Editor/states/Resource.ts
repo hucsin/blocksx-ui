@@ -1,7 +1,7 @@
-import StateModel from '@blocksx-ui/StateX/Model';
+import StateModel from '@blocksx/ui/StateX/Model';
 
 // 数据库类型范围
-export type ResourceDatabaseType = 'datasource' | 'database' | 'schema' | 'table' | 'view' | 'procedure' | 'trigger' | 'function' | 'user';
+export type ResourceDatabaseType = 'datasource' | 'database' | 'schema' | 'table' | 'view' | 'column' | 'procedure' | 'trigger' | 'function' | 'user';
 // 项目类型范围                      数据同步(时时)       数据复制(一次性)   定时任务(周期)           
 export type ResourceProductType = 'synchronization' | 'replication' | 'scheduled' | ''; 
 export type ResourceFileGroupType = 'folder';

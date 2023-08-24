@@ -1,11 +1,11 @@
 import React from 'react';
 import MonacoEditor from 'react-monaco-editor';
-import Toolbar from '@blocksx-ui/Editor/Toolbar';
-import { pluginManager, resourceManager } from '@blocksx-ui/Editor/core/manager';
-import { addEvent, removeEvent } from '@blocksx-ui/utils/dom';
-import { StateComponent, StateX } from '@blocksx-ui/StateX';
+import Toolbar from '@blocksx/ui/Editor/Toolbar';
+import { pluginManager, resourceManager } from '@blocksx/ui/Editor/core/manager';
+import { addEvent, removeEvent } from '@blocksx/ui/utils/dom';
+import { StateComponent, StateX } from '@blocksx/ui/StateX';
 
-import { EditorWorkspaceState } from '@blocksx-ui/Editor/states';
+import { EditorWorkspaceState } from '@blocksx/ui/Editor/states';
 
 
 import './style.scss';

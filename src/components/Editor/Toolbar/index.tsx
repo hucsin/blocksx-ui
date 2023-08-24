@@ -1,5 +1,5 @@
 import React from 'react';
-import { pluginManager } from '@blocksx-ui/Editor/core/manager/index';
+import { pluginManager } from '@blocksx/ui/Editor/core/manager/index';
 import { Divider } from 'antd';
 
 import './style.scss';

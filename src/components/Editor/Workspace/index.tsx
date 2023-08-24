@@ -3,11 +3,11 @@ import { Tabs } from 'antd';
 import classnames from 'classnames';
 import { utils } from '@blocksx/core';
 
-import { pluginManager } from '@blocksx-ui/Editor/core/manager/index';
-import { StateX, StateComponent } from '@blocksx-ui/StateX';
-import EditorWorkspaceState from '@blocksx-ui/Editor/states/Workspace';
+import { pluginManager } from '@blocksx/ui/Editor/core/manager/index';
+import { StateX, StateComponent } from '@blocksx/ui/StateX';
+import EditorWorkspaceState from '@blocksx/ui/Editor/states/Workspace';
 
-import { CloseCircleFilled, CloseOutlined, TableOutlined } from '@blocksx-ui/Icons';
+import { CloseCircleFilled, CloseOutlined, TableOutlined } from '@blocksx/ui/Icons';
 
 import './style.scss';
 import './panel';

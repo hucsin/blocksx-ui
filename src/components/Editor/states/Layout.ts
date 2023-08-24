@@ -1,6 +1,6 @@
 import { utils } from '@blocksx/core';
-import StateModel from '@blocksx-ui/StateX/Model';
-import StateX from '@blocksx-ui/StateX/StateX';
+import StateModel from '@blocksx/ui/StateX/Model';
+import StateX from '@blocksx/ui/StateX/StateX';
 
 type LayoutType = 'show' | 'hide' | 'fold' | 'extend'
 

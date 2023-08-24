@@ -1,4 +1,4 @@
-import { pluginManager } from '@blocksx-ui/Editor/core/manager/index';
+import { pluginManager } from '@blocksx/ui/Editor/core/manager/index';
 import CodeRun from './CodeRun';
 import CodeModify from './CodeModify';
 

@@ -1,8 +1,8 @@
 
 import React from 'react';
-import Widget, { WidgetDirectionType } from '@blocksx-ui/Editor/core/Widget';
+import Widget, { WidgetDirectionType } from '@blocksx/ui/Editor/core/Widget';
 
-import { Setting } from '@blocksx-ui/Icons'
+import { Setting } from '@blocksx/ui/Icons'
 
 export default class TestWidget extends Widget {
     public text: string =  '';

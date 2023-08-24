@@ -1,7 +1,7 @@
 /**
  * 管理
  */
-import { StateModel, StateX } from '@blocksx-ui/StateX';
+import { StateModel, StateX } from '@blocksx/ui/StateX';
 import { utils } from '@blocksx/core';
 import DataMeta from './MetaData'
 

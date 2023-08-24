@@ -1,9 +1,9 @@
 import React from 'react';
 import { Tabs, Table } from 'antd';
-import { StateX, StateComponent } from '@blocksx-ui/StateX/index';
-import { pluginManager  } from '@blocksx-ui/Editor/core/manager';
+import { StateX, StateComponent } from '@blocksx/ui/StateX/index';
+import { pluginManager  } from '@blocksx/ui/Editor/core/manager';
 import { utils } from '@blocksx/core';
-import { EditorWorkspaceState, EditorFeedbackState, EditorLayoutState } from '@blocksx-ui/Editor/states';
+import { EditorWorkspaceState, EditorFeedbackState, EditorLayoutState } from '@blocksx/ui/Editor/states';
 import './style.scss';
 
 

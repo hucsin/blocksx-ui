@@ -1,6 +1,6 @@
 
-import {resourceManager } from '@blocksx-ui/Editor/core/manager/index';
-import { Mysql, PostgreSQL , Table, Datasource, FolderOutlined } from '@blocksx-ui/Icons'
+import {resourceManager } from '@blocksx/ui/Editor/core/manager/index';
+import { Mysql, PostgreSQL , Table, Datasource, FolderOutlined } from '@blocksx/ui/Icons'
 
 import './resource/boot';
 

@@ -1,7 +1,7 @@
- import { StateModel, StateX } from '@blocksx-ui/StateX';
+ import { StateModel, StateX } from '@blocksx/ui/StateX';
  import EditorMetaDataState, { MetaDataState } from './MetaData';
- import EditorWorkspaceState from '@blocksx-ui/Editor/states/Workspace';
- import EditorFeedbackState from '@blocksx-ui/Editor/states/Feedback';
+ import EditorWorkspaceState from '@blocksx/ui/Editor/states/Workspace';
+ import EditorFeedbackState from '@blocksx/ui/Editor/states/Feedback';
 
 
 export default class EditorWorkspacePanelState extends EditorMetaDataState <MetaDataState> {

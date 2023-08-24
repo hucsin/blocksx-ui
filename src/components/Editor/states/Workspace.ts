@@ -1,4 +1,4 @@
-import { StateModel, StateX } from '@blocksx-ui/StateX';
+import { StateModel, StateX } from '@blocksx/ui/StateX';
 import { utils } from '@blocksx/core';
 import EditorWorkspacePanel from './WorkspacePanel';
 import EditorLayoutState from './Layout';

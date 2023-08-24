@@ -4,10 +4,10 @@
  */
 
 
- import { StateModel, StateX } from '@blocksx-ui/StateX';
+ import { StateModel, StateX } from '@blocksx/ui/StateX';
  
  import { utils } from '@blocksx/core';
- import EditorWorkspaceState from '@blocksx-ui/Editor/states/Workspace';
+ import EditorWorkspaceState from '@blocksx/ui/Editor/states/Workspace';
 
  export interface SerializeType {
     $name: string;

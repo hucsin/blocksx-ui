@@ -3,14 +3,14 @@
  */
 import React from 'react';
 import { Tree, Button } from 'antd';
-import { Down, Menu } from '@blocksx-ui/Icons';
-import { addEvent ,removeEvent } from '@blocksx-ui/utils/dom'
+import { Down, Menu } from '@blocksx/ui/Icons';
+import { addEvent ,removeEvent } from '@blocksx/ui/utils/dom'
 
-import { StateX, StateComponent } from '@blocksx-ui/StateX';
-import EditorResourceState , { ResourceItem } from '@blocksx-ui/Editor/states/Resource';
-import { resourceManager, pluginManager } from '@blocksx-ui/Editor/core/manager/index';
-import ContextMenu from '@blocksx-ui/Editor/ContextMenu';
-import { EditorLayoutState } from '@blocksx-ui/Editor/states';
+import { StateX, StateComponent } from '@blocksx/ui/StateX';
+import EditorResourceState , { ResourceItem } from '@blocksx/ui/Editor/states/Resource';
+import { resourceManager, pluginManager } from '@blocksx/ui/Editor/core/manager/index';
+import ContextMenu from '@blocksx/ui/Editor/ContextMenu';
+import { EditorLayoutState } from '@blocksx/ui/Editor/states';
 
 import './boot';
 import './style.scss';
@@ -34,7 +34,6 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
     private layoutState: any = StateX.findModel(EditorLayoutState);
     public constructor(props: EditorResourceTreeProps) {
         super(props);
-        console.log('initresource-component')
 
         StateX.registerModel(this.resourceState = new EditorResourceState(this.namespace = props.namespace, {
             tree: props.tree
@@ -65,7 +64,7 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
     }
 
     public componentDidUpdate() {
-         this.resetHeight();
+        // this.resetHeight();
     }
     public destory() {
         removeEvent(window,'resize', this.resetHeight);

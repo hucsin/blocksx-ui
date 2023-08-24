@@ -1,7 +1,7 @@
 import React from 'react';
-import { StateX, StateComponent } from '@blocksx-ui/StateX';
-import SplitPane, { Pane } from '@blocksx-ui/SplitPane';
-import { EditorLayoutState } from '@blocksx-ui/Editor/states';
+import { StateX, StateComponent } from '@blocksx/ui/StateX';
+import SplitPane, { Pane } from '@blocksx/ui/SplitPane';
+import { EditorLayoutState } from '@blocksx/ui/Editor/states';
 import './style.scss';
 
 interface EditorLayoutContainerProps {

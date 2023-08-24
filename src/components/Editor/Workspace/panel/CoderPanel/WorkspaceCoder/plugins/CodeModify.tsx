@@ -6,12 +6,12 @@
 
  import { format } from 'sql-formatter'
 
- import { StateComponent, StateX } from '@blocksx-ui/StateX/index';
- import PluginBase from '@blocksx-ui/Editor/core/Plugin';
- import WidgetBase, { WidgetDirectionType } from '@blocksx-ui/Editor/core/Widget';
- import { SaveFilled,FormatPainterFilled } from '@blocksx-ui/Icons';
+ import { StateComponent, StateX } from '@blocksx/ui/StateX/index';
+ import PluginBase from '@blocksx/ui/Editor/core/Plugin';
+ import WidgetBase, { WidgetDirectionType } from '@blocksx/ui/Editor/core/Widget';
+ import { SaveFilled,FormatPainterFilled } from '@blocksx/ui/Icons';
 
- import { EditorWorkspaceState } from '@blocksx-ui/Editor/states'
+ import { EditorWorkspaceState } from '@blocksx/ui/Editor/states'
 
  
  

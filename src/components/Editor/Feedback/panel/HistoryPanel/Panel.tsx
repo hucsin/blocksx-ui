@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs, Table } from 'antd';
-import { StateX, StateComponent } from '@blocksx-ui/StateX/index';
-import EditorWorkspaceState from '@blocksx-ui/Editor/states/Workspace';
+import { StateX, StateComponent } from '@blocksx/ui/StateX/index';
+import EditorWorkspaceState from '@blocksx/ui/Editor/states/Workspace';
 
 
 interface HistoryPanelProps {

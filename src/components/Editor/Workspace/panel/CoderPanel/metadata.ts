@@ -1,5 +1,5 @@
 
-import { EditorMetaDataState, EditorWorkspacePanelState } from '@blocksx-ui/Editor/states';
+import { EditorMetaDataState, EditorWorkspacePanelState } from '@blocksx/ui/Editor/states';
 
 
 export default class WorkspacePanelCoderMeta extends EditorWorkspacePanelState {

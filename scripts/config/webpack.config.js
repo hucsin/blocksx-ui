@@ -320,7 +320,7 @@ module.exports = function (webpackEnv) {
           'scheduler/tracing': 'scheduler/tracing-profiling',
         }),
         ...(modules.webpackAliases || {}),
-        '@blocksx-ui/Editor': path.resolve(__dirname, '../src/components/Editor')
+        '@blocksx/ui': path.resolve(__dirname, '../../src/components')
       },
       plugins: [
         // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -435,10 +435,10 @@ module.exports = function (webpackEnv) {
                     '@babel/plugin-proposal-class-properties',
                     '@babel/plugin-proposal-private-methods',
                     '@babel/plugin-proposal-private-property-in-object',
-                    //'babel-plugin-transform-jsx-stylesheet',
+                    //-'babel-plugin-transform-jsx-stylesheet',
                     '@babel/plugin-syntax-dynamic-import',
                     'transform-react-jsx',
-                    'babel-plugin-inline-react-svg'
+                    //'babel-plugin-inline-react-svg'
                   
                 ].filter(Boolean),
                 // This is a feature of `babel-loader` for webpack (not Babel itself).

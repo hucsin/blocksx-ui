@@ -1,4 +1,4 @@
-import { pluginManager } from '@blocksx-ui/Editor/core/manager/index';
+import { pluginManager } from '@blocksx/ui/Editor/core/manager/index';
 import TreeItemWashPlugin from './TreeItemWash.plugin';
 import ContextMenusPlugin from './ContextMenu.plugin';
 import ToolbarPlugin from './toolbar/toolbar.plugin';

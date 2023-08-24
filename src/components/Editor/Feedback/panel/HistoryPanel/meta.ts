@@ -1,4 +1,4 @@
-import { EditorMetaDataState } from '@blocksx-ui/Editor/states';
+import { EditorMetaDataState } from '@blocksx/ui/Editor/states';
 
 
 export default class HistoryMetaData extends EditorMetaDataState<{}> {

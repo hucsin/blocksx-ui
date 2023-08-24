@@ -10,7 +10,7 @@ import EditorFeedback from '../components/Editor/Feedback';
 
 import { StateX } from '../components/StateX/index';
 import { EditorLayoutState } from '../components/Editor/states';
-import SplitPane, { Pane } from '@blocksx-ui/SplitPane';
+import SplitPane, { Pane } from '@blocksx/ui/SplitPane';
 import './layout.scss';
 
 let sourceTree: any[] =[

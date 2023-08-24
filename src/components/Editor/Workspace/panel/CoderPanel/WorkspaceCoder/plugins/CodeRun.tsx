@@ -4,13 +4,13 @@
  import React from 'react';
  import { Button } from 'antd';
 
- import { StateComponent, StateX } from '@blocksx-ui/StateX/index';
- import PluginBase from '@blocksx-ui/Editor/core/Plugin';
- import WidgetBase, { WidgetDirectionType } from '@blocksx-ui/Editor/core/Widget';
- import { PlayCircleFilled } from '@blocksx-ui/Icons';
+ import { StateComponent, StateX } from '@blocksx/ui/StateX/index';
+ import PluginBase from '@blocksx/ui/Editor/core/Plugin';
+ import WidgetBase, { WidgetDirectionType } from '@blocksx/ui/Editor/core/Widget';
+ import { PlayCircleFilled } from '@blocksx/ui/Icons';
 
- import { EditorWorkspaceState, EditorWorkspacePanelState } from '@blocksx-ui/Editor/states';
- import { HistoryMetaData } from '@blocksx-ui/Editor/Feedback/panel'
+ import { EditorWorkspaceState, EditorWorkspacePanelState } from '@blocksx/ui/Editor/states';
+ import { HistoryMetaData } from '@blocksx/ui/Editor/Feedback/panel'
 
  
  
