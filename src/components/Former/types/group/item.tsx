@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { DownOutlined, RightOutlined } from '@ant-design/icons';
 
 export default class FormerGroupItem extends React.Component<{title:string,
-  children?:any,groupType: any},{collapse:boolean}> {
+  children?:any,hidden?:boolean,groupType: any},{collapse:boolean}> {
     public constructor(props:any) {
         super(props);
         this.state = {
@@ -26,12 +26,13 @@ export default class FormerGroupItem extends React.Component<{title:string,
 
     public render() {
       let showMore: boolean = this.state.collapse && this.props.groupType == 'more';
-      
+        
         return (
             <div className={
               classnames({
                 "former-group-item": true,
-                "former-group-typeMore": showMore
+                "former-group-typeMore": showMore,
+                'former-group-hidden': this.props.hidden
               })
             }>
                 

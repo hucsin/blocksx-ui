@@ -52,6 +52,7 @@
 
 .Pane {
   height: 100%;
+  overflow:hidden;
   &.horizontal {
     max-height: 100%;
     overflow: hidden;

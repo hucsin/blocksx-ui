@@ -15,8 +15,10 @@ interface WorkspaceItem {
 }
 interface WorkspaceState {
     current?: string;
+    historyLength?: number;
     items?: EditorMetaData<any>[];
-    changed?: any
+    changed?: any;
+    errorMessage?: string;
 }
 
 
@@ -36,7 +38,8 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
         super(Object.assign({
             current: state ? getCurrentKey(state.items) : null,
             items: state ? state.items || [] : [],
-            changed: {}
+            changed: {},
+            historyLength: state ? (state.items || []).length : 0
         }, state))
 
         this.cache = {};
@@ -44,7 +47,6 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
         
     }
     public initWorkspace() {
-        console.log('initworkspace', this.state)
         this.state.items?.map((it)=>{
             this.push(it,null, true)
         })
@@ -65,6 +67,7 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
 
             this.setState({
                 items: items,
+                historyLength: (this.state.historyLength as number || 0) + 1,
                 ...props
             })
         }
@@ -78,11 +81,33 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
             return this.dataMeta[it.namespace]
         });
     }
+    public getLength() {
+        return this.state.items?.length;
+    }
+    public getHistoryLength() {
+        return this.state.historyLength;
+    }
     
     public getCurrentKey() {
         return this.state.current;
     }
-
+    /**
+     * 错误消息 
+     * @param message 
+     */
+    public showErrorMessage(message:string) {
+        this.setState({
+            errorMessage: message
+        })
+    }
+    public resetErrorMessage() {
+        this.setState({
+            errorMessage: ''
+        })
+    }
+    public getErrorMessage() {
+        return this.state.errorMessage;
+    }
     public setCurrentKey(current:string) {
         this.setState({
             current: current
@@ -159,6 +184,7 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
         });
         
         this.get(meta.namespace).toggleFeedback();
+        this.resetErrorMessage();
     }
 
     /**
@@ -178,7 +204,6 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
         if (workspace) {
             let changeds: any = this.state.changed;
             
-
             changeds[namespace || this.state.current as any] 
                 = workspace.changed 
                 = utils.isUndefined(changed) ? true : changed;
@@ -186,7 +211,8 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
 
             this.setState({
                 changed: changeds,
-                items: this.state.items
+                items: this.state.items,
+                errorMessage: ''
             })
 
         }
@@ -228,6 +254,9 @@ export default class EditorWorkspaceState extends StateModel<WorkspaceState> {
      */
     public getCurrentPanel() {
         return this.get(this.state.current as string)
+    }
+    public getCurrent(){
+        return this.getCurrentPanel()
     }
     /**
      * 获取当前的面状态对象

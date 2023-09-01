@@ -11,7 +11,37 @@
             position: absolute;
             top: 0;
             right: 0;
+        }
+        .resourcetree-left-toolbar {
+            margin-left: 8px;
+            opacity: .8;
 
+            .anticon-plus {
+                position: relative;
+                &::after{
+                    content: " ";
+                    position: absolute;
+                    bottom: -2px;
+                    right: -2px;
+                    width: 0;
+                    height: 0;
+                    font-size:0;
+                    overflow: hidden;
+                    border: 2px dashed transparent ;
+                    border-top: 2px solid #253852
+                }
+            }
+            > span {
+                button {
+                    padding: 0 3px;
+                    height: 20px;
+                    text-align: center;
+                    width: 21px;
+                    line-height: 20px;
+                    font-size: 12px;
+                    display: inline-block;
+                }
+            }
         }
     }
     > div {
@@ -114,5 +144,35 @@
             }
            
         }
+    }
+}
+.ant-dropdown-menu-title-content {
+    > span {
+        .anticon {
+            margin-right: 4px;
+        }
+    }
+} 
+.ant-dropdown-menu-submenu {
+    .ant-dropdown-menu {
+        .ant-dropdown-menu-item,
+        .ant-dropdown-menu-submenu-title {
+            padding: 2px 8px;
+            min-width: 100px;
+        
+        }
+        
+    }
+}
+.mini-dropdown {
+    
+    &.ant-dropdown .ant-dropdown-menu {
+        .ant-dropdown-menu-item,
+        .ant-dropdown-menu-submenu-title {
+            padding: 2px 8px;
+            min-width: 100px;
+        
+        }
+        
     }
 }

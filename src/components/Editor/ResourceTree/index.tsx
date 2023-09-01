@@ -2,7 +2,8 @@
  * 资源树
  */
 import React from 'react';
-import { Tree, Button } from 'antd';
+import { Tree, Button, Skeleton } from 'antd';
+import JDBCSortKeyMap from '@blocksx/db/jdbc/es/JDBCSortKeyMap';
 import { Down, Menu } from '@blocksx/ui/Icons';
 import { addEvent ,removeEvent } from '@blocksx/ui/utils/dom'
 
@@ -28,6 +29,18 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
         resource: '资源',
         product: '任务'
     }
+    private typeShortMap: any = {
+        v: 'view',
+        i: 'index',
+        t: 'table',
+        c: 'column',
+        d: 'database',
+        f: 'function',
+        p: 'procedure',
+        tr: 'trigger',
+        s: 'schema',
+        ds: 'datasource'
+    }
     private namespace: string;
     private resourceState: any;
     private resourceTree: any;
@@ -36,7 +49,7 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
         super(props);
 
         StateX.registerModel(this.resourceState = new EditorResourceState(this.namespace = props.namespace, {
-            tree: props.tree
+            tree: props.tree 
         }))
 
         this.state = {
@@ -48,6 +61,9 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
     public bindEvent() {
         addEvent(window,'resize', this.resetHeight);
         //this.layoutState.on('resize', this.resetHeight)
+        this.resourceState.registerWasher((tree: ResourceItem[]) => {
+            return this.washTree(tree)
+        })
     }
     public resetHeight=()=> {
         let height = this.resourceTree.getBoundingClientRect().height;
@@ -71,6 +87,7 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
         //this.layoutState.off('resize', this.resetHeight)
     };
     public render() {
+        let tree: any[] = this.resourceState.getWashedTree();
         return (
             <div className='resourcetree-wrapper' >
                 <ContextMenu namespace={this.namespace} />
@@ -78,11 +95,14 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
                 <div ref={(e)=> this.resourceTree = e}>
                     <div className='resourcetree-header'>
                         <span>{this.nameMap[this.namespace]}</span>
+                        <span className='resourcetree-left-toolbar'>
+                            {this.renderLeftToolbar()}
+                        </span>
                         <div className='resourcetree-toolbar'>
-                            {this.renderToolbar()}
+                            {this.renderRightToolbar()}
                         </div>
                     </div>
-                    {this.state.height && <Tree
+                    {this.resourceState.getLoadingState() && tree.length ==0 ? <Skeleton active/> : this.state.height && (tree.length==0 ? <Skeleton/> : <Tree
                         showIcon
                         blockNode
                         onRightClick={(e: any)=> {return this.showContextMenu(e.event,e.node)}}
@@ -97,23 +117,19 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
                         defaultSelectedKeys={['0-0-0']}
                         
                         switcherIcon={<Down />}
-                        treeData={this.washTree(this.resourceState.getTreeList())}
-                    />}
+                        treeData={tree}
+                    />)}
                 </div>
             </div>
         )
     }
-    private renderToolbar() {
-        
-        let toolbar: any = pluginManager.getWidgetByName(['RESOURCETREE', this.namespace,'TOOLBAR'], 'toolbar') || [];
-        
-        return toolbar.map((it,i) => {
-            if (it) {
-                return it.render({key:i})
-            } else {
-                return <span></span>
-            }
-        });
+    private renderRightToolbar() {
+        return pluginManager.renderWidgetByDirection(
+            ['RESOURCETREE', this.namespace,'TOOLBAR'], ['right', 'bottom'])
+    }
+    private renderLeftToolbar() {
+        return pluginManager.renderWidgetByDirection(
+            ['RESOURCETREE', this.namespace,'TOOLBAR'], ['left', 'top'])
     }
     private renderTitle(title: any,nodeData: any) {
         return (
@@ -143,22 +159,48 @@ export default class EditorResourceTree extends StateComponent<EditorResourceTre
         event.stopPropagation();
         ContextMenu.showContextMenu(this.namespace, event, context)
     }
+    private washRecord(record: any) {
+        let result: any = {};
+        for(let prop in record) {
+            result[JDBCSortKeyMap.getEnlargeKey(prop)] = record[prop]
+        }
+        return result;
+    }
     /**
      * 清洗数据  RESOURCETREE.RESOURCE.WASH
      * @param ResourceItem 
      * @returns 
      */
-    private washTree(ResourceItem:[]) {
+    private washTree(ResourceItem:ResourceItem[], parent?: string[]) {
 
-        return ResourceItem.map((it: ResourceItem) => {
+        return ResourceItem.map((it: ResourceItem, index: any) => {
+            let item: any = this.getTrueData(it);
+            let keypath: any = parent ? [...parent, item.key] : [item.key];
+            let treeKey: string = keypath.join('.')
+            
             return pluginManager.pipeline(['RESOURCETREE',this.namespace,'WASH'],{
-                ...it,
-                key: it.key,
-                title: it.name,//this.renderTitle(it.name),
-                icon: this.getIconResourceComponent(it),
-                children:it.children ? this.washTree(it.children as any) : null
+                ...item,
+                key: `${treeKey}-${index}`,
+                keypath: treeKey,
+                id: treeKey,
+                title: item.name ,//this.renderTitle(it.name),
+                icon: this.getIconResourceComponent(item),
+                children:item.children ? this.washTree(item.children as any, keypath) : null
             }, this)
         })
+    }   
+    private getTrueType(type: string) {
+        return this.typeShortMap[type] || type;
+    }
+    private getTrueData(data: any) {
+        return {
+            type: this.getTrueType(data.t || data.type),
+            name: data.n || data.name,
+            key: data.k || data.key || data.n || data.name,
+            children: data.c || data.children,
+            parent: data.p || data.parent,
+            record: this.washRecord(data.r || data.record)
+        }
     }
 
     private getIconResourceComponent(item: ResourceItem) {

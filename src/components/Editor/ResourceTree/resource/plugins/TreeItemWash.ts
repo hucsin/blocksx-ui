@@ -9,18 +9,22 @@ export default class ResourceTreeItemWashPlugin extends PluginBase implements  P
 
     private groupMap: any = {
         schema: {
-            table: '表'
+            table: '表',
+            view: '视图',
+            function: '函数',
+            procedure: '存储过程'
         },
         table: {
-            field: '字段',
-            index: '索引'
+            column: '字段',
+            index: '索引',
+            trigger: '触发器'
         }
     }
     private slatMap:any =  {
         datasource: true,
         tableGroup: true,
-        fieldGroup: true,
-        field: (v) => {
+        columnGroup: true,
+        column: (v) => {
             return v.record &&  v.record.format ;
         }
     }
@@ -28,6 +32,7 @@ export default class ResourceTreeItemWashPlugin extends PluginBase implements  P
     public constructor() {
         super()
     }
+    
     public groupChildren(parentKey: string, children: any[], map: any, context: any) {
         let group: any = {};
         children.forEach(it => {

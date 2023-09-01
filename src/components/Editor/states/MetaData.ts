@@ -18,6 +18,7 @@
  export interface MetaDataState {
     value?: any;
     data?: any[];
+    version?: number;
  }
 
  const toCaseInsensitive = (name: string) => {
@@ -73,11 +74,14 @@
     public props: any;
 
     public constructor(namespace: string, props: any, state: any) {
-        super(namespace, state || {});
+        super(namespace, Object.assign(state , { version: 0 }));
         this.props = props || {};
     }
 
-    public config(key:string) {
+    public getProps() {
+        return this.props;
+    }
+    public getProp(key:string) {
         return this.props[key]
     }
 
@@ -101,6 +105,21 @@
             return this.meta('loading');
         } else {
             this.meta('loading', loading);
+        }
+    }
+    public resetProps(props: any) {
+        Object.assign(this.props, props);
+        this.updateVersion();
+    }
+    public resetState(state: any) {
+        this.setState(
+            this.updateVersion(state)
+        )
+    }
+    public reset(meta: any) {
+        if (utils.isFunction(meta.getProps)) {
+            this.resetProps(meta.getProps());
+            this.resetState(meta.getStates());
         }
     }
     /**

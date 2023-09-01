@@ -2,6 +2,7 @@ import React from 'react';
 import { StateX, StateComponent } from '@blocksx/ui/StateX';
 import SplitPane, { Pane } from '@blocksx/ui/SplitPane';
 import { EditorLayoutState } from '@blocksx/ui/Editor/states';
+import FormerContainer from '@blocksx/ui/Editor/FormerContainer'
 import './style.scss';
 
 interface EditorLayoutContainerProps {
@@ -109,6 +110,7 @@ export default class EditorLayoutContainer extends StateComponent<EditorLayoutCo
 
         return (
             <div className='layout-container'>
+                <FormerContainer/>
                 {this.renderSplitPane(
                     ResourceFold ? this.props.LeftChinampa : this.renderSplitPane(
                         this.props.LeftChinampa,

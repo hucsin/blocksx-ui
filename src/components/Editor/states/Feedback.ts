@@ -64,7 +64,7 @@ export default class EditorFeedbackState extends StateModel<FeedbackState> {
 
         this.dataMeta[meta.namespace] = meta;
         // 保护的对象
-        if (meta.config('protect')) {
+        if (meta.getProp('protect')) {
             this.map[meta.namespace] = {
                 protect: true,
                 namespace: meta.namespace,
@@ -88,6 +88,9 @@ export default class EditorFeedbackState extends StateModel<FeedbackState> {
             
             return this.dataMeta[it.namespace]
         });
+    }
+    public getCurrent() {
+        return this.dataMeta[this.getCurrentKey() as string]
     }
     public getCurrentKey() {
         return this.state.current;
@@ -145,18 +148,21 @@ export default class EditorFeedbackState extends StateModel<FeedbackState> {
      * @param meta 
      */
     public register(meta: DataMeta<any>, props?: any) {
+        let current: any ;
         if (!DataMeta.findMetaModel(meta)) {
             console.error(`Please register datameta[${meta.toString()}] before using it!`)
         }
         let namespace: string = meta.namespace as string;
 
         if (this.has(namespace)) {
+            current = this.get(namespace);
+            current.reset(meta);
             this.setCurrentKey(namespace)
         } else {
-
-            this.push(meta);
+            this.push(current = meta);
             this.reset(props);
         }
+        return current;
     }
 
     /**
@@ -164,10 +170,14 @@ export default class EditorFeedbackState extends StateModel<FeedbackState> {
      * @param meta 
      */
     public open(meta: DataMeta<any>) {
-        this.register(meta, {
+        let current: any = this.register(meta, {
             current: meta.namespace
         });
         
+        // 从心打开
+        if (utils.isFunction(current.reopen)) {
+            current.reopen();
+        }
     }
 
 

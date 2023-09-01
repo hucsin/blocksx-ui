@@ -9,17 +9,17 @@ import './style.scss';
 
 export default class EditorFeedback extends StateComponent<{}>{
     private workspaceState: EditorWorkspaceState ;
-
+    private panelCanvas: any;
     public constructor(props) {
         super(props);
         this.workspaceState = StateX.findModel(EditorWorkspaceState);
     }
     
     public renderPanelLabel(item: any) {
-        return item.config('name')
+        return item.getProp('name')
     }
     public renderPanelChildren(it: any) {
-        let plugin: any = pluginManager.find(['FEEDBACK','PANEL', it.config('type')]);
+        let plugin: any = pluginManager.find(['FEEDBACK','PANEL', it.getProp('type')]);
 
         if (plugin) {
             if (utils.isArray(plugin)) {
@@ -33,12 +33,12 @@ export default class EditorFeedback extends StateComponent<{}>{
     }
     public renderChildren() {
         let feedback: EditorFeedbackState = this.workspaceState.getCurrentFeedback();
-        console.log(feedback, 'feedback-wraper')
+        
         if (feedback) {
             
-            return feedback.getItems().map((it: any) => {
+            return feedback.getItems().map((it: any, index: number) => {
                 return {
-                    key: it.config('key') || it.namespace,
+                    key: [it.getProp('key') || it.namespace, index].join(''),
                     label: this.renderPanelLabel(it), 
                     children: this.renderPanelChildren(it)
                 }
@@ -48,7 +48,7 @@ export default class EditorFeedback extends StateComponent<{}>{
     
     public render() {
         return (
-            <div className='feedback-wrapper'>
+            <div className='feedback-wrapper' ref={(ref)=> this.panelCanvas=ref}>
                 <Tabs
                     hideAdd
                     size="small"

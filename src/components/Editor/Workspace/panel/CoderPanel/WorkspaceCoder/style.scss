@@ -5,7 +5,22 @@
     box-sizing: border-box;
     padding-top: 40px;
     margin-top: -1px;
-    overflow-y:auto;
+    button {
+        span:empty{
+            display:none;
+        }
+    }
+    .workspace-coder-router {
+        font-size: 12px;
+        opacity: .5;
+        .anticon {
+            font-size:10px;
+            vertical-align: middle;
+        }
+    }
+    .ant-btn.ant-btn-sm  {
+        padding: 0px 4px;
+    }
     .editor-toolbar-horizontal {
         position: absolute;
         left: 0;

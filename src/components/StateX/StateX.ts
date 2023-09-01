@@ -42,7 +42,6 @@ class StateX {
         model.StateX = this;
         
         return () => {
-            console.log('333333223')
             delete this.models[model.getId()];
         };
     }

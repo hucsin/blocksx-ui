@@ -3,19 +3,29 @@ import Leaf from './leaf';
 import { Drawer, Modal, Button, Popover, Tabs } from 'antd';
 import { EventEmitter } from 'events';
 import classnames from 'classnames';
+import { utils as BUtils } from '@blocksx/core';
+import * as ICONS from '../Icons';
 
 import './style.scss';
+
+
+export interface ExtraContentType {
+  logo?: string | Function;
+  extraContent?: string | Function
+}
 
 export interface FormerProps {
   type?: string;
   value?: any;
   schema: any;
+  extra?:  ExtraContentType;
   className?: string;
   classifyType?: 'tabs' | 'step' | 'verticalTabs';
   groupType?: 'accordion' | 'more',
   schemaClassifySort?: any;
   defaultClassify: string; // 默认分类
   onChangeValue?: Function;
+  autoclose?: boolean;
   //onRelyParams: Function;
   // 获取 依赖的参数
   onGetDependentParameters?: Function;
@@ -55,6 +65,8 @@ interface FormerState {
 
   column: any;
   viewer?: boolean; // 标记视图模式，只展示
+  disabled?: boolean;
+  loading?: boolean;
 }
 /**
  * 三种模式
@@ -68,6 +80,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     keep: true,
     size: 'small',
     viewer: false,
+    autoclose: true,
     column: 'one'
   };
   private timer: any;
@@ -78,7 +91,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     super(props);
     this.state = {
       type: props.type || 'default', // default, drawer, modal
-      value: props.value,
+      value: props.value || {},
       schema: props.schema,
       visible: props.visible,
       width: props.width,
@@ -89,7 +102,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
       classifyActiveKey: '0',
       id: props.id,
       viewer: props.viewer,
-      column: this.getDefaultColumn(props.column)
+      column: this.getDefaultColumn(props.column),
+      disabled: false,
+      loading: false
     };
 
     this.timer = null;
@@ -209,6 +224,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
           value,
           runtimeValue:value
         });
+        
+        this.emitter.emit('changeValue')
+
         if (this.state.type === 'default') {
           if (this.props.onChangeValue) {
             this.props.onChangeValue(value);
@@ -217,8 +235,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
       }, 200);
     }
   }
-  private onSave = () => {
-
+  public validationValue(cb: Function) {
     let count: number = this.emitter.listenerCount('validation');
     let isBreak: boolean = false;
 
@@ -237,7 +254,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
         if ( --count <= 0) {
           if (!isBreak) {
-            this.doSave();
+            cb()
           }
           this.emitter.removeListener('checked', this.helper)
           this.helper = null;
@@ -247,19 +264,30 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
     } else {
 
-      this.doSave();
+      cb()
     }
   }
-  private doSave() {
+  private onSave = () => {
 
-    this.onCloseLayer();
+   this.validationValue(() => {
+      this.doSave()
+   })
+  }
+  private doSave() {
+    if (this.props.autoclose) {
+      this.onCloseLayer();
+    } else {
+      this.setState({
+        loading: true
+      })
+    }
     // 值修改的时候上报
     if (this.props.onChangeValue) {
       this.props.onChangeValue(this.state.value);
     }
     // 在保存的时候直接提交值
     if (this.props.onSave) {
-      this.props.onSave(this.state.value);
+      this.props.onSave(this.state.value, this);
     }
   }
 
@@ -356,12 +384,52 @@ export default class Former extends React.Component<FormerProps, FormerState> {
       </>
     )
   }
-  private onCloseLayer = () => {
+  public onCloseLayer = () => {
     this.setState({
-      visible: true
+      visible: true,
+      loading: false
     });
     this.props.onClose && this.props.onClose();
   }
+
+  private renderExtraLogo() {
+    let { extra = {}} = this.props;
+    if (extra.logo) {
+      if (BUtils.isString(extra.logo)) {
+        let View: any = ICONS[extra.logo as string];
+        return (
+          <div className='formar-logo-container'>
+            { View ? <View/> : (extra.logo as string)}
+          </div>
+        )
+      }
+      return (
+        <div className='formar-logo-container'>
+          { BUtils.isFunction(extra.logo) ? (extra.logo as Function)(this) :  extra.logo }
+        </div>
+      )
+    }
+  }
+  private renderExtraContent() {
+    let { extra = {}} = this.props;
+
+    if (extra.extraContent) {
+
+      if (BUtils.isFunction(extra.extraContent)) {
+        return (extra.extraContent as Function)(this)
+      } else {
+        return extra.extraContent;
+      }
+    }
+  }
+
+  public doDisabledButton(disabled?: boolean) {
+    
+    this.setState({
+      disabled: BUtils.isUndefined(disabled) ? true : disabled
+    })
+  }
+
   public render() {
     switch (this.state.type) {
       case 'popover':
@@ -412,21 +480,27 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             rootClassName={this.props.className}
             width={this.state.width || 450}
             maskClosable={!this.props.keep}
+            className={classnames({
+              [`drawer-type-${this.props.size}`]: true
+            })}
+            
             footer={
               <div
                 style={{
                   textAlign: 'right',
                 }}
               >
-                <Button onClick={this.onCloseLayer} style={{ marginRight: 8 }}>
+                {this.renderExtraContent()}
+                <Button  onClick={this.onCloseLayer} size={this.props.size as any} style={{ marginRight: 8 }}>
                   取消
                 </Button>
-                {!this.state.viewer ? <Button onClick={this.onSave} type="primary">
+                {!this.state.viewer ? <Button loading={this.state.loading} disabled={this.state.disabled} size={this.props.size as any} onClick={this.onSave} type="primary">
                   {this.state.okText || '确定'}
                 </Button> : null}
               </div>
             }
           >
+            {this.renderExtraLogo()}
             {this.renderLeaf()}
           </Drawer>
         )

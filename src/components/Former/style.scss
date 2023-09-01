@@ -94,3 +94,21 @@
     }
   }  
 }
+.drawer-type-small {
+  .ant-drawer-title {
+    opacity: .8;
+  }
+  .ant-drawer-header{
+    padding: 8px 12px;
+  }
+}
+
+.formar-logo-container {
+  position: absolute;
+  top: 48px;
+  right:20px;
+  width: 100px;
+  height: 100px;
+  opacity: .1;
+  font-size: 80px;
+}

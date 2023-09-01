@@ -218,7 +218,7 @@ export default class LayoutContainerDemo extends React.Component {
 
                                 </div>}
                                 RightChinampa={<div style={{height: '100%', background: '#fcc'}}>left<br/>c</div>}
-                                Resource={<EditorResourceTree namespace='resource' tree={sourceTree} />}
+                                Resource={<EditorResourceTree namespace='resource' tree={[]} />}
                                 Product={<EditorResourceTree namespace='product' tree={sourceTree.slice(1,2)} />}
                                 Workspace={<EditorWorkspace/>}
                                 Feedback={<EditorFeedback/>}

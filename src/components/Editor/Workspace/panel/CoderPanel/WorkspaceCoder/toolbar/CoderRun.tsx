@@ -10,9 +10,8 @@
  import { PlayCircleFilled } from '@blocksx/ui/Icons';
 
  import { EditorWorkspaceState, EditorWorkspacePanelState } from '@blocksx/ui/Editor/states';
- import { HistoryMetaData } from '@blocksx/ui/Editor/Feedback/panel'
+ import { RecordMetaData } from '@blocksx/ui/Editor/Feedback/panel'
 
- 
  
  
  class CodeRunComponent extends StateComponent<{
@@ -25,19 +24,22 @@
         super(props);
     }
     public onClick =()=> {
-        let { editor } = this.workspaceState.getCurrentPanel().getContext();
+        let currentPanel: any = this.workspaceState.getCurrentPanel();
+        let { editor } = currentPanel.getContext();
         let feedback:any  = this.workspaceState.getCurrentFeedback();
-        let history: any = new HistoryMetaData([this.props.namespace, 'HISTORY'].join('.'), null);
+        let { root = {} } = currentPanel.getProp('router') || {};
+        let router: any = currentPanel.getState('router');
         
-        history.push({
+        let record: any = new RecordMetaData([this.props.namespace, 'RECORD'].join('.'), {
             code: editor.getValue(),
-            time: new Date().toString().split(' ')[4],
-            cost: '232ms'
-        })
-        console.log(feedback)
+            databaseId: root.id,
+            schema: router
+        });
+        
         this.workspaceState.layoutState.showFeedbackDisplay();
-
-        feedback.open(history)
+        this.workspaceState.resetErrorMessage();
+        
+        feedback.open(record)
     }
     
     public render() {

@@ -321,6 +321,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
       if (this.isType('object')) {
         controlHide.forEach((it) => {
+          
           delete value[it];
         })
       }
@@ -596,6 +597,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     children.push(
       <Group key={children.length}>
         {groupList.map((it: { title: string; group: any[] }, index: number) => {
+          
           return (
             <GroupItem 
               key={index}
@@ -616,8 +618,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                   let properties:any = this.getObjectItemProperties(prop);//this.clone(this.properties[prop]);
                   let childrenControl:any = this.state.childrenControl ? this.state.childrenControl[prop] : null;
                   // 计算oneOf
+                  let props: any = this.properties[prop];
+                  let hidden: boolean = props['x-type'] =='hidden';
                   return (
                     <Child
+                      hidden={hidden}
                       {...properties}
                       // object items 关闭的时候
                       onChangeValue={(val: any, type?: string) => {

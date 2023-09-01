@@ -3,5 +3,7 @@ export { default as EditorResourceState } from './Resource';
 export { default as EditorWorkspaceState } from './Workspace';
 export { default as EditorWorkspacePanelState } from './WorkspacePanel';
 export { default as EditorFeedbackState } from './Feedback';
+export { default as EditorFormerState } from './Former';
 
 export { default as EditorMetaDataState } from './MetaData';
+

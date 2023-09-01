@@ -15,13 +15,16 @@ export default abstract class  Widget {
         let _key: string = key || _props.namespace || _props.key;
         
         if (this.placeholder) {
+            
             return (<Tooltip 
-                        placement="bottom" 
+                        placement="top" 
+                        mouseEnterDelay={0.3}
                         title={this.placeholder} 
-                        {...props} 
                         key={_key}
+                        trigger={['hover']}
+                        getPopupContainer={()=> {return document.body}}
                     >
-                        {this.renderChildren(props, _key)}
+                        <span className='ant-btn-wraper'>{this.renderChildren(props, _key)}</span>
                     </Tooltip>) 
         } else {
             return this.renderChildren(props, _key)

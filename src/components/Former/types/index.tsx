@@ -26,3 +26,4 @@ export { default as icon } from './icon';
 export { default as more } from './more';
 export { default as code } from './code';
 export { default as color } from './color';
+export { default as hidden } from './hidden';

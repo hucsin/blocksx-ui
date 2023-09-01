@@ -21,7 +21,6 @@ interface TFormerObjectItem {
     switch: boolean;
     collapse: boolean;
     value:any;
-
     colspan: any;
 }
 interface IFormerObjectItemS extends IFormerObjectItem {
@@ -31,6 +30,7 @@ interface IFormerObjectItemS extends IFormerObjectItem {
     onChangeValue: Function;
     'x-model-switch'?: boolean;
 
+    hidden?:boolean;
     children?: any;
 
 }

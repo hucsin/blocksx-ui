@@ -13,4 +13,28 @@
             border-top-color:#1677ff
         }
     }
+    box-sizing: border-box;
+    height:100%;
+    width: auto;
+    overflow: hidden;
+    padding-top: 37px;
+    > .ant-tabs {
+        position: relative;
+        height: 100%;   
+        .ant-tabs-nav {
+            position: relative;
+            margin-top: -37px;
+        }
+    }
+    
+    .ant-tabs-content-holder {
+        height: 0;
+        .ant-tabs-content {
+            height: 100%;
+            .ant-tabs-tabpane {
+                height: 100%;
+            }
+        }
+    }
+
 }

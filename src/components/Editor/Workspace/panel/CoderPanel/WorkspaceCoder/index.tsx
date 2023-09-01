@@ -9,7 +9,8 @@ import { EditorWorkspaceState } from '@blocksx/ui/Editor/states';
 
 
 import './style.scss';
-import './plugins/index'
+import './toolbar/index';
+import './editor/index'
 
 
 interface WorkspaceCoderProps {
@@ -22,7 +23,10 @@ export default class WorkspaceCoder extends StateComponent<WorkspaceCoderProps, 
     height: number;
     editorOptions?: any
 }>{
-    private staticNamespace: string = 'WORKSPACE.CODER.TOOLBAR';
+    private toolbarNamespace: string = 'WORKSPACE.CODER.TOOLBAR';
+    private configNamespace: string = 'WORKSPACE.CODER.CONFIG';
+    private editorNamespace: string = 'WORKSPACE.CODER.EDITOR';
+    
     private panelCanvas: any;
     private workspaceState: EditorWorkspaceState = StateX.findModel(EditorWorkspaceState);
     private editor:any ;
@@ -30,11 +34,13 @@ export default class WorkspaceCoder extends StateComponent<WorkspaceCoderProps, 
         super(props);
         this.state = {
             height: 0,
-            editorOptions: resourceManager.find([this.staticNamespace, 'CONFIG']) || {
+            editorOptions: resourceManager.find(this.configNamespace) || {
+                language: 'sql',
                 minimap: {
                     enabled: false
                 },
-                theme: 'vs'
+                theme: 'vs',
+                tabSize: 4
             }
         }
 
@@ -66,7 +72,7 @@ export default class WorkspaceCoder extends StateComponent<WorkspaceCoderProps, 
         let coderState: any = this.workspaceState.get(this.props.namespace);
         return (
              <div className='workspace-coder-panel' >
-                <Toolbar direction='horizontal' toolbar={this.staticNamespace} namespace={this.props.namespace} />
+                <Toolbar direction='horizontal' toolbar={this.toolbarNamespace} namespace={this.props.namespace} />
                 <div className='workspace-coder-panel-inner' ref={(ref)=> this.panelCanvas=ref}>
                     <MonacoEditor
                         
@@ -76,11 +82,13 @@ export default class WorkspaceCoder extends StateComponent<WorkspaceCoderProps, 
                         language="sql"
                         theme={this.state.editorOptions.theme || 'vs'}
                         value={coderState.getValue()}
-                        options={pluginManager.pipeline(this.staticNamespace, this.state.editorOptions, this)}
+                        options={this.state.editorOptions}
                         onChange={this.onChange}
                         editorDidMount={(editor)=> {
                             this.editor = editor;
                             coderState.setContext(this);
+                            
+                            pluginManager.pipeline(this.editorNamespace, this.state, this)
                         }}
                     />
                 </div>

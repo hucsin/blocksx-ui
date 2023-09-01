@@ -1,5 +1,6 @@
 import Plugin from '../Plugin';
 import { keypath, utils } from '@blocksx/core';
+import EditorContextMenuManger, { MenuItem } from './ContextMenu';
 
 type NamespaceType = string | string[];
 
@@ -65,7 +66,7 @@ class PluginManager {
         
         this.walk(namespace, (plugin: any) => {
 
-            if (plugin && plugin.hasPipeLine()) {
+            if (plugin &&  plugin.hasPipeLine()) {
                 let retv: any = plugin.pipeline(value, context);
                 // 插件可以修改原值,也可以不修改
                 if (retv) {
@@ -81,18 +82,20 @@ class PluginManager {
      * 获取 菜单
      * @param namespace 
      */
-    public getContextMenu(namespace: NamespaceType) {
-        let menu: any[] = [];
-        this.walk(namespace, (plugin: any) => {
-            if (plugin.hasContextMenu()) {
-                // 显示指定分组
-                if (menu.length>0) {
-                    menu.push(null)
-                }
-                menu = menu.concat(plugin.contextMenu)
-            }
-        })
-        return menu;
+    public getContextMenu(namespace: NamespaceType, playload?: any) {
+        return EditorContextMenuManger.filter(this.toCaseInsensitive(namespace), playload)
+    }
+    public registerContextMenu(namespace: NamespaceType,  menu:MenuItem[]) {
+        return EditorContextMenuManger.registorMenu(this.toCaseInsensitive(namespace), menu);
+    }
+    public doContextMenuAction(context: any, namespace: NamespaceType, type: string, playload: any) {
+        return EditorContextMenuManger.doAction(context, this.toCaseInsensitive(namespace), type, playload);
+    }
+    public registorContextMenuAction(name: string, action: Function) {
+        return EditorContextMenuManger.registorAction(name, action);
+    }
+    public findContextMenu(namespace: NamespaceType, key?: string) {
+        return EditorContextMenuManger.findContextMenu(this.toCaseInsensitive(namespace), key);
     }
     /**
      * 通过widgetName获取widget
@@ -142,6 +145,24 @@ class PluginManager {
             }
         });
         return widgets;
+    }
+
+    /**
+     * 渲染指定位置的widget
+     * @param namespace 
+     * @param direction 
+     * @returns 
+     */
+    public renderWidgetByDirection(namespace: NamespaceType, direction: string[]) {
+        let toolbar: any = this.getWidgetByDirection(namespace, direction)
+
+        return toolbar.map((it,i) => {
+            if (it) {
+                return it.render({key:i})
+            } else {
+                return null
+            }
+        });
     }
 
     /**
