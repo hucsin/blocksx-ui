@@ -51,6 +51,22 @@ export const replaceClassName = (dom: any ,sourceClass: any, targetClass?: strin
     
 }
 
+
+export const addClass = (dom: any , className: string) => {
+    if (dom) {
+        if (dom.className.indexOf(className) == -1) {
+            dom.className = [dom.className, className].join(' ')
+        }
+    }
+}
+
+export const removeClass = (dom: any, className: string) => {
+    if (dom) {
+        dom.className = dom.className.replace(className, '')
+    }
+}
+
+
 export const createEmptyElement = (className: any, nodeName = 'div')  => {
     let ele: any = document.createElement(nodeName);
 

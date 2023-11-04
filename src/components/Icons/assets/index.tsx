@@ -57,6 +57,11 @@ export { default as Edit } from './edit';
 export { default as Up } from './up';
 export { default as Down } from './down';
 
+
+export { default as Destory } from './destory';
+export { default as Unlink } from './unlink'
+
+
 export { default as DBQuery } from './dbquery';
 export { default as DBQueryMini } from './dbqueryMini'
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * @Descripttion: 
  * @Version: 1.0.0
@@ -6,7 +7,6 @@
  */
 //import jsplumb from 'jsplumb'
 const jsplumbs = require('./ps');
-
 
 
 export default jsplumbs;

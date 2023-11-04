@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * jsBezier
  *
@@ -584,7 +585,7 @@ var PLUMB_JS =  {};
             try {
                 var msg = arguments[arguments.length - 1];
                 console.log(msg);
-                console.trace();
+               // console.trace();
             }
             catch (e) {
                 //
@@ -658,6 +659,7 @@ var PLUMB_JS =  {};
                 return _this;
             };
             this.fire = function (event, value, originalEvent) {
+                
                 if (!this.tick) {
                     this.tick = true;
                     if (!this.eventsSuspended && this._listeners[event]) {
@@ -12512,6 +12514,7 @@ var PLUMB_JS =  {};
         // hand off fired events to associated component.
         var _f = this.fire;
         this.fire = function () {
+            
             _f.apply(this, arguments);
             if (this.component) {
                 this.component.fire.apply(this.component, arguments);
@@ -12520,6 +12523,7 @@ var PLUMB_JS =  {};
 
         this.detached=false;
         this.id = params.id;
+        
         // add by wangjian 
         this.dir = params.dir;
         this.dirIndex = -1;
@@ -12664,9 +12668,50 @@ var PLUMB_JS =  {};
             
             // 计算
             this.updatePlaceClass(p);
+            // add by wangjian
+            this.updatePlaceAngle();
+
             this._jsPlumb.div.style.left = (p.component.x + p.d.minx) + "px";
             this._jsPlumb.div.style.top = (p.component.y + p.d.miny) + "px";
+
         },
+        // add by wangjian
+        // 让custom overlay 旋转
+        updatePlaceAngle: function() {
+            if (this.type === 'Custom') {
+                let component = this.component;
+                let div  = this._jsPlumb.div;
+                let rotateAngle = this.getComponentConnectorAngle(
+                    jsPlumb.getOffset(component.source), 
+                    jsPlumb.getOffset(component.target)
+                );
+                // add by wangjian
+                // 旋转自定义图标
+                let ts =  `translate(-50%, -50%) rotate(${rotateAngle}deg)`
+                
+                div.style.webkitTransform = ts;
+                div.style.mozTransform = ts;
+                div.style.msTransform = ts;
+                div.style.oTransform = ts;
+                div.style.transform = ts;
+            }
+
+        },
+        // add by wangjian
+        getComponentConnectorAngle : function(pointA, pointB) {
+             // 计算两个点之间的横纵坐标差值
+            const deltaX = pointB.left - pointA.left;
+            const deltaY = pointB.top - pointA.top;
+
+            // 使用 Math.atan2 函数计算角度（弧度制）
+            const radians = Math.atan2(deltaY, deltaX);
+
+            // 将弧度制转换为角度制
+            const degrees = radians * (180 / Math.PI);
+
+            // 返回角度值
+            return degrees;
+        }, 
         updatePlaceClass: function(p) {
 
             if (this.type === 'Custom' && this.dir) {
@@ -12682,6 +12727,8 @@ var PLUMB_JS =  {};
                     this.dirIndex = dir;
                 }
 
+                
+                
             }
         }
     });

@@ -3,11 +3,15 @@ import { utils } from '@blocksx/core';
 
 import { EditorResourceState, EditorWorkspaceState } from '@blocksx/ui/Editor/states';
 import { StateX } from '@blocksx/ui/StateX';
-import { mysqlParser,IParseResult} from '@blocksx/db/sqlparser';
+import { SQLParser, ASTMetaReader } from '@blocksx/db/sqlparser';
+
+import CacheAST from './CacheAST';
+
+
 
 export default class EditorUtils {
     public static utilCache: any = {};
-    public static getUtil(editor: any) {
+    public static getUtil(editor: any):EditorUtils {
         if (!editor.cacheutilskey) {
             editor.cacheutilskey = utils.uniq('cache');
         }
@@ -20,13 +24,19 @@ export default class EditorUtils {
     private resourceState: any;
     private parseCache: any;
     private keywordsCache: any;
+
+    private tableListCache: any;
+    private tableFieldCache: any;
     
-    private workspaceState: EditorWorkspaceState = StateX.findModel(EditorWorkspaceState);
+    public workspaceState: EditorWorkspaceState = StateX.findModel(EditorWorkspaceState);
 
     public constructor(editor: any) {
         this.editor = editor;
         this.parseCache = {};
         this.keywordsCache = {};
+
+        this.tableListCache = {};
+        this.tableFieldCache = {};
     }
 
     public getResourceState() {
@@ -40,15 +50,26 @@ export default class EditorUtils {
         let columnGroup: any = children.filter(it => it.type == 'columnGroup');
         return columnGroup.length ? columnGroup[0].children || [] : []
     }
-    public getTableField(table: string) {
+    /**
+     * 获取表的字段
+     */
+    public getTableColumnList(table: string) {
+        let rootId: string = this.workspaceState.getCurrent().getRouterId();
         let tableList: any = this.getTableList();
-        let field: any[] = [];
-        tableList.forEach(it => {
-            if (it.name == table) {
-                field = field.concat(this.getTableColumnByGroup(it.children))
-            }
-        })
-        return field
+        let cacheKey: string = [rootId, table].join('.');
+
+        if (this.tableFieldCache[cacheKey]) {
+            return this.tableFieldCache[cacheKey];
+
+        } else {
+            let field: any[] = [];
+            tableList.forEach(it => {
+                if (this.ignoreCaseContrast(it.name ,table)) {
+                    field = field.concat(this.getTableColumnByGroup(it.children).map((field: any) => utils.toUpper(field.name)))
+                }
+            })
+            return this.tableFieldCache[cacheKey] = field
+        }
     }
 
 
@@ -73,20 +94,37 @@ export default class EditorUtils {
             if (this.parseCache[hashKey]) {
                 return this.parseCache[hashKey]
             }
-            return this.parseCache[hashKey] = mysqlParser(curretnValue, model.getOffsetAt(this.editor.getPosition()))
+            let parseAST: any = SQLParser.parser(curretnValue, 'mysql');
+
+            if (utils.isArray(parseAST)) {
+                return this.parseCache[hashKey] = ASTMetaReader.readStatement(parseAST);
+
+            } else {
+                return parseAST;
+            }
         }
     }
 
+    /**
+     * 
+     * @param onlyName 
+     * @returns 
+     */
     public getTableList(onlyName?: boolean) {
         let rootId: string = this.workspaceState.getCurrent().getRouterId();
-        let { table = [] } = this.getKeywordsByRootId(rootId)
+        let cacheKey: string = onlyName ? [rootId, 'name'].join('.') : rootId;
 
-        if (onlyName) {
-            return table.map(tb => {
-                return tb.name;
-            })
+        if (this.tableListCache[cacheKey]) {
+            return this.tableListCache[cacheKey];
+
+        } else {
+
+            let { table = [] } = this.getKeywordsByRootId(rootId)
+
+            return this.tableListCache[cacheKey] =  (onlyName ? table.map((tb: any) => {
+                return utils.toUpper(tb.name);
+            }) : table);
         }
-        return table;
     }
 
     /**
@@ -110,22 +148,15 @@ export default class EditorUtils {
         return this.editor.getValue();
     }
 
-    public setErrorMarkers (selections: any, message: any) {
-        if (!Array.isArray(selections)) {
-            selections = [selections];
-            message = [message];
-        }
-
-        monaco.editor.setModelMarkers(this.getModel(), 'sql', selections.map((position: any, index: number) => {
+    public setErrorMarkers (errorToken: any) {
+       
+        monaco.editor.setModelMarkers(this.getModel(), 'sql', errorToken.filter(it=>!!it.token).map((errorToken: any, index: number) => {
             return {
-                ...this.getSelectionByPosition(position),
-                message: message[index],
+                ...this.getSelectionByToken(errorToken.token),
+                message: errorToken.message,
                 severity: monaco.MarkerSeverity.Error
             }
         }))
-    }
-    public flushErrorMarkers() {
-        monaco.editor.setModelMarkers(this.getModel(), 'sql', []);
     }
     /**
      * 获取选中的值
@@ -142,6 +173,14 @@ export default class EditorUtils {
             endLineNumber,
             endColumn,
         })
+    }
+    /**
+     * 通过token获取选取位置
+     * @param token 
+     * @returns 
+     */
+    public getSelectionByToken(token: any) {
+        return this.getSelectionByPosition([token.start, token.start+token.text.length-1])
     }
     /**
      * 通过postion获取selection位置
@@ -204,5 +243,34 @@ export default class EditorUtils {
             lineNumber: startLineNumber,
             column: startColumn + text.length,
         })
+    }
+
+
+    public toCacheAST(stm: any):CacheAST {
+        return new CacheAST(stm, this);
+    }
+    /**
+     * 忽略大小写查找字符串数组里面是否具有某一项
+     * @param array 
+     * @param value 
+     * @returns 
+     */
+    public ignoreCaseFindArray(array: string[], value: string) {
+        let upperValue: string = utils.toUpper(value);
+
+        return array.find((it: any) => {
+            if (utils.toUpper(it) == upperValue) {
+                return true;
+            }
+        })
+    }
+    /**
+     * 忽略大小写比较是否一样
+     * @param leftValue 
+     * @param rightValue 
+     * @returns 
+     */
+    public ignoreCaseContrast(leftValue: string, rightValue:string) {
+        return utils.toUpper(leftValue) == utils.toUpper(rightValue)
     }
 }

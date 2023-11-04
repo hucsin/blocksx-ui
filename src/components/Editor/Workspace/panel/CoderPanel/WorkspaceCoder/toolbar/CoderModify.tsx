@@ -27,7 +27,7 @@
         let { editor } = this.workspaceState.getCurrentPanel().getContext();
 
         if (editor) {
-            editor.setValue(format(editor.getValue()))
+            editor.setValue(format(editor.getValue(), {language:'mysql'}))
         }
     }
     public render() {

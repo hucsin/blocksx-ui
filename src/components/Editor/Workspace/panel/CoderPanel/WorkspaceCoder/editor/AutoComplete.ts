@@ -7,7 +7,7 @@ import { language } from 'monaco-editor/esm/vs/basic-languages/sql/sql';
 import { utils } from '@blocksx/core';
 import EditorUtils from './EditorUtils';
 
-import { mysqlParser, StatementReader, ICursorInfo, ITableInfo, ICompletionItem, IStatement, IStatements } from '@blocksx/db/sqlparser';
+//import { mysqlParser, StatementReader, ICursorInfo, ITableInfo, ICompletionItem, IStatement, IStatements } from '@blocksx/db/sqlparser';
 
 const { keywords } = language
 
@@ -28,7 +28,7 @@ export default class AutoComplate extends PluginBase {
     }
     
     private registerCompletion() {
-
+/*
         monaco.languages.registerCompletionItemProvider('sql', {
             triggerCharacters: ['.', ...keywords],
             provideCompletionItems: async (model, position) => {
@@ -39,7 +39,7 @@ export default class AutoComplate extends PluginBase {
                     return this.editorUtil.markSuggestion([])
                 }
 
-                const cursorInfo: any = await StatementReader.getCursorInfo(parseResult.ast, parseResult.cursorKeyPath);
+                const cursorInfo: any = null//await StatementReader.getCursorInfo(parseResult.ast, parseResult.cursorKeyPath);
                 const parserSuggestion: any = this.pipeKeywords(parseResult.nextMatchings);
 
                 //this.catchError(parseResult);
@@ -50,13 +50,14 @@ export default class AutoComplate extends PluginBase {
 
                 switch (cursorInfo.type) {
                     case 'tableField':
-                        const cursorRootStatementFields = await StatementReader.getFieldsFromStatement(
+                        const cursorRootStatementFields = null /*await StatementReader.getFieldsFromStatement(
                             parseResult.ast,
                             parseResult.cursorKeyPath,
                             this.onSuggestTableFields,
-                        );
+                        );*/
 
                         // group.fieldName
+                        /*
                         const groups = utils.groupBy(
                             cursorRootStatementFields.filter(cursorRootStatementField => {
                                 return cursorRootStatementField.groupPickerName !== null;
@@ -167,6 +168,7 @@ export default class AutoComplate extends PluginBase {
                 };
             },
         });
+        */
     }
 
 
@@ -174,7 +176,7 @@ export default class AutoComplate extends PluginBase {
         return [a, b, c].filter(it => it).join('.')
     }
 
-
+    /*
     public onSuggestTableNames: (cursorInfo?: ICursorInfo<ITableInfo>) => Promise<ICompletionItem[]> = cursorInfo => {
 
         let table: any[] = this.editorUtil.getTableList();
@@ -185,7 +187,14 @@ export default class AutoComplate extends PluginBase {
                     label: it.name,
                     insertText: it.name,
                     sortText: `A${it.name}`,
-                    kind: monaco.languages.CompletionItemKind.Folder,
+                    //kind: monaco.languages.CompletionItemKind.Folder,
+                    kind: {
+                        value: monaco.languages.CompletionItemKind.Keyword, // 设置默认图标类型
+                        // 设置自定义图标，可以使用URL或CSS类
+                        custom: {
+                            iconClass: 'custom-icon-class' // 例如，使用CSS类来定义图标
+                        }
+                    }
                 };
             })
         ) as any;
@@ -282,5 +291,5 @@ export default class AutoComplate extends PluginBase {
                 value: `\`\`\`json\n${JSON.stringify(args, null, 2)}\n\`\`\``,
             },
         ]);
-    };
+    };*/
 }

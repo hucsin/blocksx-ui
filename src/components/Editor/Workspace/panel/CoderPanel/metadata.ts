@@ -16,8 +16,15 @@ export default class WorkspacePanelCoderMeta extends EditorWorkspacePanelState {
     }
     public getRouterId() {
         let router: any = this.getState('router');
+        
         if (router) {
             return router[router.length -1 ].id;
+        }
+    }
+    public getRouterLast() {
+        let router: any = this.getState('router');
+        if (router) {
+            return router[router.length - 1];
         }
     }
 }
