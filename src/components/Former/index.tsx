@@ -15,7 +15,7 @@ export interface ExtraContentType {
 }
 
 export interface FormerProps {
-  type?: string;
+  type?: 'drawer' | 'modal' | 'popover';
   value?: any;
   schema: any;
   extra?:  ExtraContentType;
@@ -37,6 +37,7 @@ export interface FormerProps {
   id?: any;
   title?: string;
   okText?: string;
+  cancelText?: string;
   width?: number;
   onClose?: Function;
   keep?: boolean;
@@ -60,6 +61,7 @@ interface FormerState {
   visible?: boolean;
   title?: string;
   okText?: string;
+  cancelText?: string;
   width?: number;
   id?: any;
 
@@ -77,7 +79,7 @@ interface FormerState {
 export default class Former extends React.Component<FormerProps, FormerState> {
   static defaultProps = {
     defaultClassify: '基础',
-    keep: true,
+    keep: false,
     size: 'small',
     viewer: false,
     autoclose: true,
@@ -89,14 +91,16 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
   public constructor(props: FormerProps) {
     super(props);
+    let { schema } = props;
     this.state = {
       type: props.type || 'default', // default, drawer, modal
       value: props.value || {},
-      schema: props.schema,
+      schema: schema,
       visible: props.visible,
       width: props.width,
-      title: props.title,
+      title: props.title || schema.title,
       okText: props.okText,
+      cancelText: props.cancelText,
       classify: this.splitClassifySchema(props.schema),
       classifyValue: {},
       classifyActiveKey: '0',
@@ -149,6 +153,11 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     if (newProps.okText != this.state.okText) {
       this.setState({
         okText: newProps.okText
+      })
+    }
+    if (newProps.cancelText != this.state.cancelText) {
+      this.setState({
+        okText: newProps.cancelText
       })
     }
     if (newProps.id != this.state.id) {
@@ -455,7 +464,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             }}
           >{this.props.children}</Popover>
         )
-      case 'model':
+      case 'modal':
         return (
           <Modal
             title={this.state.title || '编辑数据'}
@@ -492,7 +501,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
               >
                 {this.renderExtraContent()}
                 <Button  onClick={this.onCloseLayer} size={this.props.size as any} style={{ marginRight: 8 }}>
-                  取消
+                  {this.state.cancelText || '取消'}
                 </Button>
                 {!this.state.viewer ? <Button loading={this.state.loading} disabled={this.state.disabled} size={this.props.size as any} onClick={this.onSave} type="primary">
                   {this.state.okText || '确定'}

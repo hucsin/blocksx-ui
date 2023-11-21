@@ -15,11 +15,8 @@ export default class Chinampa {
     private inTime: number;
     private timer: any;
     private hitStep: number;
-    
-
     private inLeftPanel: any;
 
-    
     public constructor(miniFlow: any, panel: any, destoryPanel: any, unlinkPanel: any) {
         this.panel = panel;
         this.destoryPanel = destoryPanel;
@@ -33,28 +30,28 @@ export default class Chinampa {
     }
     private showPanel() {
 
-        addClass(this.panel, 'scenflow-show')
+        addClass(this.panel, 'chinampa-show')
 
     }
     private hidePanel() {
-        removeClass(this.panel, 'scenflow-show')
+        removeClass(this.panel, 'chinampa-show')
     }
     private calculatedSize() {
         this.panelRect = this.panel.getBoundingClientRect();
         this.canvasRect = this.canvas.getBoundingClientRect();
     }
     private isInRect(centerXY: any, rect: any) {
-        let offsetLeft:number = centerXY.left - rect.left + this.canvasRect.left + 60;
-        let offsetTop:number = centerXY.top - rect.top + this.canvasRect.top + 40;
-
-        return offsetLeft > 0 
-            && offsetLeft < rect.width + 100 
-            && offsetTop > 0 && offsetTop < rect.height + 80;
+        let offsetLeft:number = centerXY.left - rect.left //+ this.canvasRect.left ;
+        let offsetTop:number = centerXY.top - rect.top// + this.canvasRect.top ;
+        
+        return offsetLeft -20 > 0 
+            && offsetLeft < rect.width  +40
+            && offsetTop -20> 0 && offsetTop < rect.height + 40;
     }
     private hitDestoryOrUnlink(centerPos: any) {
-        let halfPanel:number = this.panelRect.left - this.canvasRect.left + this.panelRect.width/2;
+        let halfPanel:number = this.panelRect.left + this.panelRect.width/2;
         let inLeftPanel = halfPanel > centerPos.left;
-
+        
         // 计算在right的位置
         if (inLeftPanel === false) {
             let unlinkPositon: number = halfPanel + 8 + 30;
@@ -76,6 +73,7 @@ export default class Chinampa {
 
 
         this.hideDestoryOrUnlink();
+        this.removePanelFlicker()
         // destory
         addClass(this.inLeftPanel ? this.destoryPanel : this.unlinkPanel, 'chinampa-actived')
     }
@@ -134,13 +132,13 @@ export default class Chinampa {
 
             if (inPanel) {
                 if (!this.inPanel){
-                    addClass(this.panel, 'scenflow-dragging-active');
+                    addClass(this.panel, 'dragging-active');
                     
                     this.inPanel = true;
                 } 
                 this.hitDestoryOrUnlink(centerPos);
             } else {
-                removeClass(this.panel, 'scenflow-dragging-active');
+                removeClass(this.panel, 'dragging-active');
                 this.hideDestoryOrUnlink();
                 this.removePanelFlicker();
                 this.inLeftPanel = -1;
@@ -156,8 +154,10 @@ export default class Chinampa {
                 if (this.inLeftPanel == true) {
                     if (this.hitStep>0) {
                         //  删除
-                        this.distoryPanel();
-                        return this.miniFlow.dropDragNode(() => {});
+                        
+                        return this.miniFlow.dropDragNode(() => {
+                            this.distoryPanel();
+                        });
                     }
                 }
             }

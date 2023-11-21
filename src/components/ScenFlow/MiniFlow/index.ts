@@ -4,7 +4,10 @@ import { addClass, removeClass } from '../../utils/dom';
 import { addEvent } from '../../utils/dom'
 import Chinampa from './chinampa';
 import DraggableCanvas from './draggable';
+import PositioningCanvas from './positioning';
 import FormatCanvas from './format';
+
+import { IRect, IPointCoord } from './typing';
 /**
  * 一个极简交互的流程图绘制工具
  */
@@ -14,14 +17,14 @@ import JSPlumbTool from '../../utils/third-party/jsplumb';
 export type FLowNodeType = 'go' | 'router' | 'module' | 'control' | 'empty';
 
 
-interface ConnectorMap {
+export interface ConnectorMap {
     source: string;
     target: string;
     isLock?: boolean;
     isTemporary?: boolean;
 }
 
-interface FlowNodeMap {
+export interface FlowNodeMap {
     id: string;
     type: FLowNodeType;
     left: number,
@@ -54,13 +57,14 @@ export default class MiniFlow extends EventEmitter {
         ["Perimeter", { shape: 'Circle', rotation: '' }]
     ];
     private magnet: any = {
-        safeDistance: 100, // 安全距离, 右边方向
+        safeDistance: 20, // 安全距离, 右边方向
         safeAngle: 45, // 安全角度, 右边方向
         safeMinDiamond: 30,
         safeMaxDiamond: 200        
     };
     private temporaryRouterOffset: number;
     private canvas: any ;
+    private cavnasWrapper: any;
     private canvasPosition: any;
     private canvasZoom: number;
 
@@ -84,10 +88,14 @@ export default class MiniFlow extends EventEmitter {
     private instance: any;
 
     private canvasFormat: FormatCanvas;
+    public cavnasDraggable: any;
+    private canvasPositioning: PositioningCanvas ;
 
     public constructor(props: MiniFlowMap) {
         super();
+
         this.canvas = document.getElementById(props.canvas as string);
+        this.cavnasWrapper = this.canvas.parentNode;
         
         new Chinampa(this, props.chinampaPanel, 
             props.destoryChinampaPanel, 
@@ -119,7 +127,8 @@ export default class MiniFlow extends EventEmitter {
         });
 
         this.canvasFormat = new FormatCanvas(this);
-        new DraggableCanvas(this);
+        this.cavnasDraggable= new DraggableCanvas(this);
+        this.canvasPositioning = new PositioningCanvas(this)
 
         this.bindEvent();
         this.instance.batch(() => {
@@ -266,17 +275,24 @@ export default class MiniFlow extends EventEmitter {
      * 添加临时的router节点
      * @param isTemporary 
      */
-    private addTemporaryRouterNode(nodeId) {
+    private addTemporaryRouterNode(nodeId: string) {
         
         let routerNodeId: string = utils.uniq('router');
         let sourceNode: any = this.getNodeById(nodeId);
+        let linePoint: any 
         let targetsNode: any = this.getConnectorBySourceId(nodeId)[0];
-        let targetNode: any = this.getNodeById(targetsNode.target);
-        let linePoint: any = this.getLinePointByTargetSource(sourceNode.left, sourceNode.top, targetNode.left, targetNode.top)
-
+        if (targetsNode) {
+            let targetNode: any = this.getNodeById(targetsNode.target);
+            linePoint= this.getLinePointByTargetSource(sourceNode.left, sourceNode.top, targetNode.left, targetNode.top)
+        } else {
+            linePoint = {
+                top: sourceNode.top,
+                left: sourceNode.left + this.size * 2
+            }
+        }
         let tempRouterNode: any = Object.assign({
             id: routerNodeId,
-            isTemporary:true,
+            isTemporary: true,
             left: linePoint.left,
             top: linePoint.top
         }, this.templateMap.router || {})
@@ -343,18 +359,76 @@ export default class MiniFlow extends EventEmitter {
 
 
     private getSafeDistanceSwwitchNode(activate: any, holder: any, halfSize: number, safeDistance: number,pointX: number, pointY: number) {
+        let node: any  = holder.type == 'append' ? this.getNodeById(this.dragTarget.tempRouterId) : holder.node;
         
-        let node: any  = holder.type == 'append' 
-            ? this.getNodeById(this.dragTarget.tempRouterId) : holder.node;
-      
-        let holderCenterX: number = node.left + halfSize;
-        let holderCenterY: number = node.top + halfSize;
-        let holderDistance: number = Math.sqrt(Math.pow(pointX - holderCenterX, 2) + Math.pow(pointY - holderCenterY, 2));
+        if (this.dragTarget.tempRouterId || node.type == 'router'){
+        
+            let holderCenterX: number = node.left + halfSize;
+            let holderCenterY: number = node.top + halfSize;
+            let holderDistance: number = Math.sqrt(Math.pow(pointX - holderCenterX, 2) + Math.pow(pointY - holderCenterY, 2));
 
-        if (holderDistance< safeDistance * 2.5) {
-            activate.push(holder)
+            if (holderDistance< safeDistance + 1 * this.size) {
+            //  console.log(holder, 'append')
+                activate.push(holder)
+            }
         }
     }
+    private getDistanceByNode(node: any, pointX: number, pointY: number) {
+        let halfSize: number = this.getSize(true);
+        let centerX: number = node.left + halfSize;
+        let centerY: number = node.top + halfSize;
+        return  Math.sqrt(Math.pow(pointX - centerX, 2) + Math.pow(pointY - centerY, 2));
+        
+    }
+    private getDistanceAgleByNode(node: any, pointX: number, pointY: number) {
+        let halfSize: number = this.getSize(true);
+        let centerX: number = node.left + halfSize;
+        let centerY: number = node.top + halfSize;
+        return Math.PI - Math.atan2(pointY - centerY, pointX - centerX);
+    }
+    private getDistanceTypeIgnoreRouter(config: any, sourceTargets: any[], pointX: any, pointY: any) {
+
+        if(sourceTargets.length == 0) {
+            let { node } = config;
+
+            if (this.dragNode.type =='go') {
+                // 两个开始相组合,生成router节点
+                if (node.type =='go') {
+                    return {
+                        ...config,
+                        
+                        type: 'append'
+                    }
+                }
+            }
+
+            return {
+                ...config,
+                type: 'connector'
+            }
+        } 
+        // 如果只有一个目标,切这个目标是路由节点
+        
+        if (sourceTargets.length == 1) {
+            let routerNode: any = this.getNodeById(sourceTargets[0].target);
+            if (routerNode.type =='router') {
+                
+                return {
+                    ...config,
+                    type: 'connector',
+                    node: routerNode,
+                    distance: this.getDistanceByNode(routerNode, pointX, pointY)
+                }
+            }
+        } 
+
+        return {
+            ...config,
+            type: 'append'
+        }
+        
+    }
+
     /**
      * 获取在安全距离内节点
      * @param id 
@@ -363,52 +437,56 @@ export default class MiniFlow extends EventEmitter {
     private getSafeDistanceNodes(pos: number[]) {
         let halfSize: number = this.getSize(true);
         let pointX: number = pos[0] + halfSize;
-        let safeDistance: number = this.magnet.safeDistance;
+        let safeDistance: number = Math.max(this.size + this.magnet.safeDistance, this.size + 10);
         let pointY:number = pos[1] + halfSize;
         let activate:any = [];
         // 如果存在拖动对象
         if (this.dragTarget) {
             let { holder } = this.dragTarget;
             if (holder.node) {
-                this.getSafeDistanceSwwitchNode(activate, holder, halfSize, safeDistance,pointX, pointY)
+                
+                this.getSafeDistanceSwwitchNode(activate, holder, halfSize, safeDistance, pointX, pointY)
             }
         }
-        
+       
         activate.length == 0 && this.nodes.forEach(it => {
 
             if (it.id == this.dragNodeId || it.isTemporary) {
+                
                 return;
             }
 
-            let centerX: number = it.left + halfSize;
-            let centerY: number = it.top + halfSize;
-            let distance: number = Math.sqrt(Math.pow(pointX - centerX, 2) + Math.pow(pointY - centerY, 2));
-            
+            let distance: number = this.getDistanceByNode(it, pointX, pointY)//
             let sourceTargets: any = this.getConnectorBySourceId(it.id);
+            
             // router  节点判断安全距离均为添加新节点
             if (it.type =='router') {
-                if (distance < safeDistance ) {
+            
+                if (distance < this.size + 10 ) {
                     activate.push({type: 'connector', distance, node: it})
                 }
+
+
             } else {
                 // 在圆里面, 强制添加
+                
                 if (distance < halfSize) {
-                    activate.push({type: sourceTargets.length ? 'append' : 'connector', distance, node: it});
+                    activate.push(this.getDistanceTypeIgnoreRouter({distance, node: it}, sourceTargets, pointX, pointY));
 
                 // 在角度里面
                 } else {
-                    let angle: number = Math.PI - Math.atan2(pointY - centerY, pointX - centerX);
+                    let angle: number = this.getDistanceAgleByNode(it, pointX, pointY)//
                     
                     // 如果没有source节点就增加响应区范围
-                    if (sourceTargets.length == 0) {
-                        safeDistance += (this.getSize() );
-                    }
+                   // let _safeDistance =  sourceTargets.length == 0 ? safeDistance + this.getSize() : safeDistance  ;
+                    
 
-                    if ( distance < safeDistance 
+                    if ( distance < safeDistance + this.size/2
                             && angle >= this.safeStartAngle 
                             && angle <= this.safeEndAngle ) {
                         
-                        activate.push({type: sourceTargets.length == 0 ? 'connector' : 'append', distance, node: it})
+                        //activate.push({type: sourceTargets.length == 0 ? 'connector' : 'append', distance, node: it})
+                        activate.push(this.getDistanceTypeIgnoreRouter({distance, node: it}, sourceTargets, pointX, pointY))
                     }
                 }
             }
@@ -602,7 +680,7 @@ export default class MiniFlow extends EventEmitter {
                 ["Custom", {
                     create:function(component) {
                     let custom: any = document.createElement('div');
-                    custom.className = 'scenflow-overlays-arrow';
+                    custom.className = 'overlays-arrow';
                     return custom;
                     },
                     location:0,
@@ -662,14 +740,16 @@ export default class MiniFlow extends EventEmitter {
                     // 没有路由 如果是没有节点就直接链接新节点
                     // 获取节点
                     let sourceNodes: any = this.getConnectorBySourceId(node.id);
+                    
                     if (sourceNodes.length) {
                         placeholder.type = 'append';
                     } else {
-                        return  {
+                        placeholder.switchEndpoint = dragGo;
+                        /*return  {
                             type: 'connector',
                             switchEndpoint: dragGo , // 
                             node: node
-                        };
+                        };*/
                     }
                 }
             } else if (node.type == 'router') {
@@ -773,7 +853,7 @@ export default class MiniFlow extends EventEmitter {
      */
     private batchDescendantNodeBackward(nodeId: string, sourceId: string, isTemporary?: boolean) {
 
-        let offset: any = { left: 0, top: 0 };
+        let offset: IPointCoord = { left: 0, top: 0 };
         let sourceNode: any = this.getNodeById(sourceId);
         let connector: any = this.getConnectorBySourceId(nodeId, true)[0] || {} ;
         let targetNode: any = this.getNodeById(connector.target);
@@ -810,12 +890,14 @@ export default class MiniFlow extends EventEmitter {
                 // 在节点后面增加router节点
                 case 'append':
                     let dragNodeId: string = this.dragNodeId;
+                    
                     // 新增临时router节点
                     let tempRouterId: string = dragTarget.tempRouterId 
                             ? dragTarget.tempRouterId  : dragTarget.tempRouterId = this.addTemporaryRouterNode(holder.node.id)
                     let targetNodes: any = dragTarget.targetNodes 
                             ? dragTarget.targetNodes : dragTarget.targetNodes = this.getSourceTargetListConnectorByNodeId(holder.node.id);
                     
+
                     // 获取目标节点的路径节点
                     // 批量lock掉所有的原始节点
                     setTimeout(() => {
@@ -823,15 +905,23 @@ export default class MiniFlow extends EventEmitter {
                         // 建立目标节点到临时router节点的链接
                         this.addConnectorBySourceTarget(holder.node.id, tempRouterId, isTemporary);
                         // 批量建立所有的临时节点
-                        this.batchAddConnectorByNodeId(tempRouterId, targetNodes, isTemporary);
-                        this.addConnectorBySourceTarget(tempRouterId, dragNodeId, isTemporary);
-                        
+                        targetNodes.length && this.batchAddConnectorByNodeId(tempRouterId, targetNodes, isTemporary);
+
+                        if (holder.switchEndpoint ) {
+                            this.addConnectorBySourceTarget( dragNodeId, tempRouterId, isTemporary);
+                        } else {
+                            this.addConnectorBySourceTarget(tempRouterId, dragNodeId, isTemporary);
+                        }
+
                         // 节点后移动化
                         this.batchDescendantNodeBackward(tempRouterId, holder.node.id, isTemporary);
                         
-                        isTemporary 
-                            ? this.batchLockConnectorByNodeId(holder.node.id, targetNodes)
-                            : this.batchRemoveConnectorByNodeId(holder.node.id, targetNodes);
+                        if (isTemporary) {
+                            this.batchLockConnectorByNodeId(holder.node.id, targetNodes)
+                        } else {
+                            this.batchRemoveConnectorByNodeId(holder.node.id, targetNodes);
+                            tempRouterId && this.updateNodeById(tempRouterId, { isTemporary : false})
+                        }
                         
                         cb && cb();
                     }, 0);
@@ -975,11 +1065,11 @@ export default class MiniFlow extends EventEmitter {
     }
     
     private findOffsetNodes (left: number, top: number) {
+    
         return this.nodes.filter((it) => {
-
             return (it.left - this.size < left) && (['go','router'].indexOf(it.type) > -1 || this.getConnectorBySourceId(it.id).length == 0 )
         }).map(it => {
-            let distance=  Math.sqrt(Math.pow(it.left - left, 2) + Math.pow(it.top - top, 2));
+            let distance=  Math.sqrt(Math.pow(left-it.left, 2) + Math.pow(top-it.top, 2));
             
             if (it.type == 'go') {
                 let router: any = this.findRouterConnectorByNodeId(it.id)
@@ -997,35 +1087,19 @@ export default class MiniFlow extends EventEmitter {
             }
         }).sort((a, b) => {
             return a.distance > b.distance ? 1 : -1;
-        })
+        });
     }
 
     private addNewNodeByPosition (pageX: number, pageY: number) {
-        let canvasOffset: any = {left :this.canvas.offsetLeft, top: this.canvas.offsetTop, width: this.canvas.offsetWidth, height: this.canvas.offsetHeight};
-        let canvasRect: any = this.canvas.getBoundingClientRect();
-        
-
-        let offsetNodes: any = this.findOffsetNodes(pageX - canvasRect.left, pageY - canvasRect.top);
         let newNodeId: any = utils.uniq('module');
-        // 点击点位置
-        let pointerLeft: any = pageX - canvasOffset.left ;//- this.size/2;
-        let pointerTop: any = pageY - canvasOffset.top;// -this.size/2;
-        // 点击点所在中心点位置
-        let centerLeft: any = canvasOffset.left + canvasOffset.width / 2;
-        let centerTop: any = canvasOffset.top + canvasOffset.height / 2;
-
-        let zoomCenterLeft: any = canvasRect.width / 2 + canvasRect.left;
-        let zoomCenterTop: any = canvasRect.height/2 + canvasRect.top;
-
-        let zoomPointerLeft: any =(pointerLeft - centerLeft)/ this.getZoom() + zoomCenterLeft;
-        let zoomPointerTop: any = (pointerTop - centerTop) / this.getZoom() + zoomCenterTop;
-        
+        let shadowPoint: any = this.canvasPositioning.getOriginalShadowPointByPageXY(pageX, pageY);
+        let offsetNodes: any = this.findOffsetNodes(shadowPoint.left - this.size/2, shadowPoint.top - this.size/2);
 
         this.addNewNode(Object.assign({}, this.templateMap.new || {}, {
             id: newNodeId,
             isNew: true,
-            left: zoomPointerLeft - this.getSize(true),
-            top: zoomPointerTop - this.getSize(true)
+            left: shadowPoint.left - this.size/2,
+            top: shadowPoint.top - this.size/2
         }), (nodeConfig: any) => {
             // 建立链接
             
@@ -1039,8 +1113,6 @@ export default class MiniFlow extends EventEmitter {
                 }
             }
         });
-        
-        
     }
     /******************
      * 以下为公共接口区
@@ -1053,7 +1125,7 @@ export default class MiniFlow extends EventEmitter {
             addClass(node, 'showed');
             setTimeout(()=> {
                 removeClass(node, 'showed');
-                removeClass(node, 'scenflow-node-new');
+                removeClass(node, 'node-new');
                 // 建立连线
                 cb && cb(config);
                 this.doChangeSave();
@@ -1065,16 +1137,31 @@ export default class MiniFlow extends EventEmitter {
         
         if (this.dragNodeId) {
             
-            let dropConnector: any = dir == 'right' 
-                ? this.getConnectorBySourceId(this.dragNodeId) 
-                : dir == 'left' ? this.getConnectorByTargetId(this.dragNodeId) : this.getConnectorIdsByNodeId(this.dragNodeId);
+            let sourceNodes: any = this.getConnectorBySourceId(this.dragNodeId);
+            let targetNodes: any = this.getConnectorByTargetId(this.dragNodeId)
             
+            let dropConnector: any = dir == 'right'  
+                ? sourceNodes : dir == 'left' 
+                    ? targetNodes : this.getConnectorIdsByNodeId(this.dragNodeId);
+            
+
             this.removeTemporaryConnector();
+
 
             dropConnector.forEach(it => {
                 this.removeConnectorBySourceTarget(it.source, it.target);
                 this.removeConnectorNodeBySourceTarget(it.source, it.target);
             });
+
+
+            // 如果是删除两根线条,自动链接
+            if ( dir == 'middle') {
+                if (sourceNodes.length == 1 && targetNodes.length == 1) {
+                    
+                    this.addConnectorBySourceTarget(targetNodes[0].source,  sourceNodes[0].target, false);
+                }
+            }
+
             this.reflushDragNode();
             !nosave && this.doChangeSave();
         }
@@ -1083,8 +1170,9 @@ export default class MiniFlow extends EventEmitter {
         if (this.dragNodeId) {
             //this.removeConnectorByNodeId(this.dragNodeId);
             this.dropConnectorByDragNode('middle',true);
-            this.removeNodeById(this.dragNodeId);
+            
             this.dropNodeById(this.dragNodeId, () => {
+                this.removeNodeById(this.dragNodeId);
                 cb && cb();
                 this.doChangeSave();
             });
@@ -1094,11 +1182,10 @@ export default class MiniFlow extends EventEmitter {
 
 
 
-    public recursiveChildrenFormat(nodeId: string) {
-        let node: any = this.getNodeById(nodeId);
-
-    }
     public doFormatNodeCanvas() {
        this.canvasFormat.format();
+    }
+    public doZoomNodeCanvas() {
+       this.canvasFormat.zoomFit();
     }
 }

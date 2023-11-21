@@ -11,7 +11,7 @@ const babelConfig = require('../../babel.config')();
 
 module.exports = function(ignoreModule) {
   const envOpt = {
-    loose: true,
+    loose: false,
   };
 
   if (ignoreModule) {

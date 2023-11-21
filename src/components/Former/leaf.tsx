@@ -220,7 +220,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         this.setState({
           validationState: false
         })
-      }, 2000)
+      }, 4000)
 
       cb(!msg, msg);
     })
@@ -824,7 +824,9 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             runtimeValue={this.state.runtimeValue}
             disabled={!this.isAllowModify()}
             onChangeValue={(val: any, type?: string, originValue?: any) => this.onChangeValue(val, type, originValue)}
-          /></span>
+          />
+            {this.state.validationMessage && <span className='former-error-message'>{this.state.validationMessage}</span>}
+          </span>
         </Popover>
       )
     }

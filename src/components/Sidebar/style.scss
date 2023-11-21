@@ -64,23 +64,24 @@
 
 .hoofs-sidebar-fold {
     width: 60px;
-    .side-header-fold {
+    .hoofs-sidebar-header-fold {
         display:none;
     }
     dt {
         display:none;
     }
-    .side-header:hover {
-        .side-header-icon {
+    
+    .hoofs-sidebar-header:hover {
+        .hoofs-sidebar-header-icon {
             display: none;
         }
-        .side-header-fold-open {
+        .hoofs-sidebar-header-fold-open {
             right: auto !important;
             left: -8px;
             display: block !important;
         }
     }
-    .side-header-title {
+    .hoofs-sidebar-header-title {
 
         >span,
         >p {
@@ -96,6 +97,8 @@
     color:#C7D2FE;
     font-size:14px;
     position: relative;
+
+    
 
     &.hoofs-sidebar-fold {
         width: 60px;
@@ -128,6 +131,7 @@
             padding-left: 8px;
             padding-bottom: 8px;
             color:#818CEE;
+            text-transform: capitalize;
         }
         
         dd {
@@ -151,6 +155,7 @@
             }
             .hoofs-sidebar-menu-text {
                 padding-left: 8px;
+                text-transform: capitalize;
             }
             .hoofs-sidebar-tool {
                 position: absolute;

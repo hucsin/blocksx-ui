@@ -9,6 +9,8 @@ export interface SidebarMenuItem {
     key: React.Key;
     name: String;
 
+    autoFold?: boolean;
+
     icon: String;
     group?: String;
 

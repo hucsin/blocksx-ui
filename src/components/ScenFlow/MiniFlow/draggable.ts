@@ -34,7 +34,7 @@ export default class CanvasDraggle {
             left: 0,
             top: 0
         };
-        this.zoomMinNumber = 0.3;
+        this.zoomMinNumber = 0.02;
         this.zoomMaxNumber = 2;
         this.init();
     }
@@ -90,7 +90,7 @@ export default class CanvasDraggle {
         if (postion.transform) {
             this.canvas.style.transform = postion.transform;
         }
-
+        this.diagram.setPosition(postion);
     }
     private canvasDrag = (event: any) => {
 

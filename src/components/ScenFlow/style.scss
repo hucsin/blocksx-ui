@@ -5,10 +5,13 @@
     left: 0;
     height: 100%;
     background-color: #ffcc;
+
 }
+
 .scenflow-draggle-wrapper {
     width: 100%;
     height: 100%;
+    
 }
 .flow {
     position: absolute;
@@ -139,7 +142,7 @@
     z-index: 1;
     opacity: 0;
     transition: opacity .2s ;
-    &.scenflow-show {
+    &.chinampa-show {
         opacity: 1;
         z-index: 100;
     }
@@ -209,6 +212,7 @@
     }
 
     &.scenflow-dragging-active {
+        height: 80px;
         .scenflow-response-item {
             width: 120px;
             height: 80px;

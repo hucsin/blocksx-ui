@@ -35,7 +35,7 @@ export { default as Inbox } from './inbox';
 export { default as Scheduled } from './scheduled';
 export { default as Setting } from './setting';
 export { default as AccessToken } from './accessToken';
-export { default as Bytehubs } from './bytehubs';
+
 export { default as Datasource } from './datasource';
 export { default as Variable } from './variable';
 export { default as Monitor } from './monitor';
@@ -61,9 +61,9 @@ export { default as Down } from './down';
 export { default as Destory } from './destory';
 export { default as Unlink } from './unlink'
 
-
+export { default as Bytehubs1 } from './bytehubs';
 export { default as DBQuery } from './dbquery';
-export { default as DBQueryMini } from './dbqueryMini'
+export { default as Bytehubs } from './dbqueryMini'
 
 export { default as DsSetting } from './DsSetting';
 export { default as DsAdd } from './DsAdd';
@@ -75,5 +75,29 @@ export { default as Query } from './query';
 export { default as MySQL } from './mysql';
 export { default as PostgreSQL } from './postgresql';
 
+export { default as IAPI } from './api';
+export { default as IDataPipeline } from './DataPipeline';
+
+export { default as IUser } from './user';
+export { default as IDocument } from './document';
+export { default as ICharging } from './charging';
+export { default as IHelp } from './help';
+export { default as IArrowBack } from './arrowBack';
+export { default as IAutoZoom } from './autoZoom';
+export { default as IAutoAlign } from './autoAlign';
+export { default as IPublish } from './publish';
+export { default as IStatistics } from './statistics';
+
+export { default as IConnections } from './connections';
+
+export { default as IActivated } from './activated';
+export { default as IDactivated } from './deactivated';
+export { default as IWorkflow } from './workflow';
+export { default as IRemoting } from './remoting';
+export { default as IRun } from './run'
+export { default as ISwitchOpen } from './switchOpen';
+
+export { default as IDataTransfer} from './dataTransfer';
+export { default as IRunLog } from './runLog'
 
 

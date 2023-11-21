@@ -382,6 +382,9 @@ module.exports = function (webpackEnv) {
               test: /\.svg$/,
               use: [
                 {
+                  loader: 'svg-inline-loader'
+                },
+                {
                   loader: require.resolve('@svgr/webpack'),
                   options: {
                     prettier: false,
@@ -392,16 +395,16 @@ module.exports = function (webpackEnv) {
                     titleProp: true,
                     ref: true,
                   },
-                },
+                }/*,
                 {
                   loader: require.resolve('file-loader'),
                   options: {
                     name: 'static/media/[name].[hash].[ext]',
                   },
-                },
+                },*/
               ],
               issuer: {
-                and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
+               // and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
               },
             },
             // Process application JS with Babel.
@@ -438,7 +441,7 @@ module.exports = function (webpackEnv) {
                     //-'babel-plugin-transform-jsx-stylesheet',
                     '@babel/plugin-syntax-dynamic-import',
                     'transform-react-jsx',
-                    //'babel-plugin-inline-react-svg'
+                   // 'inline-react-svg'
                   
                 ].filter(Boolean),
                 // This is a feature of `babel-loader` for webpack (not Babel itself).

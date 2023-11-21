@@ -74,6 +74,20 @@ export default class ScenFlow extends React.Component<{}, {
                     color: '#ffaacc',
                     left: 840,
                     top: 400
+                },
+                {
+                    id: 'f8',
+                    type: 'go',
+                    color: '#ffaacc',
+                    left: 840,
+                    top: 500
+                },
+                {
+                    id: 'f9',
+                    type: 'go',
+                    color: '#ffaacc',
+                    left: 840,
+                    top: 600
                 }
             ],
             connector: [
@@ -100,9 +114,11 @@ export default class ScenFlow extends React.Component<{}, {
 
         this.miniFlow = new MiniFlow({
             canvas: 'canvas',
+            
             unlinkChinampaPanel: this.unlinkPanel,
             destoryChinampaPanel: this.destoryPanel,
             chinampaPanel: this.responsePanel,
+
             templateMap: {
                 router: {
                     type: 'router',
@@ -121,28 +137,29 @@ export default class ScenFlow extends React.Component<{}, {
     }
     private bindEvent() {
         this.miniFlow.on('onChange', (data) => {
-            console.log(data)
 
             this.setState({
                 nodes: data.nodes,
                 connector: data.connector
             }, () => {
                 console.log('save-loocalstorage')
-                //localStorage.setItem('__data__', JSON.stringify(data))
+                localStorage.setItem('__data__', JSON.stringify(data))
             })
         })
     }
     
     public render() {
         return (<div className='scenflow-draggle-wrapper' draggable>
-            <div style={{position: 'absolute',left: 0,top: 0,zIndex: 22222222}}>
+            <div style={{position: 'absolute',padding: 10,left: 0,top: 0,zIndex: 22222222}}>
                 <button onClick={() => {
                     this.miniFlow.doFormatNodeCanvas()
                 }}>格式化</button>
-                <button>显示区</button>
+                <button onClick={()=> {
+                    this.miniFlow.cavnasDraggable.setZoom(.5)
+                }}>显示区</button>
                 
             </div>
-            <div style={{position:"absolute",zIndex:111,textAlign:'center',lineHeight:120,color:'#fff', width: 120,height: 120,background: '#ccc',left: 0,top:0}}>t</div>
+            <div style={{position:"absolute",padding: 10,zIndex:111,textAlign:'center',lineHeight:120,color:'#fff', width: 120,height: 120,background: '#ccc',left: 0,top:0}}>t</div>
             <div className={classnames({
                 'scenflow-response-wrapper': true
             })}
@@ -175,7 +192,7 @@ export default class ScenFlow extends React.Component<{}, {
                             'scenflow-node': true,
                             'scenflow-node-new': it.isNew
                         })} style={{ backgroundColor: it.color, left: it.left, top: it.top }} id={it.id}>
-                            <div >{it.id}<br />({it.left + 69}, {it.top + 69})</div>
+                            <div >{it.id}<br />({it.left}, {it.top})</div>
                         </div>
                     )
                 })}

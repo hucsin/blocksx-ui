@@ -6,6 +6,7 @@
  */
 import { IFormerValidation } from './typings';
 import { utils } from '@blocksx/core';
+import i18n from '@blocksx/i18n';
 
 class Validation {
   private regexpCache: any;
@@ -18,7 +19,7 @@ class Validation {
     if (validation.required) {
       // 验证必填
       if (!utils.isValidValue(value)) {
-        return callback('该字段必须填写')
+        return callback(i18n.t('This field must be filled in'))
       }
     }
     // 简单验证类型
@@ -38,7 +39,7 @@ class Validation {
     // 验证枚举
     if (!valided && validation.enum && utils.isArray(validation.enum)) {
       if (validation.enum.indexOf(value) > -1) {
-        return callback('该字段值不在允许范围')
+        return callback(i18n.t('The field value is not within the allowed range'))
       }
     }
     // 正则
@@ -56,10 +57,10 @@ class Validation {
       
       if (utils.isPromise(valid)) {
         return valid.then((valid: any) => {
-          callback(valid ? utils.isString(valid) ? valid : '该字段格式有误' : '')
+          callback(valid ? utils.isString(valid) ? valid : i18n.t('The format of this field is incorrect') : '')
         })
       } else {
-        return callback(valid ? utils.isString(valid) ? valid : '该字段格式有误' : '')
+        return callback(valid ? utils.isString(valid) ? valid : i18n.t('The format of this field is incorrect')  : '')
       }
     }
 
@@ -89,7 +90,7 @@ class Validation {
       let regexp = this.createRegexp(validation.pattern as any);
 
       if (!(value + '').match(regexp)) {
-        return '该字段格式不正确'
+        return i18n.t('The format of this field is incorrect')
       }
 
     } catch (e) {
@@ -99,13 +100,13 @@ class Validation {
   }
   private validNumber(value: any, validation: IFormerValidation) {
     if (!utils.isNumeric(value)) {
-      return '该字段必须是一个有效的数字';
+      return i18n.t('This field must be a valid number');
     }
 
     // 能不能整除
     if (validation.multipleOf) {
       if (value % validation.multipleOf !== 0) {
-        return `该字段值必须能被${validation.multipleOf}整除`;
+        return i18n.t(`The field value must be divisible by {multipleOf}`, {multipleOf:validation.multipleOf});
       }
     }
 
@@ -114,30 +115,33 @@ class Validation {
 
     if (validation.maximum) {
       if (value < minimum || value > maximum) {
-        return `该字段值必须在${minimum}-${maximum}之间`;
+        return i18n.t(`The field value must be between {minimum} and {maximum}`, {
+          minimum,
+          maximum
+        });
       }
     }
   }
   private validArray(value: any, validation: IFormerValidation) {
     if (!utils.isArray(value)) {
-      return '该字段需要是一个有效数组'
+      return i18n.t('This field needs to be a valid array')
     }
     let minItems = validation.minItems || 0;
     let maxItems = validation.maxItems || 1e10;
 
     if (value.length < minItems || value.length > maxItems) {
-      return `数组项必须在${minItems}-${maxItems}之间`;
+      return i18n.t(`The array must have {minItems}  to {maxItems} items`, {minItems,maxItems});
     }
   }
   private validString(value: any, validation: IFormerValidation) {
     if (!utils.isString(value)) {
-      return '该字段必须为字符串'
+      return i18n.t('This field must be a string')
     }
     let minLength = validation.minLength || 0;
     let maxLength = validation.maxLength || 1e10;
     // 验证字符串长度
     if (value.length < minLength || value.length > maxLength) {
-      return `字段长度需要在${minLength}-${maxLength}之间`;
+      return i18n.t(`Field length needs to be between {minLength} and {maxLength}`, {minLength, maxLength});
     }
   }
 }

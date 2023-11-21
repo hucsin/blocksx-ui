@@ -88,8 +88,9 @@ export interface IFormerBase {
     type: string, // 数据类型
     title?: string, // 数据项名称
     description?: string, // 数据项描述
+    tooltip?: string,// 数据项 描述
     defaultValue?: any, // 默认值
-    value:any,
+    value?:any,
     runtimeValue?: any;
 
     disabled?: boolean,
@@ -153,7 +154,7 @@ export interface IFormerControl {
 }
 
 export interface IFormerObjectItem extends IFormerBase {
-    value: any[],
+    value?: any[],
     "x-index"?: number, // 排序
     "x-group"?: string, // 分组
     "x-classify"?: string, // 分类信息
@@ -177,7 +178,7 @@ export interface IFormerObjectItem extends IFormerBase {
 export interface IFormerObject extends IFormerBase {
     type: 'object',
     title?: string,
-    value: any[],
+    value?: any,
     properties: {
         [props: string]: IFormerObjectItem
     }
@@ -185,7 +186,7 @@ export interface IFormerObject extends IFormerBase {
 
 export interface IFormerArray extends IFormerBase {
     type: 'array',
-    value: any[],
+    value?: any[],
     title?: string,
     items: IFormerBase
 }

@@ -51,7 +51,7 @@ const fixedWidth = str => {
   return strs.slice(0, -1).concat(lastString).join('\n');
 };
 
-function buildPackage(packagesDir, isBuildEs) {
+function buildPackage(packagesDir, dirPath, isBuildEs) {
   const srcDir = path.resolve(packagesDir);
   const pattern = path.resolve(srcDir, '**/*');
   const files = glob.sync(pattern, {nodir: true});
@@ -89,7 +89,7 @@ function buildPackage(packagesDir, isBuildEs) {
   }
 
   
-  files.forEach(file => buildFile(packagesDir, file, isBuildEs, esDir));
+  files.forEach(file => buildFile(packagesDir,dirPath, file, isBuildEs, esDir));
   
 
   process.stdout.write(`[  ${chalk.green('OK')}  ]\n`);
@@ -109,14 +109,14 @@ function getPackages(packagesDir, customPackages) {
     .filter(f => fs.lstatSync(path.resolve(f)).isDirectory());
 }
 
-function buildFile(packagesDir, file, isBuildEs, esDir) {
+function buildFile(packagesDir, dirPath, file, isBuildEs, esDir) {
   const BUILD_DIR = isBuildEs ? esDir : 'lib';
   const packageName = path.relative(packagesDir, file).split(path.sep)[0];
   
   const packageSrcPath = path.resolve(packagesDir, packageName, SRC_DIR);
-  const packageBuildPath = path.resolve(packagesDir, packageName, BUILD_DIR);
-  const relativeToSrcPath = path.relative(packageSrcPath, file).replace(/(\.js|\.ts|\.tsx)$/, '.js');
-
+  const packageBuildPath = path.resolve(dirPath, BUILD_DIR, path.relative(packagesDir, file));
+  const relativeToSrcPath = packageBuildPath.replace(/(\.js|\.ts|\.tsx)$/, '.js');
+  
   const destPath = path.resolve(packageBuildPath, relativeToSrcPath);
 
   let babelOptions;
@@ -125,8 +125,6 @@ function buildFile(packagesDir, file, isBuildEs, esDir) {
   } else {
     babelOptions = getBabelConfig();
   }
-  console.log(babelOptions, 333)
-
   spawnSync('mkdir', ['-p', path.dirname(destPath)]);
   if (!minimatch(file, IGNORE_PATTERN)) {
 
@@ -143,7 +141,7 @@ function buildFile(packagesDir, file, isBuildEs, esDir) {
 }
 
 // const packagesDir = path.resolve(__dirname, '../packages');
-module.exports = function compile(packagesName, isBuildEs) {
+module.exports = function compile(packagesName, packagedir, isBuildEs) {
   const packagesDir = path.resolve(__dirname, `../${packagesName}`);
   const packages = getPackages(packagesDir, customPackages);
   
@@ -167,8 +165,7 @@ module.exports = function compile(packagesName, isBuildEs) {
     });*/
   } else {
     process.stdout.write(chalk.bold.inverse('Compiling packages\n'));
-    
-    buildPackage(packagesDir, isBuildEs);
+    buildPackage(packagesDir, packagedir, isBuildEs);
     
     process.stdout.write('\n');
   }

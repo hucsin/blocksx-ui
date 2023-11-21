@@ -6,7 +6,9 @@
         }
     }
     .ant-message-notice-content {
-        min-width: 180px;
+        min-width: 240px;
+        padding: 16px !important;
+        
     }
 }
 .hoofs-pick-content {
@@ -16,12 +18,19 @@
         color:#333;
         margin: 0;
         padding: 0;
-        padding-bottom: 4px;
+        padding-bottom: 8px;
 
     font-weight: 400;
     }
     .ant-select  {
         width: 100%;
+    }
+    .hoofs-pick-buttons {
+        text-align: right;
+        text-transform:capitalize;
+        button {
+            margin-left: 8px;;
+        }
     }
 }
 .hoofs-pick-mask {

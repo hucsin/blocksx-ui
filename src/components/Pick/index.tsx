@@ -1,6 +1,6 @@
 import React from  'react';
 import ReactDOM from 'react-dom';
-import { message, Select } from 'antd';
+import { message, Select, Button } from 'antd';
 
 import { utils } from '@blocksx/core';
 
@@ -15,12 +15,19 @@ interface PickOption {
 }
 
 interface PickProps {
-
-    option: PickOption[];
+    type: 'option' | 'confirm';
+    option?: PickOption[];
     value?: string;
     visible?: boolean;
     onChange?: Function;
+    onConfirm?: Function;
+    onHidden?: Function;
 
+    okText?: string;
+    cancelText?: string;
+    danger?: boolean;
+
+    maskClosable?: boolean;
     title?: string;
 }
 
@@ -31,6 +38,12 @@ interface PickState {
 }
 
 export default class Pick extends React.Component<PickProps, PickState> {
+    static defaultProps: any = {
+        maskClosable: true,
+        type: 'option',
+        okText: 'Confirm',
+        cancelText: 'Cancel'
+    }
     private uuid: any ; 
     private visible: boolean;
     public constructor(props: PickProps) {
@@ -39,7 +52,7 @@ export default class Pick extends React.Component<PickProps, PickState> {
         this.state = {
             visible: props.visible || false,
             value: props.value,
-            option: props.option
+            option: props.option || []
         }
         this.visible = false;
         this.uuid = utils.uniq('pick')
@@ -62,30 +75,53 @@ export default class Pick extends React.Component<PickProps, PickState> {
                 value: newProps.value
             })
         }
+        
+    }
+    private onConfirm() {
+        if (this.props.onConfirm) {
+            this.props.onConfirm();
+        }
+        this.hidePick(true);
+    }
+    private renderContent() {
+
+        if (this.props.type =='confirm') {
+            return (
+                <div className='hoofs-pick-buttons' >
+                    <Button size='small' onClick={()=> {this.hidePick(true)}}>{this.props.cancelText}</Button>
+                    <Button size='small' type='primary' danger={this.props.danger} onClick={()=>{this.onConfirm()}}>{this.props.okText}</Button>
+                </div>
+            )
+        }
+
+        return (
+            <Select
+                size='small'
+                showSearch
+                options={this.state.option.map((it) => {
+                    return {
+                        value: it.value || it.key,
+                        label: it.label || it.name
+                    }
+                })}
+                value ={this.state.value}
+                onChange={(v)=> {
+                    this.setState({
+                        value: v,
+                        visible: false
+                    })
+                    this.hidePick();
+                    this.props.onChange && this.props.onChange(v)
+                }}
+            ></Select>
+        )
     }
     public getPickOption() {
         
         return (
             <div className='hoofs-pick-content'>
                 <h4>{this.props.title}</h4>
-                <Select 
-                    size='small'
-                    options={this.state.option.map((it) => {
-                        return {
-                            value: it.value || it.key,
-                            label: it.label || it.name
-                        }
-                    })}
-                    value ={this.state.value}
-                    onChange={(v)=> {
-                        this.setState({
-                            value: v,
-                            visible: false
-                        })
-                        this.hidePick();
-                        this.props.onChange && this.props.onChange(v)
-                    }}
-                ></Select>
+                {this.renderContent()}
             </div>
         )
     }
@@ -107,15 +143,28 @@ export default class Pick extends React.Component<PickProps, PickState> {
             })
         }
     }
-    public hidePick() {
+    public hidePick(hide?:boolean) {
         message.destroy(this.uuid)
         this.visible = false;
+        hide && this.setState({
+            visible: false
+        })
+        
+        if (this.props.onHidden) {
+            this.props.onHidden();
+        }
     }
     public render() {
         if (this.state.visible) {
             return ReactDOM.createPortal(
                 <div 
                     className='hoofs-pick-mask'
+                    onClick={() => {
+                        if (this.props.maskClosable) {
+                            this.hidePick(true);
+                            
+                        }
+                    }}
                 ></div>,
                 document.body
             )

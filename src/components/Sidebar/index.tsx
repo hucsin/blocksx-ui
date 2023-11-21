@@ -17,6 +17,7 @@ export interface sidebarState {
     favorites?: SidebarMenuItem[];
     children?: MenuGroupCache[];
     folding: boolean;
+    foldState?: boolean;
     firstMenu: SidebarMenuItem;
 
     currentKey?: string;
@@ -35,12 +36,14 @@ export interface SidebarProps {
     onChange?: Function; 
 }
 
-export default class Sidebar extends React.Component<SidebarProps, sidebarState> {
+export default class Siderbar extends React.Component<SidebarProps, sidebarState> {
 
+    private menuMap: any;
 
     public constructor(props:SidebarProps) {
         super(props);
 
+        this.menuMap = {};
         let { menu, firstMenu, currentKey, children } = this.recombineGroupMenu(props.menu, '', props.currentKey);
         
         this.state = {
@@ -52,9 +55,11 @@ export default class Sidebar extends React.Component<SidebarProps, sidebarState>
             children
         }
         
-        this.onChange(currentKey, firstMenu);
+        
     }
-
+    public componentDidMount() {
+        this.onChange(this.state.currentKey, this.menuMap[this.state.currentKey as string]);
+    }
 
     private getFirstMenu(menu: any) {
         let firstCache: any = menu[0];
@@ -97,8 +102,10 @@ export default class Sidebar extends React.Component<SidebarProps, sidebarState>
             }
 
             if (parentKey) {
-                item.key = [parentKey, item.key].join('.')
+                item.key = [parentKey, item.key].join('.');   
             }
+            
+            this.menuMap[item.key] = item;
 
             if (!firstMenu && item.type != 'Shortcut') {
                 firstMenu = item;
@@ -126,7 +133,21 @@ export default class Sidebar extends React.Component<SidebarProps, sidebarState>
     }
 
     public onChange(currentKey:any, current:any) {
-        this.props.onChange && this.props.onChange(currentKey, current)
+        this.props.onChange && this.props.onChange(currentKey, current);
+        
+        if (current.autoFold) {
+            this.setState({
+                foldState: this.state.folding,
+                folding: true
+            })
+        } else {
+            if (this.state.foldState !== undefined) {
+                this.setState({
+                    folding: false,//this.state.foldState
+                    foldState: undefined
+                })
+            }
+        }
     }
 
     public goFirstMenu = ()=> {
@@ -135,6 +156,7 @@ export default class Sidebar extends React.Component<SidebarProps, sidebarState>
             currentKey: firstMenu.key as any,
             children: undefined
         })
+        this.onChange(firstMenu.key, firstMenu)
     }
     public onSelectMenu =(currentKey:string, it: any)=> {
         
@@ -178,6 +200,7 @@ export default class Sidebar extends React.Component<SidebarProps, sidebarState>
             >
                 <SideHeader onFoldSwitch={()=>{
                     this.setState({
+                        foldState: undefined,
                         folding: !this.state.folding
                     })
                 }}/>
@@ -187,7 +210,7 @@ export default class Sidebar extends React.Component<SidebarProps, sidebarState>
                         <dl>
                             <dd onClick={this.goFirstMenu}>
                                 <HoofsIcons.ArrowLeftOutlined/>
-                                <span className='hoofs-sidebar-menu-text'>{i18n.join('返回', this.state.firstMenu.name)} </span>
+                                <span className='hoofs-sidebar-menu-text'>{i18n.join('return', this.state.firstMenu.name)} </span>
                             </dd>
                         </dl>
                     }

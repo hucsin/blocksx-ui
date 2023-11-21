@@ -61,6 +61,7 @@ interface SplitPaneProps {
   size?: number | string
 }
 class SplitPane extends React.Component<SplitPaneProps> {
+  static Pane: any;
   constructor(props) {
     super(props);
 
