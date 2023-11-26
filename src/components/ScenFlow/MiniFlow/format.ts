@@ -194,47 +194,72 @@ export default class CanvasFormat {
         return bound;
     }
 
+    private needReset() {
+        return this.miniFlow.nodes.length == 0
+    }
+
+    public reset() {
+        this.miniFlow.cavnasDraggable.setZoom(1);
+        this.miniFlow.cavnasDraggable.setPosition({
+            left: 0,
+            top: 0
+        })
+    }
     /**
      * 缩放适配
      */
     public zoomFit() {
-        let bound: any = this.getObtainBoundaries();
-        let boundWidth: number = bound.right - bound.left + this.miniFlow.size;
-        let boundHeight: number = bound.bottom - bound.top + this.miniFlow.size;
+        if (this.needReset()) {
 
-        let canvasWidth:number = this.miniFlow.canvas.offsetWidth;// - this.miniFlow.size/2;
-        let canvasHeight: number = this.miniFlow.canvas.offsetHeight;// - this.miniFlow.size/2;
-        
-        let isWidthMax: boolean = boundWidth / boundHeight > canvasWidth / canvasHeight;
-        let scale: number = isWidthMax /*宽度大,*/
-                    ? canvasWidth / boundWidth : canvasHeight / boundHeight;
-        let wrapperHeight: number = this.miniFlow.cavnasWrapper.offsetHeight;
-        let wrapperWidth: number = this.miniFlow.cavnasWrapper.offsetWidth;
-        
-        this.miniFlow.cavnasDraggable.setZoom(scale)
-      
-        this.miniFlow.cavnasDraggable.setPosition({
-            left: -(boundWidth - wrapperWidth) * scale/2  + (-bound.left * scale), 
-            top: -(boundHeight  - wrapperHeight) * scale /2  + (-bound.top * scale)
-        })
+            this.reset();
 
+        } else {
+            let bound: any = this.getObtainBoundaries();
+            let boundWidth: number = bound.right - bound.left + this.miniFlow.size;
+            let boundHeight: number = bound.bottom - bound.top + this.miniFlow.size;
+
+            let canvasWidth:number = this.miniFlow.canvas.offsetWidth;// - this.miniFlow.size/2;
+            let canvasHeight: number = this.miniFlow.canvas.offsetHeight;// - this.miniFlow.size/2;
+            
+            let isWidthMax: boolean = boundWidth / boundHeight > canvasWidth / canvasHeight;
+            let scale: number = isWidthMax /*宽度大,*/
+                        ? canvasWidth / boundWidth : canvasHeight / boundHeight;
+            let wrapperHeight: number = this.miniFlow.cavnasWrapper.offsetHeight;
+            let wrapperWidth: number = this.miniFlow.cavnasWrapper.offsetWidth;
+            
+            this.miniFlow.cavnasDraggable.setZoom(scale)
+        
+            this.miniFlow.cavnasDraggable.setPosition({
+                left: -(boundWidth - wrapperWidth) * scale/2  + (-bound.left * scale), 
+                top: -(boundHeight  - wrapperHeight) * scale /2  + (-bound.top * scale)
+            })
+        }
+        
     }
 
-    public format() {
-       let flowMaps: any = this.getFlowMaps();
-       
-       let paddingNumber: any = this.computePaddingNumber(flowMaps);
-       let paddingSize: number =  Math.max((this.miniFlow.canvas.offsetHeight ) / paddingNumber, this.miniFlow.size + this.miniFlow.temporaryRouterOffset/2)
-       
-       this.begingSize = 0;
-       this.levelSize =  Math.max((this.miniFlow.canvas.offsetWidth - this.miniFlow.size / 2) / this.getMaxLevelNumber(), this.miniFlow.size * 2);
-        
-       this.repaint(flowMaps, paddingSize);
-       this.zoomFit();
-       this.miniFlow.doChangeSave();
 
-       setTimeout(()=> {
-            this.miniFlow.instance.repaintEverything();
-       }, 0)
+    public format() {
+
+        if (this.needReset()) {
+
+            this.reset();
+        } else {
+            let flowMaps: any = this.getFlowMaps();
+       
+            let paddingNumber: any = this.computePaddingNumber(flowMaps);
+            let paddingSize: number =  Math.max((this.miniFlow.canvas.offsetHeight ) / paddingNumber, this.miniFlow.size + this.miniFlow.temporaryRouterOffset/2)
+            
+            this.begingSize = 0;
+            this.levelSize =  Math.max((this.miniFlow.canvas.offsetWidth - this.miniFlow.size / 2) / this.getMaxLevelNumber(), this.miniFlow.size * 2);
+                
+            this.repaint(flowMaps, paddingSize);
+            this.zoomFit();
+            this.miniFlow.doChangeSave();
+
+            setTimeout(()=> {
+                    this.miniFlow.instance.repaintEverything();
+            }, 0)
+        }
+       
     }
 }

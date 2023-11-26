@@ -625,7 +625,9 @@ export default class MiniFlow extends EventEmitter {
         // 绑定事件
         addEvent(this.canvas.parentNode, 'dblclick', (e) => {
             
-            this.addNewNodeByPosition(e.pageX, e.pageY)
+            if (this.nodes.length > 0) {
+                this.addNewNodeByPosition(e.pageX, e.pageY)
+            }
         })
     }
     /**
