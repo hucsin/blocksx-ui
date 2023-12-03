@@ -251,7 +251,7 @@ export default class CanvasFormat {
             
             this.begingSize = 0;
             this.levelSize =  Math.max((this.miniFlow.canvas.offsetWidth - this.miniFlow.size / 2) / this.getMaxLevelNumber(), this.miniFlow.size * 2);
-                
+            
             this.repaint(flowMaps, paddingSize);
             this.zoomFit();
             this.miniFlow.doChangeSave();

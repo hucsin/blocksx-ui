@@ -38,10 +38,7 @@ export default class Positioning {
 
         let originalCenterLeftDistance: number = point.left - originalCenterPoint.left ;
         let originalCenterTopDistance: number =  point.top - originalCenterPoint.top ;
-        console.log('center point', originalCenterPoint, scaleCenterPoint)
-        console.log('distance- oraiginal',originalCenterLeftDistance )
-        console.log('distance- scale',(originalCenterLeftDistance) * this.miniFlow.getZoom(), scaleCenterPoint.left )
-        
+       
         return {
             left: scaleCenterPoint.left + (originalCenterLeftDistance) * this.miniFlow.getZoom(),
             top: scaleCenterPoint.top +  originalCenterTopDistance * this.miniFlow.getZoom()
@@ -50,8 +47,6 @@ export default class Positioning {
     } 
     private getOriginalPoint(pageX: number, pageY: number) {
 
-        console.log(this.canvasOriginalRect, this.canvasScaleRect)
-        
         return {
             left: pageX - this.canvasOriginalRect.left ,
             top: pageY - this.canvasOriginalRect.top 

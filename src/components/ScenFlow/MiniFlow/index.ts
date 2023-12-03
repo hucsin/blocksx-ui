@@ -14,7 +14,7 @@ import { IRect, IPointCoord } from './typing';
 
 import JSPlumbTool from '../../utils/third-party/jsplumb';
 
-export type FLowNodeType = 'go' | 'router' | 'module' | 'control' | 'empty';
+export type FlowNodeType = 'go' | 'router' | 'module' | 'control' | 'empty';
 
 
 export interface ConnectorMap {
@@ -26,7 +26,7 @@ export interface ConnectorMap {
 
 export interface FlowNodeMap {
     id: string;
-    type: FLowNodeType;
+    type: FlowNodeType;
     left: number,
     top: number,
     color: string;
@@ -69,6 +69,7 @@ export default class MiniFlow extends EventEmitter {
     private canvasZoom: number;
 
     private templateMap: any;
+    private freezeState: boolean;
 
     private nodes: FlowNodeMap[];
     private connector: ConnectorMap[];
@@ -113,6 +114,8 @@ export default class MiniFlow extends EventEmitter {
         this.size = (props.size || 138);
         this.temporaryRouterOffset =  40;
         
+        this.freezeState = false;
+        
 
         this.safeStartAngle = (180 - this.magnet.safeAngle/2) * (Math.PI/180);
         this.safeEndAngle = (180 + this.magnet.safeAngle/2) * (Math.PI/180);
@@ -138,6 +141,14 @@ export default class MiniFlow extends EventEmitter {
         })
     }
 
+    
+    public freeze() {
+        this.freezeState = true;
+    }
+    public unfreeze() {
+        this.freezeState = false;
+    }
+
     public getZoom() {
         return this.canvasZoom;
     }
@@ -158,9 +169,22 @@ export default class MiniFlow extends EventEmitter {
     }
     private doChangeSave() {
         // 触发事件
+       // this.flushNodes();
         this.emit('onChange', {
             nodes: this.nodes,
             connector: this.connector
+        })
+    }
+
+    private flushNodes() {
+        //let cacheKey: any = Object.keys(this.nodeMap)
+        this.nodes = this.nodes.map(it => {
+            let updateValue: any = this.nodeMap[it.id];
+
+            return  updateValue ? Object.assign(it, {
+                props: updateValue.props || {},
+                color: updateValue.color
+            }): it;
         })
     }
 
@@ -176,7 +200,7 @@ export default class MiniFlow extends EventEmitter {
         return source.map(it => it.target);
     }
     // 获取开始节点
-    private getStartNodes() {
+    public getStartNodes() {
 
         return this.nodes.filter(node => this.getConnectorBySourceId(node.id, true).length && !this.getConnectorByTargetId(node.id).length )
     }
@@ -185,6 +209,9 @@ export default class MiniFlow extends EventEmitter {
     }
     private getConnectorIdsByNodeId(nodeId: string) {
         return this.connector.filter(it => it.target == nodeId || it.source == nodeId);
+    }
+    private hasNode(id: string) {
+        return !! this.getNodeById(id);
     }
     private getNodeById(id: string): any {
         return this.nodes.find(it => it.id == id)
@@ -197,13 +224,34 @@ export default class MiniFlow extends EventEmitter {
         })
     }
 
-    private updateNodeById(id: string, node: any) {
-        let onode: any = this.nodeMap[id];
-        if (onode) {
-            Object.assign(onode, node)
-        }
+    private reflushConnectorById(id: string) {
+        let connector: any = this.getConnectorIdsByNodeId(id);
+        connector.forEach(it => {
+            this.resetConnectorNodeBySourceTarget(it.source, it.target)
+        })
+    }
+
+    public updateNodeById(id: string, node: any, forceUpdate?: boolean) {
+        let onode: any = this.getNodeById(id);
         
-        return this.nodeMap[id] = onode;
+        if (onode) {
+            let colorChange: boolean = node.color != onode.color;
+
+            this.nodes.forEach(it => {
+                if (it.id == id) {
+                    Object.assign(it, node)
+                }
+            })
+            
+            // 更新连线
+            if (colorChange) {
+                this.reflushConnectorById(id);
+            }
+            
+            if (forceUpdate) {
+                this.doChangeSave()
+            }
+        }
     }
     // 获取子孙节点
     private getDescendantNode(nodeId: string, filter?: Function) {
@@ -230,7 +278,7 @@ export default class MiniFlow extends EventEmitter {
     private hasConnectorBySourceTarget(source:string, target: string) {
         return this.connector.find(it => (it.source == source) && (it.target == target))
     }
-    private addConnectorBySourceTarget (source: string, target: string, isTemporary?: boolean) {
+    private addConnectorBySourceTarget (source: string, target: string, isTemporary?: boolean, noAutoConn?: boolean) {
         if( !this.hasConnectorBySourceTarget(source, target)) {
             
             this.connector.push({
@@ -238,7 +286,7 @@ export default class MiniFlow extends EventEmitter {
                 target,
                 isTemporary: isTemporary
             })
-            this.addConnectorNodeBySourceTarget(source, target, isTemporary)
+            !noAutoConn && this.addConnectorNodeBySourceTarget(source, target, isTemporary)
         }
     }
     private addNode(node: any, nosave?:boolean) {
@@ -277,7 +325,7 @@ export default class MiniFlow extends EventEmitter {
      */
     private addTemporaryRouterNode(nodeId: string) {
         
-        let routerNodeId: string = utils.uniq('router');
+        
         let sourceNode: any = this.getNodeById(nodeId);
         let linePoint: any 
         let targetsNode: any = this.getConnectorBySourceId(nodeId)[0];
@@ -290,23 +338,31 @@ export default class MiniFlow extends EventEmitter {
                 left: sourceNode.left + this.size * 2
             }
         }
-        let tempRouterNode: any = Object.assign({
-            id: routerNodeId,
-            isTemporary: true,
+       
+        let tempRouteNode = this.getRouterNodeConfig({
+
             left: linePoint.left,
             top: linePoint.top
-        }, this.templateMap.router || {})
+        })
 
-        this.addNode(tempRouterNode);
+        this.addNode(tempRouteNode);
         // TODO 批量递归增加位移
-        
         setTimeout(()=>{
-            this.resetFlowNode(tempRouterNode)
+            this.resetFlowNode(tempRouteNode)
         }, 0)
 
-        return routerNodeId;
+        return tempRouteNode.id;
     }
 
+    private getRouterNodeConfig(nodeConfig: any) {
+        let routerNodeId: string = utils.uniq('router');
+        return  Object.assign({
+            id: routerNodeId,
+            isTemporary: true,
+            ... nodeConfig
+        }, this.templateMap.router || {})
+    }
+    
 
     private lockConnectorBySourceTarget(source:string, target: string) {
         this.connector.find(it => {
@@ -509,8 +565,8 @@ export default class MiniFlow extends EventEmitter {
     private getSafeDiamondDiagonalCoordinates(sourceId: string, targetId: string) {
 
         let halfSize: number = this.getSize(true);
-        let sourcePoint: any = this.nodeMap[sourceId];
-        let targetPoint: any = this.nodeMap[targetId];
+        let sourcePoint: any = this.getNodeById(sourceId);
+        let targetPoint: any = this.getNodeById(targetId);
         let distance_bd: number = this.getDiamondDistance(sourceId);
 
         let x_a: number = sourcePoint.left + halfSize;
@@ -567,7 +623,7 @@ export default class MiniFlow extends EventEmitter {
         const vectorDP = { x: p.x - d.x, y: p.y - d.y };
 
         // 计算点p到菱形中心的向量
-        const vectorToCenter = { x: (a.x + c.x) / 2 - a.x, y: (a.y + c.y) / 2 - a.y };
+        //const vectorToCenter = { x: (a.x + c.x) / 2 - a.x, y: (a.y + c.y) / 2 - a.y };
 
         // 判断点p是否在菱形内部
         const crossProductAB = (vectorAP.x * sideAB.y - vectorAP.y * sideAB.x);
@@ -624,14 +680,19 @@ export default class MiniFlow extends EventEmitter {
         })
         // 绑定事件
         addEvent(this.canvas.parentNode, 'dblclick', (e) => {
-            
-            if (this.nodes.length > 0) {
-                this.addNewNodeByPosition(e.pageX, e.pageY)
+            if (!this.freezeState) {
+                if (this.nodes.length > 0) {
+                    this.addNewNodeByPosition({}, e.pageX, e.pageY)
+                }
             }
         })
     }
+    public resetConnectorNodeBySourceTarget(source: string, target: string) {
+        this.removeConnectorNodeBySourceTarget(source, target);
+        this.addConnectorNodeBySourceTarget(source, target)
+    }
     /**
-     * 删除节点
+     * 删除节点连线
      * @param source 
      * @param target 
      */
@@ -982,6 +1043,7 @@ export default class MiniFlow extends EventEmitter {
     private resetFlowNode(node?: any) {
         if (node) {
             let nodeId: any = node.id;
+            
             if (!this.nodeMap[nodeId]) {
                 this.instance.draggable(nodeId, {
                     // filter: '.scenflow-node'
@@ -1006,9 +1068,12 @@ export default class MiniFlow extends EventEmitter {
                         this.dragNodeId = nodeId;
                         this.reflushDragNode();
                     },
-                    stop: (e) => {
+                    stop: (event: any) => {
+                        
                         this.emit('onDragEnd');
                         this.draggingFlag = false;
+                        
+                        
                         if (this.dragFreeNode) {
                             if (this.dragTarget) {
                                 this.removeTemporaryConnector();
@@ -1024,6 +1089,7 @@ export default class MiniFlow extends EventEmitter {
 
                         } 
                         this.doChangeSave();
+                        
                         
                     }
                 })
@@ -1069,7 +1135,7 @@ export default class MiniFlow extends EventEmitter {
     private findOffsetNodes (left: number, top: number) {
     
         return this.nodes.filter((it) => {
-            return (it.left - this.size < left) && (['go','router'].indexOf(it.type) > -1 || this.getConnectorBySourceId(it.id).length == 0 )
+            return /*(it.left - this.size < left) && */(['go','router'].indexOf(it.type) > -1 || this.getConnectorBySourceId(it.id).length == 0 )
         }).map(it => {
             let distance=  Math.sqrt(Math.pow(left-it.left, 2) + Math.pow(top-it.top, 2));
             
@@ -1078,6 +1144,8 @@ export default class MiniFlow extends EventEmitter {
                 // 修改下
                 if(router.length) {
                     it =  this.getNodeById(router[0].target);
+                } else {
+                    distance = 1e10;
                 }
             }
 
@@ -1087,64 +1155,250 @@ export default class MiniFlow extends EventEmitter {
                 id: it.id,
                 distance
             }
-        }).sort((a, b) => {
+        }).filter(it => it.distance != 1e10).sort((a, b) => {
             return a.distance > b.distance ? 1 : -1;
         });
     }
 
-    private addNewNodeByPosition (pageX: number, pageY: number) {
+    public getTemplateNodeConfig(config: any) {
         let newNodeId: any = utils.uniq('module');
-        let shadowPoint: any = this.canvasPositioning.getOriginalShadowPointByPageXY(pageX, pageY);
-        let offsetNodes: any = this.findOffsetNodes(shadowPoint.left - this.size/2, shadowPoint.top - this.size/2);
 
-        this.addNewNode(Object.assign({}, this.templateMap.new || {}, {
+        return Object.assign({}, this.templateMap.new, {
             id: newNodeId,
             isNew: true,
-            left: shadowPoint.left - this.size/2,
-            top: shadowPoint.top - this.size/2
-        }), (nodeConfig: any) => {
-            // 建立链接
-            
-            this.resetFlowNode(nodeConfig)
-            this.updateNodeById(newNodeId, { isNew: false});
+            ...config
+        })
+    }
+    private batchUpdateConnectorSource(sourceId: string, newSourceId: string, filter?: Function) {
+        let connectors: any = this.getConnectorBySourceId(sourceId);
 
-            if (offsetNodes && offsetNodes.length ) {            
-                let sourceNode: any = offsetNodes[0];
-                if (sourceNode.distance < this.size * 5) {
-                    this.addConnectorBySourceTarget(sourceNode.id, newNodeId)
-                }
-            }
-        });
+        connectors.forEach(conn => {
+            
+            this.removeConnectorNodeBySourceTarget(conn.source, conn.target);
+            conn.source = newSourceId
+            //this.addConnectorNodeBySourceTarget(conn.source = newSourceId, conn.target);
+            filter && filter(conn)
+        })
     }
     /******************
      * 以下为公共接口区
      * 
      ******************/
+   
+    public addNewNodeByPosition (nodeInfo:any, pageX: number, pageY: number) {
+        let shadowPoint: any = this.canvasPositioning.getOriginalShadowPointByPageXY(pageX, pageY);
+        let offsetNodes: any = this.findOffsetNodes(shadowPoint.left - this.size/2, shadowPoint.top - this.size/2);
+        let newNodeConfig: any = this.getTemplateNodeConfig({
+            left: shadowPoint.left - this.size/2,
+            top: shadowPoint.top - this.size/2 ,
+            ...nodeInfo
+        })
+
+        this.addNewNode(newNodeConfig, (nodeConfig: any) => {
+            // 建立链接
+            
+            this.resetFlowNode(nodeConfig)
+            
+
+            if (offsetNodes && offsetNodes.length ) {            
+                let sourceNode: any = offsetNodes[0];
+                if (sourceNode.distance < this.size * 5) {
+                    this.addConnectorBySourceTarget(sourceNode.id, newNodeConfig.id)
+                }
+            }
+        });
+    }
+     // 给指定接口后添加一个临时节点
+    // 1、如果该节点是router节点则在后面添加子节点
+    // 2、如果该节点是非router节点
+    //    2.1、如果该节点下有一个出口节点,就自动添加router节点 , 如果下一级是一个router节点,就把新节点加入到这个
+
+    public addChildrenTemplateNodeById(nodeId: string) {
+        let sourceNode: any = this.getNodeById(nodeId);
+        let newNode: any = this.getTemplateNodeConfig({});
+        let newRouterNode: any;
+        let linkRef: any = [];
+
+        if (sourceNode) {
+
+            if (sourceNode.type != 'router') {
+                let sourceConnectors: any = this.getConnectorBySourceId(sourceNode.id);
+                // 有节点,判断下一个点的类型是否为router
+                if ( sourceConnectors.length > 0) {
+                    let targetNode: any = this.getNodeById(sourceConnectors[0].target)
+                    if (targetNode.type == 'router') {
+                        // 在router节点后加一个节点
+                        sourceNode = targetNode;
+                    } else {
+                        // 新增加一个router节点
+                        newRouterNode = this.insertAfterNode(sourceNode, this.getRouterNodeConfig({
+                            left: sourceNode.left + this.size + this.temporaryRouterOffset,
+                            top: sourceNode.top
+                        }), linkRef)
+                    }
+                }
+            }
+            this.insertAfterNode(newRouterNode || sourceNode, newNode, linkRef)
+            
+            this.doChangeSave();
+
+            setTimeout(()=> {
+               // this.doBatchAnimate(this.nodes);
+                linkRef.forEach(link => {
+                    // 
+                    if(link.newNode) {
+                        this.resetFlowNode(link.newNode);
+                        this.doNewAnimate(link.newNode, ()=> {
+                            this.resetConnectorNodeBySourceTarget(link.source, link.target);
+                        })
+                    }
+                    //  
+                   // this.doBatchAnimate(this.nodes)
+                    this.instance.repaintEverything();
+                })
+
+            }, 0)
+            //
+            
+        }
+    }
+
+    private getInsertMinPaddingNumber(nodes: any) {
+        let fistNode: any = nodes[0];
+        let lastNode: any = nodes[nodes.length - 1];
+        let newTotal: number = nodes.length + 1;
+
+        let maxSize: number = lastNode.top - fistNode.top + this.size;
+        let paddingTotal: number = maxSize - newTotal * this.size;
+        
+        // 当空白位置为正的时候
+
+        return paddingTotal > 0 ? paddingTotal / newTotal : 0;
+        
+    }
+    private getInsertOffsetSize(nodeList: any) {
+        let maxSize:number = nodeList.length * (this.size + 10) + this.size;
+        let oldSize:number = (nodeList[nodeList.length -1].top - nodeList[0].top) + this.size;
+
+        return - (maxSize - oldSize) / 2;
+    }
+    private insertAfterNodeChildren(sourceNode: any, newNodeConfig: any, linkRef: any) {
+        let connectors: any = this.getConnectorBySourceId(sourceNode.id)
+        
+        let cacheLeft: number = sourceNode.left ;
+        let nodeList = connectors.sort((connA, connB) => {
+            let targetNodeA: any = this.getNodeById(connA.target);
+            let targetNodeB: any = this.getNodeById(connB.target);
+
+            return targetNodeA.top > targetNodeB.top ? 1 : -1;
+        }).map(it => this.getNodeById(it.target));
+
+        let paddingSize: number = this.getInsertMinPaddingNumber(nodeList);
+        
+        let offsetSize: number = (paddingSize != 0 ? 0 : this.getInsertOffsetSize(nodeList) ) + nodeList[0].top;
+        let offsetTop: number = paddingSize || 10;
+        
+        
+        nodeList.forEach(node => {
+            cacheLeft = node.left;
+
+            this.updateNodeById(node.id, {
+                top: offsetSize
+            })
+            offsetSize += this.size + offsetTop
+        })
+        
+        newNodeConfig.left = cacheLeft;
+        newNodeConfig.top = offsetSize;
+    }
+    /**
+     * 仅仅通过
+     */
+    public insertAfterNode(sourceNode:any, newNodeConfig: any, linkRef: any) {
+
+        let targetNodeConnectors: any = this.getConnectorBySourceId(sourceNode.id);
+        
+        this.addNode(newNodeConfig, true);
+       
+        if (targetNodeConnectors.length > 0) {
+            
+            if (sourceNode.type == 'router') {
+                
+                this.insertAfterNodeChildren(sourceNode, newNodeConfig, linkRef)
+            // 需要把其他节点往后移动
+            } else {
+                let offset: number = this.getNodeById(targetNodeConnectors[0].target).left - sourceNode.left;
+
+                Object.assign(newNodeConfig, {
+                    left: sourceNode.left + offset,
+                    top: sourceNode.top
+                })
+
+                // 往后移
+                this.getDescendantNode(sourceNode.id, (node) => {
+                    node.left += offset;
+                });
+                // 批量修改节点的source
+                this.batchUpdateConnectorSource(sourceNode.id, newNodeConfig.id, (conn: any) => {
+                    linkRef.push(conn)
+                });
+            }
+        // 在独立节点后加入一个节点
+        } else {
+
+            Object.assign(newNodeConfig, {
+                left: sourceNode.left + this.size * 2 + this.temporaryRouterOffset,
+                top: sourceNode.top
+            })
+        }
+        
+        linkRef.push({
+            newNode: newNodeConfig,
+            source: sourceNode.id,
+            target: newNodeConfig.id
+        })
+        // 建立关系
+        this.addConnectorBySourceTarget(sourceNode.id, newNodeConfig.id, false, true)
+        
+
+        return newNodeConfig;
+    }
+
     public addNewNode (config: any, cb?: Function) {
         this.addNode(config);
-        setTimeout(()=> {
-            let node: any = document.getElementById(config.id);
-            addClass(node, 'showed');
-            setTimeout(()=> {
-                removeClass(node, 'showed');
-                removeClass(node, 'node-new');
-                // 建立连线
-                cb && cb(config);
-                this.doChangeSave();
-            }, 700)
+        cb && setTimeout(()=> {
+            this.doNewAnimate(config, cb)
         }, 0)
+    }
+    private doNewAnimate(nodeConfig, cb?: Function) {
+        let dom: any = document.getElementById(nodeConfig.id);
+        addClass(dom, 'showed');
+        setTimeout(()=> {
+            removeClass(dom, 'showed');
+            removeClass(dom, 'node-new');
+            this.updateNodeById(nodeConfig.id, { isNew: false});
+            // 建立连线
+            cb && cb(nodeConfig);
+            this.doChangeSave();
+        }, 700)
     }
     //通过dragnode删除连线
     public dropConnectorByDragNode(dir: string, nosave?:boolean) {
         
         if (this.dragNodeId) {
+            this.dropConnectorByNodeId(dir, this.dragNodeId, nosave)
+        }
+    }
+
+    public dropConnectorByNodeId(dir: string, nodeId: string, nosave?:boolean) {
+        if (nodeId) {
             
-            let sourceNodes: any = this.getConnectorBySourceId(this.dragNodeId);
-            let targetNodes: any = this.getConnectorByTargetId(this.dragNodeId)
+            let sourceNodes: any = this.getConnectorBySourceId(nodeId);
+            let targetNodes: any = this.getConnectorByTargetId(nodeId)
             
             let dropConnector: any = dir == 'right'  
                 ? sourceNodes : dir == 'left' 
-                    ? targetNodes : this.getConnectorIdsByNodeId(this.dragNodeId);
+                    ? targetNodes : this.getConnectorIdsByNodeId(nodeId);
             
 
             this.removeTemporaryConnector();
@@ -1168,18 +1422,24 @@ export default class MiniFlow extends EventEmitter {
             !nosave && this.doChangeSave();
         }
     }
+
+
     public dropDragNode(cb?: Function) {
+        
         if (this.dragNodeId) {
-            //this.removeConnectorByNodeId(this.dragNodeId);
-            this.dropConnectorByDragNode('middle',true);
-            
-            this.dropNodeById(this.dragNodeId, () => {
-                this.removeNodeById(this.dragNodeId);
-                cb && cb();
-                this.doChangeSave();
-            });
-            
+            this.deleteNodeById(this.dragNodeId, cb)
         }
+    }
+
+    public deleteNodeById(nodeId: string, cb?: Function) {
+        //this.removeConnectorByNodeId(this.dragNodeId);
+        this.dropConnectorByNodeId('middle', nodeId, true);
+            
+        this.dropNodeById(nodeId, () => {
+            this.removeNodeById(nodeId);
+            cb && cb();
+            this.doChangeSave();
+        });
     }
 
 

@@ -62,12 +62,14 @@ export default class CanvasDraggle {
     }
     private mousewheel = (event: any) => {
         // up
-        let step = 0.005;
-        let detail = event.detail != 0 ? -event.detail : event.wheelDelta;
+        if(!this.diagram.freezeState) {
+            let step = 0.005;
+            let detail = event.detail != 0 ? -event.detail : event.wheelDelta;
 
-        this.setZoom(this.diagram.getZoom() + detail * step);
-
+            this.setZoom(this.diagram.getZoom() + detail * step);
+        }
         event.preventDefault();
+        
     }
     public setZoom(zoom: number) {
 
@@ -108,7 +110,7 @@ export default class CanvasDraggle {
 
             this.setPosition(this.canvasPositionDraging = canvasPosition);
         }
-        event.preventDefault();
+        //event.preventDefault();
     }
 
     private canvasDragEnd = (event: any) => {

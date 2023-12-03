@@ -2719,7 +2719,7 @@ var PLUMB_JS =  {};
                     } else {
                         dragEl = elementToDrag;
                     }
-
+                    // by wangjian
                     consumeStartEvent && _consume(e);
                     downAt = _pl(e);
                     if (dragEl && dragEl.parentNode)
@@ -2735,6 +2735,7 @@ var PLUMB_JS =  {};
                     _dispatch("beforeStart", {el:this.el, pos:posAtDown, e:e, drag:this});
                 }
                 else if (this.params.consumeFilteredEvents) {
+                    // by wangjian
                     _consume(e);
                 }
             }
@@ -2778,6 +2779,7 @@ var PLUMB_JS =  {};
 
         this.upListener = function(e) {
             if (downAt) {
+                
                 downAt = null;
                 this.params.unbind(document, "mousemove", this.moveListener);
                 this.params.unbind(document, "mouseup", this.upListener);
@@ -2788,6 +2790,12 @@ var PLUMB_JS =  {};
                 this.stop(e);
 
                 k.notifyPosseDragStop(this, e);
+                if (moving) {
+                    //console.log(e)
+                    // by wangjian
+                   // root.jsPlumbUtil.consume(e, false)
+                }
+
                 moving = false;
                 intersectingDroppables.length = 0;
 
@@ -6422,6 +6430,7 @@ var PLUMB_JS =  {};
 
                     // when the user presses the mouse, add an Endpoint, if we are enabled.
                     var mouseDownListener = function (e) {
+                        
                         // on right mouse button, abort.
                         if (e.which === 3 || e.button === 2) {
                             return;
@@ -6442,10 +6451,11 @@ var PLUMB_JS =  {};
                         if (!def.enabled) {
                             return;
                         }
-
+                        
                         // if a filter was given, run it, and return if it says no.
                         if (p.filter) {
                             var r = _ju.isString(p.filter) ? selectorFilter(e, elInfo.el, p.filter, this, p.filterExclude) : p.filter(e, elInfo.el);
+                            
                             if (r === false) {
                                 return;
                             }
@@ -6462,7 +6472,7 @@ var PLUMB_JS =  {};
                             }
                             return false;
                         }
-
+                        
                         // find the position on the element at which the mouse was pressed; this is where the endpoint
                         // will be located.
                         var elxy = root.jsPlumb.getPositionOnElement(e, _del, _zoom);
@@ -6496,7 +6506,7 @@ var PLUMB_JS =  {};
                                 ep.finalEndpoint = def.endpoint;
                             }
                         }
-
+                        
                         var _delTempEndpoint = function () {
                             // this mouseup event is fired only if no dragging occurred, by jquery and yui, but for mootools
                             // it is fired even if dragging has occurred, in which case we would blow away a perfectly
@@ -6527,7 +6537,7 @@ var PLUMB_JS =  {};
                         // and then trigger its mousedown event, which will kick off a drag, which will start dragging
                         // a new connection from this endpoint.
                         _currentInstance.trigger(ep.canvas, "mousedown", e, payload);
-
+                        
                         _ju.consume(e);
 
                     }.bind(this);

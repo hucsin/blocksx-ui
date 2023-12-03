@@ -4,15 +4,37 @@
  * @Author: uoeye
  * @Date: 2020-10-09 21:13:21
  */
-export const addEvent = (dom: any, event: string, listener: Function) => {
+export const addEvent = (dom: any, event: string, listener: Function, iscap?:boolean) => {
     if ( dom && listener ) {
-        dom.addEventListener(event, listener, false);
+        dom.addEventListener(event, listener, iscap ? true : false);
     }
 }
 export const removeEvent = ( dom: any, event: string, listener: Function ) => {
     if ( dom && listener) {
         dom.removeEventListener(event,listener);
     }
+}
+export const consume = function(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+    else {
+        e.returnValue = false;
+    }
+}
+
+let _downAt: any = {pageX: 0, pageY: 0};
+
+
+addEvent(document, 'mousedown', (event)=> {
+    _downAt.pageX = event.pageX || event.clientX;
+    _downAt.pageY = event.pageY || event.clientY;
+}, true)
+
+
+export const downAt = () => {
+    return _downAt;
 }
 
 export const removeNode = (dom: any) => {
