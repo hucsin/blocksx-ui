@@ -98,7 +98,7 @@ export default class CanvasFormat {
         
         let maxsing: number = paddingSize * offsetPoint.paddingNumber;
         let itemStart: number = offsetPoint.top - (maxsing / 2) ;//+ (paddingSize - this.miniFlow.size)/2;
-        
+        console.log(this.levelSize, 987654321)
         nodes.forEach((node: any, index: number) => {
             
             let itemMaxSize: number = (node.type == 'go' ? 1 : node.paddingNumber )* paddingSize;
@@ -149,7 +149,6 @@ export default class CanvasFormat {
     }
     private repaint(flowMaps:any, paddingSize: number) {
         let connect: any = flowMaps.connect;
-        let defaultConnect: any = flowMaps.default;
 
         Object.keys(connect).sort((a,b) => {
             return connect[a].index > connect[b].index ? 1 : -1
@@ -191,7 +190,11 @@ export default class CanvasFormat {
             }
         })
 
-        return bound;
+        return {
+            ...bound,
+            width: bound.right - bound.left + this.miniFlow.size,
+            height: bound.bottom - bound.top + this.miniFlow.size
+        };
     }
 
     private needReset() {
@@ -215,30 +218,33 @@ export default class CanvasFormat {
 
         } else {
             let bound: any = this.getObtainBoundaries();
-            let boundWidth: number = bound.right - bound.left + this.miniFlow.size;
-            let boundHeight: number = bound.bottom - bound.top + this.miniFlow.size;
-
-            let canvasWidth:number = this.miniFlow.canvas.offsetWidth;// - this.miniFlow.size/2;
-            let canvasHeight: number = this.miniFlow.canvas.offsetHeight;// - this.miniFlow.size/2;
-            
-            let isWidthMax: boolean = boundWidth / boundHeight > canvasWidth / canvasHeight;
-            let scale: number = isWidthMax /*宽度大,*/
-                        ? canvasWidth / boundWidth : canvasHeight / boundHeight;
             let wrapperHeight: number = this.miniFlow.cavnasWrapper.offsetHeight;
             let wrapperWidth: number = this.miniFlow.cavnasWrapper.offsetWidth;
             
-            this.miniFlow.cavnasDraggable.setZoom(scale)
-        
+            let isWidthMax: boolean = bound.width / bound.height > wrapperWidth / wrapperHeight;
+            let scale: number = this.miniFlow.cavnasDraggable.getSafeZoom( isWidthMax /*宽度大,*/
+                        ? wrapperWidth / bound.width : wrapperHeight / bound.height);
+                        
+
+            //scale =4;
+            // 缩放画布中心点位移
+            let canvasCenterLeftOffset: number = bound.left + bound.width / 2;
+            let canvasCenterTopOffset: number = bound.top + bound.height / 2;
+
+            let canvasOffsetLeft: number = (wrapperWidth / 2 - canvasCenterLeftOffset ) * scale;
+            let canvasOffsetTop: number = (wrapperHeight /2 - canvasCenterTopOffset ) * scale;
+
+            this.miniFlow.cavnasDraggable.setZoom(scale);
             this.miniFlow.cavnasDraggable.setPosition({
-                left: -(boundWidth - wrapperWidth) * scale/2  + (-bound.left * scale), 
-                top: -(boundHeight  - wrapperHeight) * scale /2  + (-bound.top * scale)
+                left: canvasOffsetLeft,
+                top: canvasOffsetTop
             })
         }
         
     }
 
 
-    public format() {
+    public format(noRepatin?: boolean, noZoom?: boolean) {
 
         if (this.needReset()) {
 
@@ -247,17 +253,17 @@ export default class CanvasFormat {
             let flowMaps: any = this.getFlowMaps();
        
             let paddingNumber: any = this.computePaddingNumber(flowMaps);
-            let paddingSize: number =  Math.max((this.miniFlow.canvas.offsetHeight ) / paddingNumber, this.miniFlow.size + this.miniFlow.temporaryRouterOffset/2)
+            let paddingSize: number =  Math.max((this.miniFlow.canvas.offsetHeight ) / paddingNumber, this.miniFlow.size + this.miniFlow.temporaryRouterOffset )
             
             this.begingSize = 0;
-            this.levelSize =  Math.max((this.miniFlow.canvas.offsetWidth - this.miniFlow.size / 2) / this.getMaxLevelNumber(), this.miniFlow.size * 2);
+            this.levelSize =  Math.min(Math.max((this.miniFlow.canvas.offsetWidth - this.miniFlow.size / 2) / this.getMaxLevelNumber(), this.miniFlow.size * 2), this.miniFlow.size + 2 * this.miniFlow.temporaryRouterOffset);
             
             this.repaint(flowMaps, paddingSize);
-            this.zoomFit();
+            !noZoom && this.zoomFit();
             this.miniFlow.doChangeSave();
 
             setTimeout(()=> {
-                    this.miniFlow.instance.repaintEverything();
+                !noRepatin && this.miniFlow.instance.repaintEverything();
             }, 0)
         }
        

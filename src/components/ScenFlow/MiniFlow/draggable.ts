@@ -35,7 +35,7 @@ export default class CanvasDraggle {
             top: 0
         };
         this.zoomMinNumber = 0.02;
-        this.zoomMaxNumber = 2;
+        this.zoomMaxNumber = 1;
         this.init();
     }
 
@@ -73,7 +73,7 @@ export default class CanvasDraggle {
     }
     public setZoom(zoom: number) {
 
-        zoom = Math.min(this.zoomMaxNumber, Math.max(this.zoomMinNumber, zoom))
+        zoom = this.getSafeZoom(zoom)
 
         let canvasPosition = Object.assign({}, this.diagram.getPosition());
         canvasPosition.transform = `scale(${zoom})`;
@@ -83,6 +83,9 @@ export default class CanvasDraggle {
         this.diagram.setPosition(canvasPosition);
 
         this.canvas.style.transform = canvasPosition.transform;
+    }
+    public getSafeZoom(zoom: number) {
+        return Math.min(this.zoomMaxNumber, Math.max(this.zoomMinNumber, zoom))
     }
     private setPosition(postion: any) {
 
