@@ -5,7 +5,7 @@
  * @Date: 2020-09-01 14:52:50
  */
 import { ReactNode } from 'react';
-import { number } from './types';
+import { ValidatorRule } from '@blocksx/validator';
 
 
 
@@ -112,33 +112,8 @@ export interface IFormerBase {
         [props: string]: any
     }
 }
-export interface IFormerValidation {
-    type?: 'null' | 'boolean' | 'object' | 'array' | 'arrayObject' | 'number' | 'string' | 'integer' | 'money' | string;
+export interface IFormerValidation extends ValidatorRule {
     
-    enum?: any[]; // 枚举
-
-    required?: boolean; // 
-    
-    // for integer
-    multipleOf?: number; // 整除
-    maximum?: number; // 最大值（包含自己）
-    decimal?: number; // 小数位数
-    exclusiveMaximum?: number; // 最大值（不包含自己）
-    minimum?: number; // 最小值 （包含自己）
-    exclusiveMinimum?: number; // 最小值（不包含自己）
-    
-
-    // for string
-    minLength?: number; // 最小 （包含）
-    maxLength?: number; // 最大 （包含）
-    pattern?: string; // 正则
-
-    // for array
-    minItems?: number; // 包含 最小
-    maxItems?: number; // 包含 最大
-    uniqueItems?: boolean; // 验证项是否是唯一的
-
-    validation?: Function | string ; // 校验函数，异步校验
     control?: IFormerControl // 控制生效逻辑
 }
 export interface IFormerControl {

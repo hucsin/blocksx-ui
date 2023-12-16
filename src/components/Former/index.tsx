@@ -514,7 +514,19 @@ export default class Former extends React.Component<FormerProps, FormerState> {
           </Drawer>
         )
       default:
-        return this.renderLeaf();
+        return (
+          <div  className='ui-former-content'>
+            {this.renderLeaf()}
+            <div className='ui-former-buttons'>
+                <Button  onClick={this.onCloseLayer} size={this.props.size as any} style={{ marginRight: 8 }}>
+                  {this.state.cancelText || '取消'}
+                </Button>
+                {!this.state.viewer ? <Button loading={this.state.loading} disabled={this.state.disabled} size={this.props.size as any} onClick={this.onSave} type="primary">
+                  {this.state.okText || '确定'}
+                </Button> : null}
+            </div>
+          </div>
+        )
     }
   }
 }

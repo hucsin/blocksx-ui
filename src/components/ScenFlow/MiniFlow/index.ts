@@ -1270,7 +1270,7 @@ export default class MiniFlow extends EventEmitter {
             }
             this.insertAfterNode(newRouterNode || sourceNode, newNode, linkRef)
 
-            this.canvasFormat.format(false, true);
+            this.canvasFormat.format(false, this.nodes.length > 3);
 
             setTimeout(() => {
                 linkRef.forEach(link => {
