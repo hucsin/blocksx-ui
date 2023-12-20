@@ -384,10 +384,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
           }}
         >
           <Button size="small" onClick={this.onCloseLayer} style={{ marginRight: 8 }}>
-            取消
+            Cancel
           </Button>
           {!this.state.viewer ? <Button size="small" onClick={this.onSave} type="primary">
-            {this.state.okText || '确定'}
+            {this.state.okText || 'Ok'}
           </Button>:null}
         </div>
       </>
@@ -444,7 +444,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
       case 'popover':
         return (
           <Popover
-            title={this.state.title || '编辑数据'}
+            title={this.state.title || 'Edit data'}
             content={this.renderPopoverLeaf()}
             placement="bottomRight"
             
@@ -467,7 +467,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
       case 'modal':
         return (
           <Modal
-            title={this.state.title || '编辑数据'}
+            title={this.state.title || 'Edit data'}
             visible={this.state.visible}
             onOk={this.onSave}
             closable={false}
@@ -483,7 +483,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
       case 'drawer':
         return (
           <Drawer
-            title={this.state.title || '编辑数据'}
+            title={this.state.title || 'Edit data'}
             onClose={this.onCloseLayer}
             open={this.state.visible}
             rootClassName={this.props.className}
@@ -501,10 +501,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
               >
                 {this.renderExtraContent()}
                 <Button  onClick={this.onCloseLayer} size={this.props.size as any} style={{ marginRight: 8 }}>
-                  {this.state.cancelText || '取消'}
+                  {this.state.cancelText || 'Cancel'}
                 </Button>
                 {!this.state.viewer ? <Button loading={this.state.loading} disabled={this.state.disabled} size={this.props.size as any} onClick={this.onSave} type="primary">
-                  {this.state.okText || '确定'}
+                  {this.state.okText || 'Ok'}
                 </Button> : null}
               </div>
             }
@@ -519,10 +519,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             {this.renderLeaf()}
             <div className='ui-former-buttons'>
                 <Button  onClick={this.onCloseLayer} size={this.props.size as any} style={{ marginRight: 8 }}>
-                  {this.state.cancelText || '取消'}
+                  {this.state.cancelText || 'Cancel'}
                 </Button>
                 {!this.state.viewer ? <Button loading={this.state.loading} disabled={this.state.disabled} size={this.props.size as any} onClick={this.onSave} type="primary">
-                  {this.state.okText || '确定'}
+                  {this.state.okText || 'Ok'}
                 </Button> : null}
             </div>
           </div>
