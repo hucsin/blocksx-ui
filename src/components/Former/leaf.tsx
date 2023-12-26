@@ -270,7 +270,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
       // 视图模式
       if (this.state.viewer && this.isCanViewerType(_type)) {
-
+        
         if (View.Viewer) {
           return View.Viewer;
         }

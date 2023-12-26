@@ -5,7 +5,7 @@ import { EventEmitter } from 'events';
 import classnames from 'classnames';
 import { utils as BUtils } from '@blocksx/core';
 import * as ICONS from '../Icons';
-
+import * as FormerTypes from './types';
 import './style.scss';
 
 
@@ -77,7 +77,8 @@ interface FormerState {
  * 3、
  */
 export default class Former extends React.Component<FormerProps, FormerState> {
-  static defaultProps = {
+  public static FormerTypes = FormerTypes;
+  public static defaultProps = {
     defaultClassify: '基础',
     keep: false,
     size: 'small',
@@ -85,6 +86,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     autoclose: true,
     column: 'one'
   };
+
   private timer: any;
   private emitter: EventEmitter;
   private helper: any;
@@ -490,6 +492,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             width={this.state.width || 450}
             maskClosable={!this.props.keep}
             className={classnames({
+              'ui-former': true,
               [`drawer-type-${this.props.size}`]: true
             })}
             

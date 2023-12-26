@@ -1,15 +1,15 @@
-import React from 'react';
+/*import React from 'react';
 
 import { Button } from 'antd';
-import { Plugin, Workspace, Datasource, Record, DBQuery, DBQueryMini, Setting } from '../components/Icons'
+import { Plugin, Workspace, Datasource, Record, DBQuery, DBQueryMini, Setting } from '../../components/Icons'
 
-import EditorLayoutContainer from '../components/Editor/LayoutContainer';
-import EditorResourceTree from '../components/Editor/ResourceTree';
-import EditorWorkspace from '../components/Editor/Workspace';
-import EditorFeedback from '../components/Editor/Feedback';
+import EditorLayoutContainer from '../../components/Editor/LayoutContainer';
+import EditorResourceTree from '../../components/Editor/ResourceTree';
+import EditorWorkspace from '../../components/Editor/Workspace';
+import EditorFeedback from '../../components/Editor/Feedback';
 
-import { StateX } from '../components/StateX/index';
-import { EditorLayoutState } from '../components/Editor/states';
+import { StateX } from '../../components/StateX/index';
+import { EditorLayoutState } from '../../components/Editor/states';
 import SplitPane, { Pane } from '@blocksx/ui/SplitPane';
 import './layout.scss';
 
@@ -199,7 +199,7 @@ export default class LayoutContainerDemo extends React.Component {
                                     <button onClick ={()=> {
                                         ct.foldResource()
                                     }}>隐藏</button>
-        */
+        
         return (
             <div className='layout'>
                 <div  className='header'>
@@ -231,3 +231,4 @@ export default class LayoutContainerDemo extends React.Component {
         )
     }
 }
+*/

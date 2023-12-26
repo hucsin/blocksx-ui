@@ -6,7 +6,7 @@ export interface SidebarMenuItem {
     type?: "Shortcut" | "Action" | "Hot" | "Link"; // 类型: 快捷键 | 动作 | 热度 |  外链
     shortcut?: String;
 
-    key: React.Key;
+    key: string;
     name: String;
 
     autoFold?: boolean;
@@ -17,7 +17,7 @@ export interface SidebarMenuItem {
     onSelect?: Function;
     onAction?: Function;
 
-    children?: SidebarMenuItem[] | MenuGroupCache[]
+    children?: SidebarMenuItem[] 
 }
 
 export interface MenuGroupCache {

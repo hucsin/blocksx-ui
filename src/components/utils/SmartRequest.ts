@@ -6,6 +6,7 @@ import { pick } from 'lodash';
 class SmartRequest {
     
     private cache: any = {};
+    private req: any;
 
     public constructor() {
         Request.axios.defaults.headers.common['x-eos-encrypt'] = true;
@@ -36,13 +37,17 @@ class SmartRequest {
             return [it, params[it]].join('-')
         }).join(':')
     }
+    public reqcache(req) {
+        this.req = req;
+    }
     /**
      * 创建request请求
      */
-    public createPOST(url: string, fields?: any, noCache?: any,) {
+    public createPOST(url: string, fields?: any, noCache?: any, call?: Function) {
 
         if (typeof fields == 'boolean') {
             fields =  null;
+            call = noCache;
             noCache = fields;
         }
 
@@ -54,14 +59,22 @@ class SmartRequest {
                 let cacheKey: string = this.getCacheParamsKey(params);
                 if (this.hasCache(cacheKey)) {
                     return new Promise((resolve)=> {
-                        resolve(this.getCache(cacheKey))
+                        let result: any = this.getCache(cacheKey);
+                        call && call(request, result);
+                        resolve(result)
                     })
                 }
+            }
+            
+            if (this.req) {
+                return new Promise((resolve) => {
+                    resolve(this.req)
+                })
             }
 
             return new Promise((resolve, reject) => {
                 Request.post(url, this.getEncodeWrapper(params)).then((result: any) => {
-
+                    call && call(request, result);
                     resolve(result)
                 }).catch((e) => {
                     console.log(e)

@@ -30,7 +30,7 @@ module.exports = function(api) {
          '@babel/plugin-proposal-export-default-from',
         ['@babel/plugin-proposal-decorators', { 'legacy': true }],
         ['@babel/plugin-proposal-class-properties', { 'loose': true }],
-        'babel-plugin-transform-jsx-stylesheet',
+       //'babel-plugin-transform-jsx-stylesheet',
         '@babel/plugin-syntax-dynamic-import',
         'transform-react-jsx',
         'inline-react-svg'

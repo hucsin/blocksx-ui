@@ -10,7 +10,7 @@ import React from 'react';
 import { ColorPicker } from 'antd';
 import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
-
+import './style.scss'
 
 interface IFormerColor extends IFormerBase {
     value: any,
@@ -18,7 +18,21 @@ interface IFormerColor extends IFormerBase {
     disabled?: boolean,
     onChangeValue: Function
 }
+
+class FormerColorView extends React.Component<IFormerColor, { value: any }> {
+    public render() {
+        return (
+            <>
+                <span className='ui-former-color-view' style={{background:this.props.value}}></span>
+                <span  className='ui-former-color-viewtext'>{this.props.value}</span>
+            </>
+        )
+    }
+}
+
 export default class FormerColor extends React.Component<IFormerColor, { value: any }> {
+    public static Viewer: any = FormerColorView;
+
     public constructor(props: IFormerColor) {
         super(props);
         this.state = {
@@ -33,13 +47,13 @@ export default class FormerColor extends React.Component<IFormerColor, { value: 
         }
     }
     private onChange =(e: any)=> {
-        const { value } = e.target;
+        let hexColor: string = '#' + e.toHex()
         
         this.setState({
-            value: value
+            value: hexColor
         });
         
-        this.props.onChangeValue(value);
+        this.props.onChangeValue(hexColor);
     }
 
     public render() {

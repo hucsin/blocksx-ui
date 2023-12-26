@@ -98,3 +98,16 @@
 .ui-former-buttons {
   text-align: right;
 }
+
+.ui-former {
+  .ant-drawer-close {
+    .anticon-close {
+      transition: all .2s;
+    }
+    &:hover {
+      .anticon-close {
+        transform: rotate(90deg);
+      }
+    }
+  }
+}

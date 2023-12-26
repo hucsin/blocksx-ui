@@ -20,7 +20,7 @@ export { default as table } from './table';
 export { default as textarea } from './textarea';
 
 export { default as select } from './select';
-export { default as selectTag } from './selectTag';
+export { default as selecttag } from './selectTag';
 export { default as label } from './label';
 export { default as icon } from './icon';
 export { default as more } from './more';

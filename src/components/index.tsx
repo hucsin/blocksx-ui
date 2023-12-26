@@ -1,12 +1,18 @@
 export { default as Sidebar } from './Sidebar';
 //export { default as ScenFlow } from './ScenFlow';
-export { default as SplitPane } from './SplitPane';
+export { default as SmartPage } from './SmartPage';
+
+//export { default as SplitPane } from './SplitPane';
 export { default as Pick } from './Pick';
 
-export { default as MiniFlow } from './ScenFlow/MiniFlow'
-export { FlowNodeMap as FlowNode } from './ScenFlow/MiniFlow';
-export { ConnectorMap as FlowConnector } from './ScenFlow/MiniFlow';
-export { FlowNodeType as FlowNodeType } from './ScenFlow/MiniFlow';
+//export { default as MiniFlow } from './ScenFlow/MiniFlow'
+//export { FlowNodeMap as FlowNode } from './ScenFlow/MiniFlow';
+//export { ConnectorMap as FlowConnector } from './ScenFlow/MiniFlow';
+//export { FlowNodeType as FlowNodeType } from './ScenFlow/MiniFlow';
+
+
+
+export { default as Tabler } from './Tabler';
 
 //export * from './Editor'
 

@@ -312,6 +312,7 @@ module.exports = function (webpackEnv) {
         .filter(ext => useTypeScript || !ext.includes('ts')),
       alias: {
         // Support React Native Web
+        '@blocksx/ui': path.resolve(__dirname, '../../src/components'),
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
         'react-native': 'react-native-web',
         // Allows for better profiling with ReactDevTools
@@ -319,8 +320,7 @@ module.exports = function (webpackEnv) {
           'react-dom$': 'react-dom/profiling',
           'scheduler/tracing': 'scheduler/tracing-profiling',
         }),
-        ...(modules.webpackAliases || {}),
-        '@blocksx/ui': path.resolve(__dirname, '../../src/components')
+        ...(modules.webpackAliases || {})
       },
       plugins: [
         // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -349,11 +349,13 @@ module.exports = function (webpackEnv) {
           test: /\.(mjs|jsx|ts|tsx|css)$/,
           loader: require.resolve('source-map-loader'),
         },
+        
         {
           // "oneOf" will traverse all following loaders until one will
           // match the requirements. When no loader matches it will fall
           // back to the "file" loader at the end of the loader list.
           oneOf: [
+            
             // TODO: Merge this config once `image/avif` is in the mime-db
             // https://github.com/jshttp/mime-db
             {
@@ -382,9 +384,6 @@ module.exports = function (webpackEnv) {
               test: /\.svg$/,
               use: [
                 {
-                  loader: 'svg-inline-loader'
-                },
-                {
                   loader: require.resolve('@svgr/webpack'),
                   options: {
                     prettier: false,
@@ -394,17 +393,11 @@ module.exports = function (webpackEnv) {
                     },
                     titleProp: true,
                     ref: true,
-                  },
-                }/*,
-                {
-                  loader: require.resolve('file-loader'),
-                  options: {
-                    name: 'static/media/[name].[hash].[ext]',
-                  },
-                },*/
+                  }
+                }
               ],
               issuer: {
-               // and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
+                and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
               },
             },
             // Process application JS with Babel.
@@ -441,7 +434,7 @@ module.exports = function (webpackEnv) {
                     //-'babel-plugin-transform-jsx-stylesheet',
                     '@babel/plugin-syntax-dynamic-import',
                     'transform-react-jsx',
-                   // 'inline-react-svg'
+                    'inline-react-svg'
                   
                 ].filter(Boolean),
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
@@ -505,6 +498,22 @@ module.exports = function (webpackEnv) {
               // See https://github.com/webpack/webpack/issues/6571
               sideEffects: true,
             },
+            /*{
+              test: /\.less/,
+              use: [
+                {
+                  loader: require.resolve('less-loader'),
+                  options: {
+                    modifyVars: {
+                      'primary-color': '#000000',
+                      'link-color': '#1DA57A',
+                      'border-radius-base': '2px',
+                    },
+                    javascriptEnabled: true,
+                  }
+                }
+              ]
+            },*/
             // Adds support for CSS Modules (https://github.com/css-modules/css-modules)
             // using the extension .module.css
             {
