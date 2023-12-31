@@ -269,7 +269,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
       let View: any = FormerTypes[_type]
 
       // 视图模式
-      if (this.state.viewer && this.isCanViewerType(_type)) {
+      if (this.state.viewer && (this.isCanViewerType(_type) || View.Viewer)) {
         
         if (View.Viewer) {
           return View.Viewer;
@@ -638,7 +638,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                       oneOf={this.getObjectItemOneOfNode(prop)}
                       key={prop}
                       //需要
-                      onGetDependentParameters={properties['x-relyon'] && this.props.onGetDependentParameters}
+                      onGetDependentParameters={this.props.onGetDependentParameters}
                     >
                       <Leaf
                         {...properties}
@@ -654,6 +654,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         size={this.props.size}
                         rootEmitter={this.props.rootEmitter}
                         childrenControl={childrenControl}
+                        onGetDependentParameters={this.props.onGetDependentParameters}
                         onChangeValue={(val: any, type?: string) => {
                           value[prop] = val;
                           this.onChangeValue(value, type);
@@ -698,6 +699,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
               viewer={this.state.viewer}
               size={this.props.size}
               rootEmitter={this.props.rootEmitter}
+              onGetDependentParameters={this.props.onGetDependentParameters}
               onChangeValue={(keyVal: any, type?: string) => {
                 origin.key = keyVal;
                 this.onChangeValue(this.getObjectByKeyValue(originValue), type);
@@ -714,6 +716,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
               rootEmitter={this.props.rootEmitter}
               runtimeValue={this.state.runtimeValue}
               value={this.getValueByProps(value[prop], valueProperties)}
+              onGetDependentParameters={this.props.onGetDependentParameters}
               onChangeValue={(valVal: any, type?: string) => {
                 origin.value = valVal;
                 this.onChangeValue(this.getObjectByKeyValue(originValue), type);
@@ -768,6 +771,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                   viewer={this.state.viewer}
                   value={it}
                   runtimeValue={this.state.runtimeValue}
+                  onGetDependentParameters={ this.props.onGetDependentParameters}
                   onChangeValue={(val: any, type?: string) => {
                     // 数组里面的项值变化
                     value.splice(index, 1, val);

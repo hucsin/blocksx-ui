@@ -1,7 +1,7 @@
 import React from 'react'
 import Tabler from '../../Tabler/index';
 import SmartRequst from '../../utils/SmartRequest'
-
+import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExtendEnum';
 
 export interface SmartPageTablerProps {
     schema: any,
@@ -21,6 +21,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
     private UpdateRequest: any;
     private DeleteRequest: any;
     private CreateRequest: any;
+    private ViewRequest: any ;
 
     public constructor(props: SmartPageTablerProps) {
         super(props);
@@ -36,9 +37,10 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
     }   
     private initRequset() {
         this.ListRequest = SmartRequst.createPOST(this.props.path + '/list');
-        this.UpdateRequest = SmartRequst.createPOST(this.props.path + '/update');
-        this.DeleteRequest = SmartRequst.createPOST(this.props.path + '/delete');
-        this.CreateRequest = SmartRequst.createPOST(this.props.path + '/create');
+        this.UpdateRequest = SmartRequst.createPOST(this.props.path + '/update', true);
+        this.DeleteRequest = SmartRequst.createPOST(this.props.path + '/delete', ['id'], true);
+        this.CreateRequest = SmartRequst.createPOST(this.props.path + '/create', true);
+        this.ViewRequest = SmartRequst.createPOST(this.props.path + '/view', ['id'], true)
     }
     private getSearchQuick(field: any) {
 
@@ -73,19 +75,46 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
             let fieldUI: any = field.fieldUI || {
                 type: 'input'
             }
-            return {
+
+            let fieldObject: any  = {
                 key: field.fieldKey,
-                type: fieldUI.type,
-                tabler: true,
+                uiType: fieldUI.type,
+                type: field.fieldType,
+                column: fieldUI.column,
                 group: field.fieldGroup,
-                tablerColumn: {
+                tablerColumn:  fieldUI.column ?  {
                     filter: field.isIndexed,
-                },
-                colspan: fieldUI.colspan,
+                }: null,
+                colspan: fieldUI.colspan || 1,
                 dict: field.fieldDict,
                 name: field.fieldName || field.fieldKey,
                 validation: this.getFieldValidation(field)
+            };
+            
+            if (field.type == 'relation') {
+                Object.assign(fieldObject, {
+                    column: false,
+                    type: 'array',
+                    'x-relyon': true,
+                    props: field. relatedPath ? {
+                        mode: (props: any) => {
+                            if (props.onGetDependentParameters) {
+                                let params: any = props.onGetDependentParameters() || {};
+                                return !!params[RelationshipExtendEnum.MASTERID]
+                            }
+                        },
+
+                        onPage: SmartRequst.createPOST(field.relatedPath + '/list'),
+                        onCreate: SmartRequst.createPOST(field.relatedPath + '/create', true),
+                        onDelete: SmartRequst.createPOST(field.relatedPath + '/delete', ['id'], true),
+                        onView: SmartRequst.createPOST(field.relatedPath + '/view', ['id']),
+                        onEdit: SmartRequst.createPOST(field.relatedPath + '/update', true)
+                    } : {},
+                    fields: this.getFieldProps(field.fields)
+                });
             }
+
+            return fieldObject
         })
     }
     private initTableProps() {
@@ -106,9 +135,11 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                     {...this.state.tableProps}
                     reflush={this.state.reflush}
                     dataSource={this.ListRequest}
+
                     onEdit={this.UpdateRequest}
                     onRemove={this.DeleteRequest}
                     onAdd={this.CreateRequest}
+                    onView={this.ViewRequest}
                 />
             </div>
         )

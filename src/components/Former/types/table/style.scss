@@ -1,10 +1,44 @@
 .former-table {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #f2f2f2;
     position: relative;
     .ant-table-thead > tr > th {
       &::before {
         display:none !important;
       }
+    }
+    .ant-table-cell {
+        .ant-btn.ant-btn-sm{
+            height: 14px;
+            font-size: 12px;
+        }
+    }
+    .ant-table-wrapper .ant-table-pagination.ant-pagination {
+        margin-top: 8px;
+    }
+    .ant-table-wrapper .ant-table.ant-table-small .ant-table-footer{
+        padding: 0;
+        margin-top: -1px;
+        
+        opacity: .5;
+        transition: all .2s;
+        &:hover {
+            opacity: .7;
+            background:#f8f8f8;
+        }
+    }
+    table{
+        border-color: none;
+    }
+    .ui-former-add {
+        border-radius: 3px;
+        border: 1px solid #f2f2f2;
+        cursor: pointer;
+        text-align: center;
+        padding: 2px 8px;
+        display:block;
+    }
+    .ant-pagination .ant-pagination-item-active {
+        border-color: transparent;
     }
     colgroup {
         col {
@@ -37,7 +71,9 @@
     }
     .ant-table-expanded-row-fixed {
         margin: 0;
-        cursor: pointer;
+    }
+    .ant-empty-normal{
+        margin-block : 8px;
     }
 }
 .former-table-menu {

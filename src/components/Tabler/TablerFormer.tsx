@@ -2,6 +2,7 @@ import React from 'react';
 import Former from '../Former';
 
 import { utils } from '@blocksx/core';
+import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExtendEnum';
 /*
  * @Author: your name
  * @Date: 2020-12-21 21:55:35
@@ -27,6 +28,7 @@ export interface IFormerType {
 
     onChangeValue: Function;
     onClose: Function;
+    onView?: Function;
 
     viewer?: boolean;
 }
@@ -40,6 +42,7 @@ export interface SFormerType {
 }
 
 export default class TablerFormer extends React.Component<IFormerType, SFormerType>  {
+    private former: any;
     public constructor(props: IFormerType) {
         super(props);
         this.state = {
@@ -63,11 +66,31 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 value: newProps.value,
                 fields: newProps.fields
             })
+            if (!!newProps.action) {
+                this.resetValue()
+            }
         }
 
         if (newProps.viewer != this.state.viewer) {
             this.setState({
                 viewer: newProps.viewer
+            })
+        }
+    }
+    
+    private resetValue() {
+        let former: any = this.former;
+
+        if (this.props.onView && this.state.value) {
+            former.setState({
+                fetching: true,
+                disabled: true
+            })
+            this.props.onView(this.state.value).then((result) => {
+                this.setState({
+                    value: result
+                })
+                former.setState({disabled: false, fetching: false})
             })
         }
     }
@@ -89,34 +112,42 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     private getValidationValue(it: any) {
 
         if (it.validation) {
-            return it.validation;
+            return {
+                type: it.type || 'string',
+                ...it.validation
+            }
         }
 
         if (utils.isValidValue(it.required)) {
             return {
+                type: it.type || 'string',
                 required: it.required
             }
         }
     }
+
 
     private getDefaultSchemaProperties(fields?: any) {
         let fieldsObject: any = {};
         let _fields: any = fields || this.state.fields;
 
         _fields.forEach((it: any, index: number) => {
+            
             fieldsObject[it.key] = {
-                type: 'string', // 统一当string处理
+                type: it.type || 'string', // 统一当string处理
                 defaultValue: it.defaultValue,
                 title: it.name,
                 'x-modify': it.modify || it['x-modify'],
                 'x-group': it.group,
-                'x-half-width': utils.isValidValue(it.half) ? it.half : (_fields.length > 8 ? true : false),
+                'x-half-width': false,
                 'x-type-props': it.props,
-                'x-type': it.type,
+                'x-type': it.uiType || 'input',
                 'x-colspan': it.colspan,
+                column: it.column,
                 'x-index': index,
                 'x-control': it.control,
                 'x-validation': this.getValidationValue(it),
+                properties: it.fields ? this.getDefaultSchemaProperties(it.fields) : null,
                 ... this.getDefaultPropsByItem(it)
             }
         });
@@ -168,6 +199,8 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         }
     }
     public render() {
+        let fields: any = this.state.fields || [];
+
         return (
             <Former
                 title={this.getDefaultTitle()}
@@ -187,8 +220,18 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 }}
                 value={this.state.value}
                 viewer={this.state.viewer}
+                onGetDependentParameters={(value: any)=> {
+                    return {
+                        [RelationshipExtendEnum.MASTERID]: this.state.value.id
+                    }
+                }}
+                onInit={(former: any) => {
+                    this.former = former;
+                    
+                }}
                 autoclose={false}
-                column={'two'}
+                column={fields.length > 4 ? 'two' : 'one'}
+                width={fields.length > 4 ? 600 : 400}
                 onClose={() => {
                     this.setState({
                         visible: false

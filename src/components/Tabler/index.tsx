@@ -349,6 +349,7 @@ export default class Tabler extends React.Component<TablerProps, TablerState> {
             title: field.name,
             key: field.key + index,
             dataIndex: field.key,
+            ellipsis: true,
             width: isLast || !canResize ? undefined : cacheSize[field.key] || tablerColumn.width || defaultWidth,
             onHeaderCell: (column: any, rowIndex: number) => ({
                 width: column.width,
@@ -447,7 +448,7 @@ export default class Tabler extends React.Component<TablerProps, TablerState> {
         return column;
     }
     private isTablerColumn(it: any) {
-        return it.tabler || it.tablerColumn
+        return it.column || it.tablerColumn
     }
     private getColumns(): any {
         let { fields = [] } = this.props;
@@ -867,6 +868,7 @@ export default class Tabler extends React.Component<TablerProps, TablerState> {
                     fields={props.fields}
                     value={this.state.currentRowData}
                     viewer={this.state.formerAction == 'view'}
+                    onView={this.props.onView}
                     onClose={() => {
                         this.setState({
                             formerAction: null

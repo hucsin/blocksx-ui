@@ -134,7 +134,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
 
     public render() {
-        console.log(this.state.uiType, 876)
+        
         return (
             <div className='ui-smartpage-wrapper'>
                 <Spin spinning={this.state.loading}>

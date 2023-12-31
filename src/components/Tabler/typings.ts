@@ -168,6 +168,7 @@ export interface TablerProps {
   onAdd?: Function; // 新增的时候
   onRemove?: Function; // 删除的时候
   onRowAction?: Function;// 单行操作
+  onView?: Function;// 编辑的时候获取详细数据
 
   reflush?: any
 }
