@@ -15,8 +15,9 @@ import { RowOperate } from './typings';
 export const DEFAULT_COLUMNS_ACTION: RowOperate[] = [
     {
         key: 'view',
+        type: 'view',
         name: i18n.t('View'),
-        align: 10,
+        align: 1,
         control: {
             type: 'auth',
             key: 'view'
@@ -24,8 +25,9 @@ export const DEFAULT_COLUMNS_ACTION: RowOperate[] = [
     },
     {
         key: 'edit',
+        type: 'edit',
         name: i18n.t('Edit'),
-        align: 11,
+        align: 2,
         control: {
             type: 'auth',
             key: 'edit'
@@ -34,9 +36,11 @@ export const DEFAULT_COLUMNS_ACTION: RowOperate[] = [
     },
     {
         key: 'remove',
+        type: 'remove',
         name: i18n.t('Delete'),
         danger: true,
-        align: 12,
+        confirm: 'Do you want to delete the record?',
+        align: 3,
         control: {
             type: 'auth',
             key: 'remove'
@@ -50,6 +54,7 @@ export const DEFAULT_COLUMNS_ACTION: RowOperate[] = [
 export const DEFAULT_BATCH_ACTION: RowOperate[] = [
     {
         key: 'remove',
+        type: 'remove',
         batch: true,
         danger: true,
         name: '删除已选({selected}条)',

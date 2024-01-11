@@ -125,6 +125,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             <ViewComponent 
                 schema = {this.state.schema}
                 meta = {this.state.meta}
+                
                 triggerMap = {this.props.triggerMap}
                 path={this.state.path}
                 reflush = {this.state.reflush}

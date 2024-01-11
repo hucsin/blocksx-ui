@@ -15,6 +15,8 @@ import * as formerMap from '../Former/types';
 import * as DesignIcons from '../Icons/index';
 import { Input, Popover } from 'antd';
 
+import TablerUtils from './utils';
+
 export interface TablerCellProps {
     field: TablerField,
     editable?: boolean;// 标记是否可编辑
@@ -115,10 +117,15 @@ export default class TablerCell extends React.Component<TablerCellProps, TablerC
     }
     private renderCell () {
         let { field, value } = this.props;
-        let { tablerColumn = {} } = field;
-        let UIType: any = FormerTypes[field.type];
+  //      let { tablerColumn = {} } = field;
+//        let UIType: any = FormerTypes[field.uiType || field.type];
 
-        if (UIType && UIType.Viewer) {
+
+         return TablerUtils.renderComponentByField(field, {
+            value: this.props.value,
+            recordValue: this.props.record
+         });
+/*        if (UIType && UIType.Viewer) {
 
             return <UIType.Viewer value={value} />
         } else {
@@ -141,7 +148,7 @@ export default class TablerCell extends React.Component<TablerCellProps, TablerC
             } else {
                 return this.props.value
             }
-        }
+        }*/
     }
     private renderEditableCell () {
         let field: TablerField = this.props.field;

@@ -11,7 +11,6 @@ import { UploadImage, CloseOutlined } from '../../../Icons'
 interface IconProp extends IFormerBase {
   // 限制比例，宽/高
   aspect?: number;
-
   onChangeValue: Function
 }
 interface IconState {

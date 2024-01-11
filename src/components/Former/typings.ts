@@ -92,6 +92,7 @@ export interface IFormerBase {
     defaultValue?: any, // 默认值
     value?:any,
     runtimeValue?: any;
+    viewer?: boolean;
 
     disabled?: boolean,
     path?: any,

@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import { utils } from '@blocksx/core'
 import Tabler from '../../Tabler/index';
 import SmartRequst from '../../utils/SmartRequest'
 import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExtendEnum';
@@ -78,6 +79,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
 
             let fieldObject: any  = {
                 key: field.fieldKey,
+                ...fieldUI,
                 uiType: fieldUI.type,
                 type: field.fieldType,
                 column: fieldUI.column,
@@ -91,6 +93,10 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                 validation: this.getFieldValidation(field)
             };
             
+            if (fieldUI.motion) {
+                fieldObject.motion = SmartRequst.createPOST(this.props.path + `/${fieldUI.motion}`, ['id', fieldObject.key], true)
+            }
+
             if (field.type == 'relation') {
                 Object.assign(fieldObject, {
                     column: false,
@@ -117,31 +123,61 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
             return fieldObject
         })
     }
+    private tablerRecordTypeMap = {
+        clone: 'edit'
+    }
     private initTableProps() {
         let tableProps: any = {};
-        let {schema = { fields: []}} = this.props
+        let {schema = { fields: []}, meta, path} = this.props
 
+        
         tableProps.fields = this.getFieldProps(schema.fields);
         tableProps.searcher = this.getSearch(schema.fields);
+
+        
+        if (utils.isArray(meta.rowoperate)) {
+            tableProps.rowOperate = meta.rowoperate.map(op => {
+                let rowOperate: any = {
+                    ...op,
+                    key: op.type,
+                    align: op.align || 0,
+                };
+                let type: string = op.type.split('.');
+                let isRecord: boolean = type[0] =='record';
+                
+                // 行记录操作的时候
+                if (isRecord) {
+                    
+                    Object.assign(rowOperate, {
+                        type: this.tablerRecordTypeMap[type[1]] || type[1],
+                        motion: op.motion ? SmartRequst.createPOST(path +'/'+ op.motion, true) : null
+                    })  
+                }
+
+
+                return rowOperate;
+            })
+        }
 
         return tableProps;
     }
     
     public render() {
         return (
-            <div style={{padding: '20px'}}>
-                <Tabler 
-                    multilineEdit={false} 
-                    {...this.state.tableProps}
-                    reflush={this.state.reflush}
-                    dataSource={this.ListRequest}
-
-                    onEdit={this.UpdateRequest}
-                    onRemove={this.DeleteRequest}
-                    onAdd={this.CreateRequest}
-                    onView={this.ViewRequest}
-                />
-            </div>
+            <Tabler 
+                multilineEdit={false} 
+                {...this.state.tableProps}
+                reflush={this.state.reflush}
+                dataSource={this.ListRequest}
+                
+                onEdit={this.UpdateRequest}
+                onRemove={this.DeleteRequest}
+                onAdd={this.CreateRequest}
+                onView={this.ViewRequest}
+                onRowAction={(e, r, v)=>{
+                    console.log(e,r,v, 333)
+                }}
+            />
         )
     }
 }

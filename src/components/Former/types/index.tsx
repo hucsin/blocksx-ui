@@ -7,7 +7,7 @@
  * @FilePath: /designer/Users/iceet/work/hucsin/blocksx/packages/design-components/src/former/types/index.tsx
  */
 export { default as group } from './group';
-
+export { default as avatar } from './avator';
 export { default as array } from './array';
 export { default as object } from './object';
 export { default as input } from './input';
@@ -21,6 +21,7 @@ export { default as textarea } from './textarea';
 
 export { default as select } from './select';
 export { default as selecttag } from './selectTag';
+
 export { default as label } from './label';
 export { default as icon } from './icon';
 export { default as more } from './more';

@@ -100,6 +100,10 @@
 }
 
 .ui-former {
+  button,
+  .ant-drawer-title {
+    text-transform: capitalize;
+  }
   .ant-drawer-close {
     .anticon-close {
       transition: all .2s;

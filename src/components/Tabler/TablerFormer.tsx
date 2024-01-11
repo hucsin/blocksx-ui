@@ -20,6 +20,7 @@ import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExten
 
 export interface IFormerType {
     formerType: any;
+    name?: string;
     formerSchema?: any;
     action?: any;
     fields?: any;
@@ -37,6 +38,7 @@ export interface SFormerType {
     value?: any;
     schema?: any;
     action?: any;
+    name?: string;
     fields?: any;
     viewer?: boolean;
 }
@@ -59,8 +61,10 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     public UNSAFE_componentWillReceiveProps(newProps: IFormerType) {
 
         if (newProps.action !== this.state.action) {
+            
             this.setState({
                 action: newProps.action,
+                name: newProps.name,
                 schema: this.getSchema(newProps.fields || this.state.fields),
                 visible: !!newProps.action,
                 value: newProps.value,
@@ -180,26 +184,28 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
     private getDefaultTitle() {
         switch (this.state.action) {
-            case 'add':
+            case 'add': 
+            case 'Create':
                 return this.props.createText;
-            case 'edit':
-                return 'Edit the records';
-            case 'view':
-                return 'View the records'
+            default: 
+                let name: string = this.state.name || this.state.action ;
+                return `${name} the records`
         }
     }
     private getDefaultOkText() {
         switch (this.state.action) {
             case 'add':
                 return 'Create';
-            case 'edit':
-                return 'Edit';
             default:
-                return 'Submit'
+                return this.state.name || this.state.action;
         }
     }
     public render() {
         let fields: any = this.state.fields || [];
+
+        if (!this.state.visible) {
+            return null;
+        }
 
         return (
             <Former
@@ -221,9 +227,9 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 value={this.state.value}
                 viewer={this.state.viewer}
                 onGetDependentParameters={(value: any)=> {
-                    return {
+                    return this.state.value ? {
                         [RelationshipExtendEnum.MASTERID]: this.state.value.id
-                    }
+                    } : {}
                 }}
                 onInit={(former: any) => {
                     this.former = former;

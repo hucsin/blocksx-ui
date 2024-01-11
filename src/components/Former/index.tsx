@@ -142,6 +142,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 viewer: newProps.viewer
             })
         }
+        
         if (newProps.value && newProps.value != this.state.value) {
             this.setState({
                 value: newProps.value

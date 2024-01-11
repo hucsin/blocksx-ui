@@ -19,10 +19,10 @@ import './style.scss';
 
 interface IFormerSelect extends IFormerBase {
   value: any,
-  size: any,
+  size?: any,
   onChangeValue: Function,
-  relyon: any;
-  'x-type-props': any
+  relyon?: any;
+  'x-type-props'?: any
   dataSource?:any;
 }
 
@@ -86,9 +86,7 @@ export default class FormerSelect extends React.Component<IFormerSelect, SFormer
     
     this.setState({
       value: value
-    });
-
-    this.props.onChangeValue(value);
+    }, () => this.props.onChangeValue(value));
   }
   
   private setLoading(loading: boolean) {

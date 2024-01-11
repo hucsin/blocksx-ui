@@ -7,21 +7,29 @@
  * @FilePath: /designer/Users/iceet/work/hucsin/blocksx/packages/design-components/src/former/types/switch/index.tsx
  */
 import React from 'react';
-import classnames from 'classnames';
-import { IFormerBase } from '../../typings';
 import { Switch } from 'antd';
+
+import { IFormerBase } from '../../typings';
+import Utils from '../../../utils';
+
 import './style.scss';
 
 interface IFormerSwitch extends IFormerBase {
-    value: any,
-    onChangeValue: Function
+    value: any;
+    size?: any;
+    loading?: boolean;
+    onChangeValue: Function;
 }
 
-export default class FormerSwitch extends React.Component<IFormerSwitch, { value: any }> {
+export default class FormerSwitch extends React.Component<IFormerSwitch, { value: any; loading: any }> {
+    public static defaultProps = {
+        loading: false
+    }
     public constructor(props: IFormerSwitch) {
         super(props);
         this.state = {
-            value: props.value
+            value: props.value,
+            loading: false
         }
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
@@ -32,17 +40,36 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
         }
     }
     private onChange = (checked: boolean)=> {
-        this.setState({
-            value: checked
-        });
 
-        this.props.onChangeValue(checked);
+        if (this.props.loading) {
+            this.setState({
+                loading: true
+            })
+        }
+
+        Utils.withPromise(this.props.onChangeValue(checked), () => {
+            this.setState({
+                value: checked,
+                loading: false
+            });
+        }, ()=> this.setState({loading: false}))
     }
 
     public render() {
+        let props: any = this.props['x-type-props'] || {};
+        let loading: boolean = this.state.loading && this.props.loading;
+        let size: any = this.props.size || props.size || 'small';
+
         return (
             <div className="former-switch">
-                <Switch  size="small" {...this.props['x-type-props']} disabled={this.props.disabled}  checked={this.state.value} onChange={this.onChange} />
+                <Switch
+                    {...this.props['x-type-props']} 
+                    loading  = {loading}
+                    size     = {size}
+                    disabled = {this.props.disabled}  
+                    checked  = {this.state.value} 
+                    onChange = {this.onChange} 
+                />
             </div>
         )
     }

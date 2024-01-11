@@ -5,7 +5,7 @@
  * @Date: 2020-12-12 10:56:47
  */
 import { IFormerControl, IFormerValidation } from '../Former/typings'
-
+import { SearchBarProps } from '../SearchBar';
 /**
  * 功能检索条件定义
  */
@@ -19,17 +19,22 @@ export interface SearcherWhere {
 }
 export interface RowOperate {
   batch?: boolean | 'only'; // 是否支持批量, true | 'only'
+  type: string; // edit/ view/ monont
   key: string; // 标识
   name: string; // 删除
+  
+  motion?: Function;
+  //operate?: Function;
+  confirm?: string;// 是否确认
+
   searcher?: boolean; // 在batch模式下面，参数是否获取当前的检索条件的
-  operate?: Function;
+  
   danger?: boolean;
-  confirm?: boolean;// 是否确认
   message?: string;
   control?: RowOperateControl | RowOperateControl[],
   align?: number;// 队列位置
   data?: any; // 操作数据
-  type?: string; // 操作出发类型，默认支持两种 page，remote
+  
   page?: string; // page 模式下面的pageid
   remote?: any; // remote 模式下的remote对象
 }
@@ -59,7 +64,7 @@ export interface TablerColumn {
 export interface TablerField {
   key: string;
   name: string;
-
+  uiType?: string;
   group?: string; // 分组信息
 
   tabler?: boolean | TablerFields | TablerProps; // 是否在表格里面显示
@@ -98,14 +103,17 @@ export interface TablerFields extends Array<any> {
  *      2、不存在operate 但是datasource返回数据为非数组，为异步分页
  */
 export interface TablerProps {
+  
+  type: 'table' | 'list';
   // 组件
   components?: {},
   rowKey: string; // 行关键key,默认是id
   formerSchema?: {
     [key: string]: any
   };
+  
   formerType: string;
-
+  
   // 新增操作控制
   increase?: {
     [index: number]: {
@@ -135,7 +143,7 @@ export interface TablerProps {
   };
 
   size?: 'small' | 'middle' | 'large' | undefined;
-
+  searchSize?: any;
   fields: TablerFields;
 
   // 当传入未function 的时候有两种情况，第一种是函数返回数据，第二钟是函数返回promise对象
@@ -146,20 +154,7 @@ export interface TablerProps {
   pageSize?: number; // 每页多少条，默认20
   resizeMaxColumns: number; // 启用拖动的最大列，默认为7列，
   // 检索区域配置
-  searcher: {
-    type?: string; // 检索模式 模糊搜索,模糊精确检索
-    placeholder?: string;
-    searchKey: string; // 检索key 
-    // 检索区域类型, 没指定就是全部字段
-    searchField?: string[] | string; // 只在本地数据模式下生效，
-    // 只能加入一个快捷检索区域
-    quick: {
-      type: string; // 类型 select, radio
-      mode: "multiple" | "tags";
-      field: string; // 字段
-      data: LabelValue[]
-    }
-  }
+  searcher: SearchBarProps
 
   createText?: string;
 
@@ -170,5 +165,17 @@ export interface TablerProps {
   onRowAction?: Function;// 单行操作
   onView?: Function;// 编辑的时候获取详细数据
 
-  reflush?: any
+  reflush?: any;
+
+
+  onResetDataSource?: Function;
+  onChangePage?: Function;
+
+  getDataSource?: Function;
+  renderSearcher?: Function;
+  renderOperater?: Function;
+  renderRowOperater?: Function;
+
+
+  smartRequestMap?: any
 }

@@ -10,27 +10,48 @@
  import './style.scss';
 
  interface IFormerRadio extends IFormerBase {
+    size?: any;
+    dataSource?: any;
     onChangeValue: Function;
     value: any;
+    disabled?: boolean;
  }
 
- export default class FormerRadio extends React.Component<IFormerRadio, { props:any, value: any }>{
+ export default class FormerRadio extends React.Component<IFormerRadio, { props:any,disabled?: boolean, value: any }>{
     
+    public static defaultProps = {
+        size: 'small'
+    }
     public constructor(props: IFormerRadio) {
         super(props);
 
         this.state = {
             props: props['x-type-props'] || {},
-            value: props.value
+            value: props.value,
+            disabled: false
+        }
+        
+    }
+    public UNSAFE_componentWillUpdate(newProps: IFormerRadio) {
+        if (newProps.disabled!==this.state.disabled) {
+            this.setState({
+                disabled: newProps.disabled
+            })
+        }
+        
+        if (newProps.value !== this.state.value) {
+            this.setState({
+                value: newProps.value
+            })
         }
     }
     private onChangeValue =(e: any)=> {
         let { value } = e.target;
+
         this.setState({
             value: value
-        });
+        }, () => this.props.onChangeValue(value));
 
-        this.props.onChangeValue(value);
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
         if (newProps.value != this.state.value) {
@@ -46,7 +67,7 @@
         let dataSource: any = this.getDatasource();
 
         return (
-            <Radio.Group buttonStyle="solid" size="small" disabled={this.props.disabled}  onChange={this.onChangeValue} value={this.state.value}>
+            <Radio.Group buttonStyle="solid" size={this.props.size} disabled={this.state.disabled}  onChange={this.onChangeValue} value={this.state.value}>
                 {Array.isArray(dataSource) && dataSource.map((it: any) => {
                     let VIcon = it.icon ? FormerIcon[`${it.icon}`] : null;
                     return (
@@ -98,7 +119,6 @@
                 return this.renderBlock();
             default:
                 return this.renderButton();
-            
         }
         
     }
