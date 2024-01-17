@@ -371,7 +371,7 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
                          multilineEdit: rowIndex
                      })
                  } else {*/
-                 console.log(operate,333)
+                 
                      this.setState({
                          formerAction: operate.type,
                          formerName: operate.name,
@@ -392,7 +392,7 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
         let { currentRowOperate } = this.state;
 
         // 如果是行自定义行为操作
-        if (utils.isFunction(currentRowOperate.motion)) {
+        if (currentRowOperate && utils.isFunction(currentRowOperate.motion)) {
 
             return this.resetcheck(currentRowOperate.motion(value, this));
 

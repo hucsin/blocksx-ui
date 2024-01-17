@@ -460,7 +460,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         content={this.renderPopoverLeaf()}
                         placement="bottomRight"
 
-                        visible={this.state.visible}
+                        open={this.state.visible}
                         autoAdjustOverflow={true}
 
                         onVisibleChange={(visible: boolean) => {
@@ -480,7 +480,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 return (
                     <Modal
                         title={this.state.title || 'Edit data'}
-                        visible={this.state.visible}
+                        open={this.state.visible}
                         onOk={this.onSave}
                         closable={false}
                         onCancel={this.onCloseLayer}

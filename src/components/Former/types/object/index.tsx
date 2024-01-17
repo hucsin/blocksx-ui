@@ -24,6 +24,7 @@ export default class FormerObject extends React.Component<IFormerObjectS, {}> {
         return (
             <div className={
                 classnames("former-object", {
+                  [`former-object-viewer`]: this.props.viewer,
                   [`former-object-${this.props.size}`]: this.props.size
                 })
             }>

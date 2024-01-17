@@ -18,135 +18,175 @@ import { Select } from 'antd';
 import './style.scss';
 
 interface IFormerSelect extends IFormerBase {
-  value: any,
-  size?: any,
-  onChangeValue: Function,
-  relyon?: any;
-  'x-type-props'?: any
-  dataSource?:any;
+    value: any,
+    size?: any,
+    onChangeValue: Function,
+    relyon?: any;
+    'x-type-props'?: any
+    'x-mode'?: 'lazy' | 'cache',
+    dataSource?: any;
 }
 
 
 
 export interface SFormerSelect {
-  value: any;
-  dataSource: any[];
-  relyon: any;
-  loading: boolean;
-  multiple: boolean;
-  runtimeValue?: any;
+    value: any;
+    dataSource: any[];
+    relyon: any;
+    loading: boolean;
+    multiple: boolean;
+    runtimeValue?: any;
+
+    search?: string;
+    query?: string;
 }
 
 export default class FormerSelect extends React.Component<IFormerSelect, SFormerSelect> {
-  public constructor(props: IFormerSelect) {
-    super(props);
-    let isMultiple: boolean = this.isMultiple();
-    this.state = {
-      value: isMultiple ? this.fixedMultipleValue(props.value) : props.value,
-      dataSource: [],
-      relyon: props.relyon || {},
-      loading: false,
-      multiple: isMultiple,
-      runtimeValue: props.runtimeValue
-    };
-
-  }
-  public componentDidMount() {
-
-    this.fetchData();
-  }
-  public UNSAFE_componentWillReceiveProps(newProps: any) {
-    if (newProps.value != this.state.value) {
-      this.setState({
-        value: this.isMultiple() ? this.fixedMultipleValue(newProps.value) : newProps.value
-      })
+    public static defaultProps = {
+        'x-mode': 'lazy'
     }
-    
-    if (newProps.runtimeValue != this.state.runtimeValue) {
-      this.setState({
-        runtimeValue: newProps.runtimeValue
-      })
+    public constructor(props: IFormerSelect) {
+        super(props);
+        let isMultiple: boolean = this.isMultiple();
+        this.state = {
+            value: isMultiple ? this.fixedMultipleValue(props.value) : props.value,
+            dataSource: [],
+            relyon: props.relyon || {},
+            loading: false,
+            multiple: isMultiple,
+            runtimeValue: props.runtimeValue
+        };
+
+
+    }
+    private isLazyLoader() {
+        return this.props['x-mode'] == 'lazy';
+    }
+    public componentDidMount() {
+        if (!this.isLazyLoader())
+            this.fetchData();
+    }
+    public UNSAFE_componentWillReceiveProps(newProps: any) {
+        if (newProps.value != this.state.value) {
+            this.setState({
+                value: this.isMultiple() ? this.fixedMultipleValue(newProps.value) : newProps.value
+            })
+        }
+
+        if (newProps.runtimeValue != this.state.runtimeValue) {
+            this.setState({
+                runtimeValue: newProps.runtimeValue
+            })
+        }
+
     }
 
-  }
-
-  private fixedMultipleValue(value) {
-    if (!utils.isArray(value)) {
-      return [value]
+    private fixedMultipleValue(value) {
+        if (!utils.isArray(value)) {
+            return [value]
+        }
+        return value;
     }
-    return value;
-  }
 
-  private isMultiple() {
-    let typeProps: any = this.props['x-type-props'] || {};
-   
-    return !!typeProps['mode']
-  }
-  private onChange = (value: any) => {
-    
-    this.setState({
-      value: value
-    }, () => this.props.onChangeValue(value));
-  }
-  
-  private setLoading(loading: boolean) {
-    this.setState({
-      loading: loading
-    })
-  }
+    private isMultiple() {
+        let typeProps: any = this.props['x-type-props'] || {};
 
-  private fetchData (data?: any) {
-    let { dataSource } = this.props['x-type-props'] || {};
-    let source: any = data || dataSource || this.props.dataSource;
+        return !!typeProps['mode']
+    }
+    private onChange = (value: any) => {
 
-    if (source) {
-      this.setLoading(true);
-      
-      UtilsDatasource.getSource(source, this.state.runtimeValue).then((data: any) => {
         this.setState({
-          dataSource: data, 
-          loading: false
+            value: value
+        }, () => this.props.onChangeValue(value));
+    }
+    private onSearch =(v) => {
+        this.setState({
+            search: v
+        }, () => {
+            this.fetchData()
         })
-      })
     }
-  }
-
-  private renderRemarks(remarks: any) {
-    if (remarks) {
-      return (
-        <span className='design-former-select-remarks'>({remarks})</span>
-      )
+    private setLoading(loading: boolean) {
+        this.setState({
+            loading: loading
+        })
     }
-  }
-  private renderChildren() {
-    let dataSource: any[] = this.state.dataSource;
 
-    return dataSource.map((it => {
-      let value: any = it.value || it.key;
-      let label: any = it.label || it.name;
+    private fetchData(data?: any) {
+        let { dataSource } = this.props['x-type-props'] || {};
+        let isLabelValue: boolean = utils.isPlainObject(this.state.value);
+        let source: any = data || dataSource || this.props.dataSource;
 
-      return (
-        <Select.Option key={value} value={value}>{label}{this.renderRemarks(it.remarks)}</Select.Option>
-      )
-    }))
-  }
+        if (source) {
+            
+            // TODO 如果参数变化之后不cache
+            if (!utils.isValidArray(this.state.dataSource) || (this.state.search !== this.state.query)) {
+                this.setLoading(true);
+                
+                UtilsDatasource.getSource(source, {
+                    ...this.state.runtimeValue, 
+                    query: this.state.search
+                }).then((data: any) => {
+                    
+                    this.setState({
+                        dataSource: isLabelValue ? this.markDataSource([this.state.value, ...data]) :data,
+                        loading: false,
+                        query: this.state.search
+                    })
+                })
+            }
+        }
+    }
+    private markDataSource(data) {
+        let cache: any ={};
+        return data.filter(it => {
+            if (!cache[it.value]) {
+                cache[it.value] = true;
+                return true;
+            }
+        })
+    }
 
-  public render() {
-    return (
-      <Select
-        {...this.props['x-type-props']}   
-        onFocus={() => {
-          this.fetchData();
-        }}
-        showSearch={true}
-        disabled={this.props.disabled}  
-        loading={this.state.loading}
-        onChange = {this.onChange}
-        size={this.props.size}
-        value={this.state.value}
-      >
-        {this.renderChildren()}
-      </Select>
-    )
-  }
+    private renderRemarks(remarks: any) {
+        if (remarks) {
+            return (
+                <span className='design-former-select-remarks'>({remarks})</span>
+            )
+        }
+    }
+    private renderChildren() {
+        let dataSource: any[] = this.state.dataSource;
+
+        return dataSource.map((it => {
+            let value: any = it.value || it.key;
+            let label: any = it.label || it.name;
+
+            return (
+                <Select.Option key={value} value={value}>{label}{this.renderRemarks(it.remarks)}</Select.Option>
+            )
+        }))
+    }
+
+    public render() {
+        return (
+            <Select
+                {...this.props['x-type-props']}
+                onFocus={() => {
+                    console.log(this.isLazyLoader(), 332323)
+                    if (this.isLazyLoader()) {
+                        this.fetchData();
+                    }
+                }}
+                showSearch={true}
+                disabled={this.props.disabled}
+                loading={this.state.loading}
+                onSearch={this.onSearch}
+                onChange={this.onChange}
+                size={this.props.size}
+                value={this.state.value}
+            >
+                {this.renderChildren()}
+            </Select>
+        )
+    }
 }

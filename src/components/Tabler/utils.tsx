@@ -13,41 +13,53 @@ export default class TablerUtils {
     public static renderComponentByField(field: any, props: any,  defaultComponent?: any) {
         // 当当前字段是存在action的时候
         //if (field.action) {
-            let uiType: string = field.uiType || field.type;
-            let UiView: any = FormerTypes[uiType];
-            
-            if (utils.isFunction(defaultComponent)) {
-                return defaultComponent(field)
-            }
+        let uiType: string = field.uiType || field.type;
+        let UiView: any = FormerTypes[uiType];
+        
+        if (utils.isFunction(defaultComponent)) {
+            return defaultComponent(field)
+        }
 
-            if (UiView) {
-                if (utils.isFunction(field.motion)) {
+        if (UiView) {
+            if (utils.isFunction(field.motion)) {
 
+                return (
+                    <UiView key={field.key} {...props} loading={true} onChangeValue={(v) => {
+                        return field.motion({
+                            ... props.recordValue,
+                            [field.key]: v
+                        })
+                    }} />
+                )
+            } else {
+                if (UiView= UiView.Viewer) {
                     return (
-                        <UiView key={field.key} {...props} loading={true} onChangeValue={(v) => {
-                            return field.motion({
-                                ... props.recordValue,
-                                [field.key]: v
-                            })
-                        }} />
+                        <UiView key={field.key} {...props} />
                     )
-                } else {
-                    if (UiView= UiView.Viewer) {
-                        return (
-                            <UiView key={field.key} {...props} />
-                        )
-                    }
                 }
             }
-        //} else {
-            // TODO 枚举翻译
-            return (
-                <React.Fragment key={'c' + field.key}>
-                    {TablerUtils.renderIconComponent(field)}
-                    {props.value}
-                </React.Fragment>
-            )
-        //}
-        //return null;
+        }
+        
+        return (
+            <React.Fragment key={'c' + field.key}>
+                {TablerUtils.renderIconComponent(field)}
+                {TablerUtils.renderValue(field, props.value)}
+            </React.Fragment>
+        )
+    }
+    public static renderValue(field: any, value: any) {
+        // 判断是label对象
+        if (utils.isLabelValue(value)) {
+            return value.label;
+        } else {
+            if (utils.isLabelValueList(field.dict)) {
+                let labelValue: any = field.dict.find(it => it.value == value);
+                if (labelValue) {
+                    return labelValue.label;
+                }
+            }
+
+            return value;
+        }
     }
 }

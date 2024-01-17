@@ -73,28 +73,51 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
     }
     private getFieldProps(fields: any) {
         return fields.map(field => {
-            let fieldUI: any = field.fieldUI || {
+            let factor: any = field.factor;
+            let fieldMeta: any = field.meta || {
                 type: 'input'
             }
 
             let fieldObject: any  = {
                 key: field.fieldKey,
-                ...fieldUI,
-                uiType: fieldUI.type,
+                ...fieldMeta,
+                uiType: fieldMeta.type,
                 type: field.fieldType,
-                column: fieldUI.column,
-                group: field.fieldGroup,
-                tablerColumn:  fieldUI.column ?  {
+                column: fieldMeta.column,
+                columnGroup: field.columnGroup,
+                tablerColumn:  fieldMeta.column ?  {
                     filter: field.isIndexed,
                 }: null,
-                colspan: fieldUI.colspan || 1,
+                colspan: fieldMeta.colspan || 1,
                 dict: field.fieldDict,
                 name: field.fieldName || field.fieldKey,
-                validation: this.getFieldValidation(field)
+                validation: this.getFieldValidation(field),
+                'x-label-hidden': fieldMeta.label === false ? true : false
             };
             
-            if (fieldUI.motion) {
-                fieldObject.motion = SmartRequst.createPOST(this.props.path + `/${fieldUI.motion}`, ['id', fieldObject.key], true)
+            if (fieldMeta.motion) {
+                fieldObject.motion = SmartRequst.createPOST(this.props.path + `/${fieldMeta.motion}`, ['id', fieldObject.key], true)
+            }
+
+            if (factor) {
+            
+                let factorRequst: any = SmartRequst.createPOST( 
+                    factor.path + `/${field.factor.type}`,
+                    true
+                );
+                fieldObject.dataSource = (value: any) => {
+                    let params: any = {}
+
+                    if (factor.parent) {
+                        params.parent = factor.parent;
+                    }
+
+                    if (value.query) {
+                        params.query = value.query;
+                    }
+
+                    return factorRequst(params)
+                }
             }
 
             if (field.type == 'relation') {

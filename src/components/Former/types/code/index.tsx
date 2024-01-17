@@ -138,7 +138,7 @@ export default class FormerCode extends React.PureComponent<FormerCodeProps, For
               width={drawerWidth}
               className={"former-code-wraper"}
               onClose={this.onHideEditor}
-              visible={this.state.visible}
+              open={this.state.visible}
               maskClosable={true}
               closable={false}
             >

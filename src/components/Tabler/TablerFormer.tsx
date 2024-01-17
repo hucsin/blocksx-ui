@@ -138,11 +138,13 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         _fields.forEach((it: any, index: number) => {
             
             fieldsObject[it.key] = {
+                ...it,
                 type: it.type || 'string', // 统一当string处理
                 defaultValue: it.defaultValue,
                 title: it.name,
                 'x-modify': it.modify || it['x-modify'],
                 'x-group': it.group,
+                description: it.description,
                 'x-half-width': false,
                 'x-type-props': it.props,
                 'x-type': it.uiType || 'input',

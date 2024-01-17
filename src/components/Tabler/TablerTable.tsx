@@ -287,13 +287,13 @@
              if (this.isTablerColumn(it)) {
                  let { tablerColumn = {} } = it;
  
-                 if (tablerColumn.group) {
-                     if (!group[tablerColumn.group]) {
-                         group[tablerColumn.group] = [];
-                         group[tablerColumn.group].push(it)
+                 if (tablerColumn.columnGroup) {
+                     if (!group[tablerColumn.columnGroup]) {
+                         group[tablerColumn.columnGroup] = [];
+                         group[tablerColumn.columnGroup].push(it)
                          return true;
                      } else {
-                         group[tablerColumn.group].push(it)
+                         group[tablerColumn.columnGroup].push(it)
                          return false;
                      }
                  }
@@ -304,10 +304,10 @@
          columns = columns.map((it: any, index: number) => {
              let { tablerColumn = {} } = it;
  
-             if (tablerColumn.group) {
+             if (tablerColumn.columnGroup) {
                  return {
-                     title: tablerColumn.group,
-                     children: group[tablerColumn.group].map((it: any, idx: number) => this.getColumnByField(it, columns.length, index + idx + 1))
+                     title: tablerColumn.columnGroup,
+                     children: group[tablerColumn.columnGroup].map((it: any, idx: number) => this.getColumnByField(it, columns.length, index + idx + 1))
                  }
              }
              return this.getColumnByField(it, columns.length, index)
