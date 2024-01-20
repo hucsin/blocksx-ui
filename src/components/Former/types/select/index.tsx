@@ -172,7 +172,6 @@ export default class FormerSelect extends React.Component<IFormerSelect, SFormer
             <Select
                 {...this.props['x-type-props']}
                 onFocus={() => {
-                    console.log(this.isLazyLoader(), 332323)
                     if (this.isLazyLoader()) {
                         this.fetchData();
                     }

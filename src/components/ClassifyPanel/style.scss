@@ -1,0 +1,87 @@
+.ui-classify-panel {
+    .ui-mircotable {
+        height: calc(100vh - 100px);
+        overflow: auto;
+        .infinite-scroll-component__outerdiv{
+            .infinite-scroll-component  {
+                padding: 16px 24px;
+            }
+        }
+    }
+    .ui-extra {
+        position: absolute;
+        top: -6px;
+
+        right: 0px;;
+    }
+    .ui-header {
+        padding: 16px 0px;
+        font-size:24px;
+        padding-top: 4px;
+        position: relative;
+        background-color: #fff;
+        .ui-title {
+            text-transform:capitalize;
+            opacity: .6;
+            span.des {
+                text-transform:none;
+                font-size: 14px;
+                vertical-align: bottom;
+                opacity: .4;
+                padding-left: 16px;
+                
+            }
+            span.anticon {
+                opacity: .8;
+                margin-right: 8px;
+            }
+        
+        }
+    
+    }
+    .ui-label {
+        span {
+            background: #ddd;
+            border-radius: 3px;
+            margin-left:4px;
+            font-size: 12px;
+            color:#888;
+            padding: 0 2px;
+            transform: scale(.5);
+        }
+    }
+    .ant-tabs-nav-list {
+        padding-left: 0px;
+        
+    }
+    .ant-tabs-extra-content{
+        padding-right:0px;
+        width: 160px;
+        text-align: right;;
+        
+    }
+    .ant-tabs-nav{
+        background-color: #fff;
+        margin-bottom: 0;
+    }
+    .ant-tabs-top {
+        >.ant-tabs-nav {
+            .ant-tabs-ink-bar {
+                height: 4px;
+            }
+        
+            .ant-tabs-tab-btn {
+                text-transform: uppercase;
+            }
+        }
+    }
+    .ant-tabs-tab {
+        padding: 8px 0;
+        +.ant-tabs-tab {
+            margin-left: 24px;;
+        }
+    }
+    .ant-tabs-content-holder {
+        padding: 0;
+    }
+}

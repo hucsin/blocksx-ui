@@ -13,6 +13,8 @@ interface SelectTagProp extends IFormerBase {
     size?: any;
     // 限制比例，宽/高
     onChangeValue: Function;
+
+    'x-mode'?: 'lazy' | 'cache',
     // x-type-props
     //             .fetchTagURL
     //             .increaseTagURL
@@ -42,6 +44,9 @@ interface SelectTagState {
  * 2、新增接口，不支持删除
  */
 export default class SelectTag extends PureComponent<SelectTagProp, SelectTagState> {
+    public static defaultProps = {
+        'x-mode': 'lazy'
+    }
     public constructor(props: SelectTagProp) {
         super(props);
         this.state = {
@@ -54,10 +59,14 @@ export default class SelectTag extends PureComponent<SelectTagProp, SelectTagSta
         }
     }
 
+    private isLazyLoader() {
+        return this.props['x-mode'] == 'lazy';
+    }
 
     public componentDidMount() {
-
-        this.fetchData();
+        if(!this.isLazyLoader()) {
+            this.fetchData();
+        }
     }
 
     private setLoading(loading: boolean) {
@@ -147,7 +156,9 @@ export default class SelectTag extends PureComponent<SelectTagProp, SelectTagSta
                     'former-selectTag': true
                 })}
                 onFocus={() => {
-                    this.fetchData();
+                    if (this.isLazyLoader()) {
+                        this.fetchData();
+                    }
                 }}
                 showSearch
                 popupClassName="former-selectTag-list"

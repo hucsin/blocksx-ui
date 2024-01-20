@@ -167,15 +167,19 @@ export interface TablerProps {
 
   reflush?: any;
 
-
+  onGetRequestParams?: Function;
   onResetDataSource?: Function;
   onChangePage?: Function;
 
   getDataSource?: Function;
+  
   renderSearcher?: Function;
   renderOperater?: Function;
   renderRowOperater?: Function;
 
 
-  smartRequestMap?: any
+  smartRequestMap?: any;
+
+  searchRef?: any;
+  toolbarRef?: any;
 }

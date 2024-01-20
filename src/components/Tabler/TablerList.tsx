@@ -127,7 +127,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             this.props.onChangePage && this.props.onChangePage({
                 pageNumber: this.state.pageNumber + 1,
                 pageSize: this.state.pageSize
-            })
+            }, true)
         }
     }
     private getDataSource(): any {
@@ -438,15 +438,19 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     public render() {
         let layout: string = this.getLayout();
         return (
-            <div
-            className={classnames({
-                'ui-mircotable': true,
-                [`ui-mircotable-${this.props.classify}`]: this.props.classify,
-                [`ui-mircotable-${layout}`]: layout,
-                [`ui-mircotable-${this.props.size}`]: this.props.size
-            })}
-            id={this.id}
-            >{this.renderList()}</div>
+            <React.Fragment>
+                {this.props.renderSearcher && this.props.renderSearcher()}
+                {this.props.renderOperater && this.props.renderOperater()}
+                <div
+                className={classnames({
+                    'ui-mircotable': true,
+                    [`ui-mircotable-${this.props.classify}`]: this.props.classify,
+                    [`ui-mircotable-${layout}`]: layout,
+                    [`ui-mircotable-${this.props.size}`]: this.props.size
+                })}
+                id={this.id}
+                >{this.renderList()}</div>
+            </React.Fragment>
         )
     }
     

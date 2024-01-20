@@ -10,7 +10,10 @@ export interface SmartPageTablerProps {
     path: string;
     triggerMap: any,
     reflush: any,
-    routerParams: any
+    onGetRequestParams?: Function;
+
+    searchRef?: any;
+    toolbarRef?: any;
 }
 export interface SmartPageTablerState {
     tableProps: any;
@@ -36,6 +39,15 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
 
         this.initRequset();
     }   
+    public UNSAFE_componentWillUpdate(newProps: SmartPageTablerProps) {
+
+        if (newProps.reflush!= this.state.reflush) {
+            
+            this.setState({
+                reflush: newProps.reflush
+            })
+        }
+    }
     private initRequset() {
         this.ListRequest = SmartRequst.createPOST(this.props.path + '/list');
         this.UpdateRequest = SmartRequst.createPOST(this.props.path + '/update', true);
@@ -118,6 +130,8 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
 
                     return factorRequst(params)
                 }
+                
+                
             }
 
             if (field.type == 'relation') {
@@ -156,6 +170,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
         
         tableProps.fields = this.getFieldProps(schema.fields);
         tableProps.searcher = this.getSearch(schema.fields);
+        tableProps.type = meta.type;
 
         
         if (utils.isArray(meta.rowoperate)) {
@@ -184,8 +199,11 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
 
         return tableProps;
     }
-    
+    private getRequestParams = ()=> {
+        return this.props.onGetRequestParams && this.props.onGetRequestParams();
+    }
     public render() {
+        
         return (
             <Tabler 
                 multilineEdit={false} 
@@ -197,9 +215,16 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                 onRemove={this.DeleteRequest}
                 onAdd={this.CreateRequest}
                 onView={this.ViewRequest}
+
+                onGetRequestParams={this.getRequestParams}
+                
+                searchRef={this.props.searchRef}
+                toolbarRef={this.props.toolbarRef}
+
                 onRowAction={(e, r, v)=>{
                     console.log(e,r,v, 333)
                 }}
+                
             />
         )
     }

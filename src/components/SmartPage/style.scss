@@ -1,6 +1,22 @@
 .ui-smartpage-wrapper {
+   .ui-classify-wrapper {
+      padding: 16px 24px;
+   }
    .ui-mircotable {
         height: calc(100vh);
         overflow-y: auto;
+        .ant-list{
+         padding-top: 16px;
+        }
    } 
+
+   .ant-table-title{
+      min-height: 16px;
+  }
+  >.ant-spin-nested-loading {
+   height: 100%;
+   .ant-spin-container{
+      height: 100%;
+   }
+  }
 }

@@ -1,0 +1,166 @@
+.ui-folder-wraper {
+    position: relative;
+    height: 100%;
+    z-index: 0;
+
+    .ui-folder-body {
+        height: 100%;;
+    }
+
+    .ui-filter-folder {
+        padding: 16px;
+        box-sizing: border-box;
+        height:100%;
+        background-color: #edeff3;
+        .ant-input-suffix {
+            color:#ddd;
+        }
+        .ui-filter-folder-title {
+            font-size:20px;
+            opacity: .5;
+            text-transform: uppercase;
+            span {
+                margin-right:8px;
+            }
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+        }
+
+        dl {
+            font-size:14px;
+            &.ui-has-child {
+                border-bottom: 1px dashed #ccc;
+            }
+            padding-bottom: 16px;
+
+            dt {
+                overflow: hidden;;
+                span.title {
+                    text-transform: uppercase;
+                    opacity: .5;
+                }
+                .ant-btn {
+                    float:right;
+                    border:none;
+                    background:none;
+                    &:hover {
+                        background:#fff;
+                    }
+                }
+                padding-bottom: 8px;
+            }
+            dd {
+                margin-left: 0;
+                opacity: .8;
+                cursor: pointer;
+                border-radius: 4px;
+                padding: 4px;
+                overflow:hidden;
+                &:hover {
+                    background:rgba(0,0,0,.086)
+                }
+                .ui-title {
+                    padding-left: 8px;
+                    text-transform:capitalize
+                }
+                &.ui-select {
+                    color:#4338CA;
+                    font-weight: bold;
+                }
+                .anticon {
+                    position: relative;
+                    &::after {
+                        content: " ";
+                        position: absolute;
+                        background: rgba(0,0,0,0);
+                        
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
+                        z-index: 11;
+                    }
+                }
+                .anticon-close {
+                    float:right;
+                    display: none;
+                    position: relative;
+                    font-size:12px;
+                    margin-top: 4px;
+                    transition: all .2s;
+                    
+                   &:hover {
+                        color:red;
+                        transform: rotate(90deg);
+                    }
+                }
+
+                .ui-total {
+                    
+                    font-size:12px;
+                    float:right;
+                    background:#fff;
+                    display:inline-block;
+                    border-radius: 3px;
+                    padding: 0 4px ;
+                    
+                    margin-top: 2px;
+                }
+            }
+            &.ui-folder-more {
+
+                dd:not(.ui-select):hover {
+                    
+                    .ui-total{
+                        display:none;
+                    }
+                    .anticon-close {
+                        display: inline-block;
+                        margin-bottom: -3px;
+                    }
+
+                }
+            }
+        }
+    }
+}
+.ui-folder-popover {
+    &.ant-popover .ant-popover-title {
+        opacity: .6;
+        padding-bottom: 8px;
+        text-transform:capitalize;
+    }
+    .ant-popover-arrow,
+    .ant-popover-content {
+        margin-left: -8px;
+    }
+    .ui-folder-fomer {
+        min-width: 250px;
+        &.ui-error {
+        
+            .folder {
+                color:red;
+                opacity: 1;
+                input {
+                    border: 1px solid red;
+                }
+            }
+        }
+        .ui-content {
+            padding-bottom: 8px;
+        }
+        .ui-right {
+            text-align: right;
+            padding-top: 16px;
+            button {
+                text-transform:capitalize;
+            }
+        }
+        .ui-label {
+            font-size:12px;
+            opacity: .5;
+            text-transform:capitalize;
+        }
+    }
+}
