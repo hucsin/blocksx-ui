@@ -97,7 +97,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
             loading: false,
             // 标记是否有分页控件
             pagination: _props.pagination,
-            dataSource: [],
+            dataSource: _value || [],
             pageSize: this.getDefaultPageSize(_props, remoteMode, _value.length),//_props['pageSize'] || 10,
             currentPage: 1,
             totalNumber: remoteMode ? 0 : _value.length
@@ -108,7 +108,6 @@ export default class FormerTable extends React.Component<IFormerTable, {
     public componentDidMount() {
         this.resetDataSource(1);
     }
-
 
 
     public UNSAFE_componentWillReceiveProps(newProps: any) {
@@ -249,12 +248,15 @@ export default class FormerTable extends React.Component<IFormerTable, {
                 ellipsis: true,
                 render: (text: any, record: any, rowIndex: number) => {
 
-                    if (props.dataSource && !utils.isUndefined(text)) {
-                        text = props.dataSource.find((it: any) => it.value === text);
+                    let { dataSource } = properties[it.key];
+                    let dictList: any =  dataSource || props.dataSource ;
+                    
+                    if (utils.isArray(dictList) && !utils.isUndefined(text)) {
+                        text = dictList.find((it: any) => it.value === text);
                         text = text.label;
                     } else {
-                        if (it.type == 'boolean') {
-                            text = text ? '是' : '否'
+                        if (utils.isBoolean(text)) {
+                            text = text ? 'Yes' : 'No'
                         }
                     }
                    

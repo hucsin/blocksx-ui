@@ -4,8 +4,10 @@
 
  import React from 'react';
  import classnames from 'classnames';
+ import { utils } from '@blocksx/core';
  import { IFormerBase } from '../../typings';
  import * as FormerIcon from '../../../Icons';
+ import UtilsDatasource from '../../../utils/datasource';
  import { Radio } from 'antd';
  import './style.scss';
 
@@ -17,21 +19,41 @@
     disabled?: boolean;
  }
 
- export default class FormerRadio extends React.Component<IFormerRadio, { props:any,disabled?: boolean, value: any }>{
+ export default class FormerRadio extends React.Component<IFormerRadio, {dataSource: any, props:any,disabled?: boolean, value: any }>{
     
     public static defaultProps = {
         size: 'small'
     }
     public constructor(props: IFormerRadio) {
         super(props);
-
+        
         this.state = {
             props: props['x-type-props'] || {},
             value: props.value,
-            disabled: false
+            disabled: false,
+            dataSource: []
         }
         
     }
+
+    
+    public componentDidMount() {
+        let dataSource: any = this.props.dataSource || this.state.props.dataSource;
+        
+        dataSource && UtilsDatasource.getSource(dataSource, {}).then(result => {
+
+            this.setState({
+                dataSource: result
+            })
+        })
+    }
+    private getLabelValue(value: any) {
+        if (utils.isLabelValue(value)){
+            return value.value;
+        }
+        return value;
+    }
+
     public UNSAFE_componentWillUpdate(newProps: IFormerRadio) {
         if (newProps.disabled!==this.state.disabled) {
             this.setState({
@@ -53,21 +75,14 @@
         }, () => this.props.onChangeValue(value));
 
     }
-    public UNSAFE_componentWillReceiveProps(newProps: any) {
-        if (newProps.value != this.state.value) {
-            this.setState({
-                value: newProps.value
-            })
-        }
-    }
     private getDatasource() {
-      return this.props['dataSource'] || this.state.props['dataSource'];
+      return this.state.dataSource || [];
     }
     private renderButton() {
         let dataSource: any = this.getDatasource();
 
         return (
-            <Radio.Group buttonStyle="solid" size={this.props.size} disabled={this.state.disabled}  onChange={this.onChangeValue} value={this.state.value}>
+            <Radio.Group buttonStyle="solid" size={this.props.size} disabled={this.state.disabled}  onChange={this.onChangeValue} value={this.getLabelValue(this.state.value)}>
                 {Array.isArray(dataSource) && dataSource.map((it: any) => {
                     let VIcon = it.icon ? FormerIcon[`${it.icon}`] : null;
                     return (

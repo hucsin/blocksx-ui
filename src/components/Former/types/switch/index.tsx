@@ -21,7 +21,16 @@ interface IFormerSwitch extends IFormerBase {
     onChangeValue: Function;
 }
 
+class FormerSwitchViewer extends React.Component<{value: any}> {
+    public render() {
+        return (
+            <Switch checked={this.props.value} disabled size={'small'}></Switch>
+        )
+    }
+}
+
 export default class FormerSwitch extends React.Component<IFormerSwitch, { value: any; loading: any }> {
+    public static Viewer: any = FormerSwitchViewer;
     public static defaultProps = {
         loading: false
     }

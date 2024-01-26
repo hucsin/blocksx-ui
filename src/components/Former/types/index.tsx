@@ -28,3 +28,6 @@ export { default as more } from './more';
 export { default as code } from './code';
 export { default as color } from './color';
 export { default as hidden } from './hidden';
+
+export { default as pickone } from './pickone';
+

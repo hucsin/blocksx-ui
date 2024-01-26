@@ -120,7 +120,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         let { rootEmitter } = this.props;
 
         // 初始化的时候把初始值 上报
-        this.props.onChangeValue && this.props.onChangeValue(this.state.value, 'init');
+        //this.props.onChangeValue && this.props.onChangeValue(this.state.value, 'init');
+        this.onChange(this.state.value, 'init')
         // 清空control的影响
         if (this.props['x-control']) {
             this.dealControl(this.state.value, this.props['x-control']);
@@ -142,8 +143,9 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     }
 
     public UNSAFE_componentWillReceiveProps(newProps: any) {
-
+        
         if (newProps.value != this.state.value) {
+            
             this.setState({
                 value: newProps.value
             })
@@ -307,7 +309,16 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         return object;
     }
 
-    private getValueByProps(value: any, props: any) {
+    private getValueByProps(value: any, props: any, allValue?: any,  prop?: string) {
+
+
+        if (utils.isString(prop)) {
+            let dotProp: any = prop?.split('.');
+            if (dotProp.length == 2) {
+                return utils.get(allValue, prop)
+            }
+        }
+        
         if (utils.isUndefined(value)) {
             return utils.isUndefined(props.defaultValue) ? props.value : props.defaultValue;
         }
@@ -327,20 +338,39 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             }
         }
 
+        
+        // TODO 修改点分属性的值
+        // 后续看下高效的方法
+       // this.updateDotpropValue(value)
+        
         this.setState({
             value: value,
             validationState: false,
             validationMessage: null,
             originValue: originValue ? originValue : this.state.originValue
         });
-
+        /*
         if (this.props.onChangeValue) {
             this.props.onChangeValue(value, type, originValue);
-        }
+        }*/
+        this.onChange(value, type, originValue)
 
         if (this.props['x-control']) {
             this.dealControl(value, this.props['x-control']);
         }
+    }
+    private onChange(value: any, type?: string, originValue?: any) {
+        
+        let { path = '' } = this.props;
+        // 屏蔽 掉 点分路径值
+        // 名称中带点的 为只显示
+        if (path.indexOf('.') == -1) {
+
+            if (this.props.onChangeValue) {
+                this.props.onChangeValue(value, type, originValue)
+            }
+        }
+
     }
     private getControlInfo(keys: string[]): IControlInfo {
         let controlList: string[] = [];
@@ -483,10 +513,12 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             controlList.forEach((control: IControl) => {
 
                 let { when = [], hide = [], show = [] } = control;
-                if (utils.isArray(when)) {
+                if (utils.isArray(when) || utils.isBoolean(when)) {
                     // 当存在值的时候
                     // 简单判断值是否存在，不做模糊匹配
-                    if (when.indexOf(value) > -1) {
+                    let matchValue: boolean = utils.isBoolean(when) ? !!value : when.indexOf(value) > -1;
+                    
+                    if (matchValue) {
                         showList = showList.concat(show);
                         hideList = hideList.concat(hide);
 
@@ -621,6 +653,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                     // 计算oneOf
                                     let props: any = this.properties[prop];
                                     let hidden: boolean = props['x-type'] == 'hidden';
+                                    
                                     return (
                                         <Child
                                             hidden={hidden}
@@ -632,7 +665,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                             }}
 
                                             size={this.props.size}
-                                            value={this.getValueByProps(value[prop], properties)}
+                                            value={this.getValueByProps(value[prop], properties, value, prop)}
                                             defaultValue={this.getDefaultValue({
                                                 type: properties.type
                                             })}
@@ -646,7 +679,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                                 path={prop}
                                                 parentPath={this.path}
                                                 runtimeValue={this.state.runtimeValue}
-                                                value={this.getValueByProps(value[prop], properties)}
+                                                value={this.getValueByProps(value[prop], properties, value, prop)}
                                                 onDealControl={(control: IControl) => {
                                                     this.onDealControl(control)
                                                 }}
@@ -716,7 +749,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             parentPath={this.path}
                             rootEmitter={this.props.rootEmitter}
                             runtimeValue={this.state.runtimeValue}
-                            value={this.getValueByProps(value[prop], valueProperties)}
+                            value={this.getValueByProps(value[prop], valueProperties, value, prop)}
                             onGetDependentParameters={this.props.onGetDependentParameters}
                             onChangeValue={(valVal: any, type?: string) => {
                                 origin.value = valVal;

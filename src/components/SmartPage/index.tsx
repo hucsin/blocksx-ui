@@ -2,6 +2,7 @@
  * 自动布局页面
  */
 import React from 'react';
+import classnames from 'classnames';
 import { Spin, Empty } from 'antd';
 import './types'
 
@@ -23,14 +24,22 @@ export interface PageMeta {
 
 
 export interface SmartPageProps {
-    router: any;
+    router?: any;
     name: string; // 页面的一个唯一ID
     meta?: PageMeta;
+
+    noFolder?: boolean;
+    noHeader?: boolean;
+    noToolbar?: boolean;
 
     defaultFolder?: string;
     defaultClassify?: string;
 
     pageURI: string;
+    mode?: string;
+    rowSelection?: boolean;
+    onChangeValue?: Function;
+    onInitPage?: Function;
 
     triggerMap?: {
         [key:string] : Function;
@@ -47,8 +56,6 @@ export interface SmartPageState {
     reflush: number;
     path: string;
     name: string;
-    routerParams: any;
-    routerKey: string;
     classifyQuery?: string;
     
     folderQuery?: string;
@@ -56,6 +63,14 @@ export interface SmartPageState {
 
     classifyField?: any;
     folderField?: any;
+
+    noFolder?: boolean;
+    noHeader?: boolean;
+    noToolbar?: boolean;
+
+    rowSelection?: boolean;
+    mode?: string;
+    value?: any;
 }
 
 export default class SmartPage extends React.Component<SmartPageProps, SmartPageState> {
@@ -68,7 +83,6 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     private requestHelper: any;
     private searchRef: any;
     private toolbarRef: any;
-    private onFetchTags: any;
 
     public constructor(props: SmartPageProps) {
         super(props)
@@ -81,9 +95,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             uiType: '',
             path: '',
             name: props.name,
-            routerParams: {},
             reflush: 0,
-            routerKey: props.router.routerKey
+            noFolder: props.noFolder,
+            noHeader: props.noHeader,
+            noToolbar: props.noToolbar,
+            rowSelection: props.rowSelection,
+            mode: props.mode
         }
 
         this.requestHelper = SmartRequest.createPOST(props.pageURI);
@@ -116,22 +133,43 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             
             this.requestHelper({
                 page: this.state.name
-            }).then((data) => {
+            }).then(async (data) => {
                 let { schema = {}, uiType, path } = data;
                 
                 if (PageManger.has(uiType)) {
                     let meta: PageMeta = schema.meta || this.props.meta || {};
-                    let cache: any; 
-                    this.setState({
+                    
+                    let classifyField: any = this.getClassifyField(schema.fields);
+
+                    if (classifyField && classifyField.factor) {
+                        try {
+                            let folder: any = await this.getOnFetchFolder(classifyField)({})
+                            classifyField.fieldDict = folder;
+                        } catch(e){console.log(e)}
+                    }
+                    
+                    let initStateConfig: any = {
                         schema: schema,
                         uiType: uiType,
                         meta: meta,
-                        folderField: this.getFolderField(schema.fields),
-                        classifyField: this.getClassifyField(schema.fields),
+                        classifyField: classifyField,
                         path,
                         metaKey: this.getMetaKey(meta),
-                        loading: false
-                    })
+                        loading: false,
+                        reflush: +new Date,
+                        noFolder: this.state.noFolder,
+                        noHeader: this.state.noHeader,
+                        noToolbar: this.state.noToolbar
+                    };
+
+                    if (this.props.onInitPage) {
+                        this.props.onInitPage(initStateConfig, schema,  this)
+                    }
+
+                    initStateConfig.folderField =  
+                        initStateConfig.noFolder ? null : this.getFolderField(schema.fields);
+
+                    this.setState(initStateConfig)
                 } else {
                     throw new Error(`Component type [${uiType}] does not exist!`);
                 }
@@ -160,6 +198,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             
             this.setState({
                 name: newProps.name,
+                mode: newProps.mode,
+                folderMeta: undefined,
                 classifyQuery: undefined
             }, this.fetch)
         }
@@ -172,7 +212,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         })
     }
     private onFolderChange =(query: any, folderMeta: any) => {
-        console.log(query, folderMeta, 222)
+        
         this.setState({
             folderQuery: query,
             folderMeta,
@@ -183,7 +223,6 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         let { folderQuery, classifyQuery } = this.state;
         let params: any = {};
         
-
         if (this.state.classifyField && classifyQuery) {
             if (classifyQuery !== 'all') {
                 params[this.state.classifyField.fieldKey] = classifyQuery
@@ -196,11 +235,21 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         }
         return params;
     }
+    private onChangeValue =(value: any)=> {
+        this.setState({
+            value
+        })
+
+        if (this.props.onChangeValue) {
+            this.props.onChangeValue(value)
+        }
+    }
     public renderContentView() {
         let ViewComponent: any = PageManger.findComponentByType(this.state.uiType);
         
         return (
             <ViewComponent 
+                key={this.state.reflush}
                 schema = {this.state.schema}
                 meta = {this.state.meta}
                 
@@ -209,8 +258,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 reflush = {this.state.reflush}
                 onGetRequestParams = {this.getQueryParams}
 
+                rowSelection={this.state.rowSelection}
+                mode={this.state.mode}
                 searchRef= {this.searchRef}
+                noOperater= {this.state.noToolbar}
                 toolbarRef= {this.toolbarRef}
+                onChangeValue={this.onChangeValue}
             />
         )
     }
@@ -222,14 +275,16 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             description: folderMeta ? folderMeta.description :  folderField ? '-' : meta.description,
             icon: folderField ? '' : meta.icon
         }
-        
             
         let dictmap: any = [{value: 'all', label: 'All'}];
 
         classifyField.fieldDict && (dictmap = dictmap.concat(classifyField.fieldDict))
 
         return (
-            <div className='ui-classify-wrapper'>
+            <div className={classnames({
+                'ui-classify-wrapper': true,
+                'ui-classify-noheader': this.state.noHeader
+            })}>
                 <ClassifyPanel
                     key={37}
                     title = {classifyMeta.label as any}
@@ -248,24 +303,33 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         )
         
     }
-    private getOnFetchFolder(folderField: any): any {
-        
-        if ( this.onFetchTags) {
-            return this.onFetchTags;
+    private getOnFetchFolder(folderField: any, type?: string): any {
+       
+        if (folderField && folderField.factor) {
+            let fetch: any = SmartRequest.createPOST(folderField.factor.path + '/' + (type || folderField.factor.type || 'list'));
+
+            return (value) => {
+                if (folderField.factor.parent) {
+                    value.parent = folderField.factor.parent
+                }
+                return fetch(value)
+            }
         }
-        return this.onFetchTags = SmartRequest.createPOST(folderField.factor.path + '/' + folderField.factor.type)
     }
     public renderContent() {
         let { folderField, meta } = this.state;
-        if (folderField) {
+
+        if (folderField && folderField.factor) {
             let folder: any = folderField.meta.folder || {};
             //let tagC = tag.meta.tag;
             
             return (
                 <FilterFolder 
+                    key={meta.title || meta.icon}
                     title={meta.title as any}
                     icon={meta.icon as any}
-                    onFetchCustomFolders= {this.getOnFetchFolder(folderField)}
+                    onFetchCustomFolders= {this.getOnFetchFolder(folderField, 'list')}
+                    onAddCustomFolder={this.getOnFetchFolder(folderField, 'create')}
                     onChange={this.onFolderChange}
                     currentKey={this.props.defaultFolder}
                 >
@@ -273,6 +337,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 </FilterFolder>
             )
         }
+
         return this.renderRightContent();
     }
     public render() {

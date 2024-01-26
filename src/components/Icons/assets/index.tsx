@@ -100,4 +100,6 @@ export { default as ISwitchOpen } from './switchOpen';
 export { default as IDataTransfer} from './dataTransfer';
 export { default as IRunLog } from './runLog'
 
-export { default as IRouter } from './router'
+export { default as IRouter } from './router';
+
+export { default as IPick } from './pick'

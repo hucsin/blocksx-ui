@@ -9,6 +9,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
+
 import { Input } from 'antd';
 
 interface IFormerInput extends IFormerBase {

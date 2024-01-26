@@ -1,20 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Space, Button, Input, Modal, Dropdown, Divider, Popconfirm } from 'antd';
+import { Space, Button, Modal, Dropdown, Divider, Popconfirm } from 'antd';
 import { utils } from '@blocksx/core';
 import SearchBar from '../SearchBar';
 import TablerFormer from './TablerFormer';
+import SmartDrawer from '../SmartDrawer';
 
-import { DownOutlined, CaretDownOutlined, PlusCircleOutlined } from '../Icons/index';
+import { DownOutlined, CaretDownOutlined } from '../Icons/index';
 import i18n from '@blocksx/i18n';
 import { template } from '../utils/string';
 
-import { TablerProps, RowOperate, SearcherWhereKey, TablerField } from './typings';
+import { TablerProps, RowOperate, SearcherWhereKey } from './typings';
 import { DEFAULT_COLUMNS_ACTION, DEFAULT_BATCH_ACTION } from './config';
 import TablerTable from './TablerTable';
 import TablerList from './TablerList';
 import AuthFilter from './AuthFilter';
+import TablerUtils from './utils';
+
+
 
 
 
@@ -40,20 +44,36 @@ interface TablerState {
     formerName?: string;
     currentRowData?: any;
     currentRowOperate?: any;
+
+    selectedRowKeys?: any[];
+    rowSelection?: boolean;
+
+    smartPageOpen?: boolean;
+    smartPageData?: any;
+    mode: any;
+    value?: any;
+}
+
+
+interface TablerValueProps extends TablerProps {
+    selectedRowKeys?: any [];
+    batchOpertate?: any[]
+    mode?: string;
+    onChangeValue?: Function;
 }
 
 /**
  * 1、将数据源的部分逻辑迁移到这里
  * 2、将公共部分逻辑迁移到这里
  */
-export default class Tabler extends React.Component<TablerProps, TablerState>{
+export default class Tabler extends React.Component<TablerValueProps, TablerState>{
     static defaultProps = {
         type: 'table',
         searchSize: 'small',
         createText: i18n.t('Create new records'),
         rowKey: 'id',
         formerType: 'drawer',
-
+        rowSelection: false,
         pageNumber: 1,
         size: 'middle',
         resizeMaxColumns: 7,
@@ -67,20 +87,27 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
     }
     
     private authFilter: AuthFilter
-    public constructor(props: TablerProps) {
+    public constructor(props: TablerValueProps) {
         super(props);
-
+        
         this.state = {
             pageSize: props.pageSize || 10,
             total: 0,
+            
             pageNumber: 1,
             dataSource: [],
             originalDataSource: [],
             searcher: {},
             loading: false,
             localData: false,
+            rowSelection: props.mode ==  'pickmore' ?  true: props.rowSelection,
             reflush: props.reflush,
-            childrenReflush: props.reflush
+            childrenReflush: props.reflush,
+            value: props.selectedRowKeys,
+
+            smartPageOpen: false,
+            smartPageData: {} ,
+            mode: props.mode
         }
         this.authFilter = new AuthFilter(this);
     }
@@ -92,12 +119,22 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
     public UNSAFE_componentWillUpdate(newProps: any) {
         
         if (newProps.reflush != this.state.reflush) {
-            console.log('reflush')
             this.setState({
                 reflush: newProps.reflush
             }, () => {
                 this.resetDataSource();
                 
+            })
+        }
+        if (newProps.selectedRowKeys != this.state.selectedRowKeys) {
+            this.setState({
+                selectedRowKeys: newProps.selectedRowKeys
+            })
+        }
+
+        if (newProps.mode != this.state.mode) {
+            this.setState({
+                mode: newProps.mode
             })
         }
     }
@@ -265,39 +302,12 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
         return multilineEdit && !utils.isUndefined(this.state.multilineEdit);
     }
 
-    private onSearchInput = (e) => {
-        let searcherProps: any = this.props.searcher;
+    private renderSearcher = (isGetView?: boolean) => {
 
-        this.onSearch({
-            [`${searcherProps.searchKey}`]: {
-                type: 'match',
-                value: e
-            }
-        })
-    }
-    private onSearch = (params: any) => {
-
-        let { searcher } = this.state;
-        // 删除
-        for (let prop in params) {
-            let item: any = params[prop];
-            if (item.value == '') {
-                delete searcher[prop];
-                delete params[prop];
-            }
+        if (this.props.noSearcher) {
+            return null;
         }
 
-        this.setState({
-            searcher: Object.assign({
-                ...searcher,
-                ...params
-            })
-        }, () => {
-            this.resetDataSource()
-        })
-    }
-
-    private renderSearcher = (isGetView?: boolean) => {
         if (!isGetView && this.props.searchRef && this.props.searchRef.current) {
             return (
                 ReactDOM.createPortal(this.renderSearcher(true), this.props.searchRef.current)
@@ -346,19 +356,37 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
         return batchButton;
     }
     private getBatchAddAction() {
-        let { increase, auth = {} } = this.props;
         let batchAddList: any = [];
+        let batchOpertate: any = this.props.batchOpertate;
+        let batchOpertateMap: any = {};
 
-        if (auth.add !== false && increase) {
-            increase.forEach((it: any, index: number) => {
-                batchAddList.push({
-                    type: 'add',
+        // 判断是否是
+        if (batchOpertate && batchOpertate.length) {
+            batchOpertate.forEach((it, index) => {
+                batchOpertateMap[it.type] = it;
 
-                    name: it.name,
-                    defaultValue: it.defaultValue
-                })
+                if (!it.disabled) {
+                    batchAddList.push({
+                        ...it,
+                        id: index
+                    })
+                }
             })
         }
+
+
+        if ((!batchOpertateMap['record.create'] || (batchOpertateMap['record.create'].disabled !== true))) {
+            
+            batchAddList.unshift({
+                type: 'record.create',
+                icon: 'PlusCircleOutlined',
+                name: batchOpertateMap['record.create'] 
+                    ? batchOpertateMap['record.create'].name || this.props.createText 
+                    : this.props.createText
+            })
+        }
+        
+
 
         return batchAddList;
     }
@@ -411,13 +439,16 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
                  this.onRemove(rowData)
                  break;
              default:
-                 this.props.onRowAction && this.props.onRowAction(operate, rowData, this)
+                if (operate.motion && utils.isFunction(operate.motion)) {
+                    return operate.motion(rowData, this)
+                }
+                this.props.onRowAction && this.props.onRowAction(operate, rowData, this)
          }
     }
 
     private onFormerChange(value: any) {
         let { currentRowOperate } = this.state;
-
+        
         // 如果是行自定义行为操作
         if (currentRowOperate && utils.isFunction(currentRowOperate.motion)) {
 
@@ -458,12 +489,29 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
             return this.resetDataSource()
         }
     }
-    private onAddClick =()=> {
-        this.setState({
-            formerAction: 'create',
-            formerName: 'Create',
-            currentRowData: null
-        })
+    private onBatchAddClick =(action: any)=> {
+
+        if (utils.isPlainObject(action)) {
+            // 添加
+            if (action.type == 'record.create') {
+                this.setState({
+                    formerAction: 'create',
+                    formerName: 'Create',
+                    currentRowData: null
+                })
+            }
+        } else {
+            let batchOpertate: any = this.props.batchOpertate;
+
+            if (batchOpertate[action]) {
+
+                this.setState({
+                    smartPageOpen:true,
+                    smartPageData: batchOpertate[action]
+                })
+            }
+
+        }
     }
     
     private renderRowOperate = (rowData: any, rowIndex: number) => {
@@ -596,7 +644,40 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
             }
         }
     }
+    private renderBatchAddList(battchAddList: any) {
+        let first:any = battchAddList.shift();
+
+        if (battchAddList.length == 0) {
+
+            return (
+                <Button  type="primary" onClick={() => this.onBatchAddClick(first)} icon={TablerUtils.renderIconComponent(first)}>
+                    {first.name}
+                </Button>
+            )
+        }  else {
+            
+            return <Dropdown.Button
+                icon={TablerUtils.renderIconComponent({ icon: 'DownOutlined'})}
+                type='primary'
+                menu={{items: battchAddList.map(it => { 
+                    return {
+                        key: it.id,
+                        icon: TablerUtils.renderIconComponent(it),
+                        label: it.name,
+                        onClick: e => this.onBatchAddClick(e.key)
+                    }
+                })}}
+                onClick={()=> this.onBatchAddClick(first)}
+            >
+                {TablerUtils.renderIconComponent(first)}{first.name}
+            </Dropdown.Button>
+        }
+    }
     private renderOperater = (isGetView?: boolean) => {
+
+        if (this.props.noOperater) {
+            return null;
+        }
 
         if (!isGetView && this.props.toolbarRef && this.props.toolbarRef.current) {
 
@@ -611,9 +692,7 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
 
             return (
                 <Space size={this.props.searchSize}>
-                    <div className="tabler-batch-info" style={{display: 'none'}}>
-                        <span>{this.state.total}</span> rows of data in total{this.state.selected ? <span>, selected <span>{this.state.selected}</span> rows</span> : null} <Divider type="vertical" />
-                    </div>
+                    
                     {battchList && battchList.length ?
                         <div className="tabler-batch-action">
                             {battchList.length && <Dropdown disabled={this.isMultilineEdit()} placement="bottomRight" overlay={this.renderBatchMenu(battchList)}><span>批量操作<CaretDownOutlined /></span></Dropdown>}
@@ -621,12 +700,24 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
                         : null}
                     {/* 新增操作 */}
                     <div className="tabler-batch-add">
-                        {battchAddList.length
-                            ? <Dropdown disabled={this.isMultilineEdit()} placement="bottomRight" overlay={this.renderBatchMenu(battchAddList)}><Button size={this.props.size} type="primary">{this.props.createText}<DownOutlined /></Button></Dropdown>
-                            : <Button disabled={this.isMultilineEdit()} size={this.props.size} onClick={this.onAddClick} type="primary" icon={<PlusCircleOutlined />}>{this.props.createText}</Button>}
+                        {this.renderBatchAddList(battchAddList)}
                     </div>
                 </Space>
             )
+        }
+    }
+    private getRowOperateLength() {
+        let actionList: any = this.getRowAction({}) || [];
+
+        return actionList.length;
+    }
+    private onSelectedRow =(selectedRowKeys: any[])=> {
+        
+        this.setState({
+            value: selectedRowKeys
+        })
+        if (this.props.onChangeValue) {
+            this.props.onChangeValue(selectedRowKeys)
         }
     }
     public render() {
@@ -635,10 +726,18 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
         let props: any = this.props;
         
         return (
-            <>
+            <React.Fragment>
+                <SmartDrawer 
+                    key={'2smart'}
+                    open={this.state.smartPageOpen}
+                    {...this.state.smartPageData}
+                    onClose={()=> this.setState({smartPageOpen: false})}
+                />
                 <TablerFormer
+                     key={'2fomer'}
                      formerType={props.formerType}
                      name={this.state.formerName}
+                     column={this.props.formerColumn}
                      formerSchema={props.formerSchema}
                      action={this.state.formerAction}
                      createText={this.props.createText}
@@ -657,6 +756,7 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
                      }}
                  />
                 <View
+                    key={'2view'}
                     {...this.props}
 
                     pageSize={this.state.pageSize}
@@ -664,16 +764,21 @@ export default class Tabler extends React.Component<TablerProps, TablerState>{
                     total={this.state.total}
                     reflush={this.state.childrenReflush}
                     loading={this.state.loading}
+                    mode={this.state.mode}
                     getDataSource={() => this.state.dataSource}
                     onChangePage={(val: any ,isAppend?: boolean) => { this.setState(val, () => this.resetDataSource(isAppend)) }}
 
+                    selectedRowKeys={this.state.value}
+                    rowSelection={this.state.rowSelection}
                     renderSearcher={this.renderSearcher}
                     renderOperater={this.renderOperater}
                     renderRowOperater={this.renderRowOperate}
+                    rowOperateLength={this.getRowOperateLength()}
+                    onSelectedRow={this.onSelectedRow}
                 >
                 
                 </View>
-            </>
+            </React.Fragment>
         )
     }
 

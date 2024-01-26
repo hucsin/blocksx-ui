@@ -56,9 +56,18 @@
  
      loading?: boolean;
      reflush?: any;
+
+     mode: any;
+ }
+
+ interface TablerTableProps extends TablerProps {
+    rowOperateLength?: boolean;
+    selectedRowKeys?: any[]
+    onSelectedRow?: Function;
+    mode: any,
  }
  
- export default class TablerTable extends React.Component<TablerProps, TablerState> {
+ export default class TablerTable extends React.Component<TablerTableProps, TablerState> {
  
      static defaultProps = {
          pageSize: 10,
@@ -71,20 +80,21 @@
      private tableDOM?: any;
      private columns: any[];
  
-     public constructor(props: TablerProps) {
+     public constructor(props: TablerTableProps) {
          super(props);
          this.state = {
              pageNumber: 1,
              total: 0,
              selected: 0,
-             selectedRowKeys: [],
+             selectedRowKeys: props.selectedRowKeys || [],
              pageSize: props.pageSize,
              searcher: {},
              localData: true,
              cacheSize: {},
              cacheFilter: {},
              loading: false,
-             reflush: props.reflush
+             reflush: props.reflush,
+             mode: props.mode
          };
  
          
@@ -108,6 +118,12 @@
             })
          }
 
+         if (newProps.mode !== this.state.mode) {
+            this.setState({
+                mode: newProps.mode
+            })
+         }
+
          if (newProps.loading !== this.state.loading) {
             this.setState({
                 loading: newProps.loading
@@ -125,16 +141,26 @@
                 pageNumber: newProps.pageNumber
             })
          }
+         if (newProps.selectedRowKeys != this.state.selectedRowKeys ) {
+            
+            this.setState({
+                selectedRowKeys: newProps.selectedRowKeys
+            })
+         }
      }
      private resetDataSource(datasource?: any) {
         this.props.onResetDataSource && this.props.onResetDataSource(datasource);
      }
 
      private onSelectChange = (selectedRowKeys: any) => {
+        
          this.setState({
              selectedRowKeys,
              selected: selectedRowKeys.length
          })
+         if (this.props.onSelectedRow) {
+            this.props.onSelectedRow(selectedRowKeys);
+         }
      }
  
      private getDataSource(): any {
@@ -143,8 +169,16 @@
         }
      }
     
-    
+     private isPickMode () {
+        return ['pickone', 'pickmore'].indexOf(this.state.mode) > -1;
+     }
      private isTablerColumn(it: any) {
+        
+        if (this.isPickMode()) {
+            if (it.motion || it.major == false) {
+                return false
+            }
+        }
          return it.column || it.tablerColumn
      }
      private getColumnByField(field: TablerField, total: number, index: number) {
@@ -324,16 +358,31 @@
          })
  
          // 添加操作列
-         columns.push({
-             title: i18n.t('Operate'),
-             fixed: 'right',
-             key: '10002',
-             width: 140,
-             render: (text: any, column: any, rowIndex: number) => this.renderColumnAction(column, rowIndex)
-         })
+         if (this.state.mode !=='pickmore') {
+            columns.push({
+                title: i18n.t('Operate'),
+                fixed: 'right',
+                key: '10002',
+                width: this.getOperateWidth(),
+                render: (text: any, column: any, rowIndex: number) => this.renderColumnAction(column, rowIndex)
+            })
+        }
+
          return this.columns = columns;
      }
- 
+     private getOperateWidth() {
+        let length: any = this.props.rowOperateLength;
+        if (length) {
+            if (length>=3) {
+                return 140;
+            } else if (length >1) {
+                return 110;
+            }
+            return 80
+
+        }
+        return 140;
+     }
      private isShowTitle(): boolean {
          return true
      }
@@ -357,11 +406,7 @@
          }
      }
  
-     private onActionClick(item: any, column: any, rowIndex: number) {
- 
-         
- 
-     }
+    
  
      private renderTitle(): any {
          if (this.isShowTitle()) {
@@ -394,6 +439,11 @@
          let { multilineEdit } = this.props;
          return multilineEdit && !utils.isUndefined(this.state.multilineEdit);
      }
+     private renderSelected() {
+        return <div className="tabler-batch-selected" >
+            {this.state.selected ? <span>selected <span>{this.state.selected}/{this.state.total}</span> rows</span> : null} 
+        </div>
+     }
      public render() {
          return (
              <div className={classnames('tabler-wrapper', {
@@ -402,36 +452,49 @@
                  
                  <Spin spinning={this.state.loading}>
                     {this.renderTable()}
+                    {this.renderSelected()}
                  </Spin>
              </div>
          )
      }
      private renderTable() {
+        
          return (
              <Table
                  rowKey={this.props.rowKey || 'id'}
+                 key={1}
                  title={() => this.renderTitle()}
                  size={this.props.size}
                  columns={this.getColumns()}
                  tableLayout={'fixed'}
                  dataSource={this.getDataSource()}
                  
- 
                  scroll={this.columns.length <= this.props.resizeMaxColumns + 1 ? undefined : { x: this.getTableWidth() }}
-                 rowSelection={this.props.rowSelection !== false && {
+                 rowSelection={this.state.mode == 'pickmore' && {
                      selectedRowKeys: this.state.selectedRowKeys,
                      onChange: this.onSelectChange,
                      columnWidth: 40,
                      fixed: true
                  } as any}
+                 rowClassName={(record: any)=> {
+                    let { selectedRowKeys } = this.state;
+                    if ( selectedRowKeys ) {
+                        if (selectedRowKeys.indexOf(record[this.props.rowKey || 'id']) > -1) {
+                            return 'ui-tabler-selected' 
+                        }
+                    }
+                    return ''
+                 }}
                  components={{
                      header: {
                          cell: ResizableTitle
                      }
                  }}
+                 
                  pagination={{
                      pageSize: this.state.pageSize,
                      total: this.state.total,
+
                      onChange: (pageNumber, pageSize)=> {
                          
                         this.props.onChangePage && this.props.onChangePage({pageSize, pageNumber})

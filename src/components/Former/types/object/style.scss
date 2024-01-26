@@ -1,4 +1,7 @@
 .former-object {
+    .former-object-item-hidden {
+        display:none !important;
+    }
     &.former-object-viewer {
         .former-object-item .former-object-label-description {
             padding-bottom: 0;

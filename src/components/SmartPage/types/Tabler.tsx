@@ -11,13 +11,18 @@ export interface SmartPageTablerProps {
     triggerMap: any,
     reflush: any,
     onGetRequestParams?: Function;
-
+    onChangeValue?: Function;
     searchRef?: any;
     toolbarRef?: any;
+    noOperater?: boolean;
+    mode?: string;
+    rowSelection?: boolean;
 }
 export interface SmartPageTablerState {
     tableProps: any;
     reflush: any;
+    rowSelection: any;
+    mode?: string;
 }
 export default class SmartPageTabler extends React.Component<SmartPageTablerProps, SmartPageTablerState> {
     
@@ -32,7 +37,9 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
         
         this.state = {
             tableProps: this.initTableProps(),
-            reflush: props.reflush
+            reflush: props.reflush,
+            rowSelection: props.rowSelection,
+            mode: props.mode
         }
 
         this.initTableProps();
@@ -44,7 +51,14 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
         if (newProps.reflush!= this.state.reflush) {
             
             this.setState({
-                reflush: newProps.reflush
+                reflush: newProps.reflush,
+                mode: newProps.mode
+            })
+        }
+
+        if (newProps.mode != this.state.mode) {
+            this.setState({
+                mode: newProps.mode
             })
         }
     }
@@ -84,7 +98,9 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
         }
     }
     private getFieldProps(fields: any) {
-        return fields.map(field => {
+        let fieldsList: any = [];
+
+        fields.map(field => {
             let factor: any = field.factor;
             let fieldMeta: any = field.meta || {
                 type: 'input'
@@ -93,6 +109,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
             let fieldObject: any  = {
                 key: field.fieldKey,
                 ...fieldMeta,
+                control: field.fieldControl,
                 uiType: fieldMeta.type,
                 type: field.fieldType,
                 column: fieldMeta.column,
@@ -102,6 +119,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                 }: null,
                 colspan: fieldMeta.colspan || 1,
                 dict: field.fieldDict,
+                defaultValue: field.defaultValue,
                 name: field.fieldName || field.fieldKey,
                 validation: this.getFieldValidation(field),
                 'x-label-hidden': fieldMeta.label === false ? true : false
@@ -118,31 +136,42 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                     true
                 );
                 fieldObject.dataSource = (value: any) => {
-                    let params: any = {}
+                    let params: any = {
+                        ...value
+                    }
 
                     if (factor.parent) {
                         params.parent = factor.parent;
                     }
 
                     if (value.query) {
-                        params.query = value.query;
+                      //  params.query = value.query;
                     }
 
                     return factorRequst(params)
                 }
-                
+                // 
+                //console.log(fieldMeta.tags, 987654)
+                //if (fieldMeta.folder) {
+                //    fieldObject.onTagsList = SmartRequst.createPOST(factor.path + '/list')
+               // }
                 
             }
-
+            
             if (field.type == 'relation') {
+                
                 Object.assign(fieldObject, {
                     column: false,
-                    type: 'array',
+                    type: this.isOnemRelation(field) ? 'array': 'plainObject',
                     'x-relyon': true,
                     props: field. relatedPath ? {
                         mode: (props: any) => {
+                            if (this.isRelyRelation(field)) {
+                                return false;
+                            }
                             if (props.onGetDependentParameters) {
                                 let params: any = props.onGetDependentParameters() || {};
+                                console.log(params, 333)
                                 return !!params[RelationshipExtendEnum.MASTERID]
                             }
                         },
@@ -153,12 +182,61 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                         onView: SmartRequst.createPOST(field.relatedPath + '/view', ['id']),
                         onEdit: SmartRequst.createPOST(field.relatedPath + '/update', true)
                     } : {},
-                    fields: this.getFieldProps(field.fields)
+                    fields: this.getFieldProps(field.fields) || [],
+                    searcher : this.getSearch(field.fields)
                 });
+
+                // 
+                if (!this.isOnemRelation(field)) {
+                    this.bindingRelationshipFileds(fieldObject, fieldsList)
+                }
             }
 
-            return fieldObject
+            return fieldsList.push(fieldObject)
         })
+
+        return fieldsList;
+    }
+    private bindingRelationshipFileds(fieldObject: any, fieldsList: any[]) {
+        // 如果是1v1这种场景, 把他下面的字段加入
+        let fields: any = fieldObject.fields.filter(field => !field.labelvalue && !field.labelname)
+        let group: string = fieldObject.group || fieldObject.name;
+        let hideContrl: any = [];
+        
+        fields.forEach((field, index) => {
+            if (field.column || field.major) {
+                let trueKey: string = [fieldObject.key,field.key].join('.')
+                fieldsList.push({
+                    //...field,
+                    dict: field.dict,
+                    key: trueKey,
+                    name: field.name,
+                    type: 'label',
+                    uiType: 'label',
+                    index: index + 1,
+                    group
+                })
+
+                hideContrl.push(trueKey);
+            }
+        })
+
+        Object.assign(fieldObject, {
+            group: group,
+            index: 0,
+            control: [
+                {
+                    when: true,
+                    show: hideContrl
+                }
+            ]
+        })
+    }
+    private isRelyRelation(field: any) {
+        return ['rely_one', 'rely_onem'].indexOf(field.fieldType) > -1;
+    }
+    private isOnemRelation(field: any) {
+        return ['onem', 'rely_onem'].indexOf(field.fieldType) > -1;
     }
     private tablerRecordTypeMap = {
         clone: 'edit'
@@ -170,8 +248,9 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
         
         tableProps.fields = this.getFieldProps(schema.fields);
         tableProps.searcher = this.getSearch(schema.fields);
-        tableProps.type = meta.type;
 
+        tableProps.type = meta.type;
+        tableProps.formerColumn = meta.column;
         
         if (utils.isArray(meta.rowoperate)) {
             tableProps.rowOperate = meta.rowoperate.map(op => {
@@ -197,10 +276,19 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
             })
         }
 
+        if (utils.isArray(meta.batchoperate)) {
+            tableProps.batchOpertate = meta.batchoperate;
+        }
+
         return tableProps;
     }
     private getRequestParams = ()=> {
         return this.props.onGetRequestParams && this.props.onGetRequestParams();
+    }
+    private onChangeValue = (value)=> {
+        if (this.props.onChangeValue) {
+            this.props.onChangeValue(value)
+        }
     }
     public render() {
         
@@ -220,7 +308,10 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                 
                 searchRef={this.props.searchRef}
                 toolbarRef={this.props.toolbarRef}
-
+                
+                mode={this.state.mode}
+                noOperater={this.props.noOperater}
+                onChangeValue={this.onChangeValue}
                 onRowAction={(e, r, v)=>{
                     console.log(e,r,v, 333)
                 }}

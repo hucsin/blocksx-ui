@@ -92,6 +92,7 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
         })
     }
     public render() {
+        
         return (
             <div 
                 className={classnames('former-object-item', {
@@ -104,7 +105,8 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
                     'former-object-content-indent': this.props['x-content-indent'] || this.props['x-indent'],
                     'former-object-required': this.props['x-validation'] ?  this.props['x-validation'].required  : false,
                     [`former-object-align-${this.props['x-label-align']}`]: this.props['x-label-align'],
-                    'former-object-label-hidden': this.props['x-label-hidden']
+                    'former-object-label-hidden': this.props['x-label-hidden'] ,
+                    'former-object-item-hidden': (this.props.conditionalDisplay && !this.state.value)
                 })}
             >
                 {this.props.title ? <div className="former-object-item-label">

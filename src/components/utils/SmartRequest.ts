@@ -85,6 +85,11 @@ class SmartRequest {
         }
     }
 
+    public createPOSTByMotion(motion: string, path: string, fields?: any, noCache?: any, call?: Function) {
+        let truePath: string = motion.indexOf('/') > -1 ? motion : [path, motion].join('/');
+
+        return this.createPOST(truePath, fields, noCache, call)
+    }
     public createGET(url: string, noCache?: boolean) {
 
     }

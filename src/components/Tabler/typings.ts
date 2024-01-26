@@ -113,6 +113,7 @@ export interface TablerProps {
   };
   
   formerType: string;
+  formerColumn?: string;
   
   // 新增操作控制
   increase?: {
@@ -175,6 +176,10 @@ export interface TablerProps {
   
   renderSearcher?: Function;
   renderOperater?: Function;
+  
+  noOperater?: boolean;
+  noSearcher?: boolean;
+
   renderRowOperater?: Function;
 
 

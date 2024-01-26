@@ -265,7 +265,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         }
         return avatars;
     }
-    private getAvatarsByRowData(rowData: any, avatarField:any) {
+    private getAvatarsByRowData(rowData: any,rowIndex: number, avatarField:any) {
         
         if (avatarField) {
             let avatarData: any = rowData[avatarField.key];
@@ -288,7 +288,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             }
         }
 
-        return null;
+        return null
     }
     private renderAvatar(rowData: any, rowIndex: any, avatars?: any) {
 
@@ -296,7 +296,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             return this.props.renderRowAvatar(rowData, rowIndex);
         }
 
-        if (avatars = this.getAvatarsByRowData(rowData, this.getFieldByPlace('avatar'))) {
+        if (avatars = this.getAvatarsByRowData(rowData, rowIndex, this.getFieldByPlace('avatar'))) {
 
             if (this.props.layout == 'connections') {
                 return (
@@ -317,7 +317,9 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             )
         }
 
-        return null;
+        return (
+            <span className='ui-list-index'>#{rowIndex +1}</span>
+        );
     }
     private updateRowData(value: any) {
         // TODO 更新行数据
@@ -335,6 +337,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             return extraList.map((field, index) => {
                 return TableUtils.renderComponentByField(field, {
                     value: rowData[field.key],
+                    displayValue: rowData['DisplayValue_' + field.key],
                     onChangeValue: (value) => {
                         if (smartRequestMap[field.action]) {
                             let requestData: any = {

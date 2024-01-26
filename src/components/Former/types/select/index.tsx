@@ -50,14 +50,24 @@ export default class FormerSelect extends React.Component<IFormerSelect, SFormer
         let isMultiple: boolean = this.isMultiple();
         this.state = {
             value: isMultiple ? this.fixedMultipleValue(props.value) : props.value,
-            dataSource: [],
+            dataSource: this.getDefaultDatasource(props),
             relyon: props.relyon || {},
             loading: false,
             multiple: isMultiple,
             runtimeValue: props.runtimeValue
         };
 
+    }
+    private getDefaultDatasource(props: any) {
+        let datasource: any = [];
 
+        if (utils.isLabelValue(props.value)) {
+            datasource.push(props.value)
+        }
+        if (utils.isArray(props.dataSource)) {
+            datasource = datasource.concat(props.dataSource);
+        }
+        return datasource
     }
     private isLazyLoader() {
         return this.props['x-mode'] == 'lazy';
@@ -124,7 +134,7 @@ export default class FormerSelect extends React.Component<IFormerSelect, SFormer
                 this.setLoading(true);
                 
                 UtilsDatasource.getSource(source, {
-                    ...this.state.runtimeValue, 
+                    //...this.state.runtimeValue, 
                     query: this.state.search
                 }).then((data: any) => {
                     

@@ -21,6 +21,7 @@ import './style.scss'
 
 export interface IFormerLabel extends IFormerBase {
     value: any;
+    dict?: any;
     dataSource?: any;
 }
 
@@ -33,7 +34,7 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
     public constructor(props: IFormerLabel) {
         super(props);
 
-
+        
         this.state = {
             value: props.value,
             dataSource: null
@@ -48,11 +49,22 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
             })
         }
     }
+    public UNSAFE_componentWillUpdate(newProps: IFormerLabel) {
+
+        if (newProps.value != this.state.value) {
+            this.setState({
+                value: newProps.value
+            })
+        }
+    }
     private getLabelByValue(_value) {
 
+
         let { dataSource } = this.state;
-        if (utils.isArray(dataSource)) {
-            let find: any = dataSource.find((it: any) => {
+        let dictList: any = utils.isArray(dataSource) ? dataSource : this.props.dict;
+        
+        if (utils.isArray(dictList)) {
+            let find: any = dictList.find((it: any) => {
                 if (it.value === _value || it.key === _value) {
                     return true;
                 }
@@ -70,6 +82,7 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
             ? <span className='ui-label-empty'>{'<null>'}</span> : this.getValue(_value);
     }
     private getValue(val: any) {
+        
         if (utils.isPlainObject(val)) {
             return val.label || val.name || val.value || val.key;
         }

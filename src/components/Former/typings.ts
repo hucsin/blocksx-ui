@@ -93,6 +93,9 @@ export interface IFormerBase {
     value?:any,
     runtimeValue?: any;
     viewer?: boolean;
+    
+    // 只有存在值的时候才显示
+    conditionalDisplay?: boolean;
 
     disabled?: boolean,
     path?: any,

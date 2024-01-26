@@ -52,6 +52,10 @@ interface FilterFolderState {
     loading: boolean;
     open?: boolean;
     error?: string;
+
+    title: string;
+    icon: string;
+
 }
 
 export default class FilterFolder extends React.Component<FilterFolderProps, FilterFolderState> {
@@ -61,9 +65,10 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
             { 
                 value: 'all',
                 label: (props: any) => {
-                    return props.title ? i18n.join('all', props.title) : i18n.t('all')
+                    return 'all records';
+                    //return props.title ? i18n.join('all', props.title) : i18n.t('all')
                 },
-                description: 'all records'
+                description: 'View all data records'
             },
             {
                 value: 'none',
@@ -83,7 +88,9 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
             error: '',
             addLoading: false,
             loading: false,
-            searchValue: ''
+            searchValue: '',
+            icon: props.icon,
+            title: props.title
         }
         
     }
@@ -91,6 +98,15 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
     public componentDidMount() {
 
         this.fetch();
+    }
+    public UNSAFE_componentWillUpdate(newProps: any) {
+        
+        if (newProps.title != this.state.title) {
+            this.setState({
+                title: newProps.title,
+                icon: newProps.icon
+            }, this.fetch)
+        }
     }
 
     private fetch =()=> {
@@ -101,7 +117,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                 pageSize: 50
             }).then((result: any)=>{
                 
-                let fetchData: any = result.map(it => { return {...it, key: it.id}})
+                let fetchData: any = (utils.isArray(result.data) ? result.data:result).map(it => { return {...it, key: it.id}})
 
                 this.setState({
                     loading: false,
@@ -158,14 +174,17 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
         )
     }
     private renderTitle() {
-        let IconView: any = Icons[this.props.icon];
+        let IconView: any = Icons[this.state.icon];
+        
         if (IconView) {
             return (
                 <React.Fragment>
                     <IconView/>
-                    {this.props.title}
+                    {this.state.title}
                 </React.Fragment>
             )
+        } else {
+            return this.state.title
         }
     }
     
@@ -183,7 +202,6 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
         if (this.props.onRemoveCustomFolder) {
             this.props.onRemoveCustomFolder({id: key}).then(()=> {
                 let folders: any = this.state.folders;
-                let currentKey: any = this.state.currentKey;
 
                 folders = folders.filter(it => {
                     return it.key !== key;
@@ -310,6 +328,8 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
         let { formInput , formText } = this.state;
         let value: any = {
             name: formInput,
+            value: formInput,
+            label: formInput,
             description: formText
         }
         
