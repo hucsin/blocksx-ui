@@ -96,14 +96,21 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
         }
         return this.getLabelByValue(value);
     }
+    private renderSuffix() {
+        let props: any = this.props['props'] || this.props['x-type-props'];
+
+        if (props && props.suffix) {
+            return props.suffix;
+        }
+    }
     public render() {
         let value: any = this.getShowValue();
         return Array.isArray(value) ? (
             <span className="former-label">
                 {value.map(it => {
-                    return <Tag key={it} color="#ccc">{it}</Tag>
+                    return <Tag key={it} >{it}</Tag>
                 })}
             </span>
-        ) : <span className="former-label"> {value}</span>
+        ) : <span className="former-label"> {value} {this.renderSuffix()}</span>
     }
 }

@@ -52,8 +52,8 @@
         }
 
         padding-bottom: 24px;
-        padding-right: 6px;
-        padding-left: 6px;
+        padding-right: 24px;
+        padding-left: 24px;
 
         &.former-object-label-hidden {
             .former-object-label-menu,
@@ -64,7 +64,7 @@
 
         .former-object-label-description {
             display: block;
-            padding-bottom: 8px;
+            padding-bottom: 0px;
             padding-top: 2px;
             color: rgba(0, 0, 0, .25);
         }

@@ -17,19 +17,21 @@ import { Select } from 'antd';
 
 import './style.scss';
 
-interface IFormerSelect extends IFormerBase {
+export interface FormerSelectProps extends IFormerBase {
     value: any,
     size?: any,
+    mode?: string,
     onChangeValue: Function,
     relyon?: any;
     'x-type-props'?: any
     'x-mode'?: 'lazy' | 'cache',
+    popupClassName?: string;
     dataSource?: any;
 }
 
 
 
-export interface SFormerSelect {
+export interface FormerSelectState {
     value: any;
     dataSource: any[];
     relyon: any;
@@ -41,11 +43,11 @@ export interface SFormerSelect {
     query?: string;
 }
 
-export default class FormerSelect extends React.Component<IFormerSelect, SFormerSelect> {
+export default class FormerSelect extends React.Component<FormerSelectProps, FormerSelectState> {
     public static defaultProps = {
         'x-mode': 'lazy'
     }
-    public constructor(props: IFormerSelect) {
+    public constructor(props: FormerSelectProps) {
         super(props);
         let isMultiple: boolean = this.isMultiple();
         this.state = {
@@ -186,7 +188,9 @@ export default class FormerSelect extends React.Component<IFormerSelect, SFormer
                         this.fetchData();
                     }
                 }}
+                mode={this.props.mode}
                 showSearch={true}
+                popupClassName={this.props.popupClassName}
                 disabled={this.props.disabled}
                 loading={this.state.loading}
                 onSearch={this.onSearch}

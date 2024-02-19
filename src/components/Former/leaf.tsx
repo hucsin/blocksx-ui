@@ -261,7 +261,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         return ['array', 'object', 'map'].indexOf(this.state.type) == -1;
     }
     private isCanViewerType(type: string) {
-        return ['array', 'group', 'map', 'object', 'table'].indexOf(type) == -1;
+        return ['array', 'group', 'map', 'object','pickmore', 'table'].indexOf(type) == -1;
     }
     private getNodeByType(type?: string) {
         let _type: string = type || this.state.type;
@@ -343,6 +343,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         // 后续看下高效的方法
        // this.updateDotpropValue(value)
         
+       
+
         this.setState({
             value: value,
             validationState: false,
@@ -631,7 +633,68 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             <Group key={children.length}>
                 {groupList.map((it: { title: string; group: any[] }, index: number) => {
 
-                    return (
+                    let GroupChildren: any = it.group.sort((a: any, b: any) => {
+
+                        let prevItem = this.properties[a];
+                        let nextItem = this.properties[b];
+
+                        return prevItem['x-index'] > nextItem['x-index'] ? 1 : -1;
+                    }).map((prop: any, index: number) => {
+                        // 不存在隐藏的情况
+                        if (this.isShowObjectKeyByProp(prop)) {
+                            let properties: any = this.getObjectItemProperties(prop);//this.clone(this.properties[prop]);
+                            let childrenControl: any = this.state.childrenControl ? this.state.childrenControl[prop] : null;
+                            // 计算oneOf
+                            let props: any = this.properties[prop];
+                            let hidden: boolean = props['x-type'] == 'hidden';
+                            
+                            return (
+                                <Child
+                                    hidden={hidden}
+                                    {...properties}
+                                    // object items 关闭的时候
+                                    onChangeValue={(val: any, type?: string) => {
+                                        value[prop] = val;
+                                        this.onChangeValue(value, type);
+                                    }}
+
+                                    size={this.props.size}
+                                    value={this.getValueByProps(value[prop], properties, value, prop)}
+                                    defaultValue={this.getDefaultValue({
+                                        type: properties.type
+                                    })}
+                                    oneOf={this.getObjectItemOneOfNode(prop)}
+                                    key={prop}
+                                    //需要
+                                    onGetDependentParameters={this.props.onGetDependentParameters}
+                                >
+                                    <Leaf
+                                        {...properties}
+                                        path={prop}
+                                        parentPath={this.path}
+                                        runtimeValue={this.state.runtimeValue}
+                                        value={this.getValueByProps(value[prop], properties, value, prop)}
+                                        onDealControl={(control: IControl) => {
+                                            this.onDealControl(control)
+                                        }}
+                                        key="1"
+                                        viewer={this.state.viewer}
+                                        size={this.props.size}
+                                        rootEmitter={this.props.rootEmitter}
+                                        childrenControl={childrenControl}
+                                        onGetDependentParameters={this.props.onGetDependentParameters}
+                                        onChangeValue={(val: any, type?: string) => {
+                                            value[prop] = val;
+                                            this.onChangeValue(value, type);
+                                            //
+                                        }}
+                                    />
+                                </Child>
+                            );
+                        }
+
+                    }).filter(Boolean);
+                    return GroupChildren && GroupChildren.length > 0 ? (
                         <GroupItem
                             key={index}
                             title={it.title}
@@ -639,69 +702,9 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             index={index}
                             groupType={this.props.groupType}
                         >
-                            {it.group.sort((a: any, b: any) => {
-
-                                let prevItem = this.properties[a];
-                                let nextItem = this.properties[b];
-
-                                return prevItem['x-index'] > nextItem['x-index'] ? 1 : -1;
-                            }).map((prop: any, index: number) => {
-                                // 不存在隐藏的情况
-                                if (this.isShowObjectKeyByProp(prop)) {
-                                    let properties: any = this.getObjectItemProperties(prop);//this.clone(this.properties[prop]);
-                                    let childrenControl: any = this.state.childrenControl ? this.state.childrenControl[prop] : null;
-                                    // 计算oneOf
-                                    let props: any = this.properties[prop];
-                                    let hidden: boolean = props['x-type'] == 'hidden';
-                                    
-                                    return (
-                                        <Child
-                                            hidden={hidden}
-                                            {...properties}
-                                            // object items 关闭的时候
-                                            onChangeValue={(val: any, type?: string) => {
-                                                value[prop] = val;
-                                                this.onChangeValue(value, type);
-                                            }}
-
-                                            size={this.props.size}
-                                            value={this.getValueByProps(value[prop], properties, value, prop)}
-                                            defaultValue={this.getDefaultValue({
-                                                type: properties.type
-                                            })}
-                                            oneOf={this.getObjectItemOneOfNode(prop)}
-                                            key={prop}
-                                            //需要
-                                            onGetDependentParameters={this.props.onGetDependentParameters}
-                                        >
-                                            <Leaf
-                                                {...properties}
-                                                path={prop}
-                                                parentPath={this.path}
-                                                runtimeValue={this.state.runtimeValue}
-                                                value={this.getValueByProps(value[prop], properties, value, prop)}
-                                                onDealControl={(control: IControl) => {
-                                                    this.onDealControl(control)
-                                                }}
-                                                key="1"
-                                                viewer={this.state.viewer}
-                                                size={this.props.size}
-                                                rootEmitter={this.props.rootEmitter}
-                                                childrenControl={childrenControl}
-                                                onGetDependentParameters={this.props.onGetDependentParameters}
-                                                onChangeValue={(val: any, type?: string) => {
-                                                    value[prop] = val;
-                                                    this.onChangeValue(value, type);
-                                                    //
-                                                }}
-                                            />
-                                        </Child>
-                                    );
-                                }
-
-                            })}
+                            {GroupChildren}
                         </GroupItem>
-                    )
+                    ) : null
                 })}
             </Group>
         )

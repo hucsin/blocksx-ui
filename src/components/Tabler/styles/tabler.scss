@@ -3,10 +3,41 @@
         color: #1890ff
     }
 }
-
+.ui-former {
+    .ui-disabeld {
+        color:#ccc;
+        cursor:not-allowed;
+    }
+    .ui-choose {
+        cursor: pointer;
+        .anticon {
+            opacity: .8;
+            margin-right: 4px;
+        }
+    }
+    .ui-header {
+       
+        .anticon-right {
+            opacity: .5;
+            font-size:12px;
+            margin: 0 8px;
+        }
+    }
+}
 .tabler-wrapper {
     position: relative;
     z-index: 111;;
+    .tabler-cell-first {
+        
+        color: #1890ff;
+        
+        cursor: pointer;
+        opacity: .8;
+        &:hover {
+            text-decoration: underline;
+            opacity: 1;
+        }
+    }
     .tabler-batch-selected {
         position: relative;
         width: 50%;

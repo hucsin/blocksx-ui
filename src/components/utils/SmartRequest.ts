@@ -79,7 +79,7 @@ class SmartRequest {
                 }).catch((e) => {
                     console.log(e)
                     message.error(e.message || e || 'system error');
-                    reject()
+                    //reject(e)
                 })
             })
         }

@@ -4,10 +4,12 @@
 
 
 import React from 'react';
+import classnames from 'classnames';
 
 import { IFormerBase } from '../../typings';
 import { UnorderedListOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { Table, Popover, Button, Tooltip, Dropdown } from 'antd';
+import { Table, Button, Dropdown } from 'antd';
+import UtilsTool from '../../../utils/tool';
 import Former from '../../index';
 
 import { utils } from '@blocksx/core';
@@ -103,7 +105,6 @@ export default class FormerTable extends React.Component<IFormerTable, {
             totalNumber: remoteMode ? 0 : _value.length
         };
 
-        console.log(props)
     }
     public componentDidMount() {
         this.resetDataSource(1);
@@ -222,6 +223,13 @@ export default class FormerTable extends React.Component<IFormerTable, {
 
         return it.column;
     }
+    private onClickFistCell (record: any) {
+        this.setState({
+            visible: true,
+            viewer: true,
+            record
+        })
+    }
     private getColumns() {
         let columns: any[] = [];
         let properties = this.props.properties;
@@ -247,20 +255,22 @@ export default class FormerTable extends React.Component<IFormerTable, {
                 width: it.width,
                 ellipsis: true,
                 render: (text: any, record: any, rowIndex: number) => {
-
-                    let { dataSource } = properties[it.key];
-                    let dictList: any =  dataSource || props.dataSource ;
+                    let field: any = properties[it.key];
                     
-                    if (utils.isArray(dictList) && !utils.isUndefined(text)) {
-                        text = dictList.find((it: any) => it.value === text);
-                        text = text.label;
-                    } else {
-                        if (utils.isBoolean(text)) {
-                            text = text ? 'Yes' : 'No'
-                        }
-                    }
-                   
-                    return <span key={[rowIndex,index].join('_')}>{text}</span>;
+                    return (
+                        <span 
+                            className={classnames({
+                                'former-first-col': index == 0
+                            })}
+                            onClick={()=> {this.onClickFistCell(record)}}
+                            key={[rowIndex,index].join('_')}
+                        >
+                            {UtilsTool.renderComponentByField(field, {
+                                value: text,
+                                ... (field['props'] || field['x-type-props'])
+                            })}
+                        </span>
+                    );
                 }
             }
         });
@@ -527,6 +537,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
                     schema={this.getDefaultSchema()}
                     viewer={this.state.viewer}
                     column={'two'}
+                    width={600}
                     onSave={(value, former) => {
                         this.setState({
                             record: {
@@ -539,6 +550,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
                     }}
                     okText ="Save"
                     size='small'
+                    
                     autoclose={false}
                     cancelText='Cancel'
                     onClose={()=> {

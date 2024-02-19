@@ -94,7 +94,8 @@
     }
     private renderBlock() {
         let dataSource: any = this.getDatasource();
-
+        let value: any = this.getLabelValue(this.state.value);
+        
         return (
             <div className="former-radio-block">
                 {
@@ -104,7 +105,7 @@
                         return (
                             <div 
                                 className={classnames('former-radio-block-item', {
-                                    'former-radio-block-current': it.value === this.state.value
+                                    'former-radio-block-current': it.value === value
                                 })}
                                 key={index}
                                 onClick={() => this.onChangeValue({
@@ -114,10 +115,11 @@
                                 })}
                                 title={it.label}
                             >
-                                {it.value === this.state.value ? <span className="former-radio-block-right"><FormerIcon.CheckOutlined/></span> : null}
+                                {it.value === value ? <span className="former-radio-block-right"><FormerIcon.CheckOutlined/></span> : null}
                                 {
-                                    VIcon ? <VIcon/> : it.image ? <img src={it.image} /> : it.label
+                                    VIcon ? <VIcon/> : it.image ? <img src={it.image} /> : null
                                 }
+                                <span className='ui-text'>{it.label}</span>
                             </div>
                         );
                     }) : null

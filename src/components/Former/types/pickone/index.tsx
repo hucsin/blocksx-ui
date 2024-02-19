@@ -118,7 +118,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
         let value: any = this.state.value;
         return (
             <div className='ui-pickone-wrapper'>
-                <Alert message={this.getNoticeMessage()} type='warning' />
+                <Alert showIcon message={this.getNoticeMessage()} type='warning' />
                 <Tabler
                     key={2}
                     multilineEdit={false} 
@@ -127,7 +127,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
                     dataSource={typeProps.onPage}
                     size='small'
                     selectedRowKeys={value? [value.id]: []}
-
+                    mode="pickone"
                     rowOperate={[
                         {
                             key: 'Selected',
@@ -138,6 +138,9 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
                             }
                         }
                     ]}
+                    onChangeValue={(rowKeys: any, row: any)=> {
+                        this.onSelected(row[0])
+                    }}
                     auth={
                         {
                             view: false,
@@ -165,7 +168,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
             <Drawer
                 title={this.renderTitle()}
                 className='ui-former fromer-pick-wrapper'
-                width={600}
+                width={700}
                 extra={this.renderExtra()}
                 size='large'
                 open={this.state.open}

@@ -16,7 +16,7 @@ import { DEFAULT_COLUMNS_ACTION, DEFAULT_BATCH_ACTION } from './config';
 import TablerTable from './TablerTable';
 import TablerList from './TablerList';
 import AuthFilter from './AuthFilter';
-import TablerUtils from './utils';
+import TablerUtils from '../utils/tool';
 
 
 
@@ -126,9 +126,11 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 
             })
         }
+        
         if (newProps.selectedRowKeys != this.state.selectedRowKeys) {
             this.setState({
-                selectedRowKeys: newProps.selectedRowKeys
+                selectedRowKeys: newProps.selectedRowKeys,
+                value: newProps.selectedRowKeys
             })
         }
 
@@ -414,7 +416,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             return this.filterAuthItem(it, rowData)
         });
     }
-    private onActionClick(operate: RowOperate, rowData: any, rowIndex: number) {
+    private onActionClick(operate: RowOperate, rowData: any, rowIndex?: number) {
         
          switch (operate.type) {
              case 'view':
@@ -711,14 +713,17 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
         return actionList.length;
     }
-    private onSelectedRow =(selectedRowKeys: any[])=> {
+    private onSelectedRow =(selectedRowKeys: any[], selectedRow: any[])=> {
         
         this.setState({
             value: selectedRowKeys
         })
         if (this.props.onChangeValue) {
-            this.props.onChangeValue(selectedRowKeys)
+            this.props.onChangeValue(selectedRowKeys, selectedRow);
         }
+    }
+    private onDoView =(rowData: any)=> {
+        this.onActionClick({type: 'view', name: 'View', key: 'view'}, rowData)
     }
     public render() {
 
@@ -775,6 +780,8 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                     renderRowOperater={this.renderRowOperate}
                     rowOperateLength={this.getRowOperateLength()}
                     onSelectedRow={this.onSelectedRow}
+
+                    onClickFistCell={this.onDoView}
                 >
                 
                 </View>

@@ -45,14 +45,8 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
     public render() {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
         
-        if (props.type && props.type == 'password') {
-            return (
-                <Input.Password size={this.props.size} {...props} disabled={this.props.disabled} value={this.state.value} onChange={this.onChange} />
-            )
-        } else {
-            return (
-                <Input size={this.props.size} {...props} disabled={this.props.disabled} value={this.state.value} onChange={this.onChange} />
-            )
-        }
+        return (
+            <Input.Password size={this.props.size} {...props} disabled={this.props.disabled} value={this.state.value} onChange={this.onChange} />
+        )
     }
 }

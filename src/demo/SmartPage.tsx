@@ -55,8 +55,15 @@ export default class DemoScenFlow extends React.Component<{}, { page: string,cur
                                 key: 'schema',
                                 group: '数据源中心',
                                 autoFold: true,
-                                name: '数据库(Schema)',
+                                name: '模式管理(Schema)',
                                 icon: 'FileModel'
+                            },
+                            {
+                                key: 'virtualpacket',
+                                group: '数据源中心',
+                                autoFold: true,
+                                name: '虚拟组(Virtual)',
+                                icon: 'FolderOutlined'
                             },
                             {
                                 key: 'openapi',

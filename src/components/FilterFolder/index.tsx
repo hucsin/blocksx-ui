@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { Input, Button, Popover, Spin, Popconfirm, Empty, Skeleton } from 'antd';
+import { Input, Button, Popover, Spin, Popconfirm, Empty, Skeleton, Space } from 'antd';
 import { PlusOutlined, FolderOutlined, FolderOpenOutlined, CloseOutlined, SearchOutlined } from '@ant-design/icons';
 
 import { utils } from '@blocksx/core';
@@ -46,6 +46,7 @@ interface FilterFolderState {
     folders: FolderMeta[];
 
     formInput?: string;
+    formLabel?: string;
     formText?: string;
 
     addLoading:boolean;
@@ -266,18 +267,37 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                 "ui-error": !!this.state.error
             })}>
                 <Spin spinning={this.state.addLoading}>
-                    <div className='ui-label folder'>{i18n.t('folder name')} * </div>
+                    <div className='ui-label folder'>{i18n.t('folder name / label')} * </div>
                     <div className='ui-content folder'>
-                        <Input  
-                            size='small' 
-                            maxLength={128}
-                            onChange={(v) => {
-                                this.setState({
-                                    error: '',
-                                    formInput: v.target.value
-                                })
-                            }}
-                        />
+                        <Space.Compact>
+                            <Input  
+                                width={'50%'}
+                                size='small' 
+                                placeholder='folder name'
+                                maxLength={128}
+                                onChange={(v) => {
+                                    this.setState({
+                                        error: '',
+                                        formInput: v.target.value,
+                                        formLabel: v.target.value
+                                    })
+                                }}
+                            />
+                            <Input  
+                                width={'50%'}
+                                size='small' 
+                                placeholder='folder label'
+                                value={this.state.formLabel}
+                                maxLength={128}
+                                onChange={(v) => {
+                                    this.setState({
+                                        error: '',
+                                        formLabel: v.target.value
+                                    })
+                                }}
+                            />
+                        </Space.Compact>
+
                     </div>
                     <div className='ui-label'>{i18n.t('description')}</div>
                     <div>
@@ -296,6 +316,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                         <Button 
                             type='primary'
                             size='small'
+                            disabled={!this.state.formInput || !this.state.formLabel }
                             onClick={this.onSaveAddFolder} 
                         > {i18n.t('save')} </Button>
                     </div>
@@ -325,11 +346,11 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
         })
     }
     private onSaveAddFolder = () => {
-        let { formInput , formText } = this.state;
+        let { formInput ,formLabel, formText } = this.state;
         let value: any = {
             name: formInput,
             value: formInput,
-            label: formInput,
+            label: formLabel,
             description: formText
         }
         

@@ -15,7 +15,23 @@ interface IFormerTextarea extends IFormerBase {
     value: any,
     onChangeValue: Function
 }
+
+class FormerTextareaViewer extends React.Component<IFormerTextarea> {
+    public constructor(props:any) {
+        super(props)
+    }
+    public render() {
+        return (
+            <pre>
+                {this.props.value}
+            </pre>
+        )
+    }
+}
+
 export default class FormerTextarea extends React.Component<IFormerTextarea, { value: any }> {
+
+    public static Viewer: any = FormerTextareaViewer;
     public constructor(props: IFormerTextarea) {
         super(props);
 

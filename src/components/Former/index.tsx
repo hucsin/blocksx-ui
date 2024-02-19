@@ -1,6 +1,6 @@
 import React from 'react';
 import Leaf from './leaf';
-import { Drawer, Modal, Button, Popover, Tabs, Spin } from 'antd';
+import { Drawer, Modal, Space, Button, Popover, Tabs, Spin } from 'antd';
 import { EventEmitter } from 'events';
 import classnames from 'classnames';
 import { utils as BUtils } from '@blocksx/core';
@@ -18,6 +18,7 @@ export interface FormerProps {
     type?: 'drawer' | 'modal' | 'popover';
     value?: any;
     schema: any;
+    disabled?: boolean;
     extra?: ExtraContentType;
     className?: string;
     classifyType?: 'tabs' | 'step' | 'verticalTabs';
@@ -29,6 +30,7 @@ export interface FormerProps {
     //onRelyParams: Function;
     // 获取 依赖的参数
     onGetDependentParameters?: Function;
+    onBeforeSave?: Function;
     onSave?: Function;
     onView?: Function;
     onInit?: Function;
@@ -36,7 +38,7 @@ export interface FormerProps {
 
     visible?: boolean;
     id?: any;
-    title?: string;
+    title?: any;
     okText?: string;
     cancelText?: string;
     width?: number;
@@ -83,6 +85,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     public static FormerTypes = FormerTypes;
     public static defaultProps = {
         defaultClassify: '基础',
+        //classifyType: 'verticalTabs',
         keep: false,
         size: 'small',
         viewer: false,
@@ -112,7 +115,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             id: props.id,
             viewer: props.viewer,
             column: this.getDefaultColumn(props.column),
-            disabled: false,
+            disabled: props.disabled || false,
             loading: false,
             fetching: false
         };
@@ -142,6 +145,12 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 viewer: newProps.viewer
             })
         }
+        if (newProps.disabled != this.state.disabled) {
+            this.setState({
+                disabled: newProps.disabled
+            })
+        }
+        
         
         if (newProps.value && newProps.value != this.state.value) {
             this.setState({
@@ -193,7 +202,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         let classifyName: string[] = [];
         let { defaultClassify, schemaClassifySort, classifyType } = this.props;
         let cacheName: any = {};
-
+        
         if (classifyType) {
             let { properties = {} } = schema;
 
@@ -201,7 +210,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 for (let prop in properties) {
                     let item: any = properties[prop];
                     let xclassify = item['x-classify'];
-
+                    
                     if (xclassify) {
                         if (!cacheName[xclassify]) {
                             cacheName[xclassify] = {}
@@ -217,7 +226,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             }
 
             classifyName = schemaClassifySort || Object.keys(cacheName);
-
+            
             if (classifyName && classifyName.length > 1) {
                 return classifyName.map((it: string) => {
                     return {
@@ -246,12 +255,13 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
                 this.emitter.emit('changeValue')
 
-                if (this.state.type === 'default') {
-                    if (this.props.onChangeValue) {
-                        this.props.onChangeValue(value);
-                    }
-                }
+                //if (this.state.type === 'default') {
+               
+                //}
             }, 200);
+        }
+        if (this.props.onChangeValue) {
+            this.props.onChangeValue(value);
         }
     }
     public validationValue(cb: Function) {
@@ -287,7 +297,11 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
     }
     private onSave = () => {
-
+        if (this.props.onBeforeSave) {
+            if (this.props.onBeforeSave() === false) {
+                return;
+            }
+        }
         this.validationValue(() => {
             this.doSave()
         })
@@ -302,17 +316,19 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
         // 值修改的时候上报
         if (this.props.onChangeValue) {
-            this.props.onChangeValue(this.state.value);
+            this.props.onChangeValue(this.state.value, true);
         }
         // 在保存的时候直接提交值
         if (this.props.onSave) {
             this.props.onSave(this.state.value, this);
         }
     }
+    
 
     private getUniqKey(schema: any) {
         return schema.type + schema.title + this.state.id + schema.name + schema['$$key'];
     }
+
     private renderClassify() {
         let { classifyType } = this.props;
         let { classify, classifyValue } = this.state;
@@ -391,16 +407,18 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 {this.renderLeaf()}
                 <div
                     style={{
-                        textAlign: 'right',
+                        textAlign: 'left',
                         marginTop: '8px'
                     }}
                 >
-                    <Button size="small" onClick={this.onCloseLayer} style={{ marginRight: 8 }}>
-                        Cancel
-                    </Button>
-                    {!this.state.viewer ? <Button size="small" onClick={this.onSave} type="primary">
+                     {!this.state.viewer ? <Button disabled={this.state.disabled}  onClick={this.onSave} type="primary">
                         {this.state.okText || 'Ok'}
                     </Button> : null}
+
+                    <Button   onClick={this.onCloseLayer} style={{ marginRight: 8 }}>
+                        Cancel
+                    </Button>
+                   
                 </div>
             </>
         )
@@ -507,19 +525,17 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         })}
 
                         footer={
-                            <div
-                                style={{
-                                    textAlign: 'right',
-                                }}
-                            >
+                            <Space>
                                 {this.renderExtraContent()}
-                                <Button onClick={this.onCloseLayer} size={this.props.size as any} style={{ marginRight: 8 }}>
-                                    {this.state.cancelText || 'Cancel'}
-                                </Button>
+                                
                                 {!this.state.viewer ? <Button loading={this.state.loading} disabled={this.state.disabled} size={this.props.size as any} onClick={this.onSave} type="primary">
                                     {this.state.okText || 'Ok'}
                                 </Button> : null}
-                            </div>
+
+                                <Button onClick={this.onCloseLayer} size={this.props.size as any} style={{ marginRight: 8 }}>
+                                    {this.state.cancelText || 'Cancel'}
+                                </Button>
+                            </Space>
                         }
                     >
                         {this.renderExtraLogo()}

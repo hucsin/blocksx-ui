@@ -72,8 +72,21 @@ export { default as Plugin } from './plugin';
 
 export { default as Query } from './query';
 
-export { default as MySQL } from './mysql';
-export { default as PostgreSQL } from './postgresql';
+// 数据库
+export { default as IMySQL } from './mysql';
+export { default as IPostgreSQL } from './postgresql';
+export { default as IPolarDB } from './polardb';
+export { default as IAntDB } from './antdb';
+export { default as IGoldenDB } from './goldendb';
+export { default as IDamengDB } from './dameng';
+export { default as IKingBase } from './kingbase';
+export { default as IGBase } from './gbase';
+export { default as IGussDB } from './gussdb';
+export { default as IOpenGauss } from './opengauss';
+export { default as IHive } from './hive';
+export { default as IOceanBase } from './oceanbase';
+export { default as ITiDB } from './tidb';
+export { default as IOracle } from './oracle';
 
 export { default as IAPI } from './api';
 export { default as IDataPipeline } from './DataPipeline';

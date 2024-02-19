@@ -7,7 +7,7 @@ import * as FormerTypes from '../Former/types';
 
 import { TablerProps, SearcherWhereKey, TablerField } from './typings';
 import * as Icons from '../Icons';
-import TableUtils from './utils';
+import TableUtils from '../utils/tool';
 import { utils } from '@blocksx/core';
 import i18n from '@blocksx/i18n';
 import classnames from 'classnames';

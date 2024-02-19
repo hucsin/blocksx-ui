@@ -119,6 +119,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                 }: null,
                 colspan: fieldMeta.colspan || 1,
                 dict: field.fieldDict,
+                step: fieldMeta.step,
                 defaultValue: field.defaultValue,
                 name: field.fieldName || field.fieldKey,
                 validation: this.getFieldValidation(field),
@@ -214,7 +215,8 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                     type: 'label',
                     uiType: 'label',
                     index: index + 1,
-                    group
+                    group,
+                    props: field.props
                 })
 
                 hideContrl.push(trueKey);

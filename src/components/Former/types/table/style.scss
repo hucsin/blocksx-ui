@@ -1,6 +1,18 @@
 .former-table {
     border-top: 1px solid #f2f2f2;
     position: relative;
+
+    .former-first-col {
+        color: #1890ff;
+        
+        cursor: pointer;
+        opacity: .8;
+        &:hover {
+            text-decoration: underline;
+            opacity: 1;
+        }
+    }
+
     .ant-table-thead > tr > th {
       &::before {
         display:none !important;

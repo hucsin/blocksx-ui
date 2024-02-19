@@ -15,7 +15,7 @@ import * as formerMap from '../Former/types';
 import * as DesignIcons from '../Icons/index';
 import { Input, Popover } from 'antd';
 
-import TablerUtils from './utils';
+import TablerUtils from '../utils/tool';
 
 export interface TablerCellProps {
     field: TablerField,
@@ -23,7 +23,10 @@ export interface TablerCellProps {
     onChange?: Function ;
     value: any,
     record: object,
-    rowIndex: number
+    rowIndex: number,
+    colIndex: number,
+    onClickCell?: Function;
+
 }
 
 export interface TablerCellState {
@@ -40,6 +43,7 @@ export default class TablerCell extends React.Component<TablerCellProps, TablerC
             dictMap: {},
             editable: props.editable
         }
+        console.log(this.props.rowIndex, this.props.colIndex)
     }
     public UNSAFE_componentWillUpdate(newProps:TablerCellProps) {
         if(newProps.editable !== this.state.editable) {
@@ -116,39 +120,18 @@ export default class TablerCell extends React.Component<TablerCellProps, TablerC
         return dict.label;
     }
     private renderCell () {
-        let { field, value } = this.props;
-  //      let { tablerColumn = {} } = field;
-//        let UIType: any = FormerTypes[field.uiType || field.type];
-
+        let { field = {}, value } = this.props;
+        let props: any = {
+            ...this.props,
+            ...(field['props']  || field['x-type-props']),
+        }
 
          return TablerUtils.renderComponentByField(field, {
             value: this.props.value,
-            recordValue: this.props.record
+            recordValue: this.props.record,
+            ...props
          });
-/*        if (UIType && UIType.Viewer) {
 
-            return <UIType.Viewer value={value} />
-        } else {
-            if (!tablerColumn.type) {
-                if (utils.isArray(value)) {
-                    // 标签模式
-                    return (
-                        <React.Fragment>
-                            {value.map((it: any, index: number) => {
-                                return (
-                                    <Tag key={index} color="#ccc">{this.getValue(it)}</Tag>
-                                )
-                            })}
-                        </React.Fragment>
-                    )
-                } else {
-                    return this.getValue(value);
-                }
-
-            } else {
-                return this.props.value
-            }
-        }*/
     }
     private renderEditableCell () {
         let field: TablerField = this.props.field;
@@ -169,6 +152,9 @@ export default class TablerCell extends React.Component<TablerCellProps, TablerC
      * 1、除非指定了 tablerColumnType ，不然模式=只支持，switch， select
      * 2、
      */
+    private onClickCell =()=> {
+        this.props.onClickCell && this.props.onClickCell()
+    }
     public render () {
         let { editable } = this.props;
         
@@ -178,9 +164,12 @@ export default class TablerCell extends React.Component<TablerCellProps, TablerC
             return (
                 <span className={
                     classnames({
-                        'tabler-cell-wraper': true
+                        'tabler-cell-wraper': true,
+                        'tabler-cell-first': this.props.colIndex === 0,
                     })
-                }>
+                }
+                    onClick={this.onClickCell}
+                >
                     {this.renderCell()}
                 </span>
             )
