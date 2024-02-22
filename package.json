@@ -4,6 +4,8 @@
   "private": true,
   "main": "es/index",
   "dependencies": {
+    "@ant-design/pro-components": "^2.6.49",
+    "@ant-design/pro-provider": "^2.13.5",
     "@babel/core": "^7.16.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@testing-library/jest-dom": "^5.16.5",

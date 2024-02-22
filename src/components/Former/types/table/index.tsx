@@ -380,15 +380,15 @@ export default class FormerTable extends React.Component<IFormerTable, {
             let recordIndex: number = this.getRecordIndex(index);
 
             if (record.id) {
-                value[recordIndex] = {
+                /*value[recordIndex] = {
                     [this.props.destoryKey]: {
                         id: record.id,
                         guid: record.guid
                     }
-                }
-            } else {
-                value.splice(recordIndex, 1);
-            }
+                }*/
+            } 
+            value.splice(recordIndex, 1);
+            
             
             this.setState({
                 value: value

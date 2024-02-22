@@ -70,7 +70,14 @@ export default class DemoScenFlow extends React.Component<{}, { page: string,cur
                                 group: 'OPENAPI',
                                 name: '暴露接口',
                                 icon: 'IAPI'
+                            },
+                            {
+                                key: 'eosresources',
+                                group: 'xx',
+                                name: '资源管理',
+                                icon: 'FileModel'
                             }
+
                         ]
                     },
 

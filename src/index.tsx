@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 
 
 import LayoutContainerDemo from './demo/SmartPage';
+import LayoutLoginDemo from './demo/Login';
 import './style.css';
 
 const rootElement = document.getElementById("root");
@@ -10,6 +11,18 @@ const root = createRoot(rootElement!);
 
 // /general/product
 // /setting/other
+
+
+class DemoLayout extends React.Component {
+  public render() {
+    if(window.location.pathname.match(/login/)) {
+      return <LayoutLoginDemo/>
+    } else {
+      return <LayoutContainerDemo/>
+    }
+
+  }
+}
 
 
 /*
@@ -59,5 +72,5 @@ root.render(
   </div>
 )*/
 
-root.render(<LayoutContainerDemo/>)
+root.render(<DemoLayout/>)
 
