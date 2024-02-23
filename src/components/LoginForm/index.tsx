@@ -2,17 +2,15 @@
  * 登录表单
  */
 import React from 'react';
-import { Space, Divider } from 'antd';
-import { utils } from '@blocksx/core';
+import classnames from 'classnames';
+import { Space, Divider, Button, message } from 'antd';
 
-import {
-    LoginForm,
-    ProConfigProvider,
-    ProFormCaptcha,
-    ProFormCheckbox,
-    ProFormText,
-    setAlpha,
-} from '@ant-design/pro-components';
+import querystring from 'querystring';
+import { utils } from '@blocksx/core';
+import i18n from '@blocksx/i18n';
+import { IConnections } from '../Icons';
+
+import InputForm from './InputForm'
 import './style.scss'
 
 import MircoAvatar from '../MircoAvatar';
@@ -30,26 +28,103 @@ export interface LoginPageThreeParty {
     icon: string;
     url: string;
 }
+interface TitleMap {
+    [key: string]: string;
+}
 
 export interface LoginPageFormProps {
     image: string;
     icon: string;
     title: string;
-    subTitle: string;
+    subTitle: TitleMap;
 
     // 第三方登录
-    oauths: LoginPageThreeParty[]
+    oauths: LoginPageThreeParty[];
+
+    onSingup: Function;
+    onLogin: Function;
+    onBinding: Function;
 }
 
+interface LoginPageFormState {
+    message: string,
+    type: string;
+    orignType: string;
+    email: string;
+    oauth: string;
+}
 
-
-export default class LoginPageForm extends React.Component<LoginPageFormProps> {
+export default class LoginPageForm extends React.Component<LoginPageFormProps, LoginPageFormState> {
+    public noticeMap: any = {
+        oauth: 'If the account you fill in does not exist, the account will be created first and then the binding will be completed.',
+        signup: 'After the account is created, the login will be completed automatically.'
+    }
+    public constructor(props: LoginPageFormProps) {
+        super(props);
+        let oauths: any = props.oauths || [];
+        let params: any = querystring.parse(window.location.search.replace(/\?/,''));
+        
+        this.state = {
+            message: params.message,
+            type: this.getDefaultType(oauths, params),
+            orignType: this.getDefaultType(oauths, params),
+            oauth: this.getOAuthType(oauths, params.type),
+            email: params.email
+        }
+    }
+    public componentDidMount() {
+        if (this.state.message) {
+            message.error(this.state.message);
+        }
+    }
+    private getOAuthType(oauths: any, type: string){
+        console.log(oauths, 333)
+        return oauths.filter(it=> it.name==type).length ? type : ''
+    }
+    private getDefaultType(oauths: any, params: any) {
+        let type: string = params.type;
+        if (type) {
+            
+            if (oauths.filter(it => it.name == type).length) {
+                return 'oauth'
+            }
+        }
+        return 'login'
+    }
+    private getCurrentOAuth() {
+        let oauths: any = this.props.oauths || [];
+        return oauths.find(it => it.name == this.state.oauth)
+    }
     private goTo =(e:any)=> {
         let url: string = utils.template(e.url || '', e)
         
         if (url) {
             window.location.href = url;
         }
+    }
+    
+    private renderTitle(_type?: string) {
+        let type: string = _type || this.state.type;
+        if (type == 'oauth') {
+            let oauthInfo: any = this.getCurrentOAuth();
+            
+            return (
+                <Space>
+                    {UtilsTool.renderIconComponent(oauthInfo)}
+                    {oauthInfo.title}
+                    <span className='login-connections'><IConnections /></span>
+                    
+                    {UtilsTool.renderIconComponent(this.props)}
+                    {this.props.title}
+                </Space>
+            )
+        }
+        return (
+            <Space>
+                {UtilsTool.renderIconComponent(this.props)}
+                {this.props.title}
+            </Space>
+        )
     }
     private renderActions() {
         return (
@@ -70,7 +145,38 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps> {
             </React.Fragment>
         )
     }
+    private getSubtitle(type: string) {
+        let subTitle: any = this.props.subTitle || {};
+
+        return utils.template(subTitle[type] || '', this.state)
+    }
+    public renderOAuthActions() {
+       
+        if (this.state.type == 'login') {
+            return this.renderActions()
+        } else {
+            return (
+
+                <React.Fragment>
+                    <Divider/>
+                    <span style={{opacity: .5}}>{i18n.t(this.noticeMap[this.state.type])}</span>
+                </React.Fragment>
+            )
+        }
+        
+    }
+    private onSubmit =(v)=> {
+        switch(this.state.type) {
+            case 'login':
+                return this.props.onLogin(v);
+            case 'oauth':
+                return this.props.onBinding(v);
+            case 'signup':
+                return this.props.onSingup(v)
+        }
+    }
     public render() {
+        let isOauthType: boolean = this.state.orignType =='oauth';
         return (
             <div className='login-form-wrapper'>
                 <div className="login-logo">
@@ -79,95 +185,39 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps> {
                     {this.props.title}
                     </Space>
                 </div>
+                <div className='login-tool'>
+                    <Space>
+                        <Button type="text" onClick={()=> this.setState({type: 'signup'})} >SIGN UP</Button>
+                    </Space>
+                </div>
                 <div className='login-form-bg'>
                     <img src={this.props.image} alt="login background img" />
                 </div>
                 <div className='login-form-input'>
-                    <LoginForm
-                        logo={UtilsTool.renderIconComponent(this.props)}
-                        title={this.props.title}
-                        subTitle={this.props.subTitle}
-                        actions={this.renderActions()}
-                    >
-                        <div>
-                        <Divider >This website account</Divider>
-                        <ProFormText
-                            name="username"
-                            fieldProps={{
-                                size: 'large',
-                                prefix: <UserOutlined className={'prefixIcon'} />,
-                            }}
-                            placeholder={'please enter user name'}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: ' ',
-                                },
-                            ]}
-                        />
-                        <ProFormText.Password
-                            name="password"
-                            fieldProps={{
-                                size: 'large',
-                                prefix: <LockOutlined className={'prefixIcon'} />,
-                                /*strengthText:
-                                    'Password should contain numbers, letters and special characters, at least 8 characters long.',
-                                statusRender: (value) => {
-                                    const getStatus = () => {
-                                        if (value && value.length > 12) {
-                                            return 'ok';
-                                        }
-                                        if (value && value.length > 6) {
-                                            return 'pass';
-                                        }
-                                        return 'poor';
-                                    };
-                                    const status = getStatus();
-                                    if (status === 'pass') {
-                                        return (
-                                            <div style={{ color: 'yellow' }}>
-                                                Strength: medium
-                                            </div>
-                                        );
-                                    }
-                                    if (status === 'ok') {
-                                        return (
-                                            <div style={{ color: 'blue' }}>
-                                                Strength: strong
-                                            </div>
-                                        );
-                                    }
-                                    return (
-                                        <div style={{ color: 'red' }}>Strength: weak</div>
-                                    );
-                                },*/
-                            }}
-                            placeholder={'please enter user password'}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: ' ',
-                                },
-                            ]}
-                        />
+                    <div className={classnames({
+                        'login-form-inner': true,
+                        'login-form-showback': this.state.type =='signup'
+                    })}>
+                        <div className='login-form-front'>
+                            <InputForm
+                                title={this.renderTitle(isOauthType ? 'oauth' : 'login')}
+                                defaultValue={this.state.email}
+                                subTitle={this.getSubtitle(isOauthType ? 'oauth' : 'login')}
+                                actions={isOauthType ? this.renderOAuthActions() : this.renderActions()}
+                                type={isOauthType ? 'oauth' : 'login'}
+                                onSubmit={this.onSubmit}
+                            />
                         </div>
-                        <div
-                            style={{
-                            marginBlockEnd: 24,
-                            }}
-                        >
-                            <ProFormCheckbox noStyle name="autoLogin">
-                                Stay logged in
-                            </ProFormCheckbox>
-                            <a
-                                style={{
-                                    float: 'right',
-                                }}
-                            >
-                                Forget password
-                            </a>
+                        <div className='login-form-back'>
+                            <InputForm
+                                onSubmit={this.onSubmit}
+                                title={this.renderTitle()}
+                                subTitle={this.getSubtitle(this.state.type)}
+                                actions={this.renderOAuthActions()}
+                                type={this.state.type}
+                            />
                         </div>
-                    </LoginForm>
+                    </div>
                 </div>
             </div>
 

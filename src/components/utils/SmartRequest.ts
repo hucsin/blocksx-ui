@@ -73,13 +73,20 @@ class SmartRequest {
             }
 
             return new Promise((resolve, reject) => {
-                Request.post(url, this.getEncodeWrapper(params)).then((result: any) => {
-                    call && call(request, result);
-                    resolve(result)
-                }).catch((e) => {
-                    console.log(e)
+                Request.post(url, this.getEncodeWrapper(params)).then(({code, result}) => {
+                    // 正常响应
+                    if (code == 200) {
+                        call && call(request, result);
+                        resolve(result)
+                    } else {
+                        // 302 跳转
+                        if (code == 302) {
+                            window.location.href = result.url;
+                        }
+                    }
+                }).catch((e: any,) => {
                     message.error(e.message || e || 'system error');
-                    //reject(e)
+                    reject(e)
                 })
             })
         }
