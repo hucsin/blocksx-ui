@@ -22,7 +22,8 @@ export interface RowOperate {
   type: string; // edit/ view/ monont
   key: string; // 标识
   name: string; // 删除
-  
+  disabled?: boolean;
+  router?: string;
   motion?: Function;
   //operate?: Function;
   confirm?: string;// 是否确认

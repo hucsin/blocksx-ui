@@ -9,6 +9,7 @@ import * as FormerTypes from './types';
 import './style.scss';
 
 
+
 export interface ExtraContentType {
     logo?: string | Function;
     extraContent?: string | Function

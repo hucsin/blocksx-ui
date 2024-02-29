@@ -4,6 +4,8 @@ import Tabler from '../../Tabler/index';
 import SmartRequst from '../../utils/SmartRequest'
 import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExtendEnum';
 
+import { routerParams } from '../../utils/withRouter'
+
 export interface SmartPageTablerProps {
     schema: any,
     meta: any,
@@ -17,6 +19,8 @@ export interface SmartPageTablerProps {
     noOperater?: boolean;
     mode?: string;
     rowSelection?: boolean;
+
+    router: routerParams;
 }
 export interface SmartPageTablerState {
     tableProps: any;
@@ -162,7 +166,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
             if (field.type == 'relation') {
                 
                 Object.assign(fieldObject, {
-                    column: false,
+                    //column: false,
                     type: this.isOnemRelation(field) ? 'array': 'plainObject',
                     'x-relyon': true,
                     props: field. relatedPath ? {
@@ -305,6 +309,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                 onRemove={this.DeleteRequest}
                 onAdd={this.CreateRequest}
                 onView={this.ViewRequest}
+                router={this.props.router}
 
                 onGetRequestParams={this.getRequestParams}
                 

@@ -37,9 +37,9 @@ export default class TablerUtils {
         
         if (UiView) {
             if (utils.isFunction(field.motion)) {
-
+                
                 return (
-                    <UiView key={field.key} {...props} loading={true} onChangeValue={(v) => {
+                    <UiView key={field.key} size="default"  {...props} loading={true} onChangeValue={(v) => {
                         return field.motion({
                             ... props.recordValue,
                             [field.key]: v
@@ -142,7 +142,7 @@ export default class TablerUtils {
         let fieldsObject: any = {};
         
         fields.forEach((it: any, index: number) => {
-
+            
             if (it.column !== 'only') {
                 fieldsObject[it.key] = {
                     ...it,

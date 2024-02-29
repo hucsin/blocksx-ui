@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 
 import LayoutContainerDemo from './demo/SmartPage';
 import LayoutLoginDemo from './demo/Login';
+import RouterLayout from './components/RouterLayout';
 import './style.css';
 
 const rootElement = document.getElementById("root");
@@ -12,14 +13,33 @@ const root = createRoot(rootElement!);
 // /general/product
 // /setting/other
 
+class Text404 extends React.Component<{text: string}> {
+  public render() {
+    return (
+      <p>404</p>
+    )
+  }
+}
+class TextOther extends React.Component<{text: string}> {
+  public render() {
+    return (
+      <p>WorkflowDetail</p>
+    )
+  }
+}
 
 class DemoLayout extends React.Component {
   public render() {
-    if(window.location.pathname.match(/login/)) {
-      return <LayoutLoginDemo/>
-    } else {
-      return <LayoutContainerDemo/>
-    }
+
+    return (
+      <RouterLayout
+        pageComponentMap={{
+          PageNotFound: Text404,
+          Login: LayoutLoginDemo,
+          WorkflowDetail: TextOther
+        }}
+      />
+    )
 
   }
 }

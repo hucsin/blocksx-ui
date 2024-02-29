@@ -43,24 +43,35 @@ export default class MircoAvatar extends React.Component<IMircoAvator> {
     private onClick =()=> {
         this.props.onClick && this.props.onClick();
     }
+    private getSafeProps() {
+        let props: any = {}
+        for(let prop in this.props) {
+            if (prop.match(/^on/)) {
+                props[prop] = this.props[prop]
+            }
+        }
+        return props;
+    }
     public render() {
 
         let icon: any = this.props.icon || this.props.url;
         let color: any = this.props.color || (this.props.autoColor && this.getColor(icon || this.props.text) ) || ''
-        
+        let safePorps: any = this.getSafeProps();
         if (this.props.text) {
-            return <Avatar onClick={this.onClick} size={this.props.size} shape={this.props.shape}  style={{background:color, ...this.props.style}}>{this.props.text}</Avatar>
+            return <Avatar {...safePorps} onClick={this.onClick} size={this.props.size} shape={this.props.shape}  style={{background:color, ...this.props.style}}>{this.props.text}</Avatar>
         }
         
         if (icon) { 
             if (icon.match(/[\/\.]/)) {
-                return <Avatar onClick={this.onClick} size={this.props.size}   shape={this.props.shape} style={{backgroundColor:color, ...this.props.style}}  src={icon} />
+                return <Avatar {...safePorps} onClick={this.onClick} size={this.props.size}   shape={this.props.shape} style={{backgroundColor:color, ...this.props.style}}  src={icon} />
             }
             let IconView: any = Icons[icon];
             if (IconView) {
                 return <Avatar 
-                 onClick={this.onClick}
+                {...safePorps} 
+                onClick={this.onClick}
                  shape={this.props.shape}
+                 
                  size={this.props.size} style={{
                     background:color, 
                     fontColor: this.props.autoColor ? '#fff' : '',

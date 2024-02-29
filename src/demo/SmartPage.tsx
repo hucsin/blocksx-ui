@@ -1,20 +1,56 @@
 import React from 'react';
+import { utils } from '@blocksx/core';
 import SmartPage from '../components/SmartPage';
 import Sidebar from '../components/Sidebar';
+import SmartRequest from '../components/utils/SmartRequest'
 
 import './smartpage.scss';
 
-export default class DemoScenFlow extends React.Component<{}, { page: string,currentKey ?: string }> {
+export default class DemoScenFlow extends React.Component<{}, {menu: any, page: string,currentKey ?: string }> {
+    private menuRequest: any = SmartRequest.createPOST('/eos/resources/findTree', true);
     public constructor() {
         super({})
         let cache: any = window.localStorage.getItem('__cache');
         this.state = {
-            currentKey: cache || 'factorenum', 
-            page: (cache || 'factorenum').replace(/([a-z]+\.)/, '')
+            currentKey: cache || 'workflow', 
+            menu: [],
+            page: (cache || 'workflow').replace(/([a-z]+\.)/, '')
         }
     }
-    public render() {
+    public componentDidMount() {
+        this.menuRequest({}).then(result => {
+            
+            let menu: any = [];
+            let router: any = [];
+            let roadmap: any = [];
 
+            result.sort((a,b ) => a.index > b.index ? -1 : 1).forEach(it => {
+                let item: any = {
+                    ...it,
+                    key: it.value,
+                    name: it.label
+
+                }
+                // 页面菜单
+                if (item.pageMenu) {
+                    item.isRoadmap 
+                        ? roadmap.push(item) 
+                        : menu.push(item)
+                }
+
+                if ( item.componentName && item.pagePath) {
+                    router.push(item)
+                }
+            })
+            let menuTree: any = utils.array2tree(menu, 'value', 'parent');
+            this.setState({
+                menu: menuTree,
+                currentKey: menuTree[0].key
+            })
+        })
+    }
+    public render() {
+        if (this.state.menu.length) {
         return (
             <div className="demo-smart-page">
                 <Sidebar
@@ -26,76 +62,19 @@ export default class DemoScenFlow extends React.Component<{}, { page: string,cur
                         this.setState({ page: page }) 
                         window.localStorage.setItem('__cache', key);
                     }}
-                    menu={[{
-                        key: 'factorenum',
-                        type: 'Action',
-                        name: '要素配置',
-                        icon: 'Folder',
-                        autoFold: true
-                    },
-                    {
-                        key: 'cd',
-                        name: '数据源中心',
-                        icon: 'Scheduled',
-                        children: [
-                            {
-                                key: 'hosts',
-                                name: '主机管理',
-                                group: '主机',
-                                icon: 'Inbox'
-                            },
-                            {
-                                key: 'datasource',
-                                group: '数据源中心',
-                                autoFold: true,
-                                name: '数据源(Datasource)',
-                                icon: 'Datasource'
-                            },
-                            {
-                                key: 'schema',
-                                group: '数据源中心',
-                                autoFold: true,
-                                name: '模式管理(Schema)',
-                                icon: 'FileModel'
-                            },
-                            {
-                                key: 'virtualpacket',
-                                group: '数据源中心',
-                                autoFold: true,
-                                name: '虚拟组(Virtual)',
-                                icon: 'FolderOutlined'
-                            },
-                            {
-                                key: 'openapi',
-                                group: 'OPENAPI',
-                                name: '暴露接口',
-                                icon: 'IAPI'
-                            },
-                            {
-                                key: 'eosresources',
-                                group: 'xx',
-                                name: '资源管理',
-                                icon: 'FileModel'
-                            }
-
-                        ]
-                    },
-
-                    {
-                        key: 'application',
-                        name: '访问令牌',
-                        icon: 'AccessToken'
-                    }]}
+                    menu={this.state.menu}
                 />
                 <SmartPage
                     key={1}
                     name={this.state.page}
 
-                    router={{}}
 
                 />
             </div>
 
         )
+    } else {
+        return null;
+    }
     }
 }

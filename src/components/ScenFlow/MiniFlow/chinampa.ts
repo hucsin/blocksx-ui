@@ -1,4 +1,4 @@
-import { addClass, removeClass } from '../../utils/dom'
+import { DomUtils } from '@blocksx/ui';
 
 export default class Chinampa {
     // private destoryPanel: any;
@@ -31,11 +31,11 @@ export default class Chinampa {
     }
     private showPanel() {
 
-        addClass(this.panel, 'chinampa-show')
+        DomUtils.addClass(this.panel, 'chinampa-show')
 
     }
     private hidePanel() {
-        removeClass(this.panel, 'chinampa-show')
+        DomUtils.removeClass(this.panel, 'chinampa-show')
     }
     private calculatedSize() {
 
@@ -83,7 +83,7 @@ export default class Chinampa {
             this.hideDestoryOrUnlink();
             this.removePanelFlicker()
             // destory
-            addClass(this.unlinkPanel, 'chinampa-actived')
+            DomUtils.addClass(this.unlinkPanel, 'chinampa-actived')
         } else {
             return;
         }
@@ -114,16 +114,16 @@ export default class Chinampa {
     private addPanelFlicker() {
         //  if (this.inLeftPanel != -1) {
         if (this.unlinkPosition) {
-            addClass(this.unlinkPanel, 'chinampa-actived-animation')
+            DomUtils.addClass(this.unlinkPanel, 'chinampa-actived-animation')
         }
         //}
     }
     private removePanelFlicker(depend?: boolean) {
-        removeClass(this.unlinkPanel, 'chinampa-actived-animation');
+        DomUtils.removeClass(this.unlinkPanel, 'chinampa-actived-animation');
         //(!depend || this.inLeftPanel !== true) && removeClass(this.destoryPanel, 'chinampa-actived-animation');
     }
     private hideDestoryOrUnlink() {
-        removeClass(this.unlinkPanel, 'chinampa-actived');
+        DomUtils.removeClass(this.unlinkPanel, 'chinampa-actived');
         //removeClass(this.destoryPanel, 'chinampa-actived')
     }
     private bindEvent() {
@@ -145,13 +145,13 @@ export default class Chinampa {
 
             if (this.isInRect(centerPos, this.panelRect)) {
                 if (!this.inPanel) {
-                    addClass(this.panel, 'dragging-active');
+                    DomUtils.addClass(this.panel, 'dragging-active');
 
                     this.inPanel = true;
                 }
                 this.hitDestoryOrUnlink(centerPos);
             } else {
-                removeClass(this.panel, 'dragging-active');
+                DomUtils.removeClass(this.panel, 'dragging-active');
                 this.hideDestoryOrUnlink();
                 this.removePanelFlicker();
                 this.inLeftPanel = -1;
@@ -170,7 +170,7 @@ export default class Chinampa {
     private distoryPanel() {
 
         this.inPanel = false;
-        removeClass(this.panel, 'scenflow-dragging-active');
+        DomUtils.removeClass(this.panel, 'scenflow-dragging-active');
         this.hideDestoryOrUnlink();
     }
 }

@@ -54,7 +54,7 @@ interface TablerListProps extends TablerProps {
     minIcon?: number;
     classify?: 'mini' | 'default';
     avatarSize?: number;
-
+    onAddNew?: Function;
     renderRow?: Function;
     renderRowClassName?: Function;
     renderRowExtra?: Function;
@@ -430,8 +430,8 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             ? this.renderLoadingSkeletion()
             : <Empty 
                 description={<>
-                    <span>NO DATA</span>{this.props.onAdd && 
-                    <Button onClick={() => { this.props.onAdd && this.props.onAdd() }} type="link">CREATE NEW</Button>}
+                    <span>NO DATA</span>{this.props.onAddNew && 
+                    <Button onClick={() => { this.props.onAddNew && this.props.onAddNew() }} type="link">CREATE NEW</Button>}
                     </>
                 } 
              />;

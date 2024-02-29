@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { Space, Divider, Button, message } from 'antd';
+import { Space, Divider, Button, message,Tooltip } from 'antd';
 
 import querystring from 'querystring';
 import { utils } from '@blocksx/core';
@@ -15,11 +15,7 @@ import './style.scss'
 
 import MircoAvatar from '../MircoAvatar';
 import UtilsTool from '../utils/tool';
-import {
-    LockOutlined,
-    UserOutlined,
-    
-} from '@ant-design/icons';
+
 
 export interface LoginPageThreeParty {
 
@@ -133,13 +129,13 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
                 <Space>
                     Login With:
                     {this.props.oauths.map(it => {
-                        return (<MircoAvatar 
-                            key={it.icon} 
+                        return (
+                        <Tooltip key={it.icon}  placement='bottom' title={it.title || it.name || it.icon}><MircoAvatar 
                             size='24' 
                             icon={it.icon} 
                             color='#ccc' 
                             onClick={()=>this.goTo(it)}
-                        />);
+                        /></Tooltip>);
                     })}
                 </Space>
             </React.Fragment>

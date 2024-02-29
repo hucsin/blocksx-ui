@@ -11,7 +11,7 @@ import SmartRequest from '../utils/SmartRequest';
 import ClassifyPanel from '../ClassifyPanel';
 import FilterFolder from '../FilterFolder';
 
-
+import withRouter, { routerParams } from '../utils/withRouter';
 import './style.scss';
 
 
@@ -24,7 +24,7 @@ export interface PageMeta {
 
 
 export interface SmartPageProps {
-    router?: any;
+    router?: routerParams;
     name: string; // 页面的一个唯一ID
     meta?: PageMeta;
 
@@ -71,6 +71,9 @@ export interface SmartPageState {
     rowSelection?: boolean;
     mode?: string;
     value?: any;
+
+    defaultClassify: string;
+    defaultFolder?: string;
 }
 
 export default class SmartPage extends React.Component<SmartPageProps, SmartPageState> {
@@ -100,13 +103,36 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             noHeader: props.noHeader,
             noToolbar: props.noToolbar,
             rowSelection: props.rowSelection,
-            mode: props.mode
+            mode: props.mode,
+            defaultClassify: this.getDefaultClassify(),
+            defaultFolder: this.getDefaultFolder()
         }
 
         this.requestHelper = SmartRequest.createPOST(props.pageURI);
         this.searchRef = React.createRef();
         this.toolbarRef = React.createRef();
         
+    }
+    private getDefaultFolder() {
+        if (this.props.router) {
+            
+            let query: any = this.props.router.query;
+            
+            return query.folder || 'all'
+        }
+
+        return 'all'
+    }
+    private getDefaultClassify() {
+        
+        if (this.props.router) {
+            
+            let query: any = this.props.router.query;
+            
+            return query.classify || 'all'
+        }
+
+        return 'all'
     }
     private getMetaKey(meta: PageMeta) {
         return [meta.title, meta.description, meta.icon].join('-')
@@ -206,6 +232,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     private onClassifyChange = (query: any) => {
         
+        if (this.props.router) {
+            this.props.router.utils.goQuery({
+                classify: query
+            })
+        }
+
         this.setState({
             classifyQuery: query,
             reflush: +new Date
@@ -213,6 +245,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     private onFolderChange =(query: any, folderMeta: any) => {
         
+        if (this.props.router) {
+            this.props.router.utils.goQuery({
+                folder: query
+            })
+        }
+
         this.setState({
             folderQuery: query,
             folderMeta,
@@ -252,6 +290,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 key={this.state.reflush}
                 schema = {this.state.schema}
                 meta = {this.state.meta}
+
+                router={this.props.router}
                 
                 triggerMap = {this.props.triggerMap}
                 path={this.state.path}
@@ -293,7 +333,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     extra ={<span ref={this.toolbarRef}></span>}
                     tabsExtra = {<span ref={this.searchRef}></span>}
                     onChange={this.onClassifyChange}
-                    defaultActiveKey={this.props.defaultClassify}
+                    defaultActiveKey={this.state.defaultClassify}
                 >{dictmap.map(dict=> {
                     return <ClassifyPanel.Panel key={dict.value} label={dict.label} value={dict.value}></ClassifyPanel.Panel>
                 })}
@@ -331,7 +371,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     onFetchCustomFolders= {this.getOnFetchFolder(folderField, 'list')}
                     onAddCustomFolder={this.getOnFetchFolder(folderField, 'create')}
                     onChange={this.onFolderChange}
-                    currentKey={this.props.defaultFolder}
+                    currentKey={this.state.defaultFolder}
                 >
                     {this.renderRightContent()}
                 </FilterFolder>
@@ -351,3 +391,5 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         )
     }
 }
+
+export const WithRouterSmartPage  = withRouter(SmartPage)

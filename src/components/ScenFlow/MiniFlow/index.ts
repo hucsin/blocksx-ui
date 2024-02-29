@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { utils } from '@blocksx/core';
-import { addClass, removeClass } from '../../utils/dom';
-import { addEvent } from '../../utils/dom'
+
+import { DomUtils, JSPlumbTool } from '@blocksx/ui';
 import Chinampa from './chinampa';
 import DraggableCanvas from './draggable';
 import PositioningCanvas from './positioning';
@@ -12,7 +12,6 @@ import { IRect, IPointCoord } from './typing';
  * 一个极简交互的流程图绘制工具
  */
 
-import JSPlumbTool from '../../utils/third-party/jsplumb';
 
 export type FlowNodeType = 'go' | 'router' | 'module' | 'control' | 'empty';
 
@@ -682,7 +681,7 @@ export default class MiniFlow extends EventEmitter {
             this.connectorMap[this.getConnectorId(e.sourceId, e.targetId)] = e.connection;
         })
         // 绑定事件
-        addEvent(this.canvas.parentNode, 'dblclick', (e) => {
+        DomUtils.addEvent(this.canvas.parentNode, 'dblclick', (e) => {
             if (!this.freezeState) {
                 if (this.nodes.length > 0) {
                     this.addNewNodeByPosition({}, e.pageX, e.pageY)
@@ -1131,7 +1130,7 @@ export default class MiniFlow extends EventEmitter {
         let element: any = document.getElementById(nodeId);
 
         if (element) {
-            addClass(element, 'destroy');
+            DomUtils.addClass(element, 'destroy');
             setTimeout(() => {
                 element.style.display = 'none'
                 cb && cb();
@@ -1336,10 +1335,10 @@ export default class MiniFlow extends EventEmitter {
     }
     private doNewAnimate(nodeConfig, cb?: Function) {
         let dom: any = document.getElementById(nodeConfig.id);
-        addClass(dom, 'showed');
+        DomUtils.addClass(dom, 'showed');
         setTimeout(() => {
-            removeClass(dom, 'showed');
-            removeClass(dom, 'node-new');
+            DomUtils.removeClass(dom, 'showed');
+            DomUtils.removeClass(dom, 'node-new');
             this.updateNodeById(nodeConfig.id, { isNew: false });
             // 建立连线
             cb && cb(nodeConfig);

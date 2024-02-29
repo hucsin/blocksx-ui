@@ -22,6 +22,7 @@ export { default as textarea } from './textarea';
 
 export { default as select } from './select';
 export { default as tags } from './tags';
+export { default as rate } from './rate';
 
 export { default as label } from './label';
 export { default as icon } from './icon';

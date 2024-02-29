@@ -27,12 +27,14 @@ interface FormerRateState {
 
 export default class FormerRate extends React.Component<FormerRateProps, FormerRateState> {
     public static defaultProps = {
-        star: 1
+        star: 1,
+        size: 'default',
+        type: 'string'
     }
     public constructor(props: FormerRateProps) {
         super(props);
 
-        let typeProps: any = props['x-type-props']
+        let typeProps: any = props['x-type-props'] || {}
         
         this.state = {
             value: props.value ? 1 : 0,

@@ -32,7 +32,8 @@ class FormerSwitchViewer extends React.Component<{value: any}> {
 export default class FormerSwitch extends React.Component<IFormerSwitch, { value: any; loading: any }> {
     public static Viewer: any = FormerSwitchViewer;
     public static defaultProps = {
-        loading: false
+        loading: false,
+        type: 'string'
     }
     public constructor(props: IFormerSwitch) {
         super(props);

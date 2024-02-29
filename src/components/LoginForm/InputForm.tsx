@@ -19,6 +19,7 @@ interface InputFormState {
     actions?: any;
     type: string;
     loading: boolean;
+    stay: boolean;
 }
 
 export default class InputForm extends React.Component<InputFormProps, InputFormState> {
@@ -31,7 +32,8 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
             title: props.title,
             subTitle: props.subTitle,
             actions: props.actions,
-            loading: false
+            loading: false,
+            stay: false
         }
     }
 
@@ -76,12 +78,20 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
         
         if (this.props.onSubmit) {
             this.setState({loading: true});
-            this.props.onSubmit(va).then(() => {
+            this.props.onSubmit({
+                ...va,
+                stay: this.state.stay
+            }).then(() => {
                 this.setState({loading: false});
             }).catch(() => {
                 this.setState({loading: false});
             })
         }
+    }
+    private onChangeStay =(v)=> {
+        this.setState({
+            stay: v.target.checked
+        })
     }
     public render() {
         return (
@@ -147,8 +157,9 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
                         </Form.Item>}
 
                         {this.state.type == 'login' && <Form.Item>
+                            
                             <div className='input-checkbox'>
-                                <Checkbox name="stay">Stay logged in</Checkbox>
+                            <Checkbox name="stay" onChange={this.onChangeStay}>Stay logged in</Checkbox>    
                                 <Button type='link' >Forget password</Button>
                             </div>
                         </Form.Item>}

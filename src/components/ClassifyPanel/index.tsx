@@ -59,7 +59,7 @@ export default class ClassifyPanel extends React.Component<ClassifyPanelProps, C
             query: '',
             title: props.title,
             icon: props.icon,
-            activeKey: props.activeKey,
+            activeKey: props.defaultActiveKey,
             //groupKey: this.getDefaultGroupKey(props),
             totalDict: {},
             loading:false,

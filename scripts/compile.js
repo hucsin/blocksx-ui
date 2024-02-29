@@ -55,7 +55,7 @@ function buildPackage(packagesDir, dirPath, isBuildEs) {
   const srcDir = path.resolve(packagesDir);
   const pattern = path.resolve(srcDir, '**/*');
   const files = glob.sync(pattern, {nodir: true});
-  const esDir = srcDir.indexOf('/eos')> -1 ? 'app' : 'es';
+  const esDir = srcDir.indexOf('/eos')> -1 ? 'app' : 'lib';
   
   process.stdout.write(
     fixedWidth(`${path.basename(srcDir)}\n`)

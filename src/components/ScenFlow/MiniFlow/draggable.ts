@@ -9,7 +9,7 @@
  * 拖动，缩放
  * 
  */
-import { addEvent, removeEvent } from '../../utils/dom';
+ import { DomUtils } from '@blocksx/ui';
 
 const IMAGE_DRAG = new Image;
 IMAGE_DRAG.src = "data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==";
@@ -47,18 +47,18 @@ export default class CanvasDraggle {
     }
     private bindEvent() {
 
-        addEvent(this.canvasWraper, 'mousewheel', this.mousewheel);
-        addEvent(this.canvasWraper, 'DOMMouseScroll', this.mousewheel);
-        addEvent(this.canvasWraper, 'dragstart', this.canvasDragStart);
-        addEvent(this.canvasWraper, 'drag', this.canvasDrag);
-        addEvent(this.canvasWraper, 'dragend', this.canvasDragEnd);
+        DomUtils.addEvent(this.canvasWraper, 'mousewheel', this.mousewheel);
+        DomUtils.addEvent(this.canvasWraper, 'DOMMouseScroll', this.mousewheel);
+        DomUtils.addEvent(this.canvasWraper, 'dragstart', this.canvasDragStart);
+        DomUtils.addEvent(this.canvasWraper, 'drag', this.canvasDrag);
+        DomUtils.addEvent(this.canvasWraper, 'dragend', this.canvasDragEnd);
     }
     private unbindEvent() {
-        removeEvent(this.canvasWraper, 'mousewheel', this.mousewheel);
-        removeEvent(this.canvasWraper, 'DOMMouseScroll', this.mousewheel);
-        removeEvent(this.canvasWraper, 'dragstart', this.canvasDragStart);
-        removeEvent(this.canvasWraper, 'drag', this.canvasDrag);
-        removeEvent(this.canvasWraper, 'dragend', this.canvasDragEnd);
+        DomUtils.removeEvent(this.canvasWraper, 'mousewheel', this.mousewheel);
+        DomUtils.removeEvent(this.canvasWraper, 'DOMMouseScroll', this.mousewheel);
+        DomUtils.removeEvent(this.canvasWraper, 'dragstart', this.canvasDragStart);
+        DomUtils.removeEvent(this.canvasWraper, 'drag', this.canvasDrag);
+        DomUtils.removeEvent(this.canvasWraper, 'dragend', this.canvasDragEnd);
     }
     private mousewheel = (event: any) => {
         // up

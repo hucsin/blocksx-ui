@@ -14,7 +14,7 @@ import { RowOperate } from './typings';
  */
 export const DEFAULT_COLUMNS_ACTION: RowOperate[] = [
     {
-        key: 'view',
+        key: 'record.view',
         type: 'view',
         name: i18n.t('View'),
         align: 1,
@@ -24,7 +24,7 @@ export const DEFAULT_COLUMNS_ACTION: RowOperate[] = [
         }
     },
     {
-        key: 'edit',
+        key: 'record.edit',
         type: 'edit',
         name: i18n.t('Edit'),
         align: 2,
@@ -35,7 +35,7 @@ export const DEFAULT_COLUMNS_ACTION: RowOperate[] = [
 
     },
     {
-        key: 'remove',
+        key: 'record.remove',
         type: 'remove',
         name: i18n.t('Delete'),
         danger: true,

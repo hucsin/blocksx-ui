@@ -3,6 +3,17 @@ import { Request } from '@blocksx/swap';
 import { message } from 'antd';
 import { pick } from 'lodash';
 
+export interface FetchResult {
+    [prop: string]: any;
+}
+
+export interface FetchPageResult {
+    data: any[],
+    pageNumber: number,
+    pageSize: number,
+    count: number
+}
+
 class SmartRequest {
     
     private cache: any = {};

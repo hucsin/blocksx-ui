@@ -21,6 +21,18 @@
     
     position: relative;
     height: 100%;
+    .ant-list-item-meta-description {
+        .ant-space-gap-col-small {
+            column-gap: 4px !important;
+        }
+        .ant-space {
+            margin-right: 8px;
+        }
+        pre {
+            display:inline-block;
+            margin: 0;
+        }
+    }
     .ui-list-index {
         display: inline-block;
         position: relative;
@@ -31,11 +43,7 @@
         opacity: .6;
     }
     .ant-empty {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-top: -70px;
-        margin-left: -90px;
+        margin-top: 10%;
         .ant-empty-description >span {
             opacity: .5;
         }
@@ -118,6 +126,7 @@
         color:#000
     }
     .ant-list-item-meta-description {
+       
         > span {
             > span {
                 margin-right: 8px;

@@ -4,6 +4,7 @@ import { Input, Button, Popover, Spin, Popconfirm, Empty, Skeleton, Space } from
 import { PlusOutlined, FolderOutlined, FolderOpenOutlined, CloseOutlined, SearchOutlined } from '@ant-design/icons';
 
 import { utils } from '@blocksx/core';
+import { routerParams } from '../utils/withRouter';
 
 import i18n from '@blocksx/i18n';
 import * as Icons from '../Icons';
@@ -37,6 +38,8 @@ export interface FilterFolderProps {
     onChange?: Function;
     onSelectValue?: Function;
     children?: any;
+
+    router?: routerParams;
 }
 
 interface FilterFolderState {
@@ -193,6 +196,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
         this.setState({
             currentKey: key
         }, ()=> {
+
             this.props.onChange && this.props.onChange(key, this.getCurrentValue(key))
         })
         

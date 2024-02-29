@@ -17,6 +17,7 @@ import TablerTable from './TablerTable';
 import TablerList from './TablerList';
 import AuthFilter from './AuthFilter';
 import TablerUtils from '../utils/tool';
+import { routerParams } from '../utils/withRouter';
 
 
 
@@ -60,6 +61,8 @@ interface TablerValueProps extends TablerProps {
     batchOpertate?: any[]
     mode?: string;
     onChangeValue?: Function;
+
+    router?: routerParams;
 }
 
 /**
@@ -338,6 +341,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             })
         }
 
+
         if (rowBatch.length > 0 && batchList.length > 0) {
             batchList = [
                 ...batchList,
@@ -399,13 +403,18 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
         // 加入自定义数据
         if (rowOperate.length > 0) {
+            actionList =  actionList.filter(it => {
+                return !rowOperate.find(rt => rt.key ==it.key)
+            })
             rowOperate.forEach((it: RowOperate) => {
                 if (it.batch !== 'only') {
-                    actionList.push(it);
+                    if (!it.disabled) {
+                        actionList.push(it);
+                    }
                 }
             })
         }
-
+        
         return actionList.sort((left: any, right: any) => {
 
             if (left.align > right.align) {
@@ -413,6 +422,8 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             }
             return -1;
         }).filter((it: RowOperate) => {
+
+
             return this.filterAuthItem(it, rowData)
         });
     }
@@ -441,7 +452,13 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                  this.onRemove(rowData)
                  break;
              default:
-                if (operate.motion && utils.isFunction(operate.motion)) {
+                // 路由
+                if (operate.router) {
+                    if (this.props.router) {
+                        return this.props.router.utils.goPath(operate.router, rowData);
+                    }
+
+                } else if (operate.motion && utils.isFunction(operate.motion)) {
                     return operate.motion(rowData, this)
                 }
                 this.props.onRowAction && this.props.onRowAction(operate, rowData, this)
@@ -772,7 +789,9 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                     mode={this.state.mode}
                     getDataSource={() => this.state.dataSource}
                     onChangePage={(val: any ,isAppend?: boolean) => { this.setState(val, () => this.resetDataSource(isAppend)) }}
-
+                    onAddNew ={()=> {
+                        this.onBatchAddClick({type: 'record.create'})
+                    }}
                     selectedRowKeys={this.state.value}
                     rowSelection={this.state.rowSelection}
                     renderSearcher={this.renderSearcher}
