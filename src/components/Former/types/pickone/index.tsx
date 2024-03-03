@@ -211,7 +211,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
                         readOnly
                         size='small'
                         
-                        suffix={<Icons.IPick/>} 
+                        suffix={<Icons.PickUtilityOutlined/>} 
                         value={this.getDisplayValue()}
                         placeholder={'Binding records'}
                     />

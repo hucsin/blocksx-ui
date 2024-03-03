@@ -302,7 +302,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 return (
                     <span className='ui-mircotable-avatar-con'>
                         <FormerTypes.avatar key={1} type="string" viewer={true} color='#4338CA' icon='Bytehubs' size={40} />
-                        <Icons.IConnections key={2} />
+                        <Icons.ConnectionsDirectivityOutlined key={2} />
                         <FormerTypes.avatar key={3} type="string" {...avatars[0]} size={40} />
                     </span>
                 )
@@ -337,7 +337,9 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             return extraList.map((field, index) => {
                 return TableUtils.renderComponentByField(field, {
                     value: rowData[field.key],
+                    key: field.key,
                     displayValue: rowData['DisplayValue_' + field.key],
+                    recordValue: rowData,
                     onChangeValue: (value) => {
                         if (smartRequestMap[field.action]) {
                             let requestData: any = {
@@ -349,7 +351,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                             })
                         }
                     }
-                }, index)
+                }, ' ')
             }).filter(Boolean)
         }   
     }

@@ -27,7 +27,7 @@ export  class SideHeader extends React.Component<SideHeaderProps> {
             <div className='hoofs-sidebar-header'>
                 <div className='hoofs-sidebar-header-title'>
                     <div className='hoofs-sidebar-header-icon'>
-                        <HoofsIcons.Bytehubs />
+                        <HoofsIcons.DbqueryMiniBrandFilled />
                     </div>
                     <p>bettle</p>
                     <span>Production</span>

@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import { message as AntMessage } from 'antd';
-import { Icons, Pick } from '@blocksx/ui';
+
+import * as Icons from '../Icons/index'
+import Pick from '../Pick';
 import { utils } from '@blocksx/core';
 import i18n from '@blocksx/i18n';
 

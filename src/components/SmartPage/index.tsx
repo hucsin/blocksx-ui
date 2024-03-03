@@ -377,7 +377,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 </FilterFolder>
             )
         }
-
+        
         return this.renderRightContent();
     }
     public render() {

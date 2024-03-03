@@ -1,4 +1,4 @@
-import { DomUtils } from '@blocksx/ui';
+import * as DomUtils  from '../../utils/dom';
 
 export default class Chinampa {
     // private destoryPanel: any;
@@ -141,8 +141,6 @@ export default class Chinampa {
                 top: pos.event.pageY //+ this.miniFlow.getSize(true)
             };
             this.resetHitRect()
-            console.log(centerPos.left, this.hitRect.left, 99900)
-
             if (this.isInRect(centerPos, this.panelRect)) {
                 if (!this.inPanel) {
                     DomUtils.addClass(this.panel, 'dragging-active');

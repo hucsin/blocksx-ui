@@ -10,6 +10,7 @@ import PageLayout from './Layout';
 interface RouterLayoutProps {
     //页面组件MAP
     pageComponentMap: any;
+    defaultMenus?: any;
 }
 
 interface RouterLayoutState {
@@ -67,18 +68,23 @@ export default class RouterLayout extends React.Component<RouterLayoutProps, Rou
         let path: string [] = pathname.replace(/^\//,'').split('/');
         return this.getMatchMenus(path, allMenus)
     }
-
+    private wrapDefault(menu: any) {
+        if (menu && menu.length > 0) {
+            return menu;
+        }
+        return this.props.defaultMenus || [];
+    }
     private pretreatment (result: any) {
         let menu: any = [];
         let router: any = [];
         let roadmap: any = [];
 
-        result.sort((a,b ) => a.index > b.index ? -1 : 1).forEach(it => {
+        this.wrapDefault(result).sort((a,b ) => a.index > b.index ? -1 : 1).forEach(it => {
             let item: any = {
                 ...it,
                 key: it.value,
-                name: it.label
-
+                name: it.label,
+                type: ''
             }
             // 页面菜单
             if (item.pageMenu) {
@@ -91,6 +97,7 @@ export default class RouterLayout extends React.Component<RouterLayoutProps, Rou
                 router.push(item)
             }
         })
+        console.log(menu)
         let menuTree: any = utils.array2tree(menu, 'value', 'parent');
         
         return {

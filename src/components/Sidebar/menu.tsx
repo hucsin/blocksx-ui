@@ -33,14 +33,14 @@ class SidebarRightAction extends React.Component {
 class SidebarRightHot extends React.Component {
     public render () {
         return (
-            <HoofsIcons.Dot />
+            <HoofsIcons.DotSuggestionOutlined />
         )
     }
 }
 class SiderbarRightLink extends React.Component {
     public render () {
         return (
-            <HoofsIcons.OpenNewWindow />
+            <HoofsIcons.OpenWindowUtilityOutlined />
         )
     }
 }

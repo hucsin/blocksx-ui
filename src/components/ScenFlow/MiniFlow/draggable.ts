@@ -9,7 +9,7 @@
  * 拖动，缩放
  * 
  */
- import { DomUtils } from '@blocksx/ui';
+ import * as DomUtils  from '../../utils/dom';
 
 const IMAGE_DRAG = new Image;
 IMAGE_DRAG.src = "data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==";

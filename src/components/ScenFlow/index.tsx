@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-import { Unlink, Destory } from '../Icons'
+import { UnlinkUtilityOutlined, RemoveUtilityFilled } from '../Icons'
 import classnames from 'classnames';
 
 import MiniFlow from './MiniFlow';
@@ -171,7 +171,7 @@ export default class ScenFlow extends React.Component<{}, {
                         'scenflow-response-item': true
                     })
                     }>
-                    <Destory />
+                    <RemoveUtilityFilled />
                 </div>
                 <div
                     ref={(ref) => { this.unlinkPanel = ref }}
@@ -179,7 +179,7 @@ export default class ScenFlow extends React.Component<{}, {
                         'scenflow-response-item': true
                     })
                     }>
-                    <Unlink />
+                    <UnlinkUtilityOutlined />
                 </div>
             </div>
             <div

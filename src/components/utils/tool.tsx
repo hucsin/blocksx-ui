@@ -66,7 +66,7 @@ export default class TablerUtils {
                 </Space>
             )
         } else {
-            return <span className='ui-label-empty'>{'<null>'}</span>
+            return  defaultComponent? defaultComponent : <span key={233} className='ui-label-empty'>{'<null>'}</span>
         }
     }
     

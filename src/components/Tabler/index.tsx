@@ -288,15 +288,15 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
                     if (utils.isPromise(value)) {
                         value.then((val: any) => {
-                            this.resetDataSource(val);
+                            this.resetDataSource(val, isAppend);
                         })
                     } else {
-                        this.resetDataSource(value);
+                        this.resetDataSource(value, isAppend);
                     }
                 }
             } else {
                 if (utils.isArray(state.originalDataSource)) {
-                    this.resetDataSource(state.originalDataSource)
+                    this.resetDataSource(state.originalDataSource, isAppend)
                 }
             }
         }
@@ -788,7 +788,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                     loading={this.state.loading}
                     mode={this.state.mode}
                     getDataSource={() => this.state.dataSource}
-                    onChangePage={(val: any ,isAppend?: boolean) => { this.setState(val, () => this.resetDataSource(isAppend)) }}
+                    onChangePage={(val: any ,isAppend?: boolean) => { this.setState(val, () => this.resetDataSource(null, isAppend)) }}
                     onAddNew ={()=> {
                         this.onBatchAddClick({type: 'record.create'})
                     }}

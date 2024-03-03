@@ -8,7 +8,7 @@ import { Space, Divider, Button, message,Tooltip } from 'antd';
 import querystring from 'querystring';
 import { utils } from '@blocksx/core';
 import i18n from '@blocksx/i18n';
-import { IConnections } from '../Icons';
+import { ConnectionsDirectivityOutlined } from '../Icons';
 
 import InputForm from './InputForm'
 import './style.scss'
@@ -108,7 +108,7 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
                 <Space>
                     {UtilsTool.renderIconComponent(oauthInfo)}
                     {oauthInfo.title}
-                    <span className='login-connections'><IConnections /></span>
+                    <span className='login-connections'><ConnectionsDirectivityOutlined /></span>
                     
                     {UtilsTool.renderIconComponent(this.props)}
                     {this.props.title}

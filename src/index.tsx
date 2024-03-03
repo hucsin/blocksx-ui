@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from "react-dom/client";
 
 
-import LayoutContainerDemo from './demo/SmartPage';
+import Icon from './components/Former/types/icon';
 import LayoutLoginDemo from './demo/Login';
 import RouterLayout from './components/RouterLayout';
 import './style.css';
@@ -13,10 +13,19 @@ const root = createRoot(rootElement!);
 // /general/product
 // /setting/other
 
-class Text404 extends React.Component<{text: string}> {
+class Text404 extends React.Component<{text: string}, {value:string}> {
+  public constructor(props:any) {
+    super(props);
+    this.state = {
+      value: ''
+
+    }
+  }
   public render() {
     return (
-      <p>404</p>
+      <div style={{padding: '40px'}}>
+        <Icon value={this.state.value} onChangeValue={(v)=>{ this.setState({value: v})}} />
+      </div>
     )
   }
 }
@@ -33,6 +42,18 @@ class DemoLayout extends React.Component {
 
     return (
       <RouterLayout
+        defaultMenus={[{
+            value: 'resources',
+            label: 'resources',
+            type: 'Page',
+            level: 0,
+            pageMenu: true,
+            autoFold: true,
+            pageType: 'SmartPage',
+            componentName: 'eosresources',
+            pagePath: '/resources'
+          }
+        ]}
         pageComponentMap={{
           PageNotFound: Text404,
           Login: LayoutLoginDemo,

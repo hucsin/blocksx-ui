@@ -10,14 +10,14 @@ export default class CanvasFormat {
      * 格式化画布
      */
     // 递归设置最大项
-    private  recursiveChildrenFormatPadding(nodeId: string, level?: number) {
+    private  recursiveChildrenFormatPadding(nodeName: string, level?: number) {
         // 获取当前节点的后代节点
-        let target: any[] = this.miniFlow.getConnectorBySourceId(nodeId, true) ;
+        let target: any[] = this.miniFlow.getConnectorBySourceName(nodeName, true) ;
         let _level: any = level || 1;
         let result: any = {
             children: [],
 
-            node: this.miniFlow.getNodeById(nodeId)
+            node: this.miniFlow.getNodeByName(nodeName)
         };
         
         let paddingNumber: number =  target.length ? 0: 1;       
@@ -52,10 +52,10 @@ export default class CanvasFormat {
         }
 
         startNodes.forEach((startNode:any, index:number) => {
-            let fistNotStartNode: any = this.miniFlow.getConnectorBySourceId(startNode.id)[0];
+            let fistNotStartNode: any = this.miniFlow.getConnectorBySourceName(startNode.name)[0];
 
             if (fistNotStartNode) {
-                this.recursiveChildrenFormatPadding(startNode.id);
+                this.recursiveChildrenFormatPadding(startNode.name);
 
                 if (!flowMaps.connect[fistNotStartNode.target]) {
                     flowMaps.connect[fistNotStartNode.target] = {
@@ -63,11 +63,11 @@ export default class CanvasFormat {
                         data: []
                     };
                 }
-                flowMaps.connect[fistNotStartNode.target].data.push(startNode.id)
+                flowMaps.connect[fistNotStartNode.target].data.push(startNode.name)
 
             } else {
                 flowMaps.default.push({
-                    id: startNode.id,
+                    name: startNode.name,
                     index: index
                 })
             }
@@ -87,7 +87,7 @@ export default class CanvasFormat {
         let keys: any = Object.keys(flowMaps.connect);
         let paddingNumber: number = 0;
         keys.forEach(it => {
-            let node: any = this.miniFlow.getNodeById(it);
+            let node: any = this.miniFlow.getNodeByName(it);
 
             paddingNumber += Math.max(node.paddingNumber, flowMaps.connect[it].data.length);
         })
@@ -98,7 +98,7 @@ export default class CanvasFormat {
         
         let maxsing: number = paddingSize * offsetPoint.paddingNumber;
         let itemStart: number = offsetPoint.top - (maxsing / 2) ;//+ (paddingSize - this.miniFlow.size)/2;
-        console.log(this.levelSize, 987654321)
+        
         nodes.forEach((node: any, index: number) => {
             
             let itemMaxSize: number = (node.type == 'go' ? 1 : node.paddingNumber )* paddingSize;
@@ -115,7 +115,7 @@ export default class CanvasFormat {
         })
         return paddingNumber;
     }
-    private repaintNodeSizeByNodeId(nodeList: any, parent: any, maxSize: number, paddingSize: number, noself?: boolean) {
+    private repaintNodeSizeByNodeName(nodeList: any, parent: any, maxSize: number, paddingSize: number, noself?: boolean) {
         let maxPadding: number = this.getMaxPaddingByNodeList(nodeList);
         let perSize: number = maxSize / maxPadding;
         // 计算本身
@@ -123,17 +123,17 @@ export default class CanvasFormat {
 
         nodeList.forEach((node:any, index: number) => {
             let perMaxSize: number = node.paddingNumber * perSize;
-            let targetNodes: any = this.miniFlow.getConnectorBySourceId(node.id).map(it => this.miniFlow.getNodeById(it.target));
+            let targetNodes: any = this.miniFlow.getConnectorBySourceName(node.name).map(it => this.miniFlow.getNodeByName(it.target));
             
             if (targetNodes.length) {
-                this.repaintNodeSizeByNodeId(targetNodes, node, perMaxSize , paddingSize);
+                this.repaintNodeSizeByNodeName(targetNodes, node, perMaxSize , paddingSize);
                 //perOffsetSize += perMaxSize;
             }
         })
     }
-    private repaintFlowByNickNodeId(flow:any, nick: any, paddingSize: number) {
-        let nickNode: any = typeof nick == 'string' ? this.miniFlow.getNodeById(nick) : nick;
-        let startNodes: any = flow.data.map(it => this.miniFlow.getNodeById(it));
+    private repaintFlowByNickNodeName(flow:any, nick: any, paddingSize: number) {
+        let nickNode: any = typeof nick == 'string' ? this.miniFlow.getNodeByName(nick) : nick;
+        let startNodes: any = flow.data.map(it => this.miniFlow.getNodeByName(it));
         let maxPadding: number = Math.max(nickNode.paddingNumber, startNodes.length)
         let maxSize: number = maxPadding * paddingSize;
         // 先计算start节点
@@ -144,7 +144,7 @@ export default class CanvasFormat {
         });
         
         // 填写当前节点
-        this.repaintNodeSizeByNodeId([nickNode], nickNode, maxSize, paddingSize, true);
+        this.repaintNodeSizeByNodeName([nickNode], nickNode, maxSize, paddingSize, true);
 
     }
     private repaint(flowMaps:any, paddingSize: number) {
@@ -154,15 +154,14 @@ export default class CanvasFormat {
             return connect[a].index > connect[b].index ? 1 : -1
         }).forEach(it => {
             let flow: any = connect[it];
-            let node: any = this.miniFlow.getNodeById(it);
+            let node: any = this.miniFlow.getNodeByName(it);
             let cansize: any = Math.max(node.paddingNumber, flow.data.length) * paddingSize;
             
             node.top = this.begingSize + cansize / 2;
             node.left = this.levelSize + this.miniFlow.temporaryRouterOffset;
             
-            //this.miniFlow.updateNodeById(node.id, node)
 
-            this.repaintFlowByNickNodeId(flow, node, paddingSize)
+            this.repaintFlowByNickNodeName(flow, node, paddingSize)
             this.begingSize += cansize // + this.miniFlow.size;
         })
     }

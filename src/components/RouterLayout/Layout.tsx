@@ -20,7 +20,6 @@ interface LayoutState {
 class Layout extends  React.Component<LayoutProps, LayoutState> {
     public constructor(props: LayoutProps) {
         super(props);
-
         this.state = {
             currentKey: props.currentKey
         }
@@ -37,7 +36,7 @@ class Layout extends  React.Component<LayoutProps, LayoutState> {
     }
 
     public render() {
-
+        console.log(JSON.stringify(this.props.menu), 999)
         return (
             <div className='ui-layout'>
                 <Sidebar
