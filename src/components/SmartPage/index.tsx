@@ -3,10 +3,14 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { Spin, Empty } from 'antd';
-import './types'
+import { utils } from '@blocksx/core';
+import { Spin, Empty, Drawer, Popover } from 'antd';
+import './types';
 
-import PageManger from './Manger';
+import * as DomUtils  from '../utils/dom';
+
+import PageManger from './core/Manger';
+import CleanseSchema from './core/CleanseSchema'
 import SmartRequest from '../utils/SmartRequest';
 import ClassifyPanel from '../ClassifyPanel';
 import FilterFolder from '../FilterFolder';
@@ -25,9 +29,20 @@ export interface PageMeta {
 
 export interface SmartPageProps {
     router?: routerParams;
+    children?: any;
+    
+    typeProps: any;
+    open?: boolean;
+    onClose?: Function;
+    width?: number;
+    type: 'default' | 'drawer' | 'popover';
+    uiType: 'tree' | 'tabler' | 'former' | '';
+    title: string;
     name: string; // 页面的一个唯一ID
-    meta?: PageMeta;
+    pageMeta?: PageMeta;
 
+    simplicity?: boolean; /** 简约模式 */
+    noClassify?: boolean;
     noFolder?: boolean;
     noHeader?: boolean;
     noToolbar?: boolean;
@@ -47,15 +62,18 @@ export interface SmartPageProps {
 }
 
 export interface SmartPageState {
-    meta: PageMeta;
+    pageMeta: PageMeta;
     metaKey: string;
     uiType: string;
     schema: any;
     loading: boolean;
 
+    open: boolean;
+
     reflush: number;
     path: string;
     name: string;
+    title: string;
     classifyQuery?: string;
     
     folderQuery?: string;
@@ -67,6 +85,8 @@ export interface SmartPageState {
     noFolder?: boolean;
     noHeader?: boolean;
     noToolbar?: boolean;
+    noClassify?: boolean;
+
 
     rowSelection?: boolean;
     mode?: string;
@@ -79,29 +99,46 @@ export interface SmartPageState {
 export default class SmartPage extends React.Component<SmartPageProps, SmartPageState> {
 
     public static defaultProps = {
-        pageURI: '/api/smartpage/find'
+        pageURI: '/api/smartpage/find',
+        type: 'default',
+        uiType: '',
+        noClassify: false,
+        typeProps: {},
+        title: 'View the recrod'
     }
+    private defaultWidthMap: any = {
+        tree: 600,
+        popover: 400
+    }
+    private canShow:boolean;
     public static manger: any = PageManger;
 
     private requestHelper: any;
     private searchRef: any;
     private toolbarRef: any;
+    private isLoading: boolean;
+
+    private operateContainerRef: any;
+    private titleContainerRef: any;
 
     public constructor(props: SmartPageProps) {
         super(props)
 
         this.state = {
             loading: false,
+            open: false,
             schema: null,
-            meta: {},
+            pageMeta: {},
+            title: props.title,
             metaKey: '',
-            uiType: '',
+            uiType: props.uiType,
             path: '',
             name: props.name,
             reflush: 0,
-            noFolder: props.noFolder,
-            noHeader: props.noHeader,
-            noToolbar: props.noToolbar,
+            noFolder: props.noFolder || props.simplicity,
+            noHeader: props.noHeader=== false ? false : props.noHeader ||  props.simplicity,
+            noToolbar: props.noToolbar || props.simplicity,
+            noClassify: props.noClassify || props.simplicity,
             rowSelection: props.rowSelection,
             mode: props.mode,
             defaultClassify: this.getDefaultClassify(),
@@ -109,8 +146,13 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         }
 
         this.requestHelper = SmartRequest.createPOST(props.pageURI);
+
+        this.canShow = false;
         this.searchRef = React.createRef();
         this.toolbarRef = React.createRef();
+
+        this.operateContainerRef = React.createRef();
+        this.titleContainerRef = React.createRef();
         
     }
     private getDefaultFolder() {
@@ -139,65 +181,80 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     private getClassifyField(fields: any[]) {
         return fields.find(field => {
-            return field.meta && field.meta.classify;
+            return field.classify;
         })
     }
     private getFolderField(fields: any[]) {
         return fields.find(field => {
-            return field.meta && field.meta.folder;
+            return field.folder;
         })
     }
     public componentDidMount() {
-        
-        this.fetch();
+        if (!this.inFloatMode()) {
+            this.fetch();
+        }
     }
-
+    private hasLoading() {
+        return this.isLoading;
+    }
+    private setLoading(loding?: boolean) {
+        this.isLoading = loding || false;
+        this.setState({loading: this.isLoading})
+    }
     public fetch = ()=> {
 
-        if (!this.state.loading) {
-            this.setState({loading: true});
+        if (!this.hasLoading()) {
+            this.setLoading(true)
             
             this.requestHelper({
                 page: this.state.name
             }).then(async (data) => {
                 let { schema = {}, uiType, path } = data;
+                let trueUiType: string = this.props.uiType || uiType;
+                let classifyField: any
                 
-                if (PageManger.has(uiType)) {
-                    let meta: PageMeta = schema.meta || this.props.meta || {};
-                    
-                    let classifyField: any = this.getClassifyField(schema.fields);
+                if (PageManger.has(trueUiType)) {
+                    let pageMeta: PageMeta = schema.meta || this.props.pageMeta || {};
 
-                    if (classifyField && classifyField.factor) {
-                        try {
-                            let folder: any = await this.getOnFetchFolder(classifyField)({})
-                            classifyField.fieldDict = folder;
-                        } catch(e){console.log(e)}
+                    // 清洗fields
+                    schema.fields = CleanseSchema.getFieldProps(path, schema.fields);
+                    
+                    if (!this.state.noClassify) {
+                        classifyField = this.getClassifyField(schema.fields);
+                        
+                        if (classifyField && classifyField.factor) {
+                            try {
+                                let folder: any = await this.getOnFetchFolder(classifyField)({})
+                                classifyField.dict = folder;
+                            } catch(e){console.log(e)}
+                        }
                     }
                     
                     let initStateConfig: any = {
                         schema: schema,
-                        uiType: uiType,
-                        meta: meta,
+                        uiType: trueUiType,
+                        pageMeta: pageMeta,
                         classifyField: classifyField,
                         path,
-                        metaKey: this.getMetaKey(meta),
-                        loading: false,
+                        metaKey: this.getMetaKey(pageMeta),
                         reflush: +new Date,
                         noFolder: this.state.noFolder,
                         noHeader: this.state.noHeader,
-                        noToolbar: this.state.noToolbar
+                        noToolbar: this.state.noToolbar,
+                        noClassify: this.state.noClassify,
+                        loading: false
                     };
 
-                    if (this.props.onInitPage) {
-                        this.props.onInitPage(initStateConfig, schema,  this)
+
+                    if (!this.state.noFolder) {
+                        initStateConfig.folderField =  
+                            initStateConfig.noFolder ? null : this.getFolderField(schema.fields);
                     }
 
-                    initStateConfig.folderField =  
-                        initStateConfig.noFolder ? null : this.getFolderField(schema.fields);
-
                     this.setState(initStateConfig)
+                    this.setLoading();
                 } else {
-                    throw new Error(`Component type [${uiType}] does not exist!`);
+                    throw new Error(`Component type [${trueUiType}] does not exist!`);
                 }
             }).catch((e) => {
                 console.log(e)
@@ -209,25 +266,44 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
     public UNSAFE_componentWillUpdate(newProps: any) {
 
-        if (newProps.meta) {
-            let newMetaKey: string = this.getMetaKey(newProps.meta || {});
+        if (newProps.pageMeta) {
+            let newMetaKey: string = this.getMetaKey(newProps.pageMeta || {});
 
             if (this.state.metaKey != newMetaKey) {
                 this.setState({
                     metaKey: newMetaKey,
-                    meta: newProps.meta
+                    pageMeta: newProps.pageMeta
                 })
             }
         }
         
-        if (newProps.name != this.state.name) {
+        if (newProps.title != this.state.title) {
             
             this.setState({
                 name: newProps.name,
+                title: newProps.title,
+                
                 mode: newProps.mode,
+                open: newProps.open,
+                schema: undefined,
                 folderMeta: undefined,
                 classifyQuery: undefined
             }, this.fetch)
+        }
+
+        if (!utils.isUndefined(newProps.open) && newProps.open != this.state.open) {
+            this.setState({
+                open: newProps.open
+            })
+            
+            this.needInitSchema();
+        }
+
+
+    }
+    private needInitSchema() {
+        if (this.inFloatMode() && !this.state.schema ) {
+            this.fetch();
         }
     }
     private onClassifyChange = (query: any) => {
@@ -263,12 +339,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         
         if (this.state.classifyField && classifyQuery) {
             if (classifyQuery !== 'all') {
-                params[this.state.classifyField.fieldKey] = classifyQuery
+                params[this.state.classifyField.key] = classifyQuery
             }
         }
         if (this.state.folderField && folderQuery) {
             if (folderQuery !== 'all') {
-                params[this.state.folderField.fieldKey] = folderQuery;
+                params[this.state.folderField.key] = folderQuery;
             }
         }
         return params;
@@ -279,20 +355,19 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         })
 
         if (this.props.onChangeValue) {
-            this.props.onChangeValue(value)
+            return this.props.onChangeValue(value)
         }
     }
     public renderContentView() {
         let ViewComponent: any = PageManger.findComponentByType(this.state.uiType);
         
         return (
-            <ViewComponent 
+             this.state.schema && <ViewComponent 
                 key={this.state.reflush}
                 schema = {this.state.schema}
-                meta = {this.state.meta}
-
+                pageMeta = {this.state.pageMeta}
                 router={this.props.router}
-                
+                title={this.state.title}
                 triggerMap = {this.props.triggerMap}
                 path={this.state.path}
                 reflush = {this.state.reflush}
@@ -303,44 +378,54 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 searchRef= {this.searchRef}
                 noOperater= {this.state.noToolbar}
                 toolbarRef= {this.toolbarRef}
+                operateContainerRef={this.operateContainerRef}
+                titleContainerRef={this.titleContainerRef}
                 onChangeValue={this.onChangeValue}
+                onClose={()=>this.setState({open: false})}
             />
         )
     }
 
     public renderRightContent() {
-        let { classifyField = {}, meta, folderMeta, folderField } = this.state;
-        let classifyMeta: any = {
-            label: folderMeta ? folderMeta.label :  folderField ? '-' : meta.title,
-            description: folderMeta ? folderMeta.description :  folderField ? '-' : meta.description,
-            icon: folderField ? '' : meta.icon
+        let { classifyField = {}, pageMeta, folderMeta, folderField, noClassify } = this.state;
+
+        // 不支持classify的情况
+        if (!noClassify) {
+
+            let classifyMeta: any = {
+                label: folderMeta ? folderMeta.label :  folderField ? '-' : pageMeta.title,
+                description: folderMeta ? folderMeta.description :  folderField ? '-' : pageMeta.description,
+                icon: folderField ? '' : pageMeta.icon
+            }
+                
+            let dictmap: any = [{value: 'all', label: 'All'}];
+
+            classifyField.dict && (dictmap = dictmap.concat(classifyField.dict))
+
+            return (
+                <div className={classnames({
+                    'ui-classify-wrapper': true,
+                    'ui-classify-noheader': this.state.noHeader
+                })}>
+                    <ClassifyPanel
+                        key={37}
+                        title = {classifyMeta.label as any}
+                        description = {classifyMeta.description}
+                        icon = {classifyMeta.icon}
+                        extra ={<span ref={this.toolbarRef}></span>}
+                        tabsExtra = {<span ref={this.searchRef}></span>}
+                        onChange={this.onClassifyChange}
+                        defaultActiveKey={this.state.defaultClassify}
+                    >{dictmap.map(dict=> {
+                        return <ClassifyPanel.Panel key={dict.value} label={dict.label} value={dict.value}></ClassifyPanel.Panel>
+                    })}
+                    </ClassifyPanel>
+                    {this.renderContentView()}
+                </div>
+            )
         }
-            
-        let dictmap: any = [{value: 'all', label: 'All'}];
 
-        classifyField.fieldDict && (dictmap = dictmap.concat(classifyField.fieldDict))
-
-        return (
-            <div className={classnames({
-                'ui-classify-wrapper': true,
-                'ui-classify-noheader': this.state.noHeader
-            })}>
-                <ClassifyPanel
-                    key={37}
-                    title = {classifyMeta.label as any}
-                    description = {classifyMeta.description}
-                    icon = {classifyMeta.icon}
-                    extra ={<span ref={this.toolbarRef}></span>}
-                    tabsExtra = {<span ref={this.searchRef}></span>}
-                    onChange={this.onClassifyChange}
-                    defaultActiveKey={this.state.defaultClassify}
-                >{dictmap.map(dict=> {
-                    return <ClassifyPanel.Panel key={dict.value} label={dict.label} value={dict.value}></ClassifyPanel.Panel>
-                })}
-                </ClassifyPanel>
-                {this.renderContentView()}
-            </div>
-        )
+        return this.renderContentView()
         
     }
     private getOnFetchFolder(folderField: any, type?: string): any {
@@ -356,18 +441,27 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             }
         }
     }
-    public renderContent() {
-        let { folderField, meta } = this.state;
+    private hasLeftNavContent() {
+        let { folderField } = this.state;
+        return folderField && folderField.factor;
+    }
+    // 是否在弹窗里面
+    private inFloatMode() {
+        return this.props.type !=='default'
+    }
+    public renderMainContent() {
+        let { folderField, pageMeta } = this.state;
 
-        if (folderField && folderField.factor) {
-            let folder: any = folderField.meta.folder || {};
+        if (this.hasLeftNavContent()) {
+            //let folder: any = folderField.meta.folder || {};
             //let tagC = tag.meta.tag;
             
             return (
                 <FilterFolder 
-                    key={meta.title || meta.icon}
-                    title={meta.title as any}
-                    icon={meta.icon as any}
+                    key={pageMeta.title || pageMeta.icon}
+                    title={pageMeta.title as any}
+                    leftSize={this.inFloatMode() ? 200 : 240}
+                    icon={pageMeta.icon as any}
                     onFetchCustomFolders= {this.getOnFetchFolder(folderField, 'list')}
                     onAddCustomFolder={this.getOnFetchFolder(folderField, 'create')}
                     onChange={this.onFolderChange}
@@ -380,15 +474,103 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         
         return this.renderRightContent();
     }
-    public render() {
-        
+    public renderContent() {
         return (
             <div className='ui-smartpage-wrapper'>
                 <Spin spinning={this.state.loading}>
-                    {this.state.uiType ? this.renderContent() : <Empty/>}
+                    {this.state.uiType ? this.renderMainContent() : <Empty/>}
                 </Spin>
             </div>
         )
+    }
+    private getDefaultWidth() {
+        let defaultWidth: any = this.props.width || this.defaultWidthMap[this.props.type];
+        
+        if (!defaultWidth && this.hasLeftNavContent()) {
+            return DomUtils.getBoundingClientWidth() - 200;
+        }
+
+        return defaultWidth || 600;
+    }
+    private onClose() {
+        if (this.props.onClose) {
+            this.props.onClose()
+        }
+        this.setState({open:false})
+    }
+    private toggleOpenStatus =(open: boolean)=> {
+
+        if (open) {
+            this.setState({
+                open: this.canShow || false
+            })
+            this.canShow && this.needInitSchema();
+
+        } else {
+            this.onClose();
+        }
+    }
+
+    private onPopoverMouseUp=(event:any)=> {
+        let downAt: any = DomUtils.downAt();
+        let offsetX:number = Math.abs(event.pageX - downAt.pageX);
+        let offsetY:number = Math.abs(event.pageY - downAt.pageY);
+        
+
+        this.canShow = offsetX < 10 && offsetY < 10;
+    }
+    public renderTitle() {
+        console.log(333)
+        return (
+            <span ref={this.titleContainerRef}></span>
+        )
+    }
+    public render() {
+        console.log(this.state)
+        
+        switch (this.props.type) {
+            case 'drawer':
+                return (<Drawer
+                    open={this.state.open}
+                    {...this.props.typeProps}
+                    title={this.renderTitle()}
+                    width={this.getDefaultWidth()}
+                    onClose={()=>this.onClose()}
+                    className='ui-former ui-smartpage-drawer'
+                    footer={<span ref={this.operateContainerRef}></span>}
+                >
+                    {this.renderContent()}
+                </Drawer>)
+            case 'popover':
+                return (
+                    <Popover
+                        trigger={'click'}
+                        placement="right"
+                        {...this.props.typeProps}
+                        open={this.state.open}
+                        overlayStyle={{
+                            width: this.getDefaultWidth()
+                        }}
+
+                        rootClassName="ui-smartpage-popover"
+                        autoAdjustOverflow={true}
+                        onOpenChange={this.toggleOpenStatus}
+                        title={this.renderTitle()}
+                        content={this.renderContent()}
+                    >
+                        <div
+                            onMouseUp={this.onPopoverMouseUp}
+                            className='ui-smartpage-popover-wrapper'
+                        >
+                            {this.props.children}
+                        </div>
+                    </Popover>
+                )
+                break;
+            default:
+                return this.renderContent();
+        }
+        
     }
 }
 

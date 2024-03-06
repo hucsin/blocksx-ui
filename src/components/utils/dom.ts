@@ -97,3 +97,8 @@ export const createEmptyElement = (className: any, nodeName = 'div')  => {
 }
 
 
+export const getBoundingClientWidth = () => {
+    let rect: any = document.body.getBoundingClientRect() || {};
+
+    return rect.width;
+}

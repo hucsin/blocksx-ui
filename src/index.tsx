@@ -1,10 +1,12 @@
 import React from 'react';
 import { createRoot } from "react-dom/client";
 
-
+import { Button } from 'antd';
 import Icon from './components/Former/types/icon';
 import LayoutLoginDemo from './demo/Login';
 import RouterLayout from './components/RouterLayout';
+
+import SmartPage from './components/SmartPage';
 import './style.css';
 
 const rootElement = document.getElementById("root");
@@ -29,6 +31,33 @@ class Text404 extends React.Component<{text: string}, {value:string}> {
     )
   }
 }
+
+
+class PageOther extends React.Component<{},{open: boolean}> {
+
+  public constructor(props: any) {
+    super(props)
+
+    this.state = {open: false}
+  }
+
+  public render() {
+    return (
+      <div style={{margin: 200}}>
+        <Button onClick={() => this.setState({open: true})}>go</Button>
+        <SmartPage simplicity uiType='former' type="drawer" name="workflow" open={this.state.open}></SmartPage>
+
+        <SmartPage simplicity uiType='former' title="Node Setting" name="testing" type='popover'  >
+          <Button> test</Button>
+        </SmartPage>
+
+      </div>
+    )
+  }
+}
+
+
+
 class TextOther extends React.Component<{text: string}> {
   public render() {
     return (
@@ -55,9 +84,10 @@ class DemoLayout extends React.Component {
           }
         ]}
         pageComponentMap={{
-          PageNotFound: Text404,
+          PageOther: PageOther,
+          PageNotFound: PageOther,
           Login: LayoutLoginDemo,
-          WorkflowDetail: TextOther
+          WorkflowDetail: PageOther
         }}
       />
     )

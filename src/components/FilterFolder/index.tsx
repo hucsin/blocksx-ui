@@ -26,6 +26,7 @@ export interface FilterFolderProps {
     
     title: string;
     icon: string;
+    leftSize: number;
     
     currentKey?: string;
 
@@ -65,6 +66,7 @@ interface FilterFolderState {
 export default class FilterFolder extends React.Component<FilterFolderProps, FilterFolderState> {
     
     static defaultProps = {
+        leftSize: 240,
         sysFolders: [
             { 
                 value: 'all',
@@ -387,7 +389,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
 
         return (
             <div className='ui-folder-wraper'>
-                <SplitPane minSize={200} size={240}  maxSize={400}>
+                <SplitPane minSize={200} size={this.props.leftSize || 240}  maxSize={400}>
                     <SplitPane.Pane  >
                         <div className='ui-filter-folder'>
                         <div className='ui-filter-folder-title'>{this.renderTitle()}</div>

@@ -199,7 +199,7 @@ export default class SmartDrawer extends React.Component<SmartDrawerProps, Smart
                 {message && <Alert key={2} showIcon message={message} type='warning' />}
                 <SmartPage 
                     key={21}
-                    meta={{title: this.state.name}} 
+                    pageMeta={{title: this.state.name}} 
                     name={this.state.smartpage}
                     onInitPage ={this.onInitPage}
                     onChangeValue={this.onChangeValue}

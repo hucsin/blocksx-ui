@@ -23,6 +23,7 @@ import TablerUtils from '../utils/tool';
  */
 
 export interface IFormerType {
+    children?: any;
     formerType: any;
     name?: string;
     column?: string;
@@ -312,7 +313,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                         let currentField: any = schema.firstField;
                         let setpOneValue: any = this.state.setpOneValue || {};
                         let newValue: any = value[currentField.key];
-                        console.log(newValue, setpOneValue)
+                        
                         if (newValue && ( newValue != setpOneValue[currentField.key])) {
                             this.setState({
                                 setpOneValue: utils.clone(value),
@@ -344,7 +345,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                     })
                     this.props.onClose();
                 }}
-            ></Former>
+            >{this.props.children}</Former>
         )
     }
 }

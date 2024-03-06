@@ -22,7 +22,24 @@ interface IFormerIcon extends IFormerBase {
     disabled?: boolean,
     onChangeValue: Function
 }
+
+class FormerIconView extends React.Component<{value: string}> {
+    public render() {
+        let IconView: any = Icons[this.props.value];
+        if (IconView) {
+            return (
+                <Space>
+                    {<IconView/>}
+                    {this.props.value}
+                </Space>
+            )
+        }
+        return (<span className='ui-empty'>{'<empty>'}</span>)
+    }
+}
+
 export default class FormerIcon extends React.Component<IFormerIcon, {open: boolean, searchValue: string, query: string, value: any, classify: string }> {
+    public static Viewer: any = FormerIconView;  
     public static defaultProps = {
         type: 'string',
         size: 'small'
@@ -99,7 +116,7 @@ export default class FormerIcon extends React.Component<IFormerIcon, {open: bool
 
                             if (IconView) {
                                 return (
-                                    <Tooltip title={icon}>
+                                    <Tooltip key={icon} title={icon}>
                                         <Button className={classnames({'ui-icon-selected': icon == this.state.value})} size='large' onClick={()=> this.onChange(icon)} icon={<IconView />} />
                                     </Tooltip>
                                 )
@@ -116,6 +133,7 @@ export default class FormerIcon extends React.Component<IFormerIcon, {open: bool
             <div className='former-icons-wrapper'>
                 <Tabs
                     size="small"
+                    key={1}
                     activeKey={this.state.classify}
                     onChange={(v)=> this.setState({classify: v})}
                     items={this.defaultTab}
@@ -123,6 +141,7 @@ export default class FormerIcon extends React.Component<IFormerIcon, {open: bool
                 />
                 <Collapse
                     ghost
+                    key={2}
                     defaultActiveKey={Object.keys(IconMap)}
                     items={this.getClassifyItems()}
                 />
@@ -138,6 +157,7 @@ export default class FormerIcon extends React.Component<IFormerIcon, {open: bool
                 <Space.Compact>
                     <Input 
                        // allowClear
+                       key={1}
                         prefix={ IconView? <IconView/> : null}
                         size={this.props.size} 
                         placeholder={'<empty>'}
@@ -146,6 +166,7 @@ export default class FormerIcon extends React.Component<IFormerIcon, {open: bool
                     />
                     <Popover 
                         autoAdjustOverflow
+                        key={2}
                         open={this.state.open}
                         trigger={"click"}
                         placement="bottomRight"

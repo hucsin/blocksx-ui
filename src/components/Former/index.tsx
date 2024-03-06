@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Leaf from './leaf';
 import { Drawer, Modal, Space, Button, Popover, Tabs, Spin } from 'antd';
 import { EventEmitter } from 'events';
@@ -28,6 +29,9 @@ export interface FormerProps {
     defaultClassify: string; // 默认分类
     onChangeValue?: Function;
     autoclose?: boolean;
+
+    operateContainerRef?: any;
+    
     //onRelyParams: Function;
     // 获取 依赖的参数
     onGetDependentParameters?: Function;
@@ -412,14 +416,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         marginTop: '8px'
                     }}
                 >
-                     {!this.state.viewer ? <Button disabled={this.state.disabled}  onClick={this.onSave} type="primary">
-                        {this.state.okText || 'Ok'}
-                    </Button> : null}
-
-                    <Button   onClick={this.onCloseLayer} style={{ marginRight: 8 }}>
-                        Cancel
-                    </Button>
-                   
+                    {this.renderOperateButton()}
                 </div>
             </>
         )
@@ -469,7 +466,30 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             disabled: BUtils.isUndefined(disabled) ? true : disabled
         })
     }
+    // 渲染功能按钮
+    public renderOperateButton () {
 
+        if (this.props.operateContainerRef) {
+            return  this.props.operateContainerRef.current ? ReactDOM.createPortal(this.renderOperateWraper(), this.props.operateContainerRef.current) : null
+        }
+
+        return this.renderOperateWraper();
+    }
+    public renderOperateWraper() {
+        
+        return (
+            <Space>                       
+                {!this.state.viewer ? <Button loading={this.state.loading} disabled={this.state.disabled} onClick={this.onSave} type="primary">
+                    {this.state.okText || 'Ok'}
+                </Button> : null}
+
+                {this.renderExtraContent()}
+                <Button onClick={this.onCloseLayer}  style={{ marginRight: 8 }}>
+                    {this.state.cancelText || 'Cancel'}
+                </Button>
+            </Space>
+        )
+    }
     public render() {
         switch (this.state.type) {
             case 'popover':
@@ -522,21 +542,11 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         maskClosable={!this.props.keep}
                         className={classnames({
                             'ui-former': true,
-                            [`drawer-type-${this.props.size}`]: true
+                            //[`drawer-type-${this.props.size}`]: true
                         })}
 
                         footer={
-                            <Space>
-                                {this.renderExtraContent()}
-                                
-                                {!this.state.viewer ? <Button loading={this.state.loading} disabled={this.state.disabled} size={this.props.size as any} onClick={this.onSave} type="primary">
-                                    {this.state.okText || 'Ok'}
-                                </Button> : null}
-
-                                <Button onClick={this.onCloseLayer} size={this.props.size as any} style={{ marginRight: 8 }}>
-                                    {this.state.cancelText || 'Cancel'}
-                                </Button>
-                            </Space>
+                            this.renderOperateButton()
                         }
                     >
                         {this.renderExtraLogo()}
@@ -546,14 +556,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             default:
                 return (
                     <div className='ui-former-content'>
+                        
                         {this.renderLeaf()}
                         <div className='ui-former-buttons'>
-                            <Button onClick={this.onCloseLayer} size={this.props.size as any} style={{ marginRight: 8 }}>
-                                {this.state.cancelText || 'Cancel'}
-                            </Button>
-                            {!this.state.viewer ? <Button loading={this.state.loading} disabled={this.state.disabled} size={this.props.size as any} onClick={this.onSave} type="primary">
-                                {this.state.okText || 'Ok'}
-                            </Button> : null}
+                            {this.renderOperateButton()}
                         </div>
                     </div>
                 )
