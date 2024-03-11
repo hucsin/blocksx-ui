@@ -87,7 +87,7 @@ export default class CleanseSchema {
                             }
                             if (props.onGetDependentParameters) {
                                 let params: any = props.onGetDependentParameters() || {};
-                                console.log(params, 333)
+                                
                                 return !!params[RelationshipExtendEnum.MASTERID]
                             }
                         },

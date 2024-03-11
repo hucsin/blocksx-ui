@@ -97,7 +97,7 @@ export default class RouterLayout extends React.Component<RouterLayoutProps, Rou
                 router.push(item)
             }
         })
-        console.log(menu)
+        
         let menuTree: any = utils.array2tree(menu, 'value', 'parent');
         
         return {

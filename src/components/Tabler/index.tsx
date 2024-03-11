@@ -380,7 +380,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             })
         }
 
-
+        
         if ((!batchOpertateMap['record.create'] || (batchOpertateMap['record.create'].disabled !== true))) {
             
             batchAddList.unshift({
@@ -392,7 +392,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             })
         }
         
-
+       
 
         return batchAddList;
     }
@@ -668,11 +668,12 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
         if (battchAddList.length == 0) {
 
-            return (
+
+            return first ? (
                 <Button  type="primary" onClick={() => this.onBatchAddClick(first)} icon={TablerUtils.renderIconComponent(first)}>
                     {first.name}
                 </Button>
-            )
+            ) : null;
         }  else {
             
             return <Dropdown.Button

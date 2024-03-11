@@ -41,6 +41,8 @@ export const map:any = {
         "ProductUtilityFilled",
         "PublishUtilityFilled",
         "RemoveUtilityFilled",
+        "StartCircleUtilityFilled",
+        "StopCircleUtilityFilled",
         "ValidationUtilityFilled",
         "ApiUtilityOutlined",
         "AutoAlignUtilityOutlined",

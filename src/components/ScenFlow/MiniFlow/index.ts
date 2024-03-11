@@ -141,6 +141,11 @@ export default class MiniFlow extends EventEmitter {
         })
     }
 
+    // 清楚
+    public destory() {
+        this.instance.deleteEveryConnection();
+        this.instance.deleteEveryEndpoint();
+    }
 
     public freeze() {
         this.freezeState = true;

@@ -15,7 +15,6 @@
     "@types/node": "^16.18.32",
     "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",
-    
     "array-move": "^4.0.0",
     "babel-jest": "^27.4.2",
     "babel-loader": "^8.2.3",
@@ -100,6 +99,7 @@
     ]
   },
   "devDependencies": {
+    "@ant-design/icons": "^5.3.1",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-decorators": "^7.22.10",
     "@babel/plugin-proposal-export-default-from": "^7.18.10",
@@ -121,14 +121,14 @@
     "minimist": "^1.2.0",
     "monaco-editor-webpack-plugin": "^7.1.0",
     "node-typescript-compiler": "^2.4.0",
-    "react-infinite-scroll-component": "^6.1.0",
-    "react-resizable": "^3.0.5",
     "react-app-polyfill": "^3.0.0",
     "react-dev-utils": "^12.0.1",
     "react-image-crop": "^10.1.4",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-lifecycles-compat": "^3.0.4",
     "react-monaco-editor": "^0.54.0",
     "react-refresh": "^0.11.0",
+    "react-resizable": "^3.0.5",
     "react-resizable-panels": "^0.0.54",
     "react-sortable-hoc": "^2.0.0",
     "react-split-pane": "next",

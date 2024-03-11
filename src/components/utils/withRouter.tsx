@@ -44,14 +44,16 @@ class RouterUtils {
     }
     public go(path:string, query?: any) {
         let querystring: string = this.getQueryString(query);
-        
+        Object.assign(this.router.query, query);
         this.router.naviagte([path, querystring].filter(Boolean).join(path.indexOf('?')>-1 ? '&' : '?'))
     }
     public goPath(path:string, params?: any) {
+        Object.assign(this.router.params, params);
         this.router.naviagte(this.createPath(path, params))
+    
     }
     public goQuery(query?: any) {
-        
+        Object.assign(this.router.query, query);
         this.go(this.router.location.pathname, {
             ...this.router.query,
             ...query
@@ -75,13 +77,15 @@ export default function withRouter(WrapperComponent: any) {
     const AcB: any = function (props) {
 
         const naviagte = useNavigate()
-        const params = useParams()
+        const params = useParams();
+
+        
         const location = useLocation();
         routerData.utils = new RouterUtils(routerData);
         routerData.naviagte = naviagte;
-        routerData.params = params;
-        routerData.query = routerData.utils.getQueryMap(location.search)
+        routerData.params = params || {};
         routerData.location = location;
+        routerData.query = routerData.utils.getQueryMap(location.search)
         routerData.routerKey = location.pathname + location.search;
         
 

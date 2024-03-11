@@ -9,6 +9,7 @@ import SmartRequest from '../utils/SmartRequest'
 interface SmartDrawerProps {
     open?: boolean;
     type: string;
+    value?: any;
     smartpage: string;
     icon?: string;
     name?: string;

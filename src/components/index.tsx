@@ -1,6 +1,7 @@
 export { default as Sidebar } from './Sidebar';
 //export { default as ScenFlow } from './ScenFlow';
 export { default as SmartPage } from './SmartPage';
+export * from './core';
 
 export { default as SplitPane } from './SplitPane';
 export { default as Pick } from './Pick';

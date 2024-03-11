@@ -9,12 +9,15 @@
 import React from 'react';
 import { Switch } from 'antd';
 
+import * as Icons from '../../../Icons';
 import { IFormerBase } from '../../typings';
 import Utils from '../../../utils';
 
 import './style.scss';
 
 interface IFormerSwitch extends IFormerBase {
+    checkedIcon?: string;
+    unCheckedIcon?: string;
     value: any;
     size?: any;
     loading?: boolean;
@@ -70,10 +73,18 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
         let loading: boolean = this.state.loading && this.props.loading;
         let size: any = this.props.size || props.size || 'small';
 
+        let unCheckedIcon: string = props.unCheckedIcon || this.props.unCheckedIcon;
+        let checkedIcon: string = props.checkedIcon || this.props.checkedIcon;
+
+        let UncheckedIconView: any = Icons[unCheckedIcon];
+        let CheckedIconView: any = Icons[checkedIcon];
+
         return (
             <div className="former-switch">
                 <Switch
                     {...this.props['x-type-props']} 
+                    unCheckedChildren= {UncheckedIconView && <UncheckedIconView/>}
+                    checkedChildren={CheckedIconView && <CheckedIconView/>}
                     loading  = {loading}
                     size     = {size}
                     disabled = {this.props.disabled}  

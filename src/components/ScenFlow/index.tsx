@@ -142,7 +142,7 @@ export default class ScenFlow extends React.Component<{}, {
                 nodes: data.nodes,
                 connector: data.connector
             }, () => {
-                console.log('save-loocalstorage')
+                
                 localStorage.setItem('__data__', JSON.stringify(data))
             })
         })

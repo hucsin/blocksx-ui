@@ -20,6 +20,8 @@ export { default as PostgresqlBrandFilled } from './PostgresqlBrandFilled';
 export { default as ProductUtilityFilled } from './ProductUtilityFilled';
 export { default as PublishUtilityFilled } from './PublishUtilityFilled';
 export { default as RemoveUtilityFilled } from './RemoveUtilityFilled';
+export { default as StartCircleUtilityFilled } from './StartCircleUtilityFilled';
+export { default as StopCircleUtilityFilled } from './StopCircleUtilityFilled';
 export { default as TableAddDataFilled } from './TableAddDataFilled';
 export { default as ValidationUtilityFilled } from './ValidationUtilityFilled';
 export { default as ApiUtilityOutlined } from './ApiUtilityOutlined';

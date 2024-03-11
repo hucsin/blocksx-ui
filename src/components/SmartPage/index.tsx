@@ -9,7 +9,7 @@ import './types';
 
 import * as DomUtils  from '../utils/dom';
 
-import PageManger from './core/Manger';
+import PageManger from './core/SmartPageManger';
 import CleanseSchema from './core/CleanseSchema'
 import SmartRequest from '../utils/SmartRequest';
 import ClassifyPanel from '../ClassifyPanel';
@@ -30,9 +30,10 @@ export interface PageMeta {
 export interface SmartPageProps {
     router?: routerParams;
     children?: any;
-    
+    value?: any;
     typeProps: any;
-    open?: boolean;
+    open: boolean;
+    onShow?: Function;
     onClose?: Function;
     width?: number;
     type: 'default' | 'drawer' | 'popover';
@@ -40,6 +41,7 @@ export interface SmartPageProps {
     title: string;
     name: string; // 页面的一个唯一ID
     pageMeta?: PageMeta;
+    okText?: string;
 
     simplicity?: boolean; /** 简约模式 */
     noClassify?: boolean;
@@ -66,6 +68,7 @@ export interface SmartPageState {
     metaKey: string;
     uiType: string;
     schema: any;
+    okText?: string;
     loading: boolean;
 
     open: boolean;
@@ -102,9 +105,11 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         pageURI: '/api/smartpage/find',
         type: 'default',
         uiType: '',
+        open: false,
         noClassify: false,
         typeProps: {},
-        title: 'View the recrod'
+        title: 'View the recrod',
+        okText: 'Save'
     }
     private defaultWidthMap: any = {
         tree: 600,
@@ -126,9 +131,11 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
         this.state = {
             loading: false,
-            open: false,
+            open: props.open,
+            value: props.value,
             schema: null,
             pageMeta: {},
+            okText: props.okText,
             title: props.title,
             metaKey: '',
             uiType: props.uiType,
@@ -282,13 +289,20 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             this.setState({
                 name: newProps.name,
                 title: newProps.title,
-                
+                value: newProps.value,
                 mode: newProps.mode,
+                okText: newProps.okText,
                 open: newProps.open,
                 schema: undefined,
                 folderMeta: undefined,
                 classifyQuery: undefined
             }, this.fetch)
+        }
+
+        if (newProps.value != this.state.value) {
+            this.setState({
+                value: newProps.value
+            })
         }
 
         if (!utils.isUndefined(newProps.open) && newProps.open != this.state.open) {
@@ -365,6 +379,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
              this.state.schema && <ViewComponent 
                 key={this.state.reflush}
                 schema = {this.state.schema}
+                value = {this.state.value}
                 pageMeta = {this.state.pageMeta}
                 router={this.props.router}
                 title={this.state.title}
@@ -372,7 +387,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 path={this.state.path}
                 reflush = {this.state.reflush}
                 onGetRequestParams = {this.getQueryParams}
-
+                okText={this.state.okText}
                 rowSelection={this.state.rowSelection}
                 mode={this.state.mode}
                 searchRef= {this.searchRef}
@@ -504,13 +519,19 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             this.setState({
                 open: this.canShow || false
             })
-            this.canShow && this.needInitSchema();
-
+            this.canShow && this.onShow();
+            
         } else {
             this.onClose();
         }
     }
-
+    private onShow() {
+        this.setState({
+            open: true
+        })
+        this.needInitSchema();
+        this.props.onShow && this.props.onShow()
+    }
     private onPopoverMouseUp=(event:any)=> {
         let downAt: any = DomUtils.downAt();
         let offsetX:number = Math.abs(event.pageX - downAt.pageX);
@@ -520,13 +541,11 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         this.canShow = offsetX < 10 && offsetY < 10;
     }
     public renderTitle() {
-        console.log(333)
         return (
             <span ref={this.titleContainerRef}></span>
         )
     }
     public render() {
-        console.log(this.state)
         
         switch (this.props.type) {
             case 'drawer':

@@ -35,7 +35,7 @@ export const DEFAULT_COLUMNS_ACTION: RowOperate[] = [
 
     },
     {
-        key: 'record.remove',
+        key: 'record.delete',
         type: 'remove',
         name: i18n.t('Delete'),
         danger: true,

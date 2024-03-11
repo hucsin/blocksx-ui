@@ -42,7 +42,6 @@ export default class FormerTags extends React.Component<FormerTagsProps, FormerT
         }
     }
     public render () {
-        console.log(this.state.value)
         return (
             <div className='former-tags-wrapper'>
             <FormerSelect 

@@ -36,7 +36,7 @@ class Layout extends  React.Component<LayoutProps, LayoutState> {
     }
 
     public render() {
-        console.log(JSON.stringify(this.props.menu), 999)
+        
         return (
             <div className='ui-layout'>
                 <Sidebar

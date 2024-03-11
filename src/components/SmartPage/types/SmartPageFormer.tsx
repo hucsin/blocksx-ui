@@ -8,7 +8,7 @@
  import classnames from 'classnames';
  import { RightOutlined } from '@ant-design/icons'
  import * as Icons from '../../Icons'
- import { Space} from 'antd';
+ import { Space } from 'antd';
  import { routerParams } from '../../utils/withRouter';
  import  Former  from '../../Former'
 
@@ -32,6 +32,7 @@
     titleContainerRef?: any;
     router: routerParams;
     onClose?: Function;
+    onShow?: Function;
 }
 
 interface SmartPageFormerState {

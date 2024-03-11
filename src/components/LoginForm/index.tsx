@@ -74,7 +74,7 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
         }
     }
     private getOAuthType(oauths: any, type: string){
-        console.log(oauths, 333)
+        
         return oauths.filter(it=> it.name==type).length ? type : ''
     }
     private getDefaultType(oauths: any, params: any) {
