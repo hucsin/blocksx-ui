@@ -51,7 +51,8 @@ interface SmartPageFormerState {
 export default class SmartPageFormer extends React.Component<SmartPageFormerProps, SmartPageFormerState> {
         public static defaultProps = {
             viewer: false,
-            okText: 'Ok'
+            okText: 'Ok',
+            reflush: 1
         }
         public constructor(props: SmartPageFormerProps) {
             super(props);

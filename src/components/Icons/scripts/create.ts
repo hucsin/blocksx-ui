@@ -7,7 +7,27 @@ const lodash = require('lodash');
 
 
 const filledIcons = glob.sync('../assets/svg/filled/*');
-const outlinedIcons = glob.sync('../assets/svg/outlined/*')
+const outlinedIcons = glob.sync('../assets/svg/outlined/*');
+const combineIcons = glob.sync('../assets/svg/combine/*')
+
+function getCombineIconTemplate(name: string, main: string, subscript: string) {
+    return `import React from 'react';
+import { IconProps } from '../type';
+import Main from './${main}';
+import Subscript from './${subscript}';
+    
+export default class ${name} extends React.Component<IconProps> {
+    public render() {
+        return (
+            <span className='icons-combine icons-combine-bottomRight'>
+                <Main/>
+                <Subscript/>
+            </span>
+        )
+    }
+}
+`
+}
 
 function getIconTemplate(iconPath: string, name: string) {
     return `import React from 'react';
@@ -27,9 +47,9 @@ export default class ${name} extends React.Component<IconProps> {
 const classifyMap: any = {};
 const iconList: any = [];
 
-function writeFile(page: string) {
+async function writeFile(page: string) {
     let fileName: string = page.replace('../assets/svg/', '');
-    let split: any = fileName.replace(/\.svg/, '').split('/');
+    let split: any = fileName.replace(/\.(json|svg)/, '').split('/');
     let splitLine: any = split[1].split('-');
     let classify: string = splitLine[splitLine.length-1];
 
@@ -38,26 +58,40 @@ function writeFile(page: string) {
     }
 
     let type: string = lodash.upperFirst(split[0]);
-    let file: string = lodash.upperFirst(lodash.camelCase(split[1])) + type
+    let file: string = lodash.upperFirst(lodash.camelCase(split[1])) + type;
 
+    let isCombine: boolean = !!page.match(/combine\//);
+    let iconTemplateText: string;
 
+    if (isCombine) {
+        let combineJSON: any =  JSON.parse(fs.readFileSync(page));
+
+        
+        iconTemplateText = getCombineIconTemplate(file, combineJSON.main,combineJSON.subscript);
+        
+    } else {
+        iconTemplateText= getIconTemplate(page.replace('\.\/assets',''), file)
+    }
 
     
-
-    let iconTemplate: string = getIconTemplate(page.replace('\.\/assets',''), file);
-
-    fs.writeFileSync('../assets/'+ file +'.tsx', iconTemplate);
-
+    
+    fs.writeFileSync('../assets/'+ file +'.tsx', iconTemplateText);
+    
     iconList.push(file);
+    
     classifyMap[classify].push(file);
     
 }
 
+
 filledIcons.forEach(writeFile)
 outlinedIcons.forEach(writeFile);
+combineIcons.forEach(writeFile)
 
 // 写index.ts
+console.log(combineIcons, iconList)
 fs.writeFileSync('../assets/index.tsx', iconList.map(ic => {
+    
     return `export { default as ${ic} } from './${ic}';`
 }).join('\n'));
 

@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { Button } from 'antd';
 import Icon from './components/Former/types/icon';
+import { Test } from './components/Icons/index'
 import LayoutLoginDemo from './demo/Login';
 import RouterLayout from './components/RouterLayout';
 
@@ -26,6 +27,7 @@ class Text404 extends React.Component<{text: string}, {value:string}> {
   public render() {
     return (
       <div style={{padding: '40px'}}>
+        <Test/>
         <Icon value={this.state.value} onChangeValue={(v)=>{ this.setState({value: v})}} />
       </div>
     )
@@ -44,6 +46,7 @@ class PageOther extends React.Component<{},{open: boolean}> {
   public render() {
     return (
       <div style={{margin: 200}}>
+        <Test/>
         <Button onClick={() => this.setState({open: true})}>go</Button>
         <SmartPage simplicity uiType='former' type="drawer" name="workflow" open={this.state.open}></SmartPage>
 

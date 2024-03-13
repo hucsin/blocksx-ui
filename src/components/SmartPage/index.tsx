@@ -435,7 +435,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         return <ClassifyPanel.Panel key={dict.value} label={dict.label} value={dict.value}></ClassifyPanel.Panel>
                     })}
                     </ClassifyPanel>
-                    {this.renderContentView()}
+                    <div className='ui-classify-content-wrapper'>{this.renderContentView()}</div>
                 </div>
             )
         }

@@ -80,6 +80,7 @@ export default class CleanseSchema {
                     //column: false,
                     type: this.isOnemRelation(field) ? 'array' : 'plainObject',
                     'x-relyon': true,
+                    colspan: field.colspan || 2,
                     props: field.relatedPath ? {
                         mode: (props: any) => {
                             if (this.isRelyRelation(field)) {
