@@ -1,5 +1,6 @@
 export * from './manager';
+export * from './types'
+export { default as PluginBase } from './BasePlugin';
+export { default as WidgetBase } from './BaseWidget';
 
-export { default as PluginBase } from './PluginBase';
-export { default as WidgetBase } from './WidgetBase';
-export { default as NamespaceType } from './NamespaceType';
+

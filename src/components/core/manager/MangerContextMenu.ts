@@ -6,7 +6,7 @@ export interface MenuItemPayload {
 export interface MenuItem {
     type?: string;
     key: string,
-    name?: string,
+    label?: string,
     icon?: string,
     action?: Function | string,
     control?: any;
@@ -57,8 +57,15 @@ class EditorContextMenuManger {
 
         return this.contextMenu[namespace];
     }
-    public filter( namespace: string, payload: any) {
-        let menus: any = this.find(namespace) || [];
+    public filter(menu: any,  namespace: any, payload?: any) {
+
+        if (utils.isString(menu)) {
+            payload = namespace;
+            namespace = menu;
+            menu = null;
+        }
+
+        let menus: any = menu || this.find(namespace) || [];
         return menus.filter((it: MenuItem ) => {
             
             if (it.control && payload) {
@@ -82,15 +89,23 @@ class EditorContextMenuManger {
         })
     }
     private match(control:any, payload: any) {
-        
-        for(let p in control) {
-            if (utils.isArray(control[p])) {
-                if (control[p].indexOf(payload[p]) > -1) {
-                    return true;
-                }
-            } else {
-                if (control[p] == payload[p]) {
-                    return true;
+        /**
+         * 支持control函数,和control对象
+         */
+        if (utils.isFunction(control)) {
+
+            return control(payload)
+
+        } else {
+            for(let p in payload) {
+                if (utils.isArray(control[p])) {
+                    if (control[p].indexOf(payload[p]) > -1) {
+                        return true;
+                    }
+                } else {
+                    if (control[p] == payload[p]) {
+                        return true;
+                    }
                 }
             }
         }
@@ -102,8 +117,6 @@ class EditorContextMenuManger {
         if (!this.has(namespace)) {
             this.contextMenu[namespace] = [];
         }
-
-        console.log(namespace, menu)
 
         menu.forEach((item: any) => {
 
@@ -124,7 +137,6 @@ class EditorContextMenuManger {
                         this.cache[parentKey].children.push(
                             this.cache[this.getCacheKey(namespace, item.key)] = {
                                 ...item,
-                                label: item.name,
                                 namespace: namespace
                             }
                         )
@@ -133,7 +145,6 @@ class EditorContextMenuManger {
 
                     this.contextMenu[namespace].push(this.cache[this.getCacheKey(namespace,item.key)] = {
                         namespace: namespace,
-                        label: item.name,
                         ...item
                     })
                 }

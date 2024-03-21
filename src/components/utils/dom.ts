@@ -9,6 +9,19 @@ export const addEvent = (dom: any, event: string, listener: Function, iscap?:boo
         dom.addEventListener(event, listener, iscap ? true : false);
     }
 }
+/**
+ * 
+ * @param dom 
+ * @param listener 
+ */
+export const resizeObserver = (dom: any, listener: any) => {
+    let observer: any = new ResizeObserver((entries:any) => {
+        let entry:any = entries[0];
+        listener(entry.contentRect)
+    });
+    observer.observe(dom)
+}
+
 export const removeEvent = ( dom: any, event: string, listener: Function ) => {
     if ( dom && listener) {
         dom.removeEventListener(event,listener);

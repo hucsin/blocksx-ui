@@ -1,0 +1,37 @@
+.editor-core-wrapper {
+    position: relative;
+    padding-top: 35px;
+    padding-bottom: 25px;
+    box-sizing: border-box;
+    height: 100%;
+    .editor-core-inner {
+        height: 100%;
+    }
+    .editor-core-toolbar{
+        top: 0px;
+        position: absolute;
+        background-color: #fff;
+        border-bottom: 1px solid #eee;
+        z-index: 1;
+        .editor-toolbar-after,
+        .editor-toolbar-before {
+            padding:6px 6px;
+            .ant-divider{
+                margin-left: 0;
+                margin-right: -8px;
+            }
+        }
+        .ant-btn:not(.ant-btn-icon-only)>.ant-btn-icon:not(:last-child) {
+            margin-inline-end: 4px;
+        }
+    }
+    .editor-core-feedback {
+        bottom: 0px;
+        position: absolute;
+        border-top: 1px solid  #eee;
+    }
+
+    &.editor-core-nofeadback {
+        padding-bottom: 0;
+    }
+}

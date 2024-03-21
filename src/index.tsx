@@ -3,7 +3,8 @@ import { createRoot } from "react-dom/client";
 
 import { Button } from 'antd';
 import Icon from './components/Former/types/icon';
-import { Test } from './components/Icons/index'
+import Editor from './components/EditorCore/index';
+
 import LayoutLoginDemo from './demo/Login';
 import RouterLayout from './components/RouterLayout';
 
@@ -16,19 +17,30 @@ const root = createRoot(rootElement!);
 // /general/product
 // /setting/other
 
-class Text404 extends React.Component<{text: string}, {value:string}> {
+class Text404 extends React.Component<{text: string}, {value:string, type: number}> {
   public constructor(props:any) {
     super(props);
     this.state = {
-      value: ''
-
+      value: '',
+      type: 0
     }
   }
   public render() {
     return (
-      <div style={{padding: '40px'}}>
-        <Test/>
-        <Icon value={this.state.value} onChangeValue={(v)=>{ this.setState({value: v})}} />
+      <div style={{padding: '0px', height: '100%', 'paddingTop': 30, boxSizing: 'border-box',overflow: 'hidden',position: 'relative'}}>
+        <div style={{height: 30, position: 'absolute', left: 0, top: 0, width: '100%', borderBottom: '1px solid #ccc'}}>
+          <Button onClick={()=>this.setState({type: 0})}>1</Button><Button onClick={()=>this.setState({type: 1})}>2</Button>
+        </div>
+        <div style={{display: this.state.type == 0 ?'block' : 'none', height: '100%'}} >
+          <Editor
+            id="string1"
+          />
+        </div>
+        <div style={{display: this.state.type == 1 ?'block' : 'none', height: '100%'}} >
+          <Editor
+            id="string2"
+          />
+        </div>
       </div>
     )
   }
@@ -45,8 +57,8 @@ class PageOther extends React.Component<{},{open: boolean}> {
 
   public render() {
     return (
-      <div style={{margin: 200}}>
-        <Test/>
+      <div style={{margin: 200, height: '100%', boxSizing: 'border-box'}}>
+        
         <Button onClick={() => this.setState({open: true})}>go</Button>
         <SmartPage simplicity uiType='former' type="drawer" name="workflow" open={this.state.open}></SmartPage>
 
@@ -88,7 +100,7 @@ class DemoLayout extends React.Component {
         ]}
         pageComponentMap={{
           PageOther: PageOther,
-          PageNotFound: PageOther,
+          PageNotFound: Text404,
           Login: LayoutLoginDemo,
           WorkflowDetail: PageOther
         }}

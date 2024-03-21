@@ -1,0 +1,96 @@
+.smartpage-tree-left {
+    .ant-tree {
+        padding-top: 16px;
+        padding-right: 16px;
+    }
+}
+.smartpage-tree-wrapper {
+    header {
+        padding: 16px 0 ;
+        margin-right: 16px;
+        border-bottom: 1px dashed #eeeeee;
+        opacity: .6;
+        font-size: 18px;
+        position: relative;
+        button {
+            position: absolute;
+            right: 0;
+            top: 16px;
+        }
+    }
+    .ant-empty {
+        margin-top: 42px;
+    }
+    .ant-tree .ant-tree-indent-unit {
+        width: 18px;
+    }
+    .ant-tree-title {
+        .ui-total {
+            display:inline-block;
+            padding: 2px;
+            line-height: 12px;
+            vertical-align: middle;
+            border-radius: 2px;
+            background:#eee;
+            margin-left: 8px;
+            font-size:12px;
+            opacity: .5;
+        }
+        .anticon {
+            padding-right: 4px;
+        }
+        button {
+            position: absolute;
+            right: 2px;
+            top: 0px;
+            font-size:12px;
+            opacity: 0;
+            .anticon {
+                padding-right: 0;
+            }
+            transition: opacity .2s;
+        }
+
+    }
+    .ant-tree-node-selected {
+        .ant-tree-title {
+            button {
+                opacity: .5;
+            }
+        }
+    }
+    .ant-tree-node-content-wrapper:hover {
+        .ant-tree-title {
+            button {
+                opacity: .5;
+            }
+        }
+    }
+    .ant-tree .ant-tree-switcher {
+        width: 24px;
+    }
+    .ant-tree .ant-tree-node-content-wrapper {
+        margin-left: -4px;
+    }
+}
+.smartpage-tree-content {
+    overflow: auto;
+    height: 100%;
+    padding: 32px;
+    padding-right: 38.2%;
+    padding-top: 16px;
+    box-sizing: border-box;
+    .ui-former-buttons {
+        text-align: left;
+    }
+   > .ant-space:first-child {
+        .ant-space-item {
+            font-size: 20px;
+            opacity: .5;
+            padding-bottom: 32px;
+        }
+    }
+    .ui-former-content {
+
+    }
+}

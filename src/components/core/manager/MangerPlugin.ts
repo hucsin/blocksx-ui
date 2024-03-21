@@ -1,18 +1,17 @@
-import Plugin from '../PluginBase';
 import { keypath, utils } from '@blocksx/core';
 import EditorContextMenuManger, { MenuItem } from './MangerContextMenu';
+
+import WidgetUtils from './WidgetUtils';
 
 type NamespaceType = string | string[];
 
 class PluginManager {
-    public cache: any;
-    public cacheData: any;
-    public map: any;
-    public constructor() {
-        this.cache = {};
-        this.cacheData = {};
 
-        this.map = {};
+    public pluginMap: any;
+    public mountMap: any;
+    public constructor() {
+        this.pluginMap = {};
+        this.mountMap = {}
     }
     private isValidNamespace(namespace: string) {
         return utils.isString(namespace) && namespace.split('.').length <= 3
@@ -22,14 +21,73 @@ class PluginManager {
      * @param namespace 
      */
     public has(namespace: NamespaceType) {
-        return !!this.cache[this.toCaseInsensitive(namespace)]
+        return !!this.pluginMap[this.toCaseInsensitive(namespace)]
     }
+
+    /**
+     * 挂载组件
+     * @param namespace 
+     * @param context 
+     */
+    public mount(namespace: NamespaceType, context: any) {
+        let nameid: string = this.getNamespaceId(namespace);
+        let truenamespace: string = this.toCaseInsensitive(namespace);
+        let plugins: any = this.find(truenamespace);
+        
+        if (plugins) {
+            plugins.forEach(({namespace, plugins})  => {
+                if (!this.mountMap[namespace]) {
+                    this.mountMap[namespace] = {}
+                }
+                this.mountMap[namespace][nameid] =  plugins.map(Plugin => new Plugin(context));
+            })
+        }
+    }
+    // 加载
+    public loadon(namespace: NamespaceType) {
+
+        let mountPlugin: any[] = this.findMount(namespace);
+
+        return mountPlugin.forEach(plugin => {
+            if (utils.isFunction(plugin.didMount)) {
+                plugin.didMount()
+            }
+        })
+    }
+
+    public findMount(namespace: NamespaceType) {
+
+        let nameid: string = this.getNamespaceId(namespace);
+        let truenamespace: string = this.toCaseInsensitive(namespace);
+        let loadplugin: any[] = Object.keys(this.mountMap);
+
+        return loadplugin.filter(plugin => {
+            if (plugin.indexOf(truenamespace) == 0) {
+                if(this.mountMap[plugin][nameid]) {
+                    return true;
+                }
+            }
+        }).map(it=> {
+            return this.mountMap[it][nameid]
+        }).flat()
+    }
+
+    /**
+     * 取消挂载
+     * @param namespace 
+     */
+    public unmount(namespace: NamespaceType) {
+        this.walk(namespace, (plugin:any) => {
+            plugin.destory && plugin.destory();
+        })
+    }
+
     /**
      * 
      * @param namespace eg. resource.layout.icon
      * @param plugin 
      */
-    public register(namespace: NamespaceType, plugin: Plugin) {
+    public register(namespace: NamespaceType, plugin: any) {
         namespace = this.toCaseInsensitive(namespace);
 
         if (!this.isValidNamespace(namespace)) {
@@ -37,24 +95,12 @@ class PluginManager {
         }
 
         if (this.has(namespace)) {
-            
-            let value:any = this.find(namespace);
-            let item: any = utils.isArray(value) ? value : [value];
-            this.cache[namespace] ++;
-
-            item.push(plugin);
-            keypath.setDataByKeypath(this.map, namespace, {
-                $$value: item
-            });
+            this.pluginMap[namespace].push(plugin);
 
         } else {
-            keypath.setDataByKeypath(this.map, namespace, {
-                $$value: plugin
-            });
-            this.cache[namespace] = 1;
-        } 
-
-        this.cacheData[namespace]  = 0;
+            this.pluginMap[namespace] = [plugin];
+        }
+        
     }
     /**
      * 数据管道,调用命名空间内所有的插件的pipeline方法,如果有
@@ -127,12 +173,16 @@ class PluginManager {
     public getWidgetByDirection(namespace: NamespaceType, direction: string[]) {
         let widgets: any[] = [];
         this.walk(namespace, (plugin: any) => {
+            
             let allWidgets: any[] = plugin.getAllWidget();
             let match: any = [];
-
+            
             allWidgets.forEach(it=> {
                 if (direction.indexOf(it.direction) > -1) {
-                    match.push(it);
+                    match.push({
+                        widget: it,
+                        plugin: plugin
+                    });
                 }
             });
 
@@ -147,6 +197,10 @@ class PluginManager {
         return widgets;
     }
 
+    public renderWidget(namespace: any, widgets: any[]) {
+        return WidgetUtils.renderWidget(namespace, widgets)
+    }
+
     /**
      * 渲染指定位置的widget
      * @param namespace 
@@ -154,15 +208,7 @@ class PluginManager {
      * @returns 
      */
     public renderWidgetByDirection(namespace: NamespaceType, direction: string[]) {
-        let toolbar: any = this.getWidgetByDirection(namespace, direction)
-
-        return toolbar.map((it,i) => {
-            if (it) {
-                return it.render({key:i})
-            } else {
-                return null
-            }
-        });
+        return this.renderWidget(namespace, this.getWidgetByDirection(namespace, direction))
     }
 
     /**
@@ -171,19 +217,17 @@ class PluginManager {
      * @param fn 
      */
     public walk(namespace: NamespaceType, fn: Function) {
-        let pipePlugins: any[] = this.find(namespace);
+
+        let nameid: string = this.getNamespaceId(namespace);
+        let truenamespace: string = this.toCaseInsensitive(namespace);
         
-        if (pipePlugins) {
+        if (this.mountMap[truenamespace]) {
+            let pipePlugins: any[] = this.mountMap[truenamespace][nameid] 
+            
             if (utils.isArray(pipePlugins)) {
                 pipePlugins.forEach((it) => {
                     fn(it);
                 });
-            } else if (utils.isPlainObject(pipePlugins)) {
-                for ( let pkey in pipePlugins) {
-                    fn(pipePlugins[pkey])
-                }
-            } else {
-                fn(pipePlugins);
             }
         }
     }
@@ -197,59 +241,65 @@ class PluginManager {
         namespace = this.toCaseInsensitive(namespace);
 
         if (this.has(namespace)) {
-            return keypath.getDataByKeypath(this.map, namespace).$$value;
+            return this.pluginMap[namespace]
         }
     }
 
     /**
+     * 匹配两个点分支付串是否一致
+     */
+    public levelMatch(target:string, source: string) {
+        return source.indexOf(target) == 0;
+    }
+
+    /**
+     * a.b.c
+     * a.b
+     * 
+     * a
+     * => a.b.c a.b
+     *  
+     * 
      * 
      * @param namespace 
      * @returns 
      */
     public find(namespace: NamespaceType) {
-        namespace = this.toCaseInsensitive(namespace);
-        
-        if (this.cacheData[namespace]) {
-            return  this.cacheData[namespace];
-        }
+        let truenamespace:string = this.toCaseInsensitive(namespace);
+        let namespaceKeys: string[] = Object.keys(this.pluginMap);
 
-        // 只支持两级命名空间获取插件,
-        if (this.isValidNamespace(namespace) && namespace.split('.').length > 1) {
-            if (this.has(namespace)) {
-                return  this.cacheData[namespace] = keypath.getDataByKeypath(this.map, namespace).$$value;
-            // 
-            } else {
 
-                let targetSplit: any = namespace.split('.');
-
-                if (targetSplit.length == 2) {
-                    // 如果我set 的时候是 a.b.c = 1, a.b.d = 1;
-                    // 那么我get a.b 的时候需要返回 {c:1,d:1}
-                    let result: any = {};
-                    for(let prop in this.cache) {
-                        let sourceSplit: any = prop.split('.');
-                        if (this.matchLevel2Namespace(targetSplit, sourceSplit)) {
-                            result[sourceSplit[2]] = this.find(prop);
-                        }
-                    }
-
-                    return  this.cacheData[namespace] = result;
-                }
+        return namespaceKeys.filter(namespace => {
+            return this.levelMatch(truenamespace, namespace)
+        }).map(namespace => {
+            return {
+                namespace,
+                plugins: this.pluginMap[namespace]
             }
-        } else {
-            console.error('Only plugins with level 2 or level 3 namespaces can be found. eg. a.b a.b.c')
-        }
-    }
-    private matchLevel2Namespace(targetSplit: string[], sourceSplit: string[]) {
-        return (targetSplit[0] === sourceSplit[0]) && (targetSplit[1] === sourceSplit[1])
+        }).flat();
     }
     private toCaseInsensitive(namespace:NamespaceType) {
 
         if (Array.isArray(namespace)) {
             namespace = namespace.join('.');
         }
+        // 需要删除 namespace里面的id
+        // 
+        namespace = namespace.replace(/\:[^.]+/,'');
 
         return namespace.toUpperCase();
+    }
+    private getNamespaceId(namespace: NamespaceType) {
+        
+        if (Array.isArray(namespace)) {
+            namespace = namespace.join('.');
+        }
+
+        let match: any = namespace.match(/\:([^.]+)/);
+
+        if (match) {
+            return match[1]
+        }
     }
 }
 

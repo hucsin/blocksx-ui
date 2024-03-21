@@ -19,19 +19,19 @@
     schema: any,
     viewer: boolean;
     pageMeta: any,
-    title: string;
+    title: any;
     path: string;
     value: any;
     reflush: any,
     okText: string;
     onGetRequestParams?: Function;
-    onChangeValue?: Function;
+    onSave?: Function;
+    onCancel?: Function;
     noOperater?: boolean;
     mode?: string;
     operateContainerRef?: any;
     titleContainerRef?: any;
     router: routerParams;
-    onClose?: Function;
     onShow?: Function;
 }
 
@@ -91,6 +91,12 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                     isStepOne: newProps.value ? false : true,
                     isStepMode: this.isStepFormer(newProps.schema),
                     setpOneValue: utils.clone(newProps.value)
+                })
+            }
+
+            if (newProps.value !== this.state.value) {
+                this.setState({
+                    value: newProps.value
                 })
             }
     
@@ -251,8 +257,8 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                 //    }
                // })
             }
-            if (this.props.onChangeValue) {
-                let result: any = this.props.onChangeValue(this.cleanLabelValueToValue(value))
+            if (this.props.onSave) {
+                let result: any = this.props.onSave(this.cleanLabelValueToValue(value))
                 
                 if (utils.isPromise(result)) {
                     return result.then(() => {
@@ -278,7 +284,7 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                 <>
                     {this.getDefaultTitle()}
                     <Former
-                        
+                        autoclose={false}
                         id={this.getDefaultId()}
                         schema={pageSchema}
                         okText={this.getDefaultOkText()}
@@ -314,7 +320,7 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                         value = {this.state.value}
                         viewer = {this.state.viewer}
                         onClose= {()=> {
-                            this.props.onClose && this.props.onClose();
+                            this.props.onCancel && this.props.onCancel();
                         }}
                         column = {pageMeta.column ? pageMeta.column as any : 'two'}
                         

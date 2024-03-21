@@ -6,10 +6,9 @@
  */
 import React from 'react';
 import { utils } from '@blocksx/core';
-import Widget from './WidgetBase';
 
 interface WidgetMap {
-    [key: string]: Widget
+    [key: string]: any
 }
 
 
@@ -32,10 +31,17 @@ export interface PluginComponent {
     render(props: any, key?: any): React.ReactNode
 }
 export default abstract class PluginBase  {
-    private widget:WidgetMap;
-
-    public constructor () {
+    
+    public destory?():any;
+    public mount?():any;
+    public context: any;
+    private widget: WidgetMap;
+    
+    
+    public constructor (context: any) {
         this.widget = {};
+
+        this.context = context;
     }
     /**
      * 判断是否存在widget
@@ -52,10 +58,10 @@ export default abstract class PluginBase  {
      * @param name 
      * @param widget 
      */
-    public registerWidget(namespace: string, widget:Widget) {
+    public registerWidget(namespace: string, widget:any) {
         namespace = this.toCaseInsensitive(namespace);
         
-        let widgetArray: any = this.hasWidget(namespace) 
+        let widgetArray: any[] = this.hasWidget(namespace) 
             ? this.widget[namespace] : []; 
 
         widgetArray.push(widget);

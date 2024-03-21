@@ -88,8 +88,8 @@ export default class Pick extends React.Component<PickProps, PickState> {
         if (this.props.type =='confirm') {
             return (
                 <div className='hoofs-pick-buttons' >
-                    <Button size='small' onClick={()=> {this.hidePick(true)}}>{this.props.cancelText}</Button>
                     <Button size='small' type='primary' danger={this.props.danger} onClick={()=>{this.onConfirm()}}>{this.props.okText}</Button>
+                    <Button size='small' onClick={()=> {this.hidePick(true)}}>{this.props.cancelText}</Button>
                 </div>
             )
         }

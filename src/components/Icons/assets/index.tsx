@@ -20,6 +20,7 @@ export { default as PostgresqlBrandFilled } from './PostgresqlBrandFilled';
 export { default as ProductUtilityFilled } from './ProductUtilityFilled';
 export { default as PublishUtilityFilled } from './PublishUtilityFilled';
 export { default as RemoveUtilityFilled } from './RemoveUtilityFilled';
+export { default as SchemaDataFilled } from './SchemaDataFilled';
 export { default as StartCircleUtilityFilled } from './StartCircleUtilityFilled';
 export { default as StopCircleUtilityFilled } from './StopCircleUtilityFilled';
 export { default as TableAddDataFilled } from './TableAddDataFilled';
@@ -35,7 +36,7 @@ export { default as ConnectionsDirectivityOutlined } from './ConnectionsDirectiv
 export { default as ControlUtilityOutlined } from './ControlUtilityOutlined';
 export { default as DatasourceAddDataOutlined } from './DatasourceAddDataOutlined';
 export { default as DatasourceMiniDataOutlined } from './DatasourceMiniDataOutlined';
-export { default as DatasourceSmallDataOutlined } from './DatasourceSmallDataOutlined'; 
+export { default as DatasourceSmallDataOutlined } from './DatasourceSmallDataOutlined';
 export { default as DbqueryBrandOutlined } from './DbqueryBrandOutlined';
 export { default as DestroyUtilityOutlined } from './DestroyUtilityOutlined';
 export { default as DocumentUtilityOutlined } from './DocumentUtilityOutlined';

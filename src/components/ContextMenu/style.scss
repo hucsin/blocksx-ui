@@ -10,7 +10,7 @@
     --contexify-activeRightSlot-color: rgba(0, 0, 0, 0.45);;
     --contexify-arrow-color: rgba(0, 0, 0, 0.45);;
     --contexify-activeArrow-color: rgba(0, 0, 0, 0.45);;
-    --contexify-menu-minWidth: 200px;
+    --contexify-menu-minWidth: 150px;
     
     --contexify-itemContent-padding: 2px;
     --contexify-separator-margin: 4px 0 ;
@@ -20,6 +20,12 @@
     --contexify-menu-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
     --contexify-menu-negatePadding: var(--contexify-menu-padding);
   
+}
+.contexify {
+    padding: 8px 4px;
+}
+.contexify_itemContent {
+    font-size: 14px;
 }
 .ui-menu-danger {
     

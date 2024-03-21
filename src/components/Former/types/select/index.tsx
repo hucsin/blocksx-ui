@@ -171,7 +171,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
 
         return dataSource.map((it => {
             let value: any = it.value || it.key;
-            let label: any = it.label || it.name;
+            let label: any = it.label || it.name || it.value || it.key;
 
             return (
                 <Select.Option key={value} value={value}>{label}{this.renderRemarks(it.remarks)}</Select.Option>

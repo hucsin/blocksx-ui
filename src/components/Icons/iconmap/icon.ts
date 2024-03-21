@@ -21,6 +21,7 @@ export const map:any = {
     "data": [
         "DatasourceDataFilled",
         "FilterDataFilled",
+        "SchemaDataFilled",
         "TableAddDataFilled",
         "DatasourceAddDataOutlined",
         "DatasourceMiniDataOutlined",

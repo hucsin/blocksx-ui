@@ -1,0 +1,25 @@
+.popover-menu-wrapper {
+    min-width: 150px;
+    .ant-popover-inner {
+        padding: 6px 0px;
+    }
+    .ant-menu-vertical >.ant-menu-item {
+        height: 26px;
+        line-height: 26px;
+    }
+    .ant-menu-light.ant-menu-root.ant-menu-vertical {
+        border-inline-end:none;
+    }
+    .ant-menu-vertical .ant-menu-item {
+        padding-inline: 8px;
+    }
+    .ant-menu .ant-menu-item .anticon +span {
+        margin-inline-start: 4px;
+    }
+    .ant-menu-light .ant-menu-item-danger {
+        &:hover {
+            background:#FF4D53 !important;
+            color:#fff !important;
+        }
+    }
+}
