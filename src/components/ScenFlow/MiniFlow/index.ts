@@ -8,31 +8,11 @@ import DraggableCanvas from './draggable';
 import PositioningCanvas from './positioning';
 import FormatCanvas from './format';
 
-import { IRect, IPointCoord } from './typing';
+import { IRect, IPointCoord, FlowNode, FlowConnector } from './typing';
 /**
  * 一个极简交互的流程图绘制工具
  */
 
-
-export type FlowNodeType = 'go' | 'router' | 'module' | 'control' | 'empty';
-
-
-export interface ConnectorMap {
-    source: string;
-    target: string;
-    isLock?: boolean;
-    isTemporary?: boolean;
-}
-
-export interface FlowNodeMap {
-    name: string;
-    type: FlowNodeType;
-    left: number,
-    top: number,
-    color: string;
-    node?: HTMLElement;
-    isTemporary?: boolean
-}
 
 
 
@@ -45,8 +25,8 @@ export interface MiniFlowMap {
 
     templateMap: any;
 
-    nodes: FlowNodeMap[];
-    connector: ConnectorMap[];
+    nodes: FlowNode[];
+    connector: FlowConnector[];
 
     size?: number;
 }
@@ -71,8 +51,8 @@ export default class MiniFlow extends EventEmitter {
     private templateMap: any;
     private freezeState: boolean;
 
-    private nodes: FlowNodeMap[];
-    private connector: ConnectorMap[];
+    private nodes: FlowNode[];
+    private connector: FlowConnector[];
     private connectorMap: any;
     private nodeMap: any;
     private dragFreeNode?: boolean;
@@ -718,8 +698,8 @@ export default class MiniFlow extends EventEmitter {
      * @param isTemporary 
      */
     private addConnectorNodeBySourceTarget(source: string, target: string, isTemporary?: boolean) {
-        let sourceNode: FlowNodeMap = this.getNodeByName(source);
-        let targetNode: FlowNodeMap = this.getNodeByName(target);
+        let sourceNode: FlowNode = this.getNodeByName(source);
+        let targetNode: FlowNode = this.getNodeByName(target);
 
         let sourceColor: string = isTemporary ? '#e2e2e2' : sourceNode.color;
         let targetColor: string = isTemporary ? '#e2e2e2' : targetNode.color;

@@ -6,23 +6,15 @@
  */
 import React from 'react';
 import { utils } from '@blocksx/core';
+import { ContextMenuItem, PluginManager } from '@blocksx/ui';
+
+import { ContextMenuMap } from './typing';
+
 
 interface WidgetMap {
     [key: string]: any
 }
 
-
-export interface ContextMenuItem {
-    key: string;
-    name: string;
-    action: string;
-    children?: ContextMenuItem[];
-    data?: any;
-}
-
-export interface PluginContextMenu {
-    contextMenu: ContextMenuItem[];
-}
 
 export interface PluginPipeline {
     pipeline(value: any, context: any): any | void;
@@ -32,15 +24,20 @@ export interface PluginComponent {
 }
 export default abstract class PluginBase  {
     
-    public destory?():any;
-    public mount?():any;
+    public destory?(): void;
+    public mount?(): void;
+    public static contextMenuMap : ContextMenuMap;
+    public keybindingMap?: any[];
+
     public context: any;
+    public namespace: string;
     private widget: WidgetMap;
     
     
-    public constructor (context: any) {
+    public constructor (namespace: string, context: any) {
         this.widget = {};
 
+        this.namespace = namespace;
         this.context = context;
     }
     /**
@@ -66,6 +63,11 @@ export default abstract class PluginBase  {
 
         widgetArray.push(widget);
         this.widget[namespace] = widgetArray;
+
+    }
+
+    public registerContextMenu(namespace: string, contextMenu:ContextMenuItem[]) {
+        PluginManager.registerContextMenu(namespace, contextMenu);
     }
 
     public hasContextMenu() {
@@ -81,8 +83,8 @@ export default abstract class PluginBase  {
      * @returns 
      */
     public findWidget(namespace?: string) {
-        
-        return namespace 
+
+        return namespace && namespace !=='*' 
             ? this.widget[this.toCaseInsensitive(namespace)] 
             : this.getAllWidget();
     }

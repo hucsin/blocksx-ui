@@ -1,7 +1,5 @@
 import React from 'react';
-import PopoverMenu from '../PopoverMenu';
-import Pick from '../Pick';
-import { PluginManager , ContextMenuManger } from '../core/index'
+import { PluginManager , ContextMenuManger, PopoverMenu } from '@blocksx/ui'
 
 interface PopoverContextMenuProps {
     children?: any;

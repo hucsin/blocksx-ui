@@ -1,16 +1,68 @@
-import { PluginBase, PluginManager } from '../../../core/index';
+import {
+    EditorBasePlugin,
+    PluginManager,
+    EditorContext,
+    UIIShortcut,
+    UIIContextmenu
+} from '@blocksx/ui';
 
-import RunerWidget from './widget';
+import ToolbarWidget from './WidgetToolbar';
+import FollowbarWdiget from './WidgetFollowbar';
 
-class Runer extends PluginBase {
-    public constructor(context: any) {
-        super(context);
-        
-        this.registerWidget('toolbar', RunerWidget)
+import { monaco } from 'react-monaco-editor';
+
+class Runer extends EditorBasePlugin {
+    public constructor(namespace: string, context: EditorContext) {
+        super(namespace, context);
+
+        this.registerWidget('toolbar', ToolbarWidget);
+        this.registerWidget('followbar', FollowbarWdiget);
+    }
+    /**
+     * 运行当前代码
+     */
+   
+    @UIIContextmenu(
+        {
+            label: 'Run code',
+        }, 
+        ({runtimeContext}) =>runtimeContext.hasValue()
+    )
+    public runCode = () => {
+        console.log(this.runtimeContext.getValue())
+    }
+    /**
+     * 运行当前行代码
+     */
+    @UIIContextmenu(
+        {
+            label: 'Run selected'
+        }, 
+        ({runtimeContext}) =>runtimeContext.hasSelection()
+    )
+    public runSelectionCode = () => {
+
+        console.log(this.runtimeContext.getSelectionValue())
     }
 
-    public destory() {
-        /** */
+    /**
+     * action
+     */
+    @UIIShortcut(
+        monaco.KeyMod.CtrlCmd,
+        monaco.KeyCode.KeyR
+    )
+    public doAction =(item?: any)=> {
+        
+        if (item) {
+
+
+        } else {
+            this.runtimeContext.hasSelection() 
+                ? this.runSelectionCode()
+                : this.runCode();
+        }
+        
     }
 }
 

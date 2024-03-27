@@ -53,6 +53,13 @@
         margin-right: 8px;
         opacity: .8;
     }
+    .shortcut-text {
+        position: absolute;
+        right: 4px;
+        top: 4px;
+        font-size:12px;
+        opacity: .5;;
+    }
     .contexify_rightSlot {
         font-size:12px;
         svg {

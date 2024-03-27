@@ -4,12 +4,18 @@
 import React from 'react';
 import classnames from 'classnames';
 import MonacoEditor from 'react-monaco-editor';
-import StateComponent from '../StateX/Component';
-import { PluginManager } from '../core/index';
+
+import { 
+    ContextMenu, 
+    StateComponent, 
+    PluginManager,
+    EditorContext
+} from '@blocksx/ui';
+
 
 import Toolbar from '../Toolbar';
+import EditorFollowBar from './core/EditorFollowBar';
 import { resizeObserver } from '../utils/dom';
-
 
 import './plugins';
 import './style.scss';
@@ -41,12 +47,14 @@ export default class EditorCore extends StateComponent<EditorCoreProps, EditorCo
                 enabled: false
             },
             theme: 'vs',
-            tabSize: 4
+            tabSize: 4,
+            contextmenu: false
         }
     }
     private editorWrapper: any;
     private namespace: string;
-    public monaco: any;
+
+    public editorContext: EditorContext;
 
     public constructor(props: EditorCoreProps) {
         super(props);
@@ -57,13 +65,15 @@ export default class EditorCore extends StateComponent<EditorCoreProps, EditorCo
             options: props.options,
             editorHeight: 0
         }
+        this.editorWrapper = React.createRef();
 
-        PluginManager.mount(this.namespace, this)
+        PluginManager.mount(this.namespace, this.editorContext = new EditorContext(this))
     }
     public componentDidMount() {
-        resizeObserver(this.editorWrapper, (e)=> {
+        
+        resizeObserver(this.editorWrapper.current, (e)=> {
             this.setState({
-                editorHeight: e.height
+                editorHeight: e.height - 4
             })
         })
     }
@@ -72,9 +82,7 @@ export default class EditorCore extends StateComponent<EditorCoreProps, EditorCo
     }
 
     private onChangeValue =(value: string)=> {
-        this.setState({
-            value: value
-        })
+        this.editorContext.runtimeContext.setValue(value);
     }
     public render() {
         return (
@@ -90,25 +98,37 @@ export default class EditorCore extends StateComponent<EditorCoreProps, EditorCo
                         height: '35px'
                     }}
                 />
-                <div className='editor-core-inner' ref={e=>this.editorWrapper=e}>
+                <ContextMenu
+                    
+                    namespace={this.namespace}
+                />
+                
+                <div className='editor-core-inner' ref={this.editorWrapper}>
+                    <EditorFollowBar namespace={this.namespace} toolbar={[this.namespace, 'TOOLBAR'].join('.')}  editorContext={this.editorContext}/>
                     <MonacoEditor
                         width='100%'
                         height={this.state.editorHeight}
-
+                        
                         language="sql"
                         theme={this.props.theme}
-                        value={this.state.value}
+                        value={this.editorContext.runtimeContext.getValue()}
                         options={this.state.options}
                         onChange={this.onChangeValue}
                         editorDidMount={(editor, monaco)=> {
-                            this.monaco = editor;
-                            console.log(editor, monaco)
-                            //console.log(monaco.getContextMenuService, editor.getContextMenuService)
-                            //coderState.setContext(this);
                             
+                            this.editorContext.setMonacoEditor(editor, monaco);
+
+                            editor.onContextMenu((editorEvent: any)=> {
+                                editorEvent.event.preventDefault();
+                                editorEvent.event.clientX = editorEvent.event.posx;
+                                editorEvent.event.clientY = editorEvent.event.posy;
+                                ContextMenu.showContextMenu(this.namespace, editorEvent.event, this.editorContext)
+                            })
+
                             PluginManager.loadon(this.namespace);
-                        //  pluginManager.pipeline(this.editorNamespace, this.state, this)
+                        
                         }}
+                        
                     />
                 </div>
 

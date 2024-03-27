@@ -54,6 +54,8 @@ export default abstract class StateModel<S, A = {}> extends EventEmitter {
                     state
                 )
             }
+        } else {
+            this.state = {} as any;
         }
     }
 

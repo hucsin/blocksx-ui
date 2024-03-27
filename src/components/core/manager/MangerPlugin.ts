@@ -1,5 +1,6 @@
 import { keypath, utils } from '@blocksx/core';
-import EditorContextMenuManger, { MenuItem } from './MangerContextMenu';
+import { ContextMenuItem } from '@blocksx/ui'
+import EditorContextMenuManger from './MangerContextMenu';
 
 import WidgetUtils from './WidgetUtils';
 
@@ -35,11 +36,11 @@ class PluginManager {
         let plugins: any = this.find(truenamespace);
         
         if (plugins) {
-            plugins.forEach(({namespace, plugins})  => {
-                if (!this.mountMap[namespace]) {
-                    this.mountMap[namespace] = {}
+            plugins.forEach(({name, plugins})  => {
+                if (!this.mountMap[name]) {
+                    this.mountMap[name] = {}
                 }
-                this.mountMap[namespace][nameid] =  plugins.map(Plugin => new Plugin(context));
+                this.mountMap[name][nameid] = plugins.map(Plugin => new Plugin(namespace, context));
             })
         }
     }
@@ -101,6 +102,25 @@ class PluginManager {
             this.pluginMap[namespace] = [plugin];
         }
         
+
+       
+        this.registerPluginWidgetContextMenu(namespace, plugin);
+    }
+
+    public registerPluginWidgetContextMenu(namespace: string, plugin: any) {
+        if (!plugin.$$contextmenu) {
+            // 写入contextMenuMap 
+            if (utils.isPlainObject(plugin.contextMenuMap)) {
+                for (let name in plugin.contextMenuMap) {
+                    this.registerContextMenu(name, plugin.contextMenuMap[name])
+                }
+            } else {
+                if (utils.isArray(plugin.contextMenuMap)) {
+                    this.registerContextMenu(namespace, plugin.contextMenuMap)
+                }
+            }
+            plugin.$$contextmenu =  true;
+        }
     }
     /**
      * 数据管道,调用命名空间内所有的插件的pipeline方法,如果有
@@ -129,10 +149,10 @@ class PluginManager {
      * @param namespace 
      */
     public getContextMenu(namespace: NamespaceType, playload?: any) {
-        return EditorContextMenuManger.filter(this.toCaseInsensitive(namespace), playload)
+        return EditorContextMenuManger.filter(this.toCaseInsensitive(namespace, true), playload)
     }
-    public registerContextMenu(namespace: NamespaceType,  menu:MenuItem[]) {
-        return EditorContextMenuManger.registorMenu(this.toCaseInsensitive(namespace), menu);
+    public registerContextMenu(namespace: NamespaceType,  menu:ContextMenuItem[]) {
+        return EditorContextMenuManger.registorMenu(this.toCaseInsensitive(namespace, true), menu);
     }
     public doContextMenuAction(context: any, namespace: NamespaceType, type: string, playload: any) {
         return EditorContextMenuManger.doAction(context, this.toCaseInsensitive(namespace), type, playload);
@@ -170,14 +190,14 @@ class PluginManager {
      * @param direction 
      * @returns 
      */
-    public getWidgetByDirection(namespace: NamespaceType, direction: string[]) {
+    public getWidgetByDirection(namespace: NamespaceType, type: string, direction: string[]) {
         let widgets: any[] = [];
         this.walk(namespace, (plugin: any) => {
             
-            let allWidgets: any[] = plugin.getAllWidget();
+            let allWidgets: any[] = plugin.findWidget(type);
             let match: any = [];
-            
-            allWidgets.forEach(it=> {
+
+            allWidgets && allWidgets.forEach(it=> {
                 if (direction.indexOf(it.direction) > -1) {
                     match.push({
                         widget: it,
@@ -190,15 +210,15 @@ class PluginManager {
                 widgets.push(null)
             }
 
-            if (match) {
+            if (match.length) {
                 widgets = widgets.concat(match)
             }
         });
         return widgets;
     }
 
-    public renderWidget(namespace: any, widgets: any[]) {
-        return WidgetUtils.renderWidget(namespace, widgets)
+    public renderWidget(namespace: any, widgets: any[], noSplit?: boolean) {
+        return WidgetUtils.renderWidget(namespace, widgets, noSplit)
     }
 
     /**
@@ -207,8 +227,8 @@ class PluginManager {
      * @param direction 
      * @returns 
      */
-    public renderWidgetByDirection(namespace: NamespaceType, direction: string[]) {
-        return this.renderWidget(namespace, this.getWidgetByDirection(namespace, direction))
+    public renderWidgetByDirection(namespace: NamespaceType, type: string, direction: string[]) {
+        return this.renderWidget(namespace, this.getWidgetByDirection(namespace, type, direction))
     }
 
     /**
@@ -273,23 +293,24 @@ class PluginManager {
             return this.levelMatch(truenamespace, namespace)
         }).map(namespace => {
             return {
-                namespace,
+                name: namespace,
                 plugins: this.pluginMap[namespace]
             }
         }).flat();
     }
-    private toCaseInsensitive(namespace:NamespaceType) {
+    public toCaseInsensitive(namespace:NamespaceType, hasNamespceId?:boolean) {
 
         if (Array.isArray(namespace)) {
             namespace = namespace.join('.');
         }
         // 需要删除 namespace里面的id
         // 
-        namespace = namespace.replace(/\:[^.]+/,'');
-
+        if (!hasNamespceId) {
+            namespace = namespace.replace(/\:[^.]+/,'');
+        }
         return namespace.toUpperCase();
     }
-    private getNamespaceId(namespace: NamespaceType) {
+    public getNamespaceId(namespace: NamespaceType) {
         
         if (Array.isArray(namespace)) {
             namespace = namespace.join('.');

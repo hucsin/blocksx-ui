@@ -142,6 +142,9 @@ class Utils {
             resolve(promise)
         }
     }
+    isMacOS() {
+        return navigator.userAgent.includes('Macintosh');
+    }
 }
 
 export default new Utils();

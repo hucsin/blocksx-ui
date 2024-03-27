@@ -21,8 +21,8 @@ export default class Toolbar extends React.Component<EditorToolbarProps> {
     public constructor(props:EditorToolbarProps) {
         super(props);
         
-        this.beforeWidget = PluginManager.getWidgetByDirection(this.props.toolbar, ['left', 'top']);
-        this.afterWidget = PluginManager.getWidgetByDirection(this.props.toolbar, ['bottom', 'right'])
+        this.beforeWidget = PluginManager.getWidgetByDirection(this.props.toolbar, 'toolbar',  ['left', 'top']);
+        this.afterWidget = PluginManager.getWidgetByDirection(this.props.toolbar, 'toolbar', ['bottom', 'right'])
     }
 
     public renderBeforeWidget() {

@@ -3,10 +3,10 @@ import { PluginBase, PluginManager } from '../../../core/index';
 import RunerWidget from './widget';
 
 class Format extends PluginBase {
-    public constructor(context: any) {
-        super(context);
+    public constructor(namespace: string,context: any) {
+        super(namespace, context);
         
-        this.registerWidget('toolbar', RunerWidget)
+        this.registerWidget('toolbar', RunerWidget);
     }
 }
 

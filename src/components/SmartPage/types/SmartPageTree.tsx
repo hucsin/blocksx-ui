@@ -2,16 +2,10 @@ import React from 'react';
 import { utils } from '@blocksx/core';
 import { Tree, Empty, Skeleton, Spin, Button } from 'antd';
 
-import * as Icons from '../../Icons';
-import SmartRequst from '../../utils/SmartRequest';
-import SplitPane from '../../SplitPane';
+import { Icons, SmartRequest, SplitPane, CombineIcon, ContextMenu, PopoverMenu, TablerUtils } from '@blocksx/ui';
+
 import SmartPageFormer from './SmartPageFormer';
-import CombineIcon from '../../Icons/CombineIcon';
 
-import ContextMenu from '../../ContextMenu';
-import PopoverMenu from '../../ContextMenu/PopoverMenu';
-
-import UtilTool from '../../utils/tool';
 
 import { getDefaultMenu } from './config/defaultMenu';
 
@@ -111,11 +105,11 @@ export default class SmartPageTree extends React.Component<SmartPageTreeProps, S
 
         
 
-        this.requestTreeList = SmartRequst.createPOST(this.props.path + '/tree');
-        this.requestTreeCreate = SmartRequst.createPOST(this.props.path + '/create', true);
-        this.requestTreeChildren = SmartRequst.createPOST(this.props.path + '/children');
-        this.requestTreeDelete = SmartRequst.createPOST(this.props.path + '/delete', true);
-        this.rrequestTreeEdit = SmartRequst.createPOST(this.props.path +'/update', true);
+        this.requestTreeList = SmartRequest.createPOST(this.props.path + '/tree');
+        this.requestTreeCreate = SmartRequest.createPOST(this.props.path + '/create', true);
+        this.requestTreeChildren = SmartRequest.createPOST(this.props.path + '/children');
+        this.requestTreeDelete = SmartRequest.createPOST(this.props.path + '/delete', true);
+        this.rrequestTreeEdit = SmartRequest.createPOST(this.props.path +'/update', true);
     }
     private getDefaultFieldByType(fields: any[], type: string) {
         if (fields) {
@@ -225,7 +219,7 @@ export default class SmartPageTree extends React.Component<SmartPageTreeProps, S
 
             return (
                 <CombineIcon 
-                    main={ UtilTool.renderIconComponent(item.icon.main)}
+                    main={ TablerUtils.renderIconComponent(item.icon.main)}
                     subscript={this.renderItemIcon(iconField, item.icon.subscript)}
                 />
             )
@@ -244,7 +238,7 @@ export default class SmartPageTree extends React.Component<SmartPageTreeProps, S
                 })
 
                 if (iconfind && iconfind.icon) {
-                    return UtilTool.renderIconComponent(iconfind)
+                    return TablerUtils.renderIconComponent(iconfind)
                 }
             }
         }
@@ -261,7 +255,7 @@ export default class SmartPageTree extends React.Component<SmartPageTreeProps, S
                 
                 <PopoverMenu 
                     menu={this.defaultMenu} 
-                    namespace={this.state.namespace}
+                   // namespace={this.state.namespace}
                     payload={item} 
                     onMenuClick={this.onMenuClick}
                 />
@@ -359,6 +353,7 @@ export default class SmartPageTree extends React.Component<SmartPageTreeProps, S
                             defaultExpandAll
                             onRightClick={(e)=> {
                                 e.event.stopPropagation();
+                                console.log(e.event)
                                 ContextMenu.showContextMenu(this.state.namespace, e.event, e.node)
                             }}
                             titleRender={this.renderTreeItem}
@@ -533,7 +528,7 @@ export default class SmartPageTree extends React.Component<SmartPageTreeProps, S
                         {pageType}
                         <PopoverMenu 
                             menu={this.defaultMenu} 
-                            namespace={this.state.namespace}
+                          //  namespace={this.state.namespace}
                             payload={{}} 
                             onMenuClick={this.onMenuClick}
                         >

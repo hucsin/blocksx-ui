@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import { message as AntMessage } from 'antd';
 
-import * as Icons from '../Icons/index'
-import Pick from '../Pick';
+import { Pick, Icons, PluginManager , ContextMenuManger  } from '@blocksx/ui';
 import { utils } from '@blocksx/core';
 import i18n from '@blocksx/i18n';
+import { monaco } from 'react-monaco-editor';
 
 import {
     Menu as ContexifyMenu,
@@ -15,25 +15,18 @@ import {
     Submenu as ContexifySubmenu,
     useContextMenu,
 } from "react-contexify";
-
-import { PluginManager , ContextMenuManger } from '../core/index'
+import { ContextMenuItem } from './typing';
+import UIUtils from '../utils/index';
 
 import "react-contexify/dist/ReactContexify.css";
 import "./style.scss";
 
 
-export interface ContextMenuItem {
-    key?: string;
-    label?: string;
-    type: string;
-    icon?: string;
-    danger?: boolean;
-    children?: ContextMenuItem[]
-}
+
 
 interface ContextMenuProps {
     children?: any;
-    menu: any;
+    menu?: any;
     namespace: string;
     onMenuClick?: Function;
 }
@@ -52,6 +45,8 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
     public static contextMenu: any = {};
     public static showContextMenu = (namespace:string, event: any, payload: any) => {
         
+        //let truenamespace = ContextMenu.getTrueNamespace(namespace);
+
         if (namespace.indexOf('CONTEXTMENU') ==-1) {
             namespace = [namespace, 'CONTEXTMENU'].join('.')
         }
@@ -59,7 +54,6 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
         if (ContextMenu.contextMenu[namespace]) {
 
             ContextMenu.contextMenu[namespace].context.resetMenuByContext(payload, ()=> {
-
                 return ContextMenu.contextMenu[namespace].menu.show({
                     event: event
                 })
@@ -68,13 +62,19 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
     }
 
     public static setContextMenu = (namespace: string, context: any) => {
-        
+
+        //namespace = ContextMenu.getTrueNamespace(namespace);
+
         ContextMenu.contextMenu[namespace] = {
             context: context,
             menu: useContextMenu({
                 id: namespace
             })
         }
+    }
+
+    public static getTrueNamespace(namespace: string) {
+        return namespace.replace(/\:[^\.]+/, '')
     }
     
 
@@ -83,7 +83,7 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
 
         
         this.state = {
-            menu: props.menu,
+            menu: props.menu || [],
             open: false,
             dangerMessage: '',
             namespace: [props.namespace, 'CONTEXTMENU'].join('.'),
@@ -115,7 +115,7 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
 
         let menu: any = ContextMenuManger.filter(this.props.menu || [], this.state.namespace, payload);
         let contextMenu: any = PluginManager.getContextMenu(this.state.namespace, payload) || [];
-
+        
         return this.filterLastDivider([
             ...menu,
             ...contextMenu
@@ -125,6 +125,10 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
 
         if (menu.length && menu[menu.length-1].type =='divider') {
             menu.pop();
+        }
+
+        if (menu.length && menu[0].type =='divider') {
+            menu.shift();
         }
 
         return menu.map(it=> {
@@ -142,13 +146,15 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
      */
     public resetMenuByContext(payload: any, fn: Function) {
         let menuList: any  = this.findMenuByContext(payload);
-    
+        
         if (menuList.length> 0) {
             this.setState({
 
                 payload,
                 menu: menuList
-            }, () => fn() )
+            } );
+
+            fn()
         }
     }
 
@@ -178,10 +184,17 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
 
             
         } else {
-            this.props.onMenuClick && this.props.onMenuClick(rowItem, this.state.payload);
+            this.doAction(rowItem);
+            
         }
     }
-
+    public doAction(current: any) {
+        if (utils.isFunction(current.action)) {
+            current.action(this.state.payload)
+        } else {
+            this.props.onMenuClick && this.props.onMenuClick(current, this.state.payload);
+        }
+    }
     public renderChildrenMenu(menu: any = null, component: any) {
         let renderMenu: any[] = menu || this.state.menu;
         
@@ -196,18 +209,28 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
                     return <component.Separator key={i}/>
                 }
                 return (
-                    <component.Item className={classnames({
-                        'ui-menu-danger': it.danger
-                    })} onClick={()=> {
+                    <component.Item 
+                        className={classnames({
+                            'ui-menu-danger': it.danger
+                        })} 
+                        onClick={()=> {
                         // test    WORKSPACE.PANEL.CODER.META
                         // doAction
-                        this.onMenuClick(it)
-                    }} key={i}>{this.renderTitle(it)}</component.Item>
+                            this.onMenuClick(it)
+                        }}
+                         key={i}
+                    >
+                        {this.renderTitle(it)}
+                        {it.shortcut && <span className='shortcut-text'>{this.getShortcutText(it.shortcut)}</span>}
+                    </component.Item>
                 )
             }
         })
     }
-
+    private getShortcutText(shortcut: number[]) {
+        // todo 2048
+        return (UIUtils.isMacOS() ? "⌘": "ctrl") + '+' + (monaco.KeyCode[shortcut[1]] || '').replace('Key', '');
+    }
     public renderTitle(it) {
         return (
             <>
@@ -238,7 +261,8 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
                         title={this.state.dangerMessage}
                         danger
                         onConfirm={()=> {
-                            this.props.onMenuClick && this.props.onMenuClick(this.state.rowItem, this.state.payload);
+                            //this.props.onMenuClick && this.props.onMenuClick(this.state.rowItem, this.state.payload);
+                            this.doAction(this.state.rowItem)
                         }}
                         onHidden={()=>{this.setState({dangerMessage: '', payload: null, open:false})}}
                     />}
