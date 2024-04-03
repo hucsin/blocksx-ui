@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { Button } from 'antd';
 import Icon from './components/Former/types/icon';
+import SqlParser from './demo/Sqlparser'
 import Editor from './components/EditorCore/index';
 
 import LayoutLoginDemo from './demo/Login';
@@ -158,5 +159,5 @@ root.render(
   </div>
 )*/
 
-root.render(<DemoLayout/>)
-
+//root.render(<DemoLayout/>)
+root.render(<SqlParser/>)
