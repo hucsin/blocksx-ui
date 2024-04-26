@@ -1,0 +1,178 @@
+.resourcetree-wrapper {
+    height: 100%;
+    box-sizing: border-box;
+    padding:8px 12px ;
+    overflow: hidden;
+    .resourcetree-header {
+        position: relative;
+        font-weight: bold;
+        line-height: 34px;
+        .resourcetree-toolbar {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        .resourcetree-left-toolbar {
+            margin-left: 8px;
+            opacity: .8;
+
+            .anticon-plus {
+                position: relative;
+                &::after{
+                    content: " ";
+                    position: absolute;
+                    bottom: -2px;
+                    right: -2px;
+                    width: 0;
+                    height: 0;
+                    font-size:0;
+                    overflow: hidden;
+                    border: 2px dashed transparent ;
+                    border-top: 2px solid #253852
+                }
+            }
+            > span {
+                button {
+                    padding: 0 3px;
+                    height: 20px;
+                    text-align: center;
+                    width: 21px;
+                    line-height: 20px;
+                    font-size: 12px;
+                    display: inline-block;
+                }
+            }
+        }
+    }
+    > div {
+        height: 100%;
+    }
+    .ant-tree {
+        .ant-tree-list-scrollbar  {
+            margin-right: -4px;
+            opacity: .4;
+            &:hover {
+                opacity: .8;
+            }
+        }
+        .ant-tree-icon__docu {
+
+        }
+        .ant-tree-switcher {
+            width: 12px;
+            color:#ababaf;
+            
+        }
+        &.ant-tree-block-node .ant-tree-list-holder-inner .ant-tree-node-content-wrapper:hover {
+            background-color: transparent;
+        }
+        .ant-tree-treenode{
+            padding: 2px;
+            &:not(.ant-tree-treenode-selected):hover {
+                background-color: #F4F4F4;
+            }
+            border-radius: 8px;
+            &:Hover {
+                .resourcetree-item {
+                    button {
+                        display: block;
+                    }
+                    span.ri-slot {
+                        opacity: .5;
+                    }
+                }
+            }
+        }
+        .ant-tree-iconEle {
+            font-size:12px;
+            width: 18px;
+            position: relative;
+            top: 0;
+        }
+        .ant-tree-treenode-selected {
+            .ant-tree-node-selected {
+                background-color: transparent;
+                color:#006bf8
+            }
+            background-color: #e6f4ff;
+            
+        }
+        .ant-tree-indent-unit {
+            width: 14px;
+        }
+        .ant-tree-node-content-wrapper{
+            white-space: nowrap;
+            overflow-x: clip;
+            overflow-y: visible;
+        }
+        .resourcetree-item {
+            display:inline-block;
+            width: 80%;
+            box-sizing: border-box;
+            vertical-align: top;
+
+            div {
+                display: block;
+                width: 100%;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+                span.ri-slot {
+                    display:inline-block;
+                    background:#ccc;
+                    line-height: 14px;
+                    font-size:12px;
+
+                    text-align: center;
+                    border-radius: 4px;
+                    margin-left: 8px;
+                    padding: 0 4px;
+                    opacity: .2;
+                    &:Hover {
+                        opacity: .5;
+                    }
+                }
+            }
+            button {
+                font-size:12px;
+                position: absolute;
+                top: 2px; 
+                right: 0;
+                padding: 0 4px;
+                height: 20px;
+                display:none;
+            }
+           
+        }
+    }
+}
+.ant-dropdown-menu-title-content {
+    > span {
+        .anticon {
+            margin-right: 4px;
+        }
+    }
+} 
+.ant-dropdown-menu-submenu {
+    .ant-dropdown-menu {
+        .ant-dropdown-menu-item,
+        .ant-dropdown-menu-submenu-title {
+            padding: 2px 8px;
+            min-width: 100px;
+        
+        }
+        
+    }
+}
+.mini-dropdown {
+    
+    &.ant-dropdown .ant-dropdown-menu {
+        .ant-dropdown-menu-item,
+        .ant-dropdown-menu-submenu-title {
+            padding: 2px 8px;
+            min-width: 100px;
+        
+        }
+        
+    }
+}

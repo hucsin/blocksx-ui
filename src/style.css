@@ -1,0 +1,38 @@
+.demo-wraper {
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  position: absolute;
+
+  background-color: rgb(241, 246, 248);
+}
+.demo-wraper-left {
+  width: 245px;
+  float:left;
+  height: 100%;
+}
+.demo-wraper-center {
+  overflow: hidden;
+  height: 100%;
+}
+body,html {padding:0;margin: 0;height: 100%;}
+#root{
+  height: 100%;
+  padding: 0px;
+}
+.right-p {
+  background-color: #ccc;
+}
+
+.panel-resize-handle{
+  background-color: red;
+  
+}
+.panel-resize-handle[data-panel-group-direction='horizontal'] {
+  height: 100%;
+  width: 3px;   
+}
+.panel-resize-handle[data-panel-group-direction="vertical"] {
+  width: 100%;
+  height: 3px;
+}

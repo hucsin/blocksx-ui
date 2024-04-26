@@ -1,0 +1,106 @@
+.former-table {
+    border-top: 1px solid #f2f2f2;
+    position: relative;
+
+    .former-first-col {
+        color: #1890ff;
+        
+        cursor: pointer;
+        opacity: .8;
+        &:hover {
+            text-decoration: underline;
+            opacity: 1;
+        }
+    }
+
+    .ant-table-thead > tr > th {
+      &::before {
+        display:none !important;
+      }
+    }
+    .ant-table-cell {
+        .ant-btn.ant-btn-sm{
+            height: 14px;
+            font-size: 12px;
+        }
+    }
+    .ant-table-wrapper .ant-table-pagination.ant-pagination {
+        margin-top: 8px;
+    }
+    .ant-table-wrapper .ant-table.ant-table-small .ant-table-footer{
+        padding: 0;
+        margin-top: -1px;
+        
+        opacity: .5;
+        transition: all .2s;
+        &:hover {
+            opacity: .7;
+            background:#f8f8f8;
+        }
+    }
+    table{
+        border-color: none;
+    }
+    .ui-former-add {
+        border-radius: 3px;
+        border: 1px solid #f2f2f2;
+        cursor: pointer;
+        text-align: center;
+        padding: 2px 8px;
+        display:block;
+    }
+    .ant-pagination .ant-pagination-item-active {
+        border-color: transparent;
+    }
+    colgroup {
+        col {
+            max-width: 200px;
+        }
+    }
+    .former-table-add {
+        color:#ccc;
+
+        transition:all .2s;
+        display:none;
+        &:hover {
+            color:#333;
+        }
+    }
+    &:hover {
+        .former-table-add {
+            display:block;
+        }
+    }
+    .ant-table-small .ant-table-thead > tr > th {
+        font-size:12px;
+        color: #333;
+        white-space: nowrap;
+    }
+    tbody td {
+        vertical-align: top;
+        max-width: 200px;
+        font-size: 12px;
+    }
+    .ant-table-expanded-row-fixed {
+        margin: 0;
+    }
+    .ant-empty-normal{
+        margin-block : 8px;
+    }
+}
+.former-table-menu {
+    list-style:none;
+    margin: 0;
+    font-size:12px;
+    line-height: 20px;
+    li {
+        cursor: pointer;
+        span {
+            color:red;
+        }
+        &:Hover {
+            color:#1890ff
+        }
+    }
+
+}

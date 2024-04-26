@@ -1,0 +1,9 @@
+@import './tabler.scss';
+@import './filter.scss';
+@import './list.scss';
+
+.ant-space {
+    .ant-tag {
+        margin-right: 0;
+    }
+}

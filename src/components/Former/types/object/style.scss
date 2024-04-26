@@ -1,0 +1,179 @@
+.former-object {
+    .former-object-item-hidden {
+        display:none !important;
+    }
+    &.former-object-viewer {
+        .former-object-item .former-object-label-description {
+            padding-bottom: 0;
+        }
+    }
+    .former-object-required {
+        >.former-object-item-label {
+            >.former-object-label-title {
+                position: relative;
+
+                &:before {
+                    content: "*";
+                    position: absolute;
+                    height: 12px;
+                    line-height: 12px;
+                    width: 12px;
+                    text-align: center;
+                    left: -12px;
+                    top: 50%;
+                    margin-top: -6px;
+                    color: red;
+                    opacity: .4
+                }
+            }
+        }
+    }
+
+    .former-group-item-content {
+        margin-right: -8px;
+    }
+
+    .former-object-item {
+        display: inline-block;
+        width: 100%;
+        vertical-align: top;
+
+        box-sizing: border-box;
+
+        &.former-object-default {
+            .former-object-label-title {
+                font-size: 16px;
+                padding-bottom: 8px;
+            }
+        }
+
+        &.former-object-half-width {
+            width: 50%;
+        }
+
+        padding-bottom: 24px;
+        padding-right: 24px;
+        padding-left: 24px;
+
+        &.former-object-label-hidden {
+            .former-object-label-menu,
+            .former-object-label-title {
+                display: none
+            }
+        }
+
+        .former-object-label-description {
+            display: block;
+            padding-bottom: 0px;
+            padding-top: 2px;
+            color: rgba(0, 0, 0, .25);
+        }
+
+        .former-object-item-label {
+            position: relative;
+            color: rgba(0, 0, 0, .55);
+            font-size: 14px;
+            padding-bottom: 8px;
+
+            .ant-checkbox-inner {
+                width: 12px;
+                height: 12px;
+            }
+
+            .anticon-exclamation-circle {
+                margin-right: 8px;
+                position: relative;
+                top: 1px;
+                opacity: .4;
+                margin-left: -4px;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+
+            .former-object-label-collapse {
+                display: block;
+                position: absolute;
+                top: 50%;
+                margin-top: -7px;
+                left: -14px;
+                font-size: 12px;
+                color: #ccc;
+                cursor: pointer;
+                -webkit-user-select: none;
+            }
+
+            button {
+                opacity: .4;
+                transition: all .2s;
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+
+        }
+
+        &:last-child {
+            padding-bottom: 0;
+        }
+
+        .former-object-label-title {
+            display: inline-block;
+            vertical-align: middle;
+            padding-right: 8px
+        }
+
+        .former-object-label-menu {
+
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            width: 12px;
+            height: 22px;
+
+            .design-leaf-oneOf {
+                position: absolute;
+                top: 50%;
+                height: 7px;
+                margin-top: -3px;
+            }
+        }
+
+        .model-switch {
+            opacity: .6;
+        }
+
+        .ant-switch {
+
+            vertical-align: middle;
+        }
+    }
+
+    .former-object-collapse-on {
+        >.former-object-item-content {
+            display: none;
+        }
+    }
+
+    .former-object-align-inline {
+
+        >.former-object-item-label,
+        >.former-object-item-content {
+            display: inline-block;
+        }
+    }
+
+    .former-object-label-indent {
+        >.former-object-item-label {
+            padding-left: 1rem;
+        }
+    }
+
+    .former-object-content-indent {
+        >.former-object-item-content {
+            padding-left: 1rem;
+        }
+    }
+}

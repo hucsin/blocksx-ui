@@ -1,0 +1,278 @@
+.scenflow-wrapper {
+    position: absolute;
+    width: 100%;
+    top:0;
+    left: 0;
+    height: 100%;
+    background-color: #ffcc;
+
+}
+
+.scenflow-draggle-wrapper {
+    width: 100%;
+    height: 100%;
+    
+}
+.flow {
+    position: absolute;
+    content: " ";
+    width : 4px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: #000;
+    top: 50px;
+    left: 50px;
+}
+.scenflow-node {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 80px;
+    text-align: center;
+    background-color: #fcc;
+    border: 9px solid #fff;
+    z-index: 20;
+    &:after {
+        position: absolute;
+        content: " ";
+        width : 4px;
+        height: 4px;
+        border-radius: 2px;
+        background-color: #000;
+        top: 50%;
+        left: 50%;
+        margin-top: -2px;
+        margin-left: -2px;
+
+    }
+
+    &.destroy {
+        animation: destoryFrames 1s .4;
+    }
+    &.scenflow-node-new {
+        transform: scale(0,0);
+        opacity: 0;
+    }
+    &.showed {
+        animation: nodeShowFrames 1s 1;
+    }
+}
+.scenflow-overlays-arrow {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    opacity: .8;
+    &::after {
+        position: absolute;
+        content: " ";
+        background: #fff;
+        height: 3px; 
+        width: 7px;
+        top: 4px;
+        left: 8px;
+    }
+    &::before {
+
+        position: absolute;
+        content: " ";
+        width: 6px;
+        height: 6px;
+        border: 3px solid #fff;
+        border-left: 3px solid transparent;
+        border-bottom: 3px solid transparent;
+        transform: rotate(45deg);
+        top: -1px;
+        left: 6px;
+    }
+}
+
+.scenflow-add {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50px;
+    z-index: 11;
+    background-color: #fcc;
+    text-align: center;
+    color:#fff;
+    &::before,
+    &::after {
+        position: absolute;
+        content: " ";
+        background: #fff;
+        left: 50%;
+        top: 50%;
+        opacity: .8;
+    }
+    &::before {
+        height: 4px;
+        width: 16px;
+        margin-left: -8px;
+        margin-top: -2px;
+    }
+
+    &::after {
+        width : 4px;
+        height: 16px;
+        margin-left:-2px;
+        margin-top:  -8px;
+    }
+
+    &[data-type=router] {
+        top: 10px;
+        right: 10px;
+        background-color: #ccaadd;
+    }
+
+    &[data-type=module] {
+        top: 10px;
+        right: 80px;
+        
+        background-color: #e11afe;
+    }
+}
+
+.scenflow-response-wrapper {
+    position: absolute;
+    width: 200px;
+    top: 10px;
+    left: 50%;
+    height: 40px;
+    margin-left: -100px;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity .2s ;
+    &.chinampa-show {
+        opacity: 1;
+        z-index: 100;
+    }
+
+    .scenflow-response-item {
+        position: absolute;
+        width: 60px;
+        height: 25px;
+        border: 3px dashed rgb(204, 204, 204);
+        border-radius: 10px;
+        line-height: 25px;
+        text-align: center;
+        
+        border-color: rgb(204, 204, 204);
+        color:rgb(204, 204, 204);
+        background-color: rgba(255, 255, 255, .4);
+        transition: all .2s ;
+        span {
+            font-size:18px;
+            vertical-align: middle;
+        }
+        &:first-child {
+            right: 50%;
+            margin-right: 8px;
+        }
+        &:last-child {
+            left: 50%;
+            margin-left: 8px;
+
+
+        }
+        &.chinampa-actived {
+            border-color:rgb(244, 203, 70);
+            color: rgb(244, 203, 70);
+            
+            background-color: rgba(244, 203, 70, .4);
+        }
+
+        &.chinampa-actived-animation {
+            animation: borderFlash .4s infinite;
+        }
+    }
+
+    @keyframes borderFlash {
+        0% {
+            
+            border-color: rgb(255, 0, 0);
+            color:rgb(255, 0, 0);
+            
+            background-color: rgba(255, 0, 0,.4);
+        }
+        50% {
+            
+            border-color:rgb(244, 203, 70);
+            color: rgb(244, 203, 70);
+           
+            background-color: rgba(244, 203, 70, .4);
+        }
+        100% {
+            
+            border-color: rgb(255, 0, 0);
+            color:rgb(255, 0, 0);
+
+            
+            background-color: rgba(255, 0, 0,.4);
+        }
+    }
+
+    &.scenflow-dragging-active {
+        height: 80px;
+        .scenflow-response-item {
+            width: 120px;
+            height: 80px;
+            line-height: 80px;
+            &:last-child {
+                &::before ,
+                &::after {
+                    content: "Left";
+                    position: absolute;
+                    font-size: 12px;
+                    height: 100%;
+                    width: 30px;
+                    left: 0;
+                    top: 0;
+                    background-color: rgba(255, 255, 255, .4);
+                    border-right: 3px dashed rgba(204, 204, 204, 0.3);
+                }
+                &::before {
+                    content: "Right";
+                    left: auto;
+                    right: 0;
+                    border-right: none;
+                    border-left:  3px dashed rgba(204, 204, 204, 0.3);
+                }
+            }
+            span {
+                font-size: 28px;
+                
+            }
+        }
+    }
+}
+
+
+
+@keyframes nodeShowFrames {
+    0% {
+        transform: scale(0,0);
+        opacity: 0;
+    }
+    90% {
+        transform: scale(1.2,1.2);
+    }
+    100% {
+        transform: scale(1,1);
+       // opacity: 0;
+       opacity: 1;
+    }
+}
+
+@keyframes destoryFrames {
+    0% {
+        transform: scale(1,1);
+        opacity: 1;
+    }
+    10% {
+        transform: scale(1.2,1.2);
+    }
+    100% {
+        transform: scale(0,0);
+       // opacity: 0;
+    }
+}

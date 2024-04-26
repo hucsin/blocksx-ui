@@ -1,0 +1,79 @@
+.former-group {
+    .former-group-hidden {
+        display: none;
+    }
+
+    .former-group-typeMore {
+        .former-group-item-title {
+            text-align: center;
+            cursor: pointer;
+            font-weight: normal;
+            font-size: 14px;
+            line-height: 20px;
+            ;
+            padding-top: 8px;
+            border-bottom: none;
+            color: #ccc;
+
+            .former-group-collapse {
+                * {
+                    display: none;
+                }
+
+                width: 100%;
+                right: 0;
+                height: 100%;
+                top:0;
+            }
+        }
+    }
+
+    .former-group-item-title {
+        position: relative;
+        line-height: 30px; 
+        color: #2E2E2E;
+        opacity: .65;
+        padding-left: 4px;
+        font-size: 16px;
+        text-transform: uppercase;
+
+        -webkit-user-select: none;
+
+        .former-group-collapse {
+            width: 12px;
+            height: 12px;
+            position: absolute;
+            right: 2px;
+            top: 5px;
+            z-index: 1;
+            color: #ddd;
+            cursor: pointer;
+        }
+
+        padding-bottom: 4px;
+        margin-bottom: 8px;
+    }
+
+    .former-group-item-content {
+
+        transition: all .4s;
+        height: auto;
+
+        border: 1px dashed #f0f0f0;
+        border-radius: 5px;
+        padding: 16px 0;
+        padding-bottom: 20px;
+
+        margin-bottom: 16px;
+        &:Hover {
+            background-color: #fcfcfc;
+        }
+    }
+
+    .former-group-item-hidden {
+        height: 0;
+        padding: 0;
+        display: none;
+        overflow: hidden;
+    }
+}

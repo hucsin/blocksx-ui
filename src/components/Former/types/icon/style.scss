@@ -1,0 +1,59 @@
+
+.former-icons-input {
+    max-width: 200px;
+}
+.ui-empty {
+    opacity: .5;
+}
+
+.former-icons-wrapper {
+    width: 450px;
+    .ui-icon-selected {
+        color:#4096ff;
+        border-color:#4096ff;
+    }
+    button {
+        transform: scale(1) perspective(0) translateZ(0);
+        transition: transform .2s,box-shadow .2s,background-color .2s;
+        &:hover {
+
+            transform: scale(1.21);
+        }
+    }
+    .ant-input-search {
+        width: 120px;
+        margin-bottom: 8px;
+    }
+    height: calc(60vh);
+    .ant-space-item {
+        display:inline-block;
+    }
+    .ant-tabs {
+        .ant-tabs-nav {
+            margin-bottom: 0;
+        }
+        &.ant-tabs-small >.ant-tabs-nav .ant-tabs-tab {
+            padding:2px 0;
+        }
+    }
+    .ant-tabs .ant-tabs-tab+.ant-tabs-tab {
+        margin: 0 0 0 16px;
+    }
+    .ant-collapse {
+        height: calc(100% - 38px);
+        padding-top: 8px;
+        overflow: auto;;
+    }
+    .ant-collapse>.ant-collapse-item >.ant-collapse-header {
+        padding: 4px 0;
+    }
+    .ant-collapse-ghost >.ant-collapse-item >.ant-collapse-content >.ant-collapse-content-box {
+        padding-block: 0px;
+    }
+    .ant-collapse .ant-collapse-content>.ant-collapse-content-box {
+        padding: 0px;
+        button {
+            margin: 2px;
+        }
+    }
+}

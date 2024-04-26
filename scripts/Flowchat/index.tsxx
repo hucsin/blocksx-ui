@@ -1,0 +1,869 @@
+/**
+ * 流程图插件
+ * 支持流程图的编辑操作等，不支持属性等的设置，只是画图
+ * 
+ */
+import React from 'react';
+import ReactDOM from 'react-dom';
+import classnames from 'classnames';
+import Flowchart from '../flowchart';
+import PropertyPane from '../propertyPane';
+
+import { Radio } from 'antd';
+import { IProcess, IProcessPipe, IProcessNode, IProcessNodePosition } from './typings';
+
+import Node from './node';
+import NodeManage from './nodeManage';
+import CanvasManage from './canvasManage';
+import Toolbar from './toolbar';
+
+import './style.less';
+import { utils, HistoryStack } from '@blocksx/core';
+import ContextMenu from './contextMenu';
+import { RotateLeftOutlined } from '@blocksx/design-components/lib/icons';
+
+
+
+
+type processMap = {
+  [prop: string]: any
+}
+
+interface DiagramProps {
+  process: IProcess;
+  processMap: processMap;
+  panelNode: any;
+  panelAttributes: any;
+  panelToolbar?: any;
+  onChangeValue?: Function;
+}
+interface DiagramState {
+  pipes: IProcessPipe[],
+  nodes: IProcessNode[],
+  process: any,
+  pageX: number,
+  pageY: number,
+  visibleContextMenu: boolean,
+  contextMenuType: any,
+  clipboardData: any,
+  subProcess: any,
+  parentProcessName: string,
+  propertyType?: string,
+  currentAttributes?: any,
+  currentValue?: any,
+  canvasPosition: any,
+  historyCurrentIndex?: number,
+  historyTotal?: number,
+  zoom: number
+}
+
+export default class Diagram extends React.Component<DiagramProps, DiagramState> {
+
+  private selectKey: string = 'select_key';
+  private selectNodeClass: string = 'diagram-node-selected';
+  private processMap: processMap;
+  private processId: any;
+  private instance: any;
+  private currentNodeId: string;
+  private currentId: string;
+  private currentValue?: any;
+  private moveBeforePageXY?: any;
+  private movePageXY?: any;
+  private canvas: any;
+  private nodeManage: NodeManage;
+  private canvasManage: CanvasManage;
+
+  private connectCache: any;
+
+
+  private history: any;
+
+  private connection: any;
+  private nodeDomMap: {
+    [prop: string]: any
+  };
+
+
+  public constructor(props: DiagramProps) {
+    super(props);
+
+    const { process } = props;
+
+    this.processMap = props.processMap;
+    this.nodeDomMap = {};
+    this.nodeManage = new NodeManage(this);
+    this.canvasManage = new CanvasManage(this);
+    this.connectCache = {};
+    this.processId = process.id;
+    // history 操作
+    this.history = new HistoryStack({
+      listener: (current: number, total: number, history: any) => {
+        this.setState({
+          historyCurrentIndex: current,
+          historyTotal: total
+        });
+        // 有数据的时候需要cho
+        if (history) {
+          this.setState({
+            ...history
+          }, () => {
+            this.instance.repaintEverything();
+            this.resetPipes();
+            this.onChangeValue(true);
+          })
+        }
+      }
+    })
+
+    this.state = {
+      pipes: process.pipes || [],
+      nodes: process.nodes || [],
+      process: process,
+      visibleContextMenu: false,
+      pageX: 0,
+      pageY: 0,
+      clipboardData: null,
+      contextMenuType: '',
+      subProcess: null,
+      parentProcessName: '',
+      canvasPosition: {
+        left: 0,
+        top: 0,
+        transform: 'scale(1)'
+      },
+      zoom: 1,
+      historyCurrentIndex: 1,
+      historyTotal: 1
+    }
+
+    this.history.push({
+      pipes: this.state.pipes,
+      nodes: this.state.nodes
+    }, true)
+  }
+  public componentWillUpdate(newProps: any) {
+    if (newProps.process.id !== this.processId) {
+      this.processId = newProps.process.id;
+
+      this.nodeDomMap = {};
+
+      this.setState({
+        process: newProps.process,
+        pipes: newProps.process.pipes,
+        nodes: newProps.process.nodes,
+      }, () => {
+        this.instance.reset();
+        this.history.empty();
+        this.connectCache = {};
+        //this.instance.clear();
+        this.resetPipes();
+        this.initNodeData();
+      })
+
+    }
+  }
+  public componentDidMount() {
+    let color = '#999';
+
+    this.instance = Flowchart.jsPlumb.getInstance({
+
+      Connector: ["Bezier", { curviness: 50 }],
+      DragOptions: { cursor: "pointer", zIndex: 2000 },
+      PaintStyle: {},
+      EndpointStyle: { stroke: 'rgba(0,0,0,0)', fill: 'rgba(0,0,0,0)' },
+      HoverPaintStyle: { stroke: "#1890ff", },
+      EndpointHoverStyle: { fill: "rgba(0,0,0,0)" },
+    });
+
+    let arrowCommon = { foldback: 0.7, fill: color, width: 10, length: 8 };
+
+    // use three-arg spec to create two different arrows with the common values:
+    let overlays = [
+      ["Arrow", { location: 1 }, arrowCommon],
+    ];
+    this.instance.importDefaults({
+      MaxConnections: -1,
+      ConnectionOverlays: overlays,
+      Anchor: ["Top", 'Right', 'Left', 'Bottom'],
+      PaintStyle: {
+        outlineWidth: 4,
+        outlineStroke: 'transparent',
+        stroke: color, strokeWidth: 4
+
+      }
+    });
+    this.instance.setContainer(this.canvas);
+    this.initNodeData();
+
+    this.instance.registerConnectionType(this.selectKey, {
+      paintStyle: { strokeWidth: 4, stroke: "#1890ff", outlineWidth: 4, outlineStroke: "transparent" },
+      hoverPaintStyle: { strokeWidth: 4, cursor: "pointer", stroke: "#1890ff" }, // hover paint style for this edge type.  
+    });
+
+    this.bindEvent();
+    this.showPropertyPane('empty');
+
+    this.nodeManage.init(this.props.panelNode);
+    this.canvasManage.init();
+
+  }
+
+  private initNodeData() {
+    // 初始化数据
+    this.instance.batch(() => {
+
+      for (let p in this.nodeDomMap) {
+        if (this.nodeDomMap[p]) {
+          this.initNode(p, this.nodeDomMap[p]);
+        }
+      }
+
+      this.resetPipes();
+
+    });
+  }
+
+  private bindEvent() {
+    let instance = this.instance;
+
+
+    instance.bind('contextmenu', (connection: any, originalEvent: any) => {
+      this.onContextMenu(originalEvent, connection);
+    });
+
+    instance.bind('click', (connection: any, originalEvent: any) => {
+
+      this.onNodeClick(originalEvent, connection);
+      // connection.toggleType('hover')
+    });
+    instance.bind('connection', (info: any) => {
+      let pipe: any = {
+        name: [info.sourceId, info.targetId].join('-'),
+        source: info.sourceId,
+        target: info.targetId,
+        props: {}
+      }
+      this.addPipe(pipe);
+    })
+    instance.bind('beforeDrop', (info: any) => {
+      if (info.targetId == info.sourceId) {
+        return false;
+      }
+      return true;
+    })
+    instance.bind('connectionDetached', (info: any) => {
+      console.log('delete connection', info)
+    })
+
+    /*instance.bind('beforeDrop', (info: any) => {
+        console.log('beforeDrap')
+    })*/
+
+
+  }
+  private toggleType(isConnection: boolean, node: any) {
+
+    if (this.connection) {
+      this.connection.toggleType(this.selectKey);
+
+      if (!isConnection) {
+        this.connection = null;
+      }
+    }
+    //
+    let currentNode = this.canvas.querySelector('.' + this.selectNodeClass);
+    if (currentNode) {
+      this.instance.removeClass(currentNode, this.selectNodeClass);
+    }
+    if (node) {
+      this.instance.addClass(node, this.selectNodeClass);
+    }
+  }
+  private getPipeBySourceTarget(source: string, target: string) {
+    let { pipes } = this.state;
+    return pipes.find((a: any) => {
+      return a.source == source && a.target == target;
+    })
+  }
+  private getNodeByKey(key: string) {
+    return {
+      name: utils.uniq(),
+      type: key,
+      description: "",
+      props: {},
+      ui: {
+        x: 10,
+        y: 10
+      }
+    }
+  }
+  private getNodeById(id: string) {
+    let { nodes } = this.state;
+
+    return nodes.find((a: any) => a.name == id)
+  }
+  private getAttributesByType(id: string) {
+    let pipe = this.processMap[id];
+    if (!pipe) {
+      throw new Error(`processMap 缺少对象: ${id}`);
+    }
+    return pipe.attributes || {};
+  }
+  private updateAttributes(attributes: any) {
+
+    switch (this.state.propertyType) {
+      case 'pipe':
+        return this.setAttributesByConnection(this.connection, attributes);
+      case 'node':
+      default:
+        return this.setAttributesByNodeId(this.currentNodeId, attributes);
+    }
+  }
+  private setAttributesByConnection(connection: any, attributes: any) {
+    let { sourceId, targetId } = connection;
+    let pipes = this.state.pipes;
+
+    pipes.forEach((it: any, index: number) => {
+      if (it.source == sourceId && it.target == targetId) {
+        let currentId: any = this.getPipeId(it);
+
+        
+        pipes[index] = Object.assign(pipes[index], attributes);
+        
+        if (attributes.props && attributes.props.description)
+        if (this.connectCache[currentId]) {
+          this.connectCache[currentId].innerHTML = attributes.props.description
+        }
+
+      }
+    });
+    
+    
+    this.setState({
+      pipes: pipes
+    }, () => {
+      this.onChangeValue()
+      //this.connectCache = {};
+      
+      //this.resetPipes();
+      //this.instance.repaintEverything();
+      
+    })
+  }
+
+  private getAttributesByConnection(connection: any) {
+    return this.getAttributesByType('PROCESS_PIPE')
+  }
+  private setAttributesByNodeId(nodeId: string, attributes: any) {
+
+    let nodes = this.state.nodes;
+
+    nodes.forEach((it: any, index: number) => {
+      if (it.name == nodeId) {
+        nodes[index] = Object.assign(nodes[index], attributes);
+      }
+    })
+
+    this.setState({
+      nodes: nodes
+    }, () => {
+      this.onChangeValue()
+    })
+  }
+  private getAttributesByNodeId(nodeId: string) {
+    let node = this.getNodeById(nodeId);
+    if (node) {
+      return this.getAttributesByType(node.type)
+    }
+  }
+  private hasSubprocess(id: string) {
+    let node = this.getNodeById(id) as any;
+    let processMap: any = this.processMap[node.type]
+
+
+    if (node) {
+      if (processMap.isSubprocess || node.children) {
+        return true;
+      }
+    }
+  }
+  private removePipeBySourceTarget(sourceId: string, targetId: string) {
+
+    let { pipes } = this.state;
+
+    pipes = pipes.filter((a: any) => !(a.source === sourceId && a.target === targetId))
+
+    this.setState({
+      pipes
+    }, () => {
+      this.onChangeValue();
+    });
+
+    this.instance.deleteConnection(this.connection);
+    this.connection = null;
+  }
+  private removeNodeById(id: string) {
+    let { nodes, pipes } = this.state;
+
+    nodes = nodes.filter((a: any) => a.name != id);
+    pipes = pipes.filter((a: any) => a.source != id && a.target != id);
+
+
+    this.setState({
+      nodes,
+      pipes
+    }, () => {
+
+      this.onChangeValue();
+    })
+
+    this.instance.deleteConnectionsForElement(this.nodeDomMap[id])
+  }
+  private copyNodeById(id: string) {
+    let node: any = utils.copy(this.getNodeById(id));
+    if (node) {
+      node.name = utils.uniq();
+      //位移
+      if (node.ui) {
+        node.ui.x += 40;
+        node.ui.y += 40;
+      }
+    }
+    return node;
+  }
+  private showPropertyPane(type?: string) {
+    let currentAttributes: any;
+    let propertyType = type || this.state.contextMenuType;
+
+    // 管道点击
+    if (propertyType == 'pipe') {
+      currentAttributes = this.getAttributesByConnection(this.connection);
+      this.setCurrentValue(true)
+    } else {
+      if (propertyType == 'node' || propertyType == 'children') {
+        currentAttributes = this.getAttributesByNodeId(this.currentNodeId)
+        this.setCurrentValue()
+      }
+
+    }
+
+    this.setState({
+      currentAttributes,
+      propertyType
+    })
+  }
+  private addPipe(pipe: any) {
+    let { pipes } = this.state;
+    let id: string = this.getPipeId(pipe)//[pipe.source, pipe.target].join('_');
+
+    if (!this.connectCache[id]) {
+      //this.connectCache[id] = true;
+      pipes.push(pipe);
+
+      this.setState({
+        pipes: pipes
+      }, () => {
+        this.onChangeValue();
+        this.resetPipes();
+      })
+    }
+  }
+  private getPipeId(pipe:any) {
+    return [pipe.source, pipe.target].join('_')
+  }
+  private resetPipes() {
+    this.state.pipes.forEach((it) => {
+      let id: string = this.getPipeId(it);//[it.source, it.target].join('_');
+      
+      if (!this.connectCache[id]) {
+       let divdom: any = document.createElement('div');
+       this.instance.connect({ 
+          id: id, 
+          source: it.source, 
+          target: it.target, 
+          endpoint: 'Dot',
+          overlays: [
+            ['Custom', {
+              create: (component: any) => {
+               
+                divdom.className ='daigram-connector-label'
+                divdom.innerHTML =  it.props && it.props.description ? it.props.description : '' ;
+                return divdom;
+              },
+              location: 0.5
+            }]
+          ]
+        });
+        
+        this.connectCache[id] = divdom;
+      }
+    });
+  }
+  private addNode(node: any) {
+    let { nodes } = this.state;
+    let newNode = utils.copy(node)
+    newNode.name = utils.uniq();
+    nodes.push(newNode);
+
+    this.setState({
+      nodes: nodes
+    }, () => {
+      this.initNode(newNode.name, this.nodeDomMap[newNode.name])
+      this.onChangeValue();
+    })
+  }
+  private initNode(prop: string, node: any) {
+    this.instance.addEndpoint(node, {
+      uuid: prop,
+      anchor: ["Top", 'Right', 'Left', 'Bottom'],
+      maxConnections: -1
+    });
+    this.instance.makeSource(node, {
+      filter: '.design-diagram-port',
+      filterExclude: false,
+      maxConnections: -1,
+      endpoint: ["Dot", { radius: 0, cssClass: "small-blue" }]
+    });
+    this.instance.makeTarget(node, {
+      dropOptions: { hoverClass: "hover" },
+      anchor: ["Top", 'Right', 'Left', 'Bottom'],
+      endpoint: ["Dot", { radius: 0, cssClass: "large-green" }]
+    });
+
+    this.instance.draggable(node, {
+      beforeStart: (e: any) => {
+        let event = e.e;
+        this.moveBeforePageXY = {
+          pageX: event.pageX,
+          pageY: event.pageY
+        }
+      },
+      stop: (e: any) => {
+        let dragId = e.el.id;
+        let finalPos = e.finalPos;
+        let event = e.e;
+        this.movePageXY = {
+          pageX: event.pageX,
+          pageY: event.pageY
+        }
+        let ui = {
+          x: finalPos[0],
+          y: finalPos[1]
+        }
+
+        let attribute = {
+          ui: ui
+        }
+
+        this.setAttributesByNodeId(dragId, attribute)
+      }
+    })
+  }
+  private setCurrentValue(isConnection?: any) {
+
+    // 连线
+    if (isConnection) {
+
+      this.currentValue = this.getPipeBySourceTarget(this.connection.sourceId, this.connection.targetId);
+    } else {
+      this.currentValue = this.getNodeById(this.currentId);
+    }
+
+    this.setState({
+      currentValue: this.currentValue
+    })
+  }
+  private stopEvent(originalEvent: any) {
+    originalEvent.preventDefault();
+    originalEvent.stopPropagation();
+  }
+  private onChangeValue(noPushHistory?: boolean) {
+    let commit: any = {
+      pipes: this.state.pipes,
+      nodes: this.state.nodes
+    };
+    this.props.onChangeValue && this.props.onChangeValue(commit);
+
+    if (!noPushHistory) {
+      this.history.push(commit);
+    }
+  }
+  private onContextMenu(originalEvent: any, connection?: any, node?: any) {
+
+    this.toggleType(false, node);
+
+    // 连线右键
+    if (connection) {
+      this.connection = connection;
+      this.currentId = [connection.sourceId, connection.targetId].join('')
+      this.toggleType(true, node);
+      this.showPropertyPane('pipe');
+    } else {
+      //this.toggleType();
+      this.currentNodeId = node.id;
+      this.currentId = node.id;
+      //this.setCurrentValue();
+      this.showPropertyPane('node');
+    }
+
+    this.setState({
+      visibleContextMenu: true,
+      contextMenuType: node ? this.hasSubprocess(node.id) ? 'children' : 'node' : 'pipe',
+      pageX: originalEvent.pageX,
+      pageY: originalEvent.pageY,
+    })
+
+    this.stopEvent(originalEvent)
+  }
+  private resetMoveInfo() {
+    this.movePageXY = this.moveBeforePageXY = null;
+  }
+  private hasNodeMoved() {
+    if (this.movePageXY) {
+      return Math.abs(this.moveBeforePageXY.pageX - this.movePageXY.pageX) > 5
+        || Math.abs(this.moveBeforePageXY.pageY - this.movePageXY.pageY) > 5
+    }
+  }
+  private onNodeClick(originalEvent: any, connection?: any, node?: any) {
+    // 连线点击
+    if (connection) {
+      this.toggleType(false, node);
+      this.connection = connection;
+      this.currentId = [connection.sourceId, connection.targetId].join('');
+
+      this.toggleType(true, node);
+      this.showPropertyPane('pipe');
+    } else {
+
+      if (this.hasNodeMoved()) {
+        this.resetMoveInfo();
+        return this.stopEvent(originalEvent);;
+      }
+      this.resetMoveInfo();
+      this.toggleType(false, node);
+      this.currentNodeId = node.id;
+      this.currentId = node.id;
+      this.showPropertyPane('node');
+    }
+
+    //this.setCurrentValue(connection)
+    //this.hideContextMenu();
+    this.stopEvent(originalEvent);
+  }
+
+  private onContextMenuClick(event: any) {
+
+    switch (event.key) {
+      case 'subprocess':
+        let node: any = this.getNodeById(this.currentNodeId);
+        let children: any = node.children || [];
+        
+        if (node && children) {
+          this.showPropertyPane('null')
+          this.setState({
+            subProcess: children,
+            parentProcessName: node.props && node.props.description || node.description
+          })
+        }
+        break;
+      case 'copy':
+      case 'cut':
+        this.setState({
+          clipboardData: this.copyNodeById(this.currentNodeId)
+        });
+
+        if (event.key == 'cut') {
+          this.removeNodeById(this.currentNodeId);
+        }
+        break;
+      case 'remove':
+        if (this.state.contextMenuType == 'pipe') {
+          if (this.connection) {
+            this.removePipeBySourceTarget(this.connection.sourceId, this.connection.targetId);
+          }
+
+        } else {
+          this.removeNodeById(this.currentNodeId);
+        }
+        this.showPropertyPane('empty');
+        break;
+      // 编辑属性
+      case 'props':
+        this.showPropertyPane(this.state.contextMenuType);
+        break;
+      case 'paste':
+        this.addNode(this.state.clipboardData);
+        break;
+    }
+
+    this.setState({
+      visibleContextMenu: false
+    })
+  }
+  private onCanvasClick() {
+
+    this.hideContextMenu();
+    this.toggleType(false, null);
+    this.showPropertyPane('empty');
+  }
+  private hideContextMenu() {
+    this.setState({
+      visibleContextMenu: false
+    });
+  }
+
+  /**
+   * 节点双击，打开子流程
+   * @param e 
+   * @param node 
+   */
+  private onNodeDoubleClick = (e: any, node: any) => {
+
+    this.currentNodeId = node.id;
+    this.currentId = node.id;
+
+    this.onContextMenuClick({
+      key: 'subprocess'
+    })
+  }
+  private onCanvasContextMenu(originalEvent: any) {
+    if (this.state.clipboardData) {
+      this.setState({
+        visibleContextMenu: true,
+        contextMenuType: 'paste',
+
+        pageX: originalEvent.pageX,
+        pageY: originalEvent.pageY,
+      })
+    } else {
+      this.setState({
+        visibleContextMenu: false
+      })
+    }
+    this.stopEvent(originalEvent);
+  }
+  private renderChildren() {
+    let { nodes, pipes } = this.state;
+    return nodes.map(it => {
+      let ui: IProcessNodePosition = it.ui || { x: 0, y: 0 };
+      
+      return (
+        <Node
+          description={it.props.description || it.description }
+          key={it.name}
+          node={it}
+          onClick={(e: any, node: any) => { this.onNodeClick(e, null, node) }}
+          onDoubleClick={this.onNodeDoubleClick}
+          onContextMenu={(e: any, node: any) => { this.onContextMenu(e, null, node) }}
+          name={it.name}
+          style={
+            {
+              left: ui.x,
+              top: ui.y
+            }
+          }
+          processMap={this.processMap[it.type] || {}}
+          title="测试"
+          ref={dom => this.nodeDomMap[it.name] = ReactDOM.findDOMNode(dom)}
+        />)
+    })
+  }
+  private renderPropertyPane() {
+    let attributeNode: any = null;
+    let { current } = this.props.panelAttributes;
+
+    if (this.state.propertyType != 'null') {
+      if (this.state.currentAttributes) {
+
+        attributeNode = <PropertyPane
+          key={this.currentId}
+          value={this.state.currentValue}
+          onChangeValue={(val: any) => {
+
+            this.updateAttributes(val);
+          }}
+          attributes={this.state.currentAttributes}
+        />
+      } else {
+        attributeNode = <PropertyPane.Empty />
+      }
+    }
+
+    if (current) {
+      return ReactDOM.createPortal(attributeNode, current)
+    }
+  }
+  private renderToolbarPane() {
+
+    if (this.props.panelToolbar) {
+      let { current } = this.props.panelToolbar;
+
+      if (current) {
+        return ReactDOM.createPortal(<Toolbar
+          diagram={this}
+          zoom={this.state.zoom}
+          historyCurrentIndex={this.state.historyCurrentIndex}
+          historyTotal={this.state.historyTotal} />, current)
+      }
+    }
+  }
+  public render() {
+    return (
+      <div className="diagram-canvas-wrapper" draggable="true">
+        <div
+          style={this.state.canvasPosition}
+          onClick={e => this.onCanvasClick()}
+          onContextMenu={e => this.onCanvasContextMenu(e)}
+          className={classnames("diagram-canvas", {
+            "diagram-canvas-hidden": this.state.subProcess
+          })}
+          ref={r => this.canvas = ReactDOM.findDOMNode(r)}
+        >
+          {this.renderChildren()}
+        </div>
+        {/** 子流程 */}
+        {this.state.subProcess && <div className="diagram-canvas-wrapper">
+          <div className="diagram-subprocess-tool">
+            <Radio.Group
+              size="small"
+              value="-1"
+              onChange={(e) => {
+                this.setState({ subProcess: null });
+                this.showPropertyPane('empty');
+              }}
+            >
+              <Radio.Button value="1"><RotateLeftOutlined/>{this.state.parentProcessName}</Radio.Button>
+            </Radio.Group>
+          </div>
+          <Diagram
+            panelAttributes={this.props.panelAttributes}
+            panelNode={this.props.panelNode}
+            panelToolbar={this.props.panelToolbar}
+
+            process={this.state.subProcess}
+            processMap={this.props.processMap}
+            onChangeValue={(value: any) => {
+              this.setAttributesByNodeId(this.currentNodeId, {
+                children: value
+              })
+            }}
+          ></Diagram>
+        </div>}
+        {/** 属性配置 */}
+        {this.renderPropertyPane()}
+        {/**工具条配置 */}
+        {this.renderToolbarPane()}
+
+        {/** 菜单 */}
+        <ContextMenu
+          type={this.state.contextMenuType}
+          visible={this.state.visibleContextMenu}
+          pageX={this.state.pageX}
+          pageY={this.state.pageY}
+          onContextMenu={(e: any) => this.onContextMenuClick(e)}
+        />
+      </div>
+
+    )
+  }
+}
