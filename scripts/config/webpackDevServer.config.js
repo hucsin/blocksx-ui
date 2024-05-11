@@ -106,12 +106,12 @@ module.exports = function (proxy, allowedHost) {
     proxy: {
       ...proxy,
       '/api': {
-        target: 'http://127.0.0.1:7001',
+        target: 'http://127.0.0.1:9000',
         changeOrigin: true
       },
 
       '/eos': {
-        target: 'http://127.0.0.1:7001',
+        target: 'http://127.0.0.1:9000',
         changeOrigin: true
       }
     },

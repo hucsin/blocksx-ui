@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { Button } from 'antd';
 import Icon from './components/Former/types/icon';
-import SqlParser from './demo/Sqlparser'
+//import SqlParser from './demo/Sqlparser'
 import Editor from './components/EditorCore/index';
 
 import LayoutLoginDemo from './demo/Login';
@@ -102,7 +102,7 @@ class DemoLayout extends React.Component {
         pageComponentMap={{
           PageOther: PageOther,
           PageNotFound: Text404,
-          Login: LayoutLoginDemo,
+          PageLogin: LayoutLoginDemo,
           WorkflowDetail: PageOther
         }}
       />
@@ -159,5 +159,5 @@ root.render(
   </div>
 )*/
 
-//root.render(<DemoLayout/>)
-root.render(<SqlParser/>)
+root.render(<DemoLayout/>)
+//root.render(<SqlParser/>)

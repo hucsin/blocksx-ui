@@ -1,7 +1,7 @@
 import React from 'react';
 import { Input,Space, Button } from 'antd';
-
-import { SQLParser, SelectStatementReader } from '../sqlparser/src/index'
+/*
+//import { SQLParser, SelectStatementReader } from '../sqlparser/src/index'
 export default class SqlParser extends React.Component<{},{value: string, number: string}> {
     public constructor(props: any) {
         super(props);
@@ -37,4 +37,4 @@ export default class SqlParser extends React.Component<{},{value: string, number
 
         )
     }
-}
+}*/
