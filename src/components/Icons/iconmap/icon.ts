@@ -24,6 +24,7 @@ export const map:any = {
         "SchemaDataFilled",
         "TableAddDataFilled",
         "DatasourceAddDataOutlined",
+        "DatasourceDefaultDataOutlined",
         "DatasourceMiniDataOutlined",
         "DatasourceSmallDataOutlined",
         "ModelDataOutlined",
@@ -51,12 +52,14 @@ export const map:any = {
         "AutoAlignUtilityOutlined",
         "AutoZoomUtilityOutlined",
         "ChargingHistoryUtilityOutlined",
+        "ConnectUtilityOutlined",
         "ControlUtilityOutlined",
         "DestroyUtilityOutlined",
         "DocumentUtilityOutlined",
         "FlowUtilityOutlined",
         "FunctionUtilityOutlined",
         "HistoryUtilityOutlined",
+        "HomeUtilityOutlined",
         "InboxUtilityOutlined",
         "IndexsUtilityOutlined",
         "KeyUtilityOutlined",
@@ -106,5 +109,8 @@ export const map:any = {
     "common": [
         "FolderCommonOutlined",
         "PageCommonOutlined"
+    ],
+    "thinkingutility": [
+        "ThinkingutilityOutlined"
     ]
 }
