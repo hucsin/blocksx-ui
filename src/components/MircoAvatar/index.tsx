@@ -66,17 +66,19 @@ export default class MircoAvatar extends React.Component<IMircoAvator> {
                 return <Avatar {...safePorps} onClick={this.onClick} size={this.props.size}   shape={this.props.shape} style={{backgroundColor:color, ...this.props.style}}  src={icon} />
             }
             let IconView: any = Icons[icon];
+            
             if (IconView) {
-                return <Avatar 
-                {...safePorps} 
-                onClick={this.onClick}
-                 shape={this.props.shape}
-                 
-                 size={this.props.size} style={{
-                    background:color, 
-                    fontColor: this.props.autoColor ? '#fff' : '',
-                    ...this.props.style
-                }} icon={<IconView/>} />
+                return (<Avatar 
+                    {...safePorps} 
+                    onClick={this.onClick}
+                    shape={this.props.shape}
+                    
+                    size={this.props.size} style={{
+                        background:color, 
+                        fontColor: this.props.autoColor ? '#fff' : '',
+                        ...this.props.style
+                    }} icon={<IconView/>} 
+                />)
             }
         }
         return <Avatar  onClick={this.onClick}/>

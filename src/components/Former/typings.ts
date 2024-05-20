@@ -85,7 +85,7 @@ import { ValidatorRule } from '@blocksx/validator';
  */
 
 export interface IFormerBase {
-    type: string, // 数据类型
+    type?: string, // 数据类型
     title?: string, // 数据项名称
     description?: string, // 数据项描述
     tooltip?: string,// 数据项 描述

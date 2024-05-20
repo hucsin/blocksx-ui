@@ -1,11 +1,14 @@
 import React from 'react';
 import classnames from 'classnames';
+import i18n from '@blocksx/i18n';
 import { RightOutlined } from '@ant-design/icons'
 import Former from '../Former';
 
 import { utils } from '@blocksx/core';
 import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExtendEnum';
 import TablerUtils from '../utils/tool';
+
+import {  upperFirst } from 'lodash'
 
 /*
  * @Author: your name
@@ -24,6 +27,7 @@ import TablerUtils from '../utils/tool';
 
 export interface IFormerType {
     children?: any;
+    pageType?: string;
     formerType: any;
     name?: string;
     column?: string;
@@ -31,7 +35,6 @@ export interface IFormerType {
     action?: any;
     fields?: any;
     value: any;
-    createText?: string;
 
     onChangeValue: Function;
     onClose: Function;
@@ -208,11 +211,11 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         } else {
             switch (this.state.action) {
                 case 'add': 
-                case 'Create':
-                    return this.props.createText;
+                case 'create':
+                    return i18n.t(['Create', 'the', 'new', this.props.pageType].join(' '));
                 default: 
                     let name: string = this.state.name || this.state.action ;
-                    return `${name} the records`
+                    return `${upperFirst(name)} the ${this.props.pageType}`
             }
         }
     }

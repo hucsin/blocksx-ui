@@ -1,5 +1,5 @@
 import React from 'react';
-import Tabler from '../../Tabler/index';
+import Tabler from '../../Tabler';
 import SmartRequst from '../../utils/SmartRequest'
 import CleanseSchema from '../core/CleanseSchema';
 
@@ -46,6 +46,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
             mode: props.mode
         }
 
+
         this.initTableProps();
 
         this.initRequset();
@@ -88,7 +89,6 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
         tableProps.rowOperate = CleanseSchema.getRowoperate(path, schema);
         tableProps.batchOpertate = CleanseSchema.getBatchoperate(schema);
         
-
         return tableProps;
     }
     private getRequestParams = ()=> {
@@ -100,20 +100,22 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
         }
     }
     public render() {
-        
+
+        let pageMeta: any = this.props.pageMeta || { title: '' }
+        console.log(pageMeta, 333111)
         return (
             <Tabler 
                 multilineEdit={false} 
                 {...this.state.tableProps}
                 reflush={this.state.reflush}
                 dataSource={this.ListRequest}
-                
+                pageType={pageMeta.title.toLowerCase()}
                 onEdit={this.UpdateRequest}
                 onRemove={this.DeleteRequest}
                 onAdd={this.CreateRequest}
                 onView={this.ViewRequest}
                 router={this.props.router}
-
+                
                 onGetRequestParams={this.getRequestParams}
                 
                 searchRef={this.props.searchRef}
@@ -125,7 +127,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                 onRowAction={(e, r, v)=>{
                     console.log(e,r,v, 333)
                 }}
-                
+                {...pageMeta.props}
             />
         )
     }

@@ -57,9 +57,13 @@ interface TablerState {
 
 
 interface TablerValueProps extends TablerProps {
+    pageType?: string;
+    avator?: string;
+
     selectedRowKeys?: any [];
     batchOpertate?: any[]
     mode?: string;
+
     onChangeValue?: Function;
 
     router?: routerParams;
@@ -73,8 +77,9 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
     static defaultProps = {
         type: 'table',
         searchSize: 'small',
-        createText: i18n.t('Create new records'),
+        //createText: i18n.t('Create new records'),
         rowKey: 'id',
+        pageType: 'records',
         formerType: 'drawer',
         rowSelection: false,
         pageNumber: 1,
@@ -387,8 +392,8 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 type: 'record.create',
                 icon: 'PlusCircleOutlined',
                 name: batchOpertateMap['record.create'] 
-                    ? batchOpertateMap['record.create'].name || this.props.createText 
-                    : this.props.createText
+                    ? batchOpertateMap['record.create'].name || this.getCreateText() 
+                    : this.getCreateText()
             })
         }
         
@@ -397,6 +402,9 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
         return batchAddList;
     }
 
+    private getCreateText() {
+        return i18n.t(['Create', 'the', 'new', this.props.pageType].join(' '))
+    }
     private getRowAction(rowData: any) {
         let { rowOperate = [] } = this.props;
         let actionList: RowOperate[] = DEFAULT_COLUMNS_ACTION.slice(0, DEFAULT_COLUMNS_ACTION.length);
@@ -763,7 +771,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                      column={this.props.formerColumn}
                      formerSchema={props.formerSchema}
                      action={this.state.formerAction}
-                     createText={this.props.createText}
+                     pageType={this.props.pageType}
                      fields={props.fields}
                      value={this.state.currentRowData}
                      viewer={this.state.formerAction == 'view'}

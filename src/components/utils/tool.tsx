@@ -142,9 +142,10 @@ export default class TablerUtils {
         let fieldsObject: any = {};
         
         fields.forEach((it: any, index: number) => {
+            let fieldKey: string = it.key || it.fieldKey;
             
             if (it.column !== 'only') {
-                fieldsObject[it.key] = {
+                fieldsObject[fieldKey] = {
                     ...it,
                     type: it.type || 'string', // 统一当string处理
                     defaultValue: it.defaultValue,
@@ -155,7 +156,7 @@ export default class TablerUtils {
                     description: it.description,
                     'x-half-width': false,
                 
-                    'x-type-props': it.props,
+                    'x-type-props': Object.assign({},it.props, it.meta && it.meta.props),
                     'x-type': it.uiType || 'input',
                     'x-colspan': it.colspan,
                     

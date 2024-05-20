@@ -48,6 +48,7 @@ export interface TablerState {
 
 interface TablerListProps extends TablerProps {
     autoColor?: boolean;
+    avator?: string;
     grid?: any;
     layout?: 'horizontal' | 'card' | 'avatar' | 'connections' | 'info';
     maxIcon?: number;
@@ -290,31 +291,53 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
         return null
     }
+    private renderAvatorAuto(avatorPlace: any, rowData: any) {
+        let fieldKey: string = avatorPlace.fieldKey;
+        let dict: any = avatorPlace.dict || [];
+        let data: any = rowData[fieldKey];
+        let findIcon = dict.find(it => it.value == data)
+        
+        if (findIcon && findIcon.icon) {
+            return (<span className='ui-mircotable-avatar'>
+                <FormerTypes.avatar type={this.getAvatarShape()} autoColor={!!this.props.autoColor} color={findIcon.color} icon={findIcon.icon}  size={this.getAvatarSize()}  />
+            </span>)
+        }
+    }
     private renderAvatar(rowData: any, rowIndex: any, avatars?: any) {
+
+        let avatarPlace: any;
 
         if (this.props.renderRowAvatar) {
             return this.props.renderRowAvatar(rowData, rowIndex);
         }
 
-        if (avatars = this.getAvatarsByRowData(rowData, rowIndex, this.getFieldByPlace('avatar'))) {
+        if (avatars = this.getAvatarsByRowData(rowData, rowIndex, avatarPlace = this.getFieldByPlace('avatar'))) {
+          console.log(this.props.avator, 2222)
+            if (this.props.avator == 'auto') {
 
-            if (this.props.layout == 'connections') {
+                console.log(avatarPlace, rowData)
+
+                return this.renderAvatorAuto(avatarPlace, rowData);
+
+            } else {
+                if (this.props.layout == 'connections') {
+                    return (
+                        <span className='ui-mircotable-avatar-con'>
+                            <FormerTypes.avatar key={1} type="string" viewer={true} color='#4338CA' icon='Bytehubs' size={40} />
+                            <Icons.ConnectionsDirectivityOutlined key={2} />
+                            <FormerTypes.avatar key={3} type="string" {...avatars[0]} size={40} />
+                        </span>
+                    )
+                }
+
                 return (
-                    <span className='ui-mircotable-avatar-con'>
-                        <FormerTypes.avatar key={1} type="string" viewer={true} color='#4338CA' icon='Bytehubs' size={40} />
-                        <Icons.ConnectionsDirectivityOutlined key={2} />
-                        <FormerTypes.avatar key={3} type="string" {...avatars[0]} size={40} />
+                    <span className='ui-mircotable-avatar'>
+                        {avatars.map((avatar, index) => {
+                            return <FormerTypes.avatar shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} key={index} {...avatar} size={this.getAvatarSize()} style={{ zIndex: avatars.length - index }} />
+                        })}
                     </span>
                 )
             }
-
-            return (
-                <span className='ui-mircotable-avatar'>
-                    {avatars.map((avatar, index) => {
-                        return <FormerTypes.avatar shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} key={index} {...avatar} size={this.getAvatarSize()} style={{ zIndex: avatars.length - index }} />
-                    })}
-                </span>
-            )
         }
 
         return (

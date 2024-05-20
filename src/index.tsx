@@ -5,6 +5,8 @@ import { Button } from 'antd';
 import Icon from './components/Former/types/icon';
 //import SqlParser from './demo/Sqlparser'
 import Editor from './components/EditorCore/index';
+//import CardList from './components/CardList/index';
+import Block from './components/Block/index';
 
 import LayoutLoginDemo from './demo/Login';
 import RouterLayout from './components/RouterLayout';
@@ -72,7 +74,132 @@ class PageOther extends React.Component<{},{open: boolean}> {
   }
 }
 
-
+class PageHome extends React.Component{
+  public render() {
+    return (
+      <div style={{
+        padding: '5% 10%',
+        height: '100%',
+        boxSizing: 'border-box',
+        overflow: 'auto'
+      }}>
+        
+        <Block
+          dataSource={[
+            {
+              title: "Harness the power of a developer1",
+              type: 'card',
+              colspan: 3,
+              layout: 'center',
+              theme: 'section',
+              description: 'Design and build complex workflows, without the complexity of coding.',
+              items: [
+                {
+                  title: 'title',
+                  avatar: 'InboxUtilityOutlined',
+                  description: 'Leveraging Facebook Lead Ads data to maximize campaign performance.'
+                },
+                {
+                  title: 'ccn',
+                  avatar: 'SlidersFilled',
+                  description: 'Leveraging Facebook Lead Ads data to maximize campaign performance.'
+                },
+                {
+                  title: '333',
+                  avatar: 'HomeUtilityOutlined',
+                  description: 'Leveraging Facebook Lead Ads data to maximize campaign performance.'
+                },
+                {
+                  title: 'title',
+                  avatar: 'InboxUtilityOutlined',
+                  description: 'Leveraging Facebook Lead Ads data to maximize campaign performance.'
+                },
+                {
+                  title: 'ccn',
+                  avatar: 'SlidersFilled',
+                  description: 'Leveraging Facebook Lead Ads data to maximize campaign performance.'
+                },
+                {
+                  title: '333',
+                  avatar: 'HomeUtilityOutlined',
+                  description: 'Leveraging Facebook Lead Ads data to maximize campaign performance.'
+                }
+              ]
+            },
+            {
+              title: "Harness the power of a developer2",
+              type: 'card',
+              colspan: 3,
+              description: 'Design and build complex workflows, without.',
+              items: [
+                {
+                  title: 'title',
+                  type: 'markdown',
+                  description: 'Leveraging Facebook Lead Ads.'
+                },
+                {
+                  title: 'ccn',
+                  type: 'markdown',
+                  description: 'Leveraging Facebook Lead Ads.'
+                },
+                {
+                  title: '333',
+                  type: 'markdown',
+                  description: 'Leveraging Ads performance.'
+                }
+              ]
+            },
+            {
+              title: "Harness the power of a developer3",
+              type: 'card',
+              colspan: 2,
+              description: 'Design and build complex workflows, without the complexity of coding.',
+              items: [
+                {
+                  title: 'Facebook Lead Ads x Make',
+                  image: 'https://media.candulabs.com/1908/fbla-webinar.png',
+                  description: 'Leveraging Facebook Lead Ads data to maximize campaign performance.'
+                },
+                {
+                  title: 'Facebook Lead Ads x Make',
+                  image: 'https://media.candulabs.com/1908/fbla-webinar.png',
+                  description: 'Leveraging Facebook Lead Ads data to maximize campaign performance.'
+                },
+                {
+                  title: 'Facebook Lead Ads x Make',
+                  image: 'https://media.candulabs.com/1908/fbla-webinar.png',
+                  description: 'Leveraging Facebook Lead Ads data to maximize campaign performance.'
+                },
+                {
+                  title: 'Facebook Lead Ads x Make',
+                  image: 'https://media.candulabs.com/1908/fbla-webinar.png',
+                  description: 'Leveraging Facebook Lead Ads data to maximize campaign performance.'
+                },
+                {
+                  title: 'Facebook Lead Ads x Make',
+                  image: 'https://media.candulabs.com/1908/fbla-webinar.png',
+                  description: 'Leveraging Facebook Lead Ads data to maximize campaign performance.'
+                },
+                {
+                  title: 'Facebook Lead Ads x Make',
+                  image: 'https://media.candulabs.com/1908/fbla-webinar.png',
+                  description: 'Leveraging Facebook Lead Ads data to maximize campaign performance.'
+                }
+              ]
+            },
+            {
+              title: "Harness the power of a developer4",
+              type: 'outline',
+              colspan: 2,
+              description: 'Design and build complex workflows, without the complexity of coding.Design and build complex workflows, without the complexity of coding.Design and build complex workflows, without the complexity of coding.',
+              icon: 'HelpUtilityOutlined'
+            }
+          ]}
+        />
+      </div>
+    )
+  }
+}
 
 class TextOther extends React.Component<{text: string}> {
   public render() {
@@ -103,7 +230,8 @@ class DemoLayout extends React.Component {
           PageOther: PageOther,
           PageNotFound: Text404,
           PageLogin: LayoutLoginDemo,
-          WorkflowDetail: PageOther
+          WorkflowDetail: PageOther,
+          PageHome: PageHome
         }}
       />
     )
