@@ -217,6 +217,10 @@
         >.anticon {
             font-size: 16px;
         }
+
+        button:first-child{
+            vertical-align: bottom;;   
+        }
         >span,
         >button,
         > ul,
@@ -224,7 +228,7 @@
             display: inline-block;
             width: auto;   
             margin-left: 16px;
-            vertical-align: middle;
+            vertical-align: bottom;
         }
     }
     button {

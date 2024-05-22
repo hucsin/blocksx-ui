@@ -1,8 +1,7 @@
 
 export interface BlockTag {
     icon?: string;
-    value?: string;
-    label: string;
+    text: string;
 
     link?: string;
 }
@@ -14,6 +13,15 @@ export interface BlockBehavior {
     content: string | Function;
     confirm?: string;
     href?: string;
+    params?: any;
+}
+
+export interface BlockAction {
+    text: string;
+    icon?: string;
+    size?: 'large' | 'small' | 'default',
+    type?: 'primary' | 'default' | 'link' | 'dashed' | 'text';
+    action: string;
     params?: any;
 }
 
@@ -39,7 +47,7 @@ export interface BlockItemBase {
     image?: BlockValue; // 主图
     video?: BlockValue; // 视频
 
-
+    actions?: BlockAction[];
     tags?: BlockTag[];
     link?: [string, string]; // [redmine me , http://www.baidu.com/]
 }
@@ -49,5 +57,6 @@ export interface BlockItem extends BlockItemBase {
     size?: 'large' | "middle" | "small",
     colspan?: number;
     layout?: "left" | "center",
+    events?: any;
     items?: BlockItemBase[];
 }

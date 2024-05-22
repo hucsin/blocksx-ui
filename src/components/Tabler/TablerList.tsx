@@ -2,13 +2,15 @@ import React from 'react';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { List, Skeleton, Empty, Divider, Button } from 'antd';
+
+import { utils } from '@blocksx/core';
 import { consume } from '../utils/dom';
 import * as FormerTypes from '../Former/types';
+import Block from '../Block';
 
-import { TablerProps, SearcherWhereKey, TablerField } from './typings';
+import { TablerProps} from './typings';
 import * as Icons from '../Icons';
 import TableUtils from '../utils/tool';
-import { utils } from '@blocksx/core';
 import i18n from '@blocksx/i18n';
 import classnames from 'classnames';
 
@@ -49,11 +51,13 @@ export interface TablerState {
 interface TablerListProps extends TablerProps {
     autoColor?: boolean;
     avator?: string;
+    pageMeta?: any;
     grid?: any;
     layout?: 'horizontal' | 'card' | 'avatar' | 'connections' | 'info';
     maxIcon?: number;
     minIcon?: number;
     classify?: 'mini' | 'default';
+    onGetRequestParams?: Function;
     avatarSize?: number;
     onAddNew?: Function;
     renderRow?: Function;
@@ -191,9 +195,6 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     }
 
 
-    private onClickItem() {
-
-    }
 
     private getFieldByPlace(place: string = 'avatar') {
         let fields: any = this.props.fields;
@@ -312,10 +313,8 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         }
 
         if (avatars = this.getAvatarsByRowData(rowData, rowIndex, avatarPlace = this.getFieldByPlace('avatar'))) {
-          console.log(this.props.avator, 2222)
             if (this.props.avator == 'auto') {
 
-                console.log(avatarPlace, rowData)
 
                 return this.renderAvatorAuto(avatarPlace, rowData);
 
@@ -453,15 +452,38 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
         return this.state.loading
             ? this.renderLoadingSkeletion()
-            : <Empty 
+            : this.renderEmpty();
+   
+    }
+    public renderEmpty() {
+        let { pageMeta, onGetRequestParams } = this.props;
+
+        if (pageMeta && pageMeta.block) {
+            let params: any = Object.assign(onGetRequestParams && onGetRequestParams() || {}, {name: 'empty'})
+            let block: any = pageMeta.block.filter(it => TableUtils.isMatchValue(it.filter, params))
+         
+            if (block.length) {
+                return (
+                   <div style={{marginTop: 32}}>
+                        <Block dataSource={block} size="default" events={{
+                            create: (params: any) => {
+                                this.props.onAddNew && this.props.onAddNew(params) 
+                            }
+                        }} />
+                    </div>
+                )
+            }
+        }
+        return (
+            <Empty 
                 description={<>
                     <span>NO DATA</span>{this.props.onAddNew && 
                     <Button onClick={() => { this.props.onAddNew && this.props.onAddNew() }} type="link">CREATE NEW</Button>}
                     </>
                 } 
-             />;
-   
-    } 
+             />
+        )
+    }
 
     public render() {
         let layout: string = this.getLayout();

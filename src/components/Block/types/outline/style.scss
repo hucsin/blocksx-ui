@@ -1,7 +1,24 @@
 .ui-block-item-type-outline {
     text-align: center;
-    padding: 32px;
+    padding: 48px;
     background:#fff;
-    border-radius: 16px;;
-    
+    border-radius: 16px;
+
+    .block-outline-subtitle {
+        font-size:16px;
+        opacity: .8;
+    }
+    .ant-btn {
+        border-radius: 32px;
+    }
+    .block-outline-tags {
+        padding-top: 32px;
+        .ant-tag {
+            border-radius: 20px;
+            padding: 2px 6px;
+            span:last-child {
+                display:none;
+            }
+        }
+    }
 }

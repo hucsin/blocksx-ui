@@ -10,7 +10,7 @@ import "./style.scss";
 interface IFormerMap extends IFormerArray {
     value: any,
     onChangeValue: Function;
-
+    'x-type-props'?: any;
     children?:any;
 }
 
@@ -20,7 +20,7 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
 
     public constructor(props: IFormerMap) {
         super(props);
-
+        console.log(props, 33333)
         let value = props.value || {};
         
         this.state = {
@@ -49,6 +49,7 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
     }
     private getValueByOriginValue(originValue: any[]) {
         
+
         let value = {};
 
         originValue.forEach((it:any) => {

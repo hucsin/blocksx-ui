@@ -190,9 +190,28 @@ class PageHome extends React.Component{
             {
               title: "Harness the power of a developer4",
               type: 'outline',
-              colspan: 2,
               description: 'Design and build complex workflows, without the complexity of coding.Design and build complex workflows, without the complexity of coding.Design and build complex workflows, without the complexity of coding.',
-              icon: 'HelpUtilityOutlined'
+              icon: ['PricingUtilityOutlined'],
+              actions: [
+                {
+                  text: 'Harness',icon: 'HelpUtilityOutlined',
+                  action: 'ac'
+                },
+                {
+                  text: 'Harness',icon: 'HelpUtilityOutlined',
+                  action: 'ac'
+                }
+              ],
+              tags: [
+                {
+                  text: 'x',
+                  icon: 'HelpUtilityOutlined'
+                },
+                {
+                  text: 'x',
+                  icon: 'HelpUtilityOutlined'
+                }
+              ]
             }
           ]}
         />

@@ -128,7 +128,6 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
     public constructor(props: SmartPageProps) {
         super(props)
-
         this.state = {
             loading: false,
             open: props.open,
@@ -348,12 +347,14 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         })
     }
     private getQueryParams = ()=> {
-        let { folderQuery, classifyQuery } = this.state;
+        let { folderQuery, classifyQuery, defaultClassify } = this.state;
+        let classifyName: string = classifyQuery || defaultClassify;
         let params: any = {};
+
         
-        if (this.state.classifyField && classifyQuery) {
-            if (classifyQuery !== 'all') {
-                params[this.state.classifyField.key] = classifyQuery
+        if (this.state.classifyField && classifyName) {
+            if (classifyName !== 'all') {
+                params[this.state.classifyField.key] = classifyName
             }
         }
         if (this.state.folderField && folderQuery) {
@@ -381,6 +382,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 schema = {this.state.schema}
                 value = {this.state.value}
                 pageMeta = {this.state.pageMeta}
+            
                 router={this.props.router}
                 title={this.state.title}
                 triggerMap = {this.props.triggerMap}

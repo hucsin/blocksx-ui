@@ -16,6 +16,7 @@ import { DownOutlined, RightOutlined, ExclamationCircleOutlined } from '@ant-des
 
 
 import { IFormerObjectItem } from '../../typings';
+import { match } from 'assert';
 
 interface TFormerObjectItem {
     switch: boolean;
@@ -26,6 +27,7 @@ interface TFormerObjectItem {
 interface IFormerObjectItemS extends IFormerObjectItem {
     value: any;
     size: any;
+    dict?:any[];
     defaultValue?: any;
     onChangeValue: Function;
     'x-model-switch'?: boolean;
@@ -91,8 +93,24 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
             collapse: !this.state.collapse
         })
     }
+    private getDescriptionText() {
+        let { dict, description } = this.props;
+        let { value } = this.state;
+
+        if (dict) {
+            let matchDescription: any = dict.find(it => it.value == value);
+
+            if (matchDescription && matchDescription.description) {
+                return matchDescription.description
+            }
+        }
+
+        return description;
+    }
     public render() {
         
+        let descriptionText: any = this.getDescriptionText();
+
         return (
             <div 
                 className={classnames('former-object-item', {
@@ -122,7 +140,7 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
                     {this.props.oneOf ? <span className="former-object-label-menu">
                         {this.props.oneOf}
                     </span> : null}
-                    {utils.isValidValue(this.props['description']) && <span className='former-object-label-description'>{this.props['description']}</span>}
+                    {utils.isValidValue(descriptionText) && <span className='former-object-label-description'>{descriptionText}</span>}
                     
                 </div> : null }
                 {this.state.switch && <div className="former-object-item-content">{this.props.children}</div>}

@@ -12,42 +12,52 @@ export default class TablerUtils {
         'radio': 'xstring',
     }
 
+    public static isMatchValue(target: any, value: any) {
+        let keys: any = Object.keys(target);
+
+        let match = keys.filter(key => {
+            // console.log(key, value[key], target[key], 88777777)
+            return value[key] === target[key]
+        })
+        return (match.length == keys.length) && (keys.length === Object.keys(value).length);
+    }
+
     public static renderIconComponent(field: any) {
         if (field.icon && Icons[field.icon]) {
             let UIView: any = Icons[field.icon];
-            return <UIView key={field.key|| field.icon}/>
+            return <UIView key={field.key || field.icon} />
         }
     }
-    public static renderComponentByField(field: any, props: any,  defaultComponent?: any) {
+    public static renderComponentByField(field: any, props: any, defaultComponent?: any) {
         // 当当前字段是存在action的时候
         //if (field.action) {
         let uiType: string = field.uiType || field.type;
         let UiView: any = FormerTypes[uiType];
 
         let record: any = props.recordValue || {};
-        let DisplayValue: any = record['DisplayValue_'+ field.key]
+        let DisplayValue: any = record['DisplayValue_' + field.key]
 
         if (DisplayValue) {
             props.value = DisplayValue
         }
-        
+
         if (utils.isFunction(defaultComponent)) {
             return defaultComponent(field)
         }
-        
+
         if (UiView) {
             if (utils.isFunction(field.motion)) {
-                
+
                 return (
                     <UiView key={field.key} size="default"  {...props} loading={true} onChangeValue={(v) => {
                         return field.motion({
-                            ... props.recordValue,
+                            ...props.recordValue,
                             [field.key]: v
                         })
                     }} />
                 )
             } else {
-                if (UiView= UiView.Viewer) {
+                if (UiView = UiView.Viewer) {
                     return (
                         <UiView key={field.key} {...props} />
                     )
@@ -66,15 +76,15 @@ export default class TablerUtils {
                 </Space>
             )
         } else {
-            return  defaultComponent? defaultComponent : <span key={233} className='ui-label-empty'>{'<null>'}</span>
+            return defaultComponent ? defaultComponent : <span key={233} className='ui-label-empty'>{'<null>'}</span>
         }
     }
-    
+
     public static renderValue(field: any, value: any) {
         // 判断是label对象
 
         if (utils.isArray(value)) {
-            return value.map((it:any, index:number) => {
+            return value.map((it: any, index: number) => {
                 return <Tag key={index}>{this.renderValue(field, it)}</Tag>
             })
         }
@@ -102,7 +112,7 @@ export default class TablerUtils {
             required: field.isRequired
         }
     }
-    
+
 
     private static getDefaultPropsByItem(it: any) {
         let defaultProps: any = {};
@@ -119,9 +129,9 @@ export default class TablerUtils {
     }
 
     public static getValidationValue(it: any) {
-        
+
         let valueType: string = this.valueTypeMap[it.uiType] || it.type || 'xstring';
-        
+
         if (it.validation) {
             return {
                 type: it.validation.type || valueType,
@@ -140,10 +150,10 @@ export default class TablerUtils {
 
     public static getDefaultSchemaProperties(fields?: any) {
         let fieldsObject: any = {};
-        
+
         fields.forEach((it: any, index: number) => {
             let fieldKey: string = it.key || it.fieldKey;
-            
+
             if (it.column !== 'only') {
                 fieldsObject[fieldKey] = {
                     ...it,
@@ -155,11 +165,11 @@ export default class TablerUtils {
                     'x-classify': it.group,
                     description: it.description,
                     'x-half-width': false,
-                
-                    'x-type-props': Object.assign({},it.props, it.meta && it.meta.props),
+
+                    'x-type-props': Object.assign({}, it.props, it.meta && it.meta.props),
                     'x-type': it.uiType || 'input',
                     'x-colspan': it.colspan,
-                    
+
                     column: it.column,
                     'x-index': utils.isNullValue(it.index) ? index : it.index,
                     'x-control': it.control,

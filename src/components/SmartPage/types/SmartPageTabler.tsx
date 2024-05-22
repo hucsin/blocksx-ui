@@ -102,11 +102,12 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
     public render() {
 
         let pageMeta: any = this.props.pageMeta || { title: '' }
-        console.log(pageMeta, 333111)
+        
         return (
             <Tabler 
                 multilineEdit={false} 
                 {...this.state.tableProps}
+                pageMeta={pageMeta}
                 reflush={this.state.reflush}
                 dataSource={this.ListRequest}
                 pageType={pageMeta.title.toLowerCase()}

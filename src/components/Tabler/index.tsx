@@ -58,6 +58,7 @@ interface TablerState {
 
 interface TablerValueProps extends TablerProps {
     pageType?: string;
+    pageMeta?: any;
     avator?: string;
 
     selectedRowKeys?: any [];
@@ -97,7 +98,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
     private authFilter: AuthFilter
     public constructor(props: TablerValueProps) {
         super(props);
-        
+
         this.state = {
             pageSize: props.pageSize || 10,
             total: 0,
@@ -117,6 +118,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             smartPageData: {} ,
             mode: props.mode
         }
+        
         this.authFilter = new AuthFilter(this);
     }
 
@@ -516,7 +518,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             return this.resetDataSource()
         }
     }
-    private onBatchAddClick =(action: any)=> {
+    private onBatchAddClick =(action: any, params?: any)=> {
 
         if (utils.isPlainObject(action)) {
             // 添加
@@ -524,7 +526,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 this.setState({
                     formerAction: 'create',
                     formerName: 'Create',
-                    currentRowData: null
+                    currentRowData: params || null
                 })
             }
         } else {
@@ -789,17 +791,19 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 <View
                     key={'2view'}
                     {...this.props}
-
+                    pageMeta={this.props.pageMeta}
                     pageSize={this.state.pageSize}
                     pageNumber={this.state.pageNumber}
                     total={this.state.total}
                     reflush={this.state.childrenReflush}
                     loading={this.state.loading}
+
+                    onGetRequestParams={this.props.onGetRequestParams}
                     mode={this.state.mode}
                     getDataSource={() => this.state.dataSource}
                     onChangePage={(val: any ,isAppend?: boolean) => { this.setState(val, () => this.resetDataSource(null, isAppend)) }}
-                    onAddNew ={()=> {
-                        this.onBatchAddClick({type: 'record.create'})
+                    onAddNew ={(params: any)=> {
+                        this.onBatchAddClick({type: 'record.create'}, params)
                     }}
                     selectedRowKeys={this.state.value}
                     rowSelection={this.state.rowSelection}
