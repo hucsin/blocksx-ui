@@ -68,7 +68,7 @@ export default class SidebarMenu extends React.Component<SiderbarMenuProps, Side
         }
     }
 
-    public componentWillReceiveProps( props: any) {
+    public UNSAFE_componentWillReceiveProps( props: any) {
         
         if (props.currentKey != this.state.currentKey) {
             this.setState({

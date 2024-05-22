@@ -74,10 +74,13 @@ class RouterUtils {
     }
 } 
 export default function withRouter(WrapperComponent: any) {
-    const AcB: any = function (props) {
-
+    
+    let defaultProps: any = WrapperComponent.defaultProps;
+    const AcB: any = function (props = {}) {
+        
         const naviagte = useNavigate()
         const params = useParams();
+        let trueProps: any = Object.assign({}, props);
 
         
         const location = useLocation();
@@ -89,11 +92,21 @@ export default function withRouter(WrapperComponent: any) {
         routerData.routerKey = location.pathname + location.search;
         
 
-        return <WrapperComponent {...props} router={routerData} />
+        for (let pr in defaultProps) {
+            if (typeof trueProps[pr] == 'undefined') {
+                trueProps[pr] = defaultProps[pr];
+            }
+        }
+
+        return <WrapperComponent {...trueProps} router={routerData} />
     }
     //  hooks static 
+    
     for (let prop in WrapperComponent) {
-        AcB[prop] = WrapperComponent[prop]
+        
+        if (prop !== 'defaultProps') {
+            AcB[prop] = WrapperComponent[prop]
+        }
     }
 
     return AcB;

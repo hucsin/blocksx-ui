@@ -28,7 +28,8 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
             originValue: this.getKeyValueArray(value)
         };
     }
-    public UNSAFE_componentWillReceiveProps(newProps:any) {
+    public UNSAFE_componentWillUpdate(newProps:any) {
+        
         if (newProps.originValue !== this.state.originValue) {
             this.setState({
                 originValue: newProps.originValue || []
@@ -49,7 +50,6 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
     }
     private getValueByOriginValue(originValue: any[]) {
         
-
         let value = {};
 
         originValue.forEach((it:any) => {
@@ -89,6 +89,7 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
         this.props.onChangeValue(value, null, originValue);
     }
     private getChildren() {
+        
         return React.Children.map(this.props.children, (it:any, index:number) => {
             
             let props = Object.assign({}, it.props);
@@ -97,6 +98,9 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
 
             return React.cloneElement(it, Object.assign({
                 index: index,
+                key: index,
+                properties: this.props['properties'],
+                viewer: this.props.viewer,
                 onMapItemRemove: (index: number) => {
                     this.onMapItemRemove(index);
                 }
@@ -120,7 +124,7 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
                     
                 })
             }>
-                {hasChildren && <div className="former-map-add" onClick={this.onMapItemAdd}><PlusCircleOutlined/></div>}
+                {hasChildren && !this.props.viewer && <div className="former-map-add" onClick={this.onMapItemAdd}><PlusCircleOutlined/></div>}
                 {hasChildren ? this.getChildren(): this.getEmptyChildren()}
             </div>
         )

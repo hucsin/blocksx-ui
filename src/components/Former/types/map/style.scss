@@ -30,27 +30,33 @@
         translate: all .4s;
         background:#fff;
         border-bottom: 1px dashed #eee;
+
+        .number {
+            display:inline-block;
+            position: absolute;
+            left: 8px;
+            font-style: italic;
+            opacity: .3;
+            top: 50%;
+            height: 20px;
+            line-height: 20px;
+            margin-top: -10px;
+
+        }
         .former-map-item-right ,
         .former-map-item-left {
             width: 50%;
             box-sizing: border-box;
             position: relative;
             display:inline-block;
+            padding-left: 20px;
+            >span:first-child {
+                opacity: .5;
+            }
         }
         .former-map-item-left {
             padding-right: 4px;
-            &:after {
-                content: ":";
-                position: absolute;
-                width: 4px;
-                height: 20px;
-                line-height:20px;
-                top:50%;
-                margin-top: -10px;
-                right: -2px;
-                z-index: 1;
-                color:#d9d9d9;
-            }
+           
         }
         .former-map-item-right {
             padding-left: 4px;
@@ -67,13 +73,16 @@
         }
         .former-map-item-remove {
             position: absolute;
-            top: -10px;
-            right: -6px;
+            top: 50%;
+            height: 16px;
+            margin-top: -8px;
+            right: -10px;
             display:none;
-            translate: all .6;
+            
+            transition: all .2s;
             opacity: 0;
             span {
-                font-size:12px;
+                font-size:16px;
                 transition: all .4s;
                 cursor: pointer;
                 color:red;
@@ -96,6 +105,7 @@
         z-index: 1;
         border-left: 3px solid #d9d9d9;
         border-radius: 3px;
+        
         cursor: pointer;
         transition:all .2s;
         &:hover {
@@ -109,8 +119,8 @@
             position: absolute;
             top: 50%;
             margin-top:-6px;
-            left: -8px;
-            font-size:12px;
+            left: -10px;
+            font-size:16px;
             opacity: 0;
             transition: all .4s;
             background:#fff;

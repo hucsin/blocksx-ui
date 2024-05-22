@@ -723,7 +723,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
                 children.push(
                     <Child
-                        key={prop}
+                        key={index}
                         size={this.props.size}
                     >
                         <Leaf
