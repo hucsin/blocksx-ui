@@ -25,7 +25,7 @@ interface IFormerTable extends IFormerBase {
     onGetDependentParameters?: Function;
     destoryKey: string;
 
-
+    fields?: any[];
     // props['x-type-props']
     /*
         mode: 'local' | 'remote'
@@ -72,9 +72,11 @@ export default class FormerTable extends React.Component<IFormerTable, {
         onDelete: Function;
         onCreate: Function;
     }
+    private uniquedMap: Map<string, any>;
     public static defaultProps = {
         destoryKey: '$$DESTROY$$'
     }
+
     public constructor(props: IFormerTable) {
         super(props);
 
@@ -85,7 +87,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
         if (remoteMode) {
             this.requset = _props;
         }
-
+        
         this.state = {
             value: _value,
             columns: this.getColumns(),
@@ -105,6 +107,21 @@ export default class FormerTable extends React.Component<IFormerTable, {
             totalNumber: remoteMode ? 0 : _value.length
         };
 
+        this.uniquedMap = this.getUniquedMap()
+
+    }
+    private getUniquedMap() {
+        let map: Map<string, any> = new Map();
+        let {fields} = this.props;
+
+        if (fields) {
+            fields.forEach(it=> {
+                if (it.isUniqued) {
+                    map.set(it.fieldKey, it)
+                }
+            })
+        }
+        return map;
     }
     public componentDidMount() {
         this.resetDataSource(1);
@@ -246,8 +263,6 @@ export default class FormerTable extends React.Component<IFormerTable, {
             return this.canShow(it, columns)
         }).map((it: any, index: number) => {
 
-            let props = it['x-type-props'] || {}
-            
             return {
                 title: it.title,
                 key: it.key + index,
@@ -506,6 +521,20 @@ export default class FormerTable extends React.Component<IFormerTable, {
         }
         return `${actionType} the records`
     }
+    private validationValue(value: any) {
+        if (this.uniquedMap.size > 0) {
+            let validationError: string[] = [];
+            let valueList: any[] = this.state.value || [];
+
+            this.uniquedMap.forEach((item, key) => {
+                if (valueList.find(it => it[key] == value[key])) {
+                    validationError.push(item.fieldName)
+                }
+            })
+
+            return validationError.length ? `The value for field [${validationError.join(',')}] is duplicated.` : null;
+        }
+    }
     public render() {
         return (
             <div className="former-table" >
@@ -538,15 +567,22 @@ export default class FormerTable extends React.Component<IFormerTable, {
                     viewer={this.state.viewer}
                     column={'two'}
                     width={600}
-                    onSave={(value, former) => {
-                        this.setState({
-                            record: {
-                                ...value,
-                                __id: +new Date
-                            }
-                        }, () => {
-                            this.onSaveRow(former)
-                        })
+                    onSave={(value, former, message) => {
+                        
+                        if (message = this.validationValue(value)) {
+
+                            return Promise.reject(message);
+                            // todo
+                        } else {
+                            this.setState({
+                                record: {
+                                    ...value,
+                                    __id: +new Date
+                                }
+                            }, () => {
+                                this.onSaveRow(former)
+                            })
+                        }
                     }}
                     okText ="Save"
                     size='small'

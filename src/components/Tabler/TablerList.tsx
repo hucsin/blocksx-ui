@@ -80,7 +80,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         classify: 'default',
         quickValue: '',
         rowSelection: false,
-        
+        autoColor: true,
         grid: {
             column: 2,
             gutter: 24,

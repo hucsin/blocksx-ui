@@ -160,17 +160,18 @@ export default class TablerUtils {
                     type: it.type || 'string', // 统一当string处理
                     defaultValue: it.defaultValue,
                     title: it.name,
+                    description: it.description,
+                    column: it.column,
+
                     'x-modify': it.modify || it['x-modify'],
                     'x-group': it.group,
                     'x-classify': it.group,
-                    description: it.description,
                     'x-half-width': false,
 
                     'x-type-props': Object.assign({}, it.props, it.meta && it.meta.props),
                     'x-type': it.uiType || 'input',
                     'x-colspan': it.colspan,
 
-                    column: it.column,
                     'x-index': utils.isNullValue(it.index) ? index : it.index,
                     'x-control': it.control,
                     'x-validation': this.getValidationValue(it),

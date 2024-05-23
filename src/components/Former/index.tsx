@@ -79,6 +79,7 @@ interface FormerState {
     disabled?: boolean;
     loading?: boolean;
     fetching?: boolean;
+    globalMessage?: string;
 }
 /**
  * 三种模式
@@ -255,11 +256,12 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
                 this.setState({
                     value,
+                    globalMessage: '',
                     runtimeValue: value
                 });
 
                 this.emitter.emit('changeValue')
-
+                
                 //if (this.state.type === 'default') {
                
                 //}
@@ -325,7 +327,26 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
         // 在保存的时候直接提交值
         if (this.props.onSave) {
-            this.props.onSave(this.state.value, this);
+            let saveresult: any = this.props.onSave(this.state.value, this);
+
+            if (BUtils.isPromise(saveresult)) {
+                saveresult.then(()=> {
+                    this.setState({
+                        loading: false
+                    })
+                }, (err) => {
+                    this.setState({
+                        globalMessage: err,
+                        loading: false
+                    })
+
+                    setTimeout(() => {
+                        this.setState({
+                            globalMessage: ''
+                        })
+                    }, 4000)
+                })
+            }
         }
     }
     
@@ -546,7 +567,16 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         })}
 
                         footer={
-                            this.renderOperateButton()
+                            <Popover 
+                                open={!!this.state.globalMessage}
+                                content={<Space><ICONS.CloseCircleOutlined style={{color:'#ff4d4f'}}/>{this.state.globalMessage}</Space>}
+                                placement="topLeft"
+                                overlayStyle={{
+                                    maxWidth: 300
+                                }}
+                            >
+                                {this.renderOperateButton()}
+                            </Popover>
                         }
                     >
                         {this.renderExtraLogo()}

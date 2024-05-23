@@ -270,13 +270,18 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             //    }
            // })
         }
-        return this.props.onChangeValue(this.cleanLabelValueToValue(value)).then(() => {
-            this.setState({visible: false});
-            this.props.onClose();
-            former.setState({loading: false})
-        }).catch(e => {
-            former.setState({loading: false})
-        });
+
+        return new Promise((resolve, reject)=> {
+
+            this.props.onChangeValue(this.cleanLabelValueToValue(value)).then(() => {
+                this.setState({visible: false});
+                this.props.onClose();
+                resolve(true)
+            }).catch(e => {
+                reject(e)
+                //former.setState({loading: false})
+            });
+        })
     }
     public render() {
         

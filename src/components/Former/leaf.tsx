@@ -840,7 +840,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     // 判断是否允许修改
     private isAllowModify() {
         // ['x-modify’]J:'deny'
-        return !(utils.isValidValue(this.state.originValue) && this.leafProps['x-modify'] && ['deny', 'false'].indexOf(this.leafProps['x-modify']) > -1);
+        return !(utils.isValidValue(this.state.originValue) && this.leafProps['x-modify'] && ['deny', 'false', false].indexOf(this.leafProps['x-modify']) > -1);
     }
 
     private renderFeaturesNode(children: any = null, type?: string) {
