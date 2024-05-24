@@ -335,6 +335,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 disabled = {this.state.isStepMode && !this.state.setpOneValue}
                 value = {this.state.value}
                 viewer = {this.state.viewer}
+                canmodify = {this.state.value && this.state.value.id}
                 onGetDependentParameters = {(value: any)=> {
                     return this.state.value ? {
                         [RelationshipExtendEnum.MASTERID]: this.state.value.id

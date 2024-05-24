@@ -33,7 +33,7 @@ module.exports = function(api) {
        //'babel-plugin-transform-jsx-stylesheet',
         '@babel/plugin-syntax-dynamic-import',
         'transform-react-jsx',
-        'inline-react-svg'
+        'inline-react-svg-v2'
       ],
       'ignore': [
         'src/generator/templates',

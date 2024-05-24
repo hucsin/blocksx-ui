@@ -527,7 +527,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
             let valueList: any[] = this.state.value || [];
 
             this.uniquedMap.forEach((item, key) => {
-                if (valueList.find(it => it[key] == value[key])) {
+                if (valueList.find(it => (it[key] == value[key]) && value.id !== it.id)) {
                     validationError.push(item.fieldName)
                 }
             })
@@ -536,6 +536,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
         }
     }
     public render() {
+        
         return (
             <div className="former-table" >
 
@@ -567,6 +568,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
                     viewer={this.state.viewer}
                     column={'two'}
                     width={600}
+                    canmodify={this.state.record && !!this.state.record['id']}
                     onSave={(value, former, message) => {
                         
                         if (message = this.validationValue(value)) {

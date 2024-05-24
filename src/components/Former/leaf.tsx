@@ -32,7 +32,7 @@ export interface ILeaf {
     items?: any;
     size?: string;
     dataSource?: any;
-
+    canmodify?:boolean;
     viewer?: boolean;
     onGetDependentParameters?: Function
 }
@@ -53,6 +53,7 @@ interface TLeaf {
     type: string;
 
     viewer?: boolean;
+    canmodify?:boolean;
 
     validationState?: any; // 验证状态
     validationMessage?: any;
@@ -97,7 +98,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         this.items = props.items;
 
         let value = utils.isUndefined(props.value) ? this.getDefaultValue() : props.value;
-
+        
         this.state = {
             value: value,
             properties: props.properties,
@@ -109,7 +110,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             parentHooksControl: {},
             oneOfCache: {},
             viewer: props.viewer,
-            originValue: this.getMapOriginValue(value || {})
+            originValue: this.getMapOriginValue(value || {}),
+            canmodify: props.canmodify
         }
     }
 
@@ -164,6 +166,13 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                     parentHooksControl: newProps.childrenControl
                 })
             }
+        }
+        
+        if (newProps.canmodify != this.state.canmodify) {
+            
+            this.setState({
+                canmodify: newProps.canmodify
+            })
         }
 
         if (newProps.type != this.state.type) {
@@ -679,6 +688,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                         }}
                                         key="1"
                                         viewer={this.state.viewer}
+                                        canmodify={this.state.canmodify}
+
                                         size={this.props.size}
                                         rootEmitter={this.props.rootEmitter}
                                         childrenControl={childrenControl}
@@ -734,6 +745,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             value={prop}
                             key="1"
                             viewer={this.state.viewer}
+                            canmodify={this.state.canmodify}
                             size={this.props.size}
                             rootEmitter={this.props.rootEmitter}
                             onGetDependentParameters={this.props.onGetDependentParameters}
@@ -749,6 +761,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             size={this.props.size}
 
                             viewer={this.state.viewer}
+                            canmodify={this.state.canmodify}
                             parentPath={this.path}
                             rootEmitter={this.props.rootEmitter}
                             runtimeValue={this.state.runtimeValue}
@@ -806,6 +819,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                     size={this.props.size}
 
                                     viewer={this.state.viewer}
+                                    canmodify={this.state.canmodify}
                                     value={it}
                                     runtimeValue={this.state.runtimeValue}
                                     onGetDependentParameters={this.props.onGetDependentParameters}
@@ -840,7 +854,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     // 判断是否允许修改
     private isAllowModify() {
         // ['x-modify’]J:'deny'
-        return !(utils.isValidValue(this.state.originValue) && this.leafProps['x-modify'] && ['deny', 'false', false].indexOf(this.leafProps['x-modify']) > -1);
+        
+        return !(utils.isValidValue(this.state.value) && this.state.canmodify && this.leafProps['x-modify'] && ['deny', 'false', false].indexOf(this.leafProps['x-modify']) > -1);
     }
 
     private renderFeaturesNode(children: any = null, type?: string) {

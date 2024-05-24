@@ -57,6 +57,8 @@ export interface FormerProps {
     column?: 'one' | 'two' | 'three' | 1 | 2 | 3 // 标记多少列
 
     children?: any;
+
+    canmodify?: boolean;
 }
 
 interface FormerState {
@@ -76,6 +78,8 @@ interface FormerState {
 
     column: any;
     viewer?: boolean; // 标记视图模式，只展示
+    canmodify?: boolean; // 标记为编辑模式
+
     disabled?: boolean;
     loading?: boolean;
     fetching?: boolean;
@@ -123,9 +127,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             column: this.getDefaultColumn(props.column),
             disabled: props.disabled || false,
             loading: false,
-            fetching: false
+            fetching: false,
+            canmodify: props.canmodify
         };
-
+        
         this.timer = null;
 
         this.emitter = new EventEmitter();
@@ -151,6 +156,14 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 viewer: newProps.viewer
             })
         }
+
+        if (newProps.canmodify != this.state.canmodify) {
+            
+            this.setState({
+                canmodify: newProps.canmodify
+            })
+        }
+
         if (newProps.disabled != this.state.disabled) {
             this.setState({
                 disabled: newProps.disabled
@@ -381,8 +394,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                                         runtimeValue={this.state.value}
                                         value={classifyValue[index] || {}}
                                         {...it}
+                                        canmodify={this.state.canmodify}
                                         rootEmitter={this.emitter}
-
+                                        xxx="222"
                                         onChangeValue={this.onChangeValue}
                                     ></Leaf>
                                 </Tabs.TabPane>
@@ -402,7 +416,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         if (classify) {
             return this.renderClassify();
         }
-
+        
         return (
             <div className={
                 classnames({
@@ -416,10 +430,13 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         runtimeValue={this.state.value || {}}
                         value={this.state.value}
                         {...this.state.schema}
+
+                        canmodify={this.state.canmodify}
                         rootEmitter={this.emitter}
                         onChangeValue={this.onChangeValue}
                         onGetDependentParameters={this.props.onGetDependentParameters}
                         viewer={this.state.viewer}
+                        xxx="222"
                         groupType={this.props.groupType}
                     ></Leaf>
                 </Spin>

@@ -381,13 +381,13 @@ module.exports = function (webpackEnv) {
               },
             },
             {
-              test: /\.svg$/,
+              test: /\.svgd$/,
               use: [
                 {
                   loader: require.resolve('@svgr/webpack'),
                   options: {
                     prettier: false,
-                    svgo: false,
+                    svgo: true,
                     svgoConfig: {
                       plugins: [{ removeViewBox: false }],
                     },
@@ -434,7 +434,7 @@ module.exports = function (webpackEnv) {
                     //-'babel-plugin-transform-jsx-stylesheet',
                     '@babel/plugin-syntax-dynamic-import',
                     'transform-react-jsx',
-                    'inline-react-svg'
+                  // 'babel-plugin-inline-react-svg'
                   
                 ].filter(Boolean),
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
