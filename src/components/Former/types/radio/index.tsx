@@ -20,7 +20,7 @@
  }
 
  export default class FormerRadio extends React.Component<IFormerRadio, {dataSource: any, props:any,disabled?: boolean, value: any }>{
-    
+    public static Viewer: any = FormerRadio;
     public static defaultProps = {
         size: 'small'
     }
@@ -30,7 +30,7 @@
         this.state = {
             props: props['x-type-props'] || {},
             value: props.value,
-            disabled: false,
+            disabled: props.disabled,
             dataSource: []
         }
         
@@ -54,7 +54,8 @@
         return value;
     }
 
-    public UNSAFE_componentWillUpdate(newProps: IFormerRadio) {
+    public UNSAFE_componentWillReceiveProps(newProps: IFormerRadio) {
+        
         if (newProps.disabled!==this.state.disabled) {
             this.setState({
                 disabled: newProps.disabled
@@ -68,6 +69,9 @@
         }
     }
     private onChangeValue =(e: any)=> {
+        if (this.props.viewer || this.state.disabled) {
+            return;
+        }
         let { value } = e.target;
 
         this.setState({
@@ -76,7 +80,14 @@
 
     }
     private getDatasource() {
-      return this.state.dataSource || [];
+      let datasource: any = this.state.dataSource || [];
+
+      // 过滤 视图前面
+      if (this.props.viewer) {
+        return datasource.filter(it => it.value === this.state.value)
+      }
+
+      return datasource;
     }
     private renderButton() {
         let dataSource: any = this.getDatasource();
@@ -86,7 +97,7 @@
                 {Array.isArray(dataSource) && dataSource.map((it: any) => {
                     let VIcon = it.icon ? FormerIcon[`${it.icon}`] : null;
                     return (
-                        <Radio.Button key={it.value} value={it.value}>{VIcon ? <VIcon/> :it.label}</Radio.Button>
+                        <Radio.Button  key={it.value} value={it.value}>{VIcon ? <VIcon/> :it.label}</Radio.Button>
                     )
                 })}
             </Radio.Group>
@@ -101,11 +112,14 @@
                 {
                     Array.isArray(dataSource) ? dataSource.map((it: any, index:number) => {
                         let VIcon = it.icon ? FormerIcon[`${it.icon}`] : null;
-                        
+                        // 
+
                         return (
                             <div 
                                 className={classnames('former-radio-block-item', {
-                                    'former-radio-block-current': it.value === value
+                                    'former-radio-block-current': it.value === value,
+                                    'former-radio-viewer': this.props.viewer,
+                                    'former-radio-disabled': this.state.disabled
                                 })}
                                 key={index}
                                 onClick={() => this.onChangeValue({

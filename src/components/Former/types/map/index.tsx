@@ -20,7 +20,6 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
 
     public constructor(props: IFormerMap) {
         super(props);
-        console.log(props, 33333)
         let value = props.value || {};
         
         this.state = {
@@ -110,7 +109,7 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
     
     private getEmptyChildren() {
         return (
-            <div  className="former-map-empty" onClick={this.onMapItemAdd}>点击新增数组项</div>
+            <div  className="former-map-empty" onClick={this.onMapItemAdd}>Click to add a new item</div>
         )
     }
 

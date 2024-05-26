@@ -11,6 +11,12 @@
         width: 90px;
         border-radius: 3px;
         cursor: pointer;
+        &.former-radio-viewer {
+            cursor: default;
+        }
+        &.former-radio-disabled {
+            cursor: not-allowed;
+        }
         position: relative;
 
         text-align: center;

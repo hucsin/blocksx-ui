@@ -45,6 +45,8 @@ interface TLeaf {
 
     originValue: any[];
     controlHide: any[];
+    controlPatch: any;
+
     childrenControl?: object;
     parentHooksControl?: IControl;
     properties?: any;
@@ -63,6 +65,7 @@ interface IControl {
     when?: string[];
     show?: string[];
     hide?: string[];
+    patch?: any;
     validation?: any;
 }
 
@@ -106,6 +109,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             items: props.items,
             type: this.type,
             controlHide: [],
+            controlPatch: {},
             childrenControl: {},
             parentHooksControl: {},
             oneOfCache: {},
@@ -430,19 +434,28 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
     }
     private onDealControl(control: IControl) {
-        let { hide = [], show = [] } = control;
+        
+        let { hide = [], show = [], patch = {} } = control;
 
         let controlHideInfo = this.getControlInfo(hide);
         let controlShowInfo = this.getControlInfo(show);
+        let controlPatchInfo = this.getControlInfo(Object.keys(patch))
 
         let controlHide = this.state.controlHide || [];
+        let controlPatch = {};
 
+        if (controlPatchInfo.controlList.length) {
+            controlPatchInfo.controlList.forEach(pt => {
+                controlPatch[pt] = patch[pt];
+            })
+        }
 
         if (controlHideInfo.controlList.length) {
             controlHideInfo.controlList.forEach((it: string) => {
                 if (controlHide.indexOf(it) == -1) {
                     controlHide.push(it);
                 }
+
             })
         }
         if (controlShowInfo.controlList.length) {
@@ -450,16 +463,17 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
 
         this.setState({
-            controlHide: controlHide
+            controlHide: controlHide,
+            controlPatch: controlPatch
         });
 
         this.onChangeValue(this.state.value);
 
-        this.dealParentControl(controlHideInfo, controlShowInfo);
-        this.dealChildrenControl(controlHideInfo, controlShowInfo);
+        this.dealParentControl(controlHideInfo, controlShowInfo, controlPatchInfo);
+        this.dealChildrenControl(controlHideInfo, controlShowInfo, controlPatchInfo);
 
     }
-    private dealChildrenControl(controlHideInfo: IControlInfo, controlShowInfo: IControlInfo) {
+    private dealChildrenControl(controlHideInfo: IControlInfo, controlShowInfo: IControlInfo, controlPatchInfo?: IControlInfo) {
         //let { childrenControl } = this.state;
         let childrenControl = {};
         let controlChildHideInfo = controlHideInfo.childrenControlList;
@@ -499,7 +513,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         })
 
     }
-    private dealParentControl(controlHideInfo: IControlInfo, controlShowInfo: IControlInfo) {
+    private dealParentControl(controlHideInfo: IControlInfo, controlShowInfo: IControlInfo, controlPatchInfo?: IControlInfo) {
         // 处理控制父级情况
         let parentControl: IControl = {};
         if (controlHideInfo.parentControlList.length) {
@@ -515,9 +529,21 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             }
         }
     }
+    private getTrueHotPatch(patch: any) {
+        for(let prop in patch) {
+            let hotPatch: any = patch[prop];
+
+            if (hotPatch.uiType) {
+                hotPatch['x-type'] = hotPatch.uiType;
+            }
+        }
+
+        return patch;
+    }
     private dealControl(value: any, controlList: IFormerControl) {
         let showList: any[] = [];
         let hideList: any[] = [];
+        let patchList: any = {};
 
         if (this.props.onDealControl) {
 
@@ -525,6 +551,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
                 let { when = [], hide = [], show = [] } = control;
                 if (utils.isArray(when) || utils.isBoolean(when)) {
+
                     // 当存在值的时候
                     // 简单判断值是否存在，不做模糊匹配
                     let matchValue: boolean = utils.isBoolean(when) ? !!value : when.indexOf(value) > -1;
@@ -534,6 +561,15 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         hideList = hideList.concat(hide);
 
                         // TODO 处理 validation 级联情况
+                        if (control.patch) {
+                            let hotPatch: any = this.getTrueHotPatch(control.patch);
+                            Object.assign(
+                                patchList, {
+                                    ...hotPatch
+                                }
+                            )
+                        }
+                        
 
                         // 不存在值的时候
                     } else {
@@ -546,7 +582,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
             this.props.onDealControl({
                 hide: hideList,
-                show: showList
+                show: showList,
+                patch: patchList
             })
         }
     }
@@ -588,8 +625,15 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     }
 
     private getObjectItemProperties(prop: string) {
-        let { value = {} } = this.state;
+        let { value = {}, controlPatch = {} } = this.state;
         let props = this.properties[prop];
+
+        // 如果存在hot patch的时候
+        if (controlPatch[prop]) {
+            return Object.assign(this.clone(props), controlPatch[prop]);
+        }
+        
+
         // 多选情况
         if (props.type == 'oneOf') {
             return this.clone(OneOf.getProperties(prop, props, value));
@@ -854,14 +898,13 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     // 判断是否允许修改
     private isAllowModify() {
         // ['x-modify’]J:'deny'
-        
+       
         return !(utils.isValidValue(this.state.value) && this.state.canmodify && this.leafProps['x-modify'] && ['deny', 'false', false].indexOf(this.leafProps['x-modify']) > -1);
     }
 
     private renderFeaturesNode(children: any = null, type?: string) {
         let View = this.getNodeByType();
         if (View) {
-
             return (
                 <Popover
                     placement="topLeft"

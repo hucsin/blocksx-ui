@@ -46,7 +46,15 @@ import { ValidatorRule } from '@blocksx/validator';
  *               "x-control": [
  *                    {
  *                       "when": [],
- *                       "show": []
+ *                       "show": [],
+ *                       "patch": {
+ *                          "ddd": {
+ *                              "x-type": "input",
+ *                              "x-type-props": {
+ *                                  "placeholder": "ddd"
+ *                              }
+ *                           }
+ *                       }
  *                    }
  *               ]
  *          },

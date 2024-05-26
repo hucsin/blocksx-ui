@@ -62,6 +62,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
     totalNumber?: number;
     loading?: boolean;
     viewer?: boolean;
+    formerViewer?: boolean;
     dataSource?: any[];
     actionType: string;
 }> {
@@ -243,7 +244,8 @@ export default class FormerTable extends React.Component<IFormerTable, {
     private onClickFistCell (record: any) {
         this.setState({
             visible: true,
-            viewer: true,
+            actionType: 'View',
+            formerViewer: true,
             record
         })
     }
@@ -271,7 +273,6 @@ export default class FormerTable extends React.Component<IFormerTable, {
                 ellipsis: true,
                 render: (text: any, record: any, rowIndex: number) => {
                     let field: any = properties[it.key];
-                    
                     return (
                         <span 
                             className={classnames({
@@ -282,6 +283,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
                         >
                             {UtilsTool.renderComponentByField(field, {
                                 value: text,
+                                size: 'small',
                                 ... (field['props'] || field['x-type-props'])
                             })}
                         </span>
@@ -354,10 +356,13 @@ export default class FormerTable extends React.Component<IFormerTable, {
         ]
     }
     private actionRecord(record: any, type: string, index: number) {
+        
         this.setState({
+            isAdd: type =='Create' ? true : false,
             record: utils.copy(record),
             recordIndex: index,
             visible: true,
+            formerViewer: type !=='View' ? false : true,
             actionType: type
         })
     }
@@ -369,6 +374,8 @@ export default class FormerTable extends React.Component<IFormerTable, {
     }
     private onCopyRow(record: any, index: number) {
         let newCopy = utils.copy(record);
+
+        console.log(newCopy, record, 333)
         // 删除ID
         delete newCopy.id;
 
@@ -416,11 +423,13 @@ export default class FormerTable extends React.Component<IFormerTable, {
     private addRowValue(type?: string, pos?: number, val?: any) {
         //let value = this.getValue();
         let actionType: string = type || 'Create';
+        
         this.setState({
             isAdd: true,
             actionType,
             record: val || {},
             recordIndex: pos,
+            formerViewer: actionType !== 'View' ? false : true,
             visible: true
         })
     }
@@ -446,7 +455,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
 
         } else {
             // 新增
-
+            
             if (isAdd) {
                 if (utils.isUndefined(recordIndex)) {
                     value.push(record)
@@ -515,11 +524,13 @@ export default class FormerTable extends React.Component<IFormerTable, {
         )
     }
     private getDefaultTitle() {
+        let title = ((this.props.title||'').replace(/[\s]/ig, '') || this.props['x-group'] || 'record').toLowerCase()
+        
         let { actionType } = this.state;
         if (actionType == 'Create') {
-            return 'Create a new records';
+            return 'Create a new ' + title;
         }
-        return `${actionType} the records`
+        return `${actionType} the ${title}`
     }
     private validationValue(value: any) {
         if (this.uniquedMap.size > 0) {
@@ -565,9 +576,9 @@ export default class FormerTable extends React.Component<IFormerTable, {
                     value={this.state.record}
                     visible={this.state.visible}
                     schema={this.getDefaultSchema()}
-                    viewer={this.state.viewer}
+                    viewer={this.state.formerViewer}
                     column={'two'}
-                    width={600}
+                    width={700}
                     canmodify={this.state.record && !!this.state.record['id']}
                     onSave={(value, former, message) => {
                         

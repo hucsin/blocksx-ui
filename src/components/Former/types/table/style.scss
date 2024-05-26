@@ -1,7 +1,9 @@
 .former-table {
     border-top: 1px solid #f2f2f2;
     position: relative;
-
+    pre {
+        margin: 0;
+    }
     .former-first-col {
         color: #1890ff;
         
@@ -21,6 +23,13 @@
     .ant-table-cell {
         .ant-btn.ant-btn-sm{
             height: 14px;
+            font-size: 12px;
+        }
+        .ant-radio-button-wrapper {
+            height: 18px;
+            padding-inline: 3px;
+            padding-block: 0;
+            line-height: 18px;
             font-size: 12px;
         }
     }

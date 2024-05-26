@@ -58,9 +58,11 @@ export default class TablerUtils {
                 )
             } else {
                 if (UiView = UiView.Viewer) {
+                   
                     return (
-                        <UiView key={field.key} {...props} />
+                        <UiView key={field.key} viewer={true} {...field} {...props} />
                     )
+                    
                 }
             }
         }

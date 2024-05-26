@@ -7,7 +7,7 @@
  * @FilePath: /designer/Users/iceet/work/hucsin/blocksx/packages/design-components/src/former/types/index.tsx
  */
 export { default as group } from './group';
-
+export { default as date } from './date';
 export { default as avatar } from './avator';
 export { default as array } from './array';
 export { default as object } from './object';

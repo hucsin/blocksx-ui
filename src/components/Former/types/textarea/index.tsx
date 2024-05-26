@@ -21,11 +21,16 @@ class FormerTextareaViewer extends React.Component<IFormerTextarea> {
         super(props)
     }
     public render() {
-        return (
-            <pre>
-                {this.props.value}
-            </pre>
-        )
+       if (this.props.value) {
+
+            return (
+                <pre>
+                    {this.props.value}
+                </pre>
+            )
+        }
+
+        return <span key={1} className='ui-label-empty'>{'<null>'}</span>
     }
 }
 
