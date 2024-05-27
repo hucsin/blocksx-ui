@@ -31,6 +31,8 @@
         pre {
             display:inline-block;
             margin: 0;
+            word-break: break-all;
+            white-space: normal;
         }
     }
     .ui-list-index {
@@ -228,7 +230,7 @@
             display: inline-block;
             width: auto;   
             margin-left: 16px;
-            vertical-align: bottom;
+            vertical-align: middle;
         }
     }
     button {

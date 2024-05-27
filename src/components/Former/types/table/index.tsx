@@ -375,7 +375,6 @@ export default class FormerTable extends React.Component<IFormerTable, {
     private onCopyRow(record: any, index: number) {
         let newCopy = utils.copy(record);
 
-        console.log(newCopy, record, 333)
         // 删除ID
         delete newCopy.id;
 
@@ -472,6 +471,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
             this.setState({
                 value
             }, () => {
+                console.log('onsave', value,33)
                 this.props.onChangeValue(value);
                 this.resetDataSource();
                 former.setState({loading: false})
@@ -546,6 +546,10 @@ export default class FormerTable extends React.Component<IFormerTable, {
             return validationError.length ? `The value for field [${validationError.join(',')}] is duplicated.` : null;
         }
     }
+    private getFormerKey() {
+        let key: string = this.state.record && this.state.record['id'];
+        return key; 
+    }
     public render() {
         
         return (
@@ -578,6 +582,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
                     schema={this.getDefaultSchema()}
                     viewer={this.state.formerViewer}
                     column={'two'}
+                    key={this.getFormerKey()}
                     width={700}
                     canmodify={this.state.record && !!this.state.record['id']}
                     onSave={(value, former, message) => {

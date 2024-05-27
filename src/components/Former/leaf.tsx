@@ -224,7 +224,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
     private verification(cb: Function) {
         // 验证
-        Validation.valid(this.state.value, this.props['x-validation'], (msg) => {
+        
+        Validation.valid(this.state.value, {...this.props['x-validation'], type: this.props.type}, (msg) => {
 
             this.setState({
                 validationState: msg,
@@ -909,6 +910,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                 <Popover
                     placement="topLeft"
                     content={this.state.validationMessage}
+                    open={!!this.state.validationMessage}
                 >
                     <span
                         className={classnames({ 'former-open-error': this.state.validationState })}
