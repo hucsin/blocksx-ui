@@ -98,7 +98,6 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
             mode: props.mode
         };
 
-
     }
     public componentDidMount() {
         //this.initDataSource(this.props);

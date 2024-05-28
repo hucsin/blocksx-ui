@@ -374,7 +374,6 @@ export default class FormerTable extends React.Component<IFormerTable, {
     }
     private onCopyRow(record: any, index: number) {
         let newCopy = utils.copy(record);
-
         // 删除ID
         delete newCopy.id;
 
@@ -471,7 +470,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
             this.setState({
                 value
             }, () => {
-                console.log('onsave', value,33)
+                
                 this.props.onChangeValue(value);
                 this.resetDataSource();
                 former.setState({loading: false})

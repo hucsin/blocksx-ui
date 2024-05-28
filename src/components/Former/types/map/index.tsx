@@ -27,8 +27,7 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
             originValue: this.getKeyValueArray(value)
         };
     }
-    public UNSAFE_componentWillUpdate(newProps:any) {
-        
+    public UNSAFE_componentWillReceiveProps(newProps:any) {
         if (newProps.originValue !== this.state.originValue) {
             this.setState({
                 originValue: newProps.originValue || []

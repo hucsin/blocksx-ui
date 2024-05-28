@@ -46,7 +46,6 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
             mode: props.mode
         }
 
-
         this.initTableProps();
 
         this.initRequset();

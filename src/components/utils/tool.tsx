@@ -115,7 +115,6 @@ export default class TablerUtils {
         }
     }
 
-
     private static getDefaultPropsByItem(it: any) {
         let defaultProps: any = {};
 

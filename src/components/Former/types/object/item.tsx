@@ -16,7 +16,6 @@ import { DownOutlined, RightOutlined, ExclamationCircleOutlined } from '@ant-des
 
 
 import { IFormerObjectItem } from '../../typings';
-import { match } from 'assert';
 
 interface TFormerObjectItem {
     switch: boolean;

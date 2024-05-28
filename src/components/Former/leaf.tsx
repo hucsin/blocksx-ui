@@ -456,7 +456,6 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                 if (controlHide.indexOf(it) == -1) {
                     controlHide.push(it);
                 }
-
             })
         }
         if (controlShowInfo.controlList.length) {
@@ -552,7 +551,6 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
                 let { when = [], hide = [], show = [] } = control;
                 if (utils.isArray(when) || utils.isBoolean(when)) {
-
                     // 当存在值的时候
                     // 简单判断值是否存在，不做模糊匹配
                     let matchValue: boolean = utils.isBoolean(when) ? !!value : when.indexOf(value) > -1;

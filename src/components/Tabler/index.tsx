@@ -98,7 +98,6 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
     private authFilter: AuthFilter
     public constructor(props: TablerValueProps) {
         super(props);
-
         this.state = {
             pageSize: props.pageSize || 10,
             total: 0,
