@@ -14,6 +14,7 @@ interface SmartDrawerProps {
     icon?: string;
     name?: string;
     path?: string;
+    pageURI?: string;
 
     mode?: string;
     notice?: string;
@@ -200,6 +201,7 @@ export default class SmartDrawer extends React.Component<SmartDrawerProps, Smart
                 {message && <Alert key={2} showIcon message={message} type='warning' />}
                 <SmartPage 
                     key={21}
+                    pageURI={this.props.pageURI}
                     pageMeta={{title: this.state.name}} 
                     name={this.state.smartpage}
                     onInitPage ={this.onInitPage}

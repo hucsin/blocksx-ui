@@ -78,6 +78,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
         quickValue: '',
         rowSelection: false
     }
+    private tableRef: any;
     private tableDOM?: any;
     private columns: any[];
 
@@ -98,10 +99,11 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
             mode: props.mode
         };
 
+        this.tableRef = React.createRef();
     }
     public componentDidMount() {
         //this.initDataSource(this.props);
-        this.tableDOM = ReactDOM.findDOMNode(this);
+        this.tableDOM = this.tableRef.current;//ReactDOM.findDOMNode(this);
     }
 
     public UNSAFE_componentWillUpdate(newProps: any) {
@@ -482,6 +484,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
                 columns={this.getColumns()}
                 tableLayout={'fixed'}
                 dataSource={this.getDataSource()}
+                ref={this.tableRef}
 
                 scroll={this.columns.length <= this.props.resizeMaxColumns + 1 ? undefined : { x: this.getTableWidth() }}
                 rowSelection={this.isPickMode() && {

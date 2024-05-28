@@ -250,6 +250,10 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         noClassify: this.state.noClassify,
                         loading: false
                     };
+                    
+                    if (this.props.onInitPage) {
+                        this.props.onInitPage(initStateConfig)
+                    }
 
 
                     if (!this.state.noFolder) {

@@ -7,22 +7,28 @@
  * @FilePath: /designer/Users/iceet/work/hucsin/blocksx/packages/design-components/src/former/types/input/index.tsx
  */
 import React from 'react';
-import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
-
+import TablerUtils from '../../../utils/tool';
+import Drawer from './drawer';
 import { Button } from 'antd';
+
+import './style.scss';
 
 interface IFormerInput extends IFormerBase {
     value: any,
+    props: any;
     size: any,
     disabled?: boolean,
     onChangeValue: Function
 }
-export default class FormerButton extends React.Component<IFormerInput, { value: any }> {
+
+export default class FormerButton extends React.Component<IFormerInput, { value: any, open: boolean }> {
+    public static Viewer:any = FormerButton;
     public constructor(props: IFormerInput) {
         super(props);
         this.state = {
-            value: props.value
+            value: props.value,
+            open: false
         };
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
@@ -33,10 +39,35 @@ export default class FormerButton extends React.Component<IFormerInput, { value:
         }
     }
     
+    private renderIcon() {
+        let { props = {} } = this.props;
+
+        return TablerUtils.renderIconComponent(props);
+    }
+
+    private renderButton() {
+        let { props = {} } = this.props;
+        return (
+            <Button type='link' icon={this.renderIcon()} onClick={()=> {this.setState({open: true})}} size="small" >{props.text}</Button>
+        )
+    }
+
+    // link ,router, smartpage
 
     public render() {
-        return (
-            <Button value="d" size="small" />
-        )
+        let { props = {} } = this.props;
+        console.log(this.props, 222)
+        
+        if (props.type == 'smartpage') {
+            return (
+                <>
+                    <Drawer onClose={()=>{this.setState({open: false})}} meta={props} record={this.props['recordValue']}  open={this.state.open} />
+                    {this.renderButton()}
+                </>
+            )
+        }
+
+        console.log(this.props)
+        return this.renderButton();
     }
 }

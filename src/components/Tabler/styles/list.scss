@@ -223,6 +223,12 @@
         button:first-child{
             vertical-align: bottom;;   
         }
+        > button {
+            padding: 0;
+            > span {
+                margin-inline-end: 4px !important;
+            }
+        }
         >span,
         >button,
         > ul,

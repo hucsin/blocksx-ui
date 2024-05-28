@@ -69,9 +69,10 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
     }
 
     public render() {
-        let props: any = this.props['x-type-props'] || {};
+        let props: any = this.props['x-type-props'] || this.props['props'] || {};
         let loading: boolean = this.state.loading && this.props.loading;
-        let size: any = this.props.size || props.size || 'small';
+        let size: any = props.size || this.props.size || 'small';
+        
 
         let unCheckedIcon: string = props.unCheckedIcon || this.props.unCheckedIcon;
         let checkedIcon: string = props.checkedIcon || this.props.checkedIcon;

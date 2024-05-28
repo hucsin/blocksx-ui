@@ -1,0 +1,33 @@
+.ui-button-drawer {
+    .ant-drawer-body {
+        .ui-header {
+            position: fixed;
+            width: 705px;
+            z-index: 100;
+            top: 11px;
+            margin: 0;
+            right: -11px;
+            font-size: 20px;
+
+            .ui-extra {
+                padding-top: 6px;
+                right: 35px;
+            }
+        }
+
+        .ant-tabs {
+            display: none;
+        }
+        .ant-tabs-nav {
+            padding-bottom: 12px;
+        }
+    }
+    .ui-smartpage-wrapper {
+        margin-top: 20px;
+    }
+    .tabler-wrapper .ant-table.ant-table-layout-fixed .ant-table-content {
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+    }
+}

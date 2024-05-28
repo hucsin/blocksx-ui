@@ -44,7 +44,7 @@ export default class TablerUtils {
         if (utils.isFunction(defaultComponent)) {
             return defaultComponent(field)
         }
-
+        
         if (UiView) {
             if (utils.isFunction(field.motion)) {
 
