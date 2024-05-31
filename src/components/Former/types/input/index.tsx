@@ -26,6 +26,7 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
         };
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
+        
         if (newProps.value != this.state.value) {
             this.setState({
                 value: newProps.value

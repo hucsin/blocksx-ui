@@ -437,6 +437,11 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
         });
     }
     private onActionClick(operate: RowOperate, rowData: any, rowIndex?: number) {
+
+        rowData = {
+            ...rowData,
+            ...(this.props.onGetRequestParams && this.props.onGetRequestParams(rowData, rowIndex) || {}) 
+        }
         
          switch (operate.type) {
              case 'view':
@@ -473,14 +478,22 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 this.props.onRowAction && this.props.onRowAction(operate, rowData, this)
          }
     }
-
+    private getSafeValue(value: any) {
+        return {
+            ...value,
+            ...(this.props.onGetRequestParams && this.props.onGetRequestParams(value))
+        }
+    }
     private onFormerChange(value: any) {
         let { currentRowOperate } = this.state;
+
+        let safeValue: any = this.getSafeValue(value);
+
         
         // 如果是行自定义行为操作
         if (currentRowOperate && utils.isFunction(currentRowOperate.motion)) {
 
-            return this.resetcheck(currentRowOperate.motion(value, this));
+            return this.resetcheck(currentRowOperate.motion(safeValue, this));
 
         } else {
 
@@ -489,13 +502,13 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 case 'create':
                 case 'add':
                     if (this.props.onAdd) {
-                        return this.resetcheck(this.props.onAdd(value))
+                        return this.resetcheck(this.props.onAdd(safeValue))
                     }
                     break;
                 // 编辑
                 case 'edit':
                     if (this.props.onEdit) {
-                        return this.resetcheck(this.props.onEdit(value));
+                        return this.resetcheck(this.props.onEdit(safeValue));
                     }
                     break;
             }

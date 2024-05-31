@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tabs, Spin } from 'antd';
 
+import ReactMarkdown from 'react-markdown';
 import * as Icons from '../Icons';
 
 //import withRouter from '../withRouter';
@@ -17,6 +18,7 @@ export interface ClassifyPanelProps {
     children: any;
     icon?: string;
     title: string;
+    renderContent?: Function;
     description?: string ;
     extra?: any;
     tabsExtra?: any;
@@ -35,7 +37,7 @@ interface ClassifyPanelState {
     query?: string;
     activeKey?: string;
    // groupKey: string;
-   icon?: string;
+    icon?: string;
     totalDict:any;
     loading: boolean;
     title: string;
@@ -140,7 +142,7 @@ export default class ClassifyPanel extends React.Component<ClassifyPanelProps, C
                     <div className='ui-title'>
                         {this.renderTitleIcon()}
                         {this.state.title}
-                        <span className='des'>{this.state.description}</span>
+                        <span className='des'><ReactMarkdown>{this.state.description}</ReactMarkdown></span>
                     </div>
                     <div className='ui-extra'>
                         {this.props.extra}
@@ -153,6 +155,7 @@ export default class ClassifyPanel extends React.Component<ClassifyPanelProps, C
                     tabBarExtraContent={this.props.tabsExtra}
                     onChange={this.onChange}
                 />}
+                {this.props.renderContent && this.props.renderContent()}
             </div>
         )
     }

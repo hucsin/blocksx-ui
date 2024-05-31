@@ -1,8 +1,9 @@
 import React from 'react';
-import classnames from 'classnames';
 import { utils } from '@blocksx/core';
+import ReactMarkdown from 'react-markdown';
 
 import SmartPage from '../../../SmartPage';
+import Avatar from '../avator';
 import { Drawer, Alert } from 'antd';
 
 interface ButtonDrawerProps {
@@ -14,6 +15,7 @@ interface ButtonDrawerProps {
 
 interface ButtonDrawerState {
     open: boolean;
+    pageMeta: any;
 }
 
 export default class ButtonDrawer extends React.Component<ButtonDrawerProps, ButtonDrawerState> {
@@ -22,7 +24,8 @@ export default class ButtonDrawer extends React.Component<ButtonDrawerProps, But
         super(props);
 
         this.state = {
-            open: props.open
+            open: props.open,
+            pageMeta: {}
         }
     }
 
@@ -40,6 +43,7 @@ export default class ButtonDrawer extends React.Component<ButtonDrawerProps, But
         if (utils.isString(meta.params)) {
             name = record[meta.params]
         }
+        
         return (
             <Drawer
                 title={meta.title || meta.name}
@@ -50,16 +54,24 @@ export default class ButtonDrawer extends React.Component<ButtonDrawerProps, But
                     this.props.onClose && this.props.onClose();
                 }}
             >
-                <Alert key={2} showIcon message={'dddd'} type='warning' />
+                <div className='ui-notice'>
+                    <Avatar size={42} icon={this.state.pageMeta.icon}/>
+                    <ReactMarkdown>{this.state.pageMeta.notice}</ReactMarkdown>
+                </div>
                 <SmartPage
                     pageURI={meta.path}
                     name={name}
-                    
+                    icon={meta.icon}
                     onInitPage={(pageInit: any)=> {
-                        console.log(pageInit, 3333)
+                        
+                        this.setState({
+                            pageMeta: pageInit.pageMeta
+                        })
                         Object.assign(pageInit, {
                             noFolder: true,
                             noHeader: false,
+                            
+                            noTitle: true,
                             noToolbar: false,
                             rowSelection: true,
                             mode: 'tabler'

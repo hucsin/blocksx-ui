@@ -38,6 +38,14 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
             format: typeProps.format || props.format
         };
     }
+    public UNSAFE_componentWillReceiveProps(newProps: any) {
+        
+        if (newProps.value != this.state.value) {
+            this.setState({
+                value: newProps.value
+            })
+        }
+    }
     private onChangeValue =(e: any, datestring: any) => {
         
         if (datestring) {
@@ -56,16 +64,17 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
                 <DatePicker.RangePicker 
                     size={this.props.size}
                     disabled={this.props.disabled}  
-                    value={rangeValue.map(it => dayjs(this.state.format, it)) as any} 
+                    value={rangeValue.map(it => dayjs(it, this.state.format)) as any} 
                     format={this.state.format}
                     onChange={this.onChangeValue}
                 />
             )
         }
+       
         return(<DatePicker 
             disabled={this.props.disabled}  
             size={this.props.size}
-            value={this.state.value && dayjs(this.state.format, this.state.value)} 
+            value={this.state.value && dayjs(this.state.value as any, this.state.format)} 
             format={this.state.format}
             onChange={this.onChangeValue}
         />)

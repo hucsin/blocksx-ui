@@ -4,11 +4,12 @@
 
  import React from 'react';
  import ReactDOM from 'react-dom';
-
  import classnames from 'classnames';
  import { RightOutlined } from '@ant-design/icons'
+
+ import SmartRequst from '../../utils/SmartRequest';
  import * as Icons from '../../Icons'
- import { Space } from 'antd';
+ import { Space, Spin } from 'antd';
  import { routerParams } from '../../utils/withRouter';
  import  Former  from '../../Former'
 
@@ -22,6 +23,7 @@
     title: any;
     path: string;
     value: any;
+    valueMode?: string;
     reflush: any,
     okText: string;
     onGetRequestParams?: Function;
@@ -33,6 +35,10 @@
     titleContainerRef?: any;
     router: routerParams;
     onShow?: Function;
+
+    toolbarRef?: any;
+
+    noTitle?: boolean;
 }
 
 interface SmartPageFormerState {
@@ -46,14 +52,18 @@ interface SmartPageFormerState {
     isStepMode: boolean,
     setpOneValue: any
     viewer: boolean;
+    loading: boolean;
 }
 
 export default class SmartPageFormer extends React.Component<SmartPageFormerProps, SmartPageFormerState> {
         public static defaultProps = {
             viewer: false,
             okText: 'Ok',
-            reflush: 1
+            reflush: 1,
+            valueMode: 'remote'
         }
+        private UpdateRequest: any;
+        private ViewRequest: any;
         public constructor(props: SmartPageFormerProps) {
             super(props);
             this.state = {
@@ -62,14 +72,29 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                 fields: props.schema.fields,
                 viewer: props.viewer,
                 okText: props.okText,
-                value: props.value || {},
+                value: props.value || null,
                 isStepOne: props.value ? false: true,
                 isStepMode: this.isStepFormer(props.schema),
                 setpOneValue: props.value,
                 pageMeta: props.pageMeta,
+                loading: props.valueMode == 'remote'
             }
+
+
+            this.UpdateRequest = SmartRequst.createPOST(this.props.path + '/upsert', true);
+            this.ViewRequest = SmartRequst.createPOST(this.props.path + '/view', true);
+            
         }
-    
+        public componentDidMount(): void {
+            
+            this.ViewRequest(this.getDefaultParams()).then((result) => {
+                
+                this.setState({
+                    value: result,
+                    loading: false
+                })
+            })
+        }
         private isStepFormer(schema: any) {
             let { fields = []} = schema ||{};
             return !!fields.filter(field => {
@@ -78,13 +103,13 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
         }
     
         public UNSAFE_componentWillReceiveProps(newProps: SmartPageFormerProps) {
-    
+            console.log(newProps, newProps.value, 'former')
             if (newProps.title !== this.state.title) {
                 
                 this.setState({
                     schema: this.getSchema(newProps.schema),
                     fields: newProps.schema.fields,
-                    value: newProps.value,
+                   // value: newProps.value,
                     pageMeta: newProps.pageMeta,
                     title: newProps.title,
                     okText: newProps.okText || 'Ok',
@@ -94,7 +119,7 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                 })
             }
 
-            if (newProps.value !== this.state.value) {
+            if (this.props.valueMode!== 'remote' && newProps.value !== this.state.value) {
                 this.setState({
                     value: newProps.value
                 })
@@ -203,6 +228,10 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
         }
         private getDefaultTitle() {
             
+            if (this.props.noTitle) {
+                return null;
+            }
+
             if (this.props.titleContainerRef) {
                 if (this.props.titleContainerRef.current){
                     return ReactDOM.createPortal(this.getDefaultTitleView(), this.props.titleContainerRef.current)
@@ -246,7 +275,19 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
             })
             return value;
         }
+        private getDefaultParams() {
+            return {
+                ...(this.props.onGetRequestParams && this.props.onGetRequestParams()),
+                ...(this.props.pageMeta ? this.props.pageMeta.params || {} : {})
+            }
+        }
         private onChangeValue(value: any, former: any) {
+
+            value = {
+                ...value,
+                ...this.getDefaultParams()
+            }
+            
             // 清洗下labelvalue
             if (this.state.isStepMode && this.state.isStepOne) {
               //  return this.setState({
@@ -257,6 +298,7 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                 //    }
                // })
             }
+            
             if (this.props.onSave) {
                 let result: any = this.props.onSave(this.cleanLabelValueToValue(value))
                 
@@ -269,8 +311,11 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                 } else {
                     former.setState({loading: false})
                 }
+            } else {
+                return this.UpdateRequest(value)
             }
         }
+        
         public render() {
             
             let { schema, isStepMode, isStepOne, pageMeta } = this.state;
@@ -279,52 +324,54 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                     ?  schema.firstStep
                     :  schema.other
                 : schema;
-    
+
             return (
                 <>
                     {this.getDefaultTitle()}
-                    <Former
-                        autoclose={false}
-                        id={this.getDefaultId()}
-                        schema={pageSchema}
-                        okText={this.getDefaultOkText()}
-                        operateContainerRef={this.props.operateContainerRef}
-                        onSave={(value: any, former: any) => {
-                            return this.onChangeValue(value, former)
-                        }}
-                        onBeforeSave= {() => {
-                            if (this.state.isStepMode && this.state.isStepOne) {
-                                this.setState({
-                                    isStepOne: false
-                                })
-                                return false;
-                            }
-                        }}
-                        onChangeValue={(value)=> {
-                            if (this.state.isStepMode && this.state.isStepOne) {
-                                let currentField: any = schema.firstField;
-                                let setpOneValue: any = this.state.setpOneValue || {};
-                                let newValue: any = value[currentField.key];
-                                
-                                if (newValue && ( newValue != setpOneValue[currentField.key])) {
+                    <Spin spinning={this.state.loading}>
+                        {this.state.value && <Former
+                            autoclose={false}
+                            id={this.getDefaultId()}
+                            schema={pageSchema}
+                            okText={this.getDefaultOkText()}
+                            operateContainerRef={this.props.operateContainerRef}
+                            onSave={(value: any, former: any) => {
+                                return this.onChangeValue(value, former)
+                            }}
+                            onBeforeSave= {() => {
+                                if (this.state.isStepMode && this.state.isStepOne) {
                                     this.setState({
-                                        setpOneValue: utils.clone(value),
-                                        value: value,
                                         isStepOne: false
                                     })
+                                    return false;
                                 }
-                            }
-                        }}
-                        
-                        disabled = {this.state.isStepMode && !this.state.setpOneValue}
-                        value = {this.state.value}
-                        viewer = {this.state.viewer}
-                        onClose= {()=> {
-                            this.props.onCancel && this.props.onCancel();
-                        }}
-                        column = {pageMeta.column ? pageMeta.column as any : 'two'}
-                        
-                    />
+                            }}
+                            onChangeValue={(value)=> {
+                                if (this.state.isStepMode && this.state.isStepOne) {
+                                    let currentField: any = schema.firstField;
+                                    let setpOneValue: any = this.state.setpOneValue || {};
+                                    let newValue: any = value[currentField.key];
+                                    
+                                    if (newValue && ( newValue != setpOneValue[currentField.key])) {
+                                        this.setState({
+                                            setpOneValue: utils.clone(value),
+                                            value: value,
+                                            isStepOne: false
+                                        })
+                                    }
+                                }
+                            }}
+                            
+                            disabled = {this.state.isStepMode && !this.state.setpOneValue}
+                            value = {this.state.value}
+                            viewer = {this.state.viewer}
+                            onClose= {()=> {
+                                this.props.onCancel && this.props.onCancel();
+                            }}
+                            column = {pageMeta.column ? pageMeta.column as any : 'two'}
+                            
+                        />}
+                    </Spin>
                 </>
             )
         }

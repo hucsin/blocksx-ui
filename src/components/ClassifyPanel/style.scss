@@ -4,7 +4,7 @@
         overflow: auto;
         .infinite-scroll-component__outerdiv{
             .infinite-scroll-component  {
-                padding: 16px 24px;
+                padding: 0px;
             }
         }
     }
@@ -26,9 +26,13 @@
                 text-transform:none;
                 font-size: 14px;
                 vertical-align: bottom;
-                opacity: .4;
+                color:#aaa;
                 padding-left: 16px;
-                
+                p {
+                    display:inline-block;
+                    padding: 0;
+                    margin: 0
+                }
             }
             span.anticon {
                 opacity: .8;

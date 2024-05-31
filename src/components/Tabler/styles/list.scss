@@ -304,6 +304,9 @@
         align-items: center;
     }
     .ant-list-item-meta-description {
+        p {
+            margin: 0;
+        }
         > span {
             > span {
                 margin-right: 8px;

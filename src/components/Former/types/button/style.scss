@@ -1,4 +1,36 @@
 .ui-button-drawer {
+    .former-object .former-group-item-content {
+        margin-right: 0;
+    }
+    .ui-notice {
+        border: 1px solid #f0f0f0;
+        border-radius: 3px;
+        border-left: 7px solid #f0f0f0;
+        padding: 8px 16px;
+        background: #fcfcfc;
+        opacity: .7;
+        color: #333;
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        > span {
+            margin-inline-end: 16px;
+        }
+        > p {
+            flex: 1 0;
+            width: 0;
+        }
+    }
+    .ui-former-buttons {
+        position: fixed;
+        z-index: 101;
+        top: 12px;
+        right: 22px;
+        .ant-space-item:last-child {
+            display:none;
+        }
+    }
+    
     .ant-drawer-body {
         .ui-header {
             position: fixed;
@@ -14,7 +46,6 @@
                 right: 35px;
             }
         }
-
         .ant-tabs {
             display: none;
         }
@@ -23,7 +54,7 @@
         }
     }
     .ui-smartpage-wrapper {
-        margin-top: 20px;
+        margin-top: 24px;
     }
     .tabler-wrapper .ant-table.ant-table-layout-fixed .ant-table-content {
         border-left: none;

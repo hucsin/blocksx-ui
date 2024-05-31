@@ -21,6 +21,7 @@ import './style.scss';
 
 export interface PageMeta {
     title?: string;
+    okText?: string;
     description?: string;
     icon?: string;
     type?: string;
@@ -42,6 +43,7 @@ export interface SmartPageProps {
     name: string; // 页面的一个唯一ID
     pageMeta?: PageMeta;
     okText?: string;
+    icon?: string;
 
     simplicity?: boolean; /** 简约模式 */
     noClassify?: boolean;
@@ -70,6 +72,7 @@ export interface SmartPageState {
     schema: any;
     okText?: string;
     loading: boolean;
+    icon?: string;
 
     open: boolean;
 
@@ -85,6 +88,7 @@ export interface SmartPageState {
     classifyField?: any;
     folderField?: any;
 
+    noTitle?: boolean;
     noFolder?: boolean;
     noHeader?: boolean;
     noToolbar?: boolean;
@@ -235,13 +239,15 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                             } catch(e){console.log(e)}
                         }
                     }
-                    
+
                     let initStateConfig: any = {
                         schema: schema,
                         uiType: trueUiType,
                         pageMeta: pageMeta,
                         classifyField: classifyField,
                         path,
+                        icon: pageMeta.icon,
+                        okText: pageMeta.okText,
                         metaKey: this.getMetaKey(pageMeta),
                         reflush: +new Date,
                         noFolder: this.state.noFolder,
@@ -386,7 +392,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 schema = {this.state.schema}
                 value = {this.state.value}
                 pageMeta = {this.state.pageMeta}
-            
+
                 router={this.props.router}
                 title={this.state.title}
                 triggerMap = {this.props.triggerMap}
@@ -397,10 +403,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 rowSelection={this.state.rowSelection}
                 mode={this.state.mode}
                 searchRef= {this.searchRef}
+                noTitle={this.state.noTitle}
                 noOperater= {this.state.noToolbar}
                 toolbarRef= {this.toolbarRef}
                 operateContainerRef={this.operateContainerRef}
                 titleContainerRef={this.titleContainerRef}
+                
                 onChangeValue={this.onChangeValue}
                 onClose={()=>this.setState({open: false})}
             />
@@ -422,8 +430,10 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             let dictmap: any = [{value: 'all', label: 'All'}];
 
             classifyField.dict && (dictmap = dictmap.concat(classifyField.dict))
+            
 
             return (
+                <>
                 <div className={classnames({
                     'ui-classify-wrapper': true,
                     'ui-classify-noheader': this.state.noHeader
@@ -432,18 +442,22 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         key={37}
                         title = {classifyMeta.label as any}
                         description = {classifyMeta.description}
-                        icon = {classifyMeta.icon}
+                        icon = {this.props.icon || classifyMeta.icon}
                         extra ={<span ref={this.toolbarRef}></span>}
                         tabsExtra = {<span ref={this.searchRef}></span>}
                         onChange={this.onClassifyChange}
                         defaultActiveKey={this.state.defaultClassify}
+                        renderContent={() => null }
                     >{dictmap.map(dict=> {
                         return <ClassifyPanel.Panel key={dict.value} label={dict.label} value={dict.value}></ClassifyPanel.Panel>
                     })}
                     </ClassifyPanel>
                     <div className='ui-classify-content-wrapper'>{this.renderContentView()}</div>
                 </div>
+                
+                </>
             )
+            
         }
 
         return this.renderContentView()

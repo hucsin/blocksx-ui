@@ -904,6 +904,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     private renderFeaturesNode(children: any = null, type?: string) {
         let View = this.getNodeByType();
         if (View) {
+            
             return (
                 <Popover
                     placement="topLeft"

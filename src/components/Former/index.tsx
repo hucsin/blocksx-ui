@@ -507,7 +507,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     // 渲染功能按钮
     public renderOperateButton () {
 
-        if (this.props.operateContainerRef) {
+        if (this.props.operateContainerRef && this.props.operateContainerRef.current) {
+            
             return  this.props.operateContainerRef.current ? ReactDOM.createPortal(this.renderOperateWraper(), this.props.operateContainerRef.current) : null
         }
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import Tabler from '../../Tabler';
-import SmartRequst from '../../utils/SmartRequest'
+import SmartRequst from '../../utils/SmartRequest';
 import CleanseSchema from '../core/CleanseSchema';
 
 import { routerParams } from '../../utils/withRouter'
@@ -69,7 +69,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
     private initRequset() {
         this.ListRequest = SmartRequst.createPOST(this.props.path + '/list');
         this.UpdateRequest = SmartRequst.createPOST(this.props.path + '/update', true);
-        this.DeleteRequest = SmartRequst.createPOST(this.props.path + '/delete', ['id'], true);
+        this.DeleteRequest = SmartRequst.createPOST(this.props.path + '/delete', true);
         this.CreateRequest = SmartRequst.createPOST(this.props.path + '/create', true);
         this.ViewRequest = SmartRequst.createPOST(this.props.path + '/view', ['id'], true)
     }
@@ -91,12 +91,21 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
         return tableProps;
     }
     private getRequestParams = ()=> {
-        return this.props.onGetRequestParams && this.props.onGetRequestParams();
+        let pageMeta: any = this.props.pageMeta || {};
+        let params: any = this.props.onGetRequestParams && this.props.onGetRequestParams() || {}
+
+        return Object.assign({}, params, pageMeta.params|| {});
     }
     private onChangeValue = (value)=> {
         if (this.props.onChangeValue) {
             this.props.onChangeValue(value)
         }
+    }
+    private getPageType() {
+        let pageMeta: any = this.props.pageMeta || { title: '' }
+        
+        return (pageMeta.pageType || pageMeta.title).toLowerCase()
+
     }
     public render() {
 
@@ -109,7 +118,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                 pageMeta={pageMeta}
                 reflush={this.state.reflush}
                 dataSource={this.ListRequest}
-                pageType={pageMeta.title.toLowerCase()}
+                pageType={this.getPageType()}
                 onEdit={this.UpdateRequest}
                 onRemove={this.DeleteRequest}
                 onAdd={this.CreateRequest}

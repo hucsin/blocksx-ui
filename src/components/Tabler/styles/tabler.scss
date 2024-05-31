@@ -158,15 +158,25 @@
                 color: #ccc;
                 padding-left: 8px;
             }
-
+            p {
+                margin: 0;
+            }
+            .former-radio-button {
+                height: 18px;
+                line-height: 18px;
+                label {
+                    line-height: 18px;
+                    height: 18px;
+                }
+            }
             .ant-space-item {
                 .ant-dropdown-trigger {
                     color: #999;
                 }
-
+                
                 button {
                     padding: 0;
-
+                    
                     >span+.anticon {
                         margin-left: 1px;
                     }

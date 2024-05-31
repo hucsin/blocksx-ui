@@ -56,7 +56,6 @@ export default class FormerButton extends React.Component<IFormerInput, { value:
 
     public render() {
         let { props = {} } = this.props;
-        console.log(this.props, 222)
         
         if (props.type == 'smartpage') {
             return (
@@ -67,7 +66,6 @@ export default class FormerButton extends React.Component<IFormerInput, { value:
             )
         }
 
-        console.log(this.props)
         return this.renderButton();
     }
 }

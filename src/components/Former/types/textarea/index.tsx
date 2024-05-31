@@ -13,6 +13,7 @@ import { Input } from 'antd';
 
 interface IFormerTextarea extends IFormerBase {
     value: any,
+    pre?: boolean;
     onChangeValue: Function
 }
 
@@ -22,11 +23,15 @@ class FormerTextareaViewer extends React.Component<IFormerTextarea> {
     }
     public render() {
        if (this.props.value) {
-
+            if (this.props.pre) {
+                return (
+                    <pre>
+                        {this.props.value}
+                    </pre>
+                )
+            }
             return (
-                <pre>
-                    {this.props.value}
-                </pre>
+                <p>{this.props.value}</p>
             )
         }
 

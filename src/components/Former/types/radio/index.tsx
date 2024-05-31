@@ -13,6 +13,7 @@
 
  interface IFormerRadio extends IFormerBase {
     size?: any;
+    dict?: any;
     dataSource?: any;
     onChangeValue: Function;
     value: any;
@@ -31,19 +32,19 @@
             props: props['x-type-props'] || {},
             value: props.value,
             disabled: props.disabled,
-            dataSource: []
+            dataSource: this.props.dataSource
         }
         
     }
 
     
-    public componentDidMount() {
+    public componentDidMountss() {
         let dataSource: any = this.props.dataSource || this.state.props.dataSource;
         
         dataSource && UtilsDatasource.getSource(dataSource, {}).then(result => {
 
             this.setState({
-                dataSource: result
+              //  dataSource: result
             })
         })
     }
@@ -68,7 +69,9 @@
             })
         }
     }
+    
     private onChangeValue =(e: any)=> {
+        
         if (this.props.viewer || this.state.disabled) {
             return;
         }
@@ -81,7 +84,10 @@
     }
     private getDatasource() {
       let datasource: any = this.state.dataSource || [];
-
+      
+      if (!datasource.length) {
+        datasource = this.props.dict || [];
+      }
       // 过滤 视图前面
       if (this.props.viewer) {
         return datasource.filter(it => it.value === this.state.value)
@@ -91,16 +97,38 @@
     }
     private renderButton() {
         let dataSource: any = this.getDatasource();
-
+        
+        let value: any = this.getLabelValue(this.state.value)
         return (
-            <Radio.Group buttonStyle="solid" size={this.props.size} disabled={this.state.disabled}  onChange={this.onChangeValue} value={this.getLabelValue(this.state.value)}>
+            
+            /*<Radio.Group buttonStyle="solid" size={this.props.size} disabled={this.state.disabled}  onChange={this.onChangeValue} defaultValue={value}>
                 {Array.isArray(dataSource) && dataSource.map((it: any) => {
+                    
                     let VIcon = it.icon ? FormerIcon[`${it.icon}`] : null;
                     return (
-                        <Radio.Button  key={it.value} value={it.value}>{VIcon ? <VIcon/> :it.label}</Radio.Button>
+                        <Radio.Button key={it.value} value={it.value}>{VIcon ? <VIcon/> :it.label}</Radio.Button>
                     )
                 })}
-            </Radio.Group>
+            </Radio.Group>*/
+
+            <div className='former-radio-button'>
+                {dataSource.map((it: any) => {
+                    
+                    let VIcon = it.icon ? FormerIcon[`${it.icon}`] : null;
+                    return (
+                        <label onClick={()=>{
+                            this.onChangeValue({
+                                target: {
+                                    value: it.value
+                                }
+                            })
+                        }} className={classnames({
+                            'ui-selected': it.value == value
+                        })} key={it.value} >{VIcon ? <VIcon/> :it.label}</label>
+                    )
+                })}
+            </div>
+            
         )
     }
     private renderBlock() {
@@ -143,7 +171,7 @@
     }
     public render() {
         let { props } = this.state;
-
+        
         // 按钮模式
         switch(props.type) {
             case 'block':

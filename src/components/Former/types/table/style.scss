@@ -21,6 +21,17 @@
       }
     }
     .ant-table-cell {
+        p {
+            margin: 0;
+        }
+        .former-radio-button {
+            height: 18px;
+            line-height: 18px;
+            label {
+                line-height: 18px;
+                height: 18px;
+            }
+        }
         .ant-btn.ant-btn-sm{
             height: 14px;
             font-size: 12px;
