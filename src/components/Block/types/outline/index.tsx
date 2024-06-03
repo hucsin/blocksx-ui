@@ -35,7 +35,7 @@ export default class Outline extends React.Component<BlockItem, any> {
                 <Space>
                     {icon.map((item, index) => {
                         return (
-                            <Former.FormerTypes.avatar icon={item} size={this.getAvatarSize()} />
+                            <Former.FormerTypes.avatar key={index} icon={item} size={this.getAvatarSize()} />
                         )
                     })}
                 </Space>

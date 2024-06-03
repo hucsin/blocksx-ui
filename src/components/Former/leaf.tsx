@@ -18,6 +18,7 @@ export interface ILeaf {
     parentPath?: string;
     value: string;
     runtimeValue?: any;
+    
     defaultValue: any;
     groupType?: string;
     rootEmitter?: EventEmitter;
@@ -221,11 +222,16 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         
         */
     }
-
+    private getTrueStringType() {
+        if (['select','radio'].indexOf(this.props['x-type'] as any) > -1) {
+            return 'xstring'
+        }
+        return this.props.type;
+    }
     private verification(cb: Function) {
         // 验证
-        
-        Validation.valid(this.state.value, {...this.props['x-validation'], type: this.props.type}, (msg) => {
+        console.log(this.props.type, this.props, )
+        Validation.valid(this.state.value, {...this.props['x-validation'], type: this.getTrueStringType()}, (msg) => {
 
             this.setState({
                 validationState: msg,

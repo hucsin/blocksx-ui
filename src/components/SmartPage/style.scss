@@ -57,6 +57,7 @@
    .ui-classify-wrapper {
       padding: 0 24px;
       height: 100%;
+      overflow: hidden;
 
    }
 
@@ -86,6 +87,7 @@
    }
    .ui-classify-content-wrapper {
       height: calc(100% - 92px);
+      overflow: auto;
    }
    .ui-header {
       margin-top: 24px;

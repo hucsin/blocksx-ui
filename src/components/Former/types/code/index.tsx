@@ -93,6 +93,7 @@ export default class FormerCode extends React.PureComponent<FormerCodeProps, For
   }
 
   private onSaveEditor =()=> {
+    console.log('save, ddd')
     // json
     if (this.state.language == 'json') {
       try {
@@ -134,7 +135,7 @@ export default class FormerCode extends React.PureComponent<FormerCodeProps, For
                 
             </div>
             <Drawer 
-              title={this.state.title || "编辑代码"}
+              title={this.state.title || "Editor code"}
               width={drawerWidth}
               className={"former-code-wraper"}
               onClose={this.onHideEditor}
@@ -158,8 +159,8 @@ export default class FormerCode extends React.PureComponent<FormerCodeProps, For
                 <div className="former-code-tool">
                   <Button size="small" onClick={this.onHideEditor} style={{
                       marginRight: 8
-                  }}>取消</Button>
-                  <Button type="primary" size="small" onClick={this.onSaveEditor}>保存</Button>
+                  }}>Cancel</Button>
+                  <Button type="primary" size="small" onClick={this.onSaveEditor}>Save</Button>
                 </div>
             </Drawer>
         </React.Fragment>

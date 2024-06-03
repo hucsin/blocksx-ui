@@ -322,6 +322,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 return;
             }
         }
+        
         this.validationValue(() => {
             this.doSave()
         })

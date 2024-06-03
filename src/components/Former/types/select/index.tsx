@@ -106,7 +106,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         return !!typeProps['mode']
     }
     private onChange = (value: any) => {
-
+        
         this.setState({
             value: value
         }, () => this.props.onChangeValue(value));
