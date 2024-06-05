@@ -6,10 +6,11 @@ import { utils } from '@blocksx/core';
 import Former from '../../../Former';
 import * as Icons from '../../../Icons';
 import { Space, Typography, Button, Tag } from 'antd';
-import { BlockItem, BlockAction, BlockTag } from '../../interface';
-import BlockManger from '../../BlockManger';
+import { BoxItem, BoxAction, BoxTag } from '../../interface';
+import BoxManger from '../../BoxManger';
 
 import './style.scss';
+import Icon from '@ant-design/icons/lib/components/Icon';
 /**
  * 概览，
  * 显示：图标
@@ -18,7 +19,7 @@ import './style.scss';
  *      buttons
  *      tags
  */
-export default class Outline extends React.Component<BlockItem, any> {
+export default class Outline extends React.Component<BoxItem, any> {
     private avatarSizeMap: any = {
         small: 64,
         default: 98,
@@ -55,7 +56,7 @@ export default class Outline extends React.Component<BlockItem, any> {
         if ( utils.isArray(this.props.actions)) {
             return (
                 <Space style={{paddingTop: '32px'}}>
-                    {this.props.actions?.map((item: BlockAction, index) => {
+                    {this.props.actions?.map((item: BoxAction, index) => {
                         return (
                             <Button 
                                 key={index} 
@@ -79,7 +80,8 @@ export default class Outline extends React.Component<BlockItem, any> {
             return (
                 <Typography.Paragraph className='block-outline-tags'>
                     <Space>
-                        {this.props.tags?.map((item: BlockTag, index: number) => {
+                        {this.props.tags?.map((item: BoxTag, index: number) => {
+                            
                             return (
                                 <Tag key={index} closeIcon={false} icon={this.renderIcon(item.icon as string)}>{item.text}</Tag>
                             )
@@ -108,4 +110,4 @@ export default class Outline extends React.Component<BlockItem, any> {
     }
 }
 
-BlockManger.set('outline', Outline)
+BoxManger.set('outline', Outline)

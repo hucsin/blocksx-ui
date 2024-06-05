@@ -1,15 +1,14 @@
 import React from 'react';
 import { utils } from '@blocksx/core';
 import { Tree, Empty, Skeleton, Spin, Button } from 'antd';
-
 import { Icons, SmartRequest, SplitPane, CombineIcon, ContextMenu, PopoverMenu, TablerUtils } from '@blocksx/ui';
-
-import SmartPageFormer from './SmartPageFormer';
+import Manger from '../../core/SmartPageManger';
+import SmartPageFormer from '../former';
 
 
 import { getDefaultMenu } from './config/defaultMenu';
 
-import './styles/SmartPageTree.scss';
+import './style.scss';
 
 interface SmartPageTreeProps {
     schema: any;
@@ -559,3 +558,5 @@ export default class SmartPageTree extends React.Component<SmartPageTreeProps, S
         }
     }
 }
+
+Manger.registoryComponent('tree', SmartPageTree)

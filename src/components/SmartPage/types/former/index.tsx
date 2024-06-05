@@ -5,16 +5,18 @@
  import React from 'react';
  import ReactDOM from 'react-dom';
  import classnames from 'classnames';
- import { RightOutlined } from '@ant-design/icons'
-
- import SmartRequst from '../../utils/SmartRequest';
- import * as Icons from '../../Icons'
- import { Space, Spin } from 'antd';
- import { routerParams } from '../../utils/withRouter';
- import  Former  from '../../Former'
-
+ import { RightOutlined } from '@ant-design/icons';
  import { utils } from '@blocksx/core'
- import SchemaUtils from '../../utils/tool';
+
+ import SmartRequst from '../../../utils/SmartRequest';
+ import * as Icons from '../../../Icons'
+ import { Space, Spin } from 'antd';
+ import { routerParams } from '../../../utils/withRouter';
+ import  Former  from '../../../Former'
+ import Manger from '../../core/SmartPageManger';
+
+ 
+ import SchemaUtils from '../../../utils/tool';
 
  export interface SmartPageFormerProps {
     schema: any,
@@ -103,7 +105,7 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
         }
     
         public UNSAFE_componentWillReceiveProps(newProps: SmartPageFormerProps) {
-            console.log(newProps, newProps.value, 'former')
+            
             if (newProps.title !== this.state.title) {
                 
                 this.setState({
@@ -376,3 +378,5 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
             )
         }
     }
+
+    Manger.registoryComponent('former', SmartPageFormer)

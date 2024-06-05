@@ -6,7 +6,7 @@ import Icon from './components/Former/types/icon';
 //import SqlParser from './demo/Sqlparser'
 import Editor from './components/EditorCore/index';
 //import CardList from './components/CardList/index';
-import Block from './components/Block/index';
+import Box from './components/Box/index';
 
 import LayoutLoginDemo from './demo/Login';
 import RouterLayout from './components/RouterLayout';
@@ -84,7 +84,7 @@ class PageHome extends React.Component{
         overflow: 'auto'
       }}>
         
-        <Block
+        <Box
           dataSource={[
             {
               title: "Harness the power of a developer1",

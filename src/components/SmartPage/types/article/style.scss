@@ -1,0 +1,36 @@
+.ui-smartpage-article {
+    .ant-typography {
+        margin: 0;
+
+        .ant-avatar {
+            margin-right: 8px;
+        }
+        span:not(.ant-avatar) {
+            opacity: .7;
+        }
+    }
+    .ui-smartpage-article-des {
+        padding-left: 40px;
+        font-size: 12px;
+        color:#ccc;
+        .anticon {
+            margin-right: 2px;
+        }
+    }
+    .ui-smartpage-article-title {
+        position: relative;
+        margin: 0px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #f2f2f2;
+
+        .ui-smartpage-article-toolbar {
+            position: absolute;
+            top: 0;
+            right: 0px;
+        }
+    }
+
+    .ui-smartpage-article-content {
+        padding: 8px 0;
+    }
+}

@@ -1,12 +1,12 @@
 
-export interface BlockTag {
+export interface BoxTag {
     icon?: string;
     text: string;
 
     link?: string;
 }
 
-export interface BlockBehavior {
+export interface BoxBehavior {
     type: 'markdown' | 'link' | 'video' | 'router';
     title?: string;
     contentType?: 'icon' | 'avator' | 'default' | 'image' | 'video' ,
@@ -16,7 +16,7 @@ export interface BlockBehavior {
     params?: any;
 }
 
-export interface BlockAction {
+export interface BoxAction {
     text: string;
     icon?: string;
     size?: 'large' | 'small' | 'default',
@@ -25,9 +25,9 @@ export interface BlockAction {
     params?: any;
 }
 
-export type BlockValue = string | BlockBehavior;
+export type BoxValue = string | BoxBehavior;
 
-export interface BlockItemBase {
+export interface BoxItemBase {
     name?: string;
     title?: string; // 标题
     description?: string; // 描述
@@ -39,24 +39,24 @@ export interface BlockItemBase {
     content?: string; // 内容
     markdown?: string; // 内容 markdown格式
 
-    avatar?: BlockValue;
-    icon?: BlockValue | BlockValue[]; 
+    avatar?: BoxValue;
+    icon?: BoxValue | BoxValue[]; 
     
     color?: string;
     
-    image?: BlockValue; // 主图
-    video?: BlockValue; // 视频
+    image?: BoxValue; // 主图
+    video?: BoxValue; // 视频
 
-    actions?: BlockAction[];
-    tags?: BlockTag[];
+    actions?: BoxAction[];
+    tags?: BoxTag[];
     link?: [string, string]; // [redmine me , http://www.baidu.com/]
 }
 
 
-export interface BlockItem extends BlockItemBase {
+export interface BoxItem extends BoxItemBase {
     size?: 'large' | "middle" | "small",
     colspan?: number;
     layout?: "left" | "center",
     events?: any;
-    items?: BlockItemBase[];
+    items?: BoxItemBase[];
 }

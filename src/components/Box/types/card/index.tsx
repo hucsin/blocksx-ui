@@ -2,17 +2,17 @@ import React from 'react';
 import classnames from 'classnames';
 import * as Icons from '../../../Icons';
 import { List, Typography } from 'antd';
-import { BlockItem } from '../../interface';
+import { BoxItem } from '../../interface';
 
 import BehaviorWrapper from '../../utils/BehaviorWrapper';
 import Former from '../../../Former';
-import BlockManger from '../../BlockManger';
+import BoxManger from '../../BoxManger';
 
 import './style.scss';
 
-export default class Card extends React.Component<BlockItem,{}> {
+export default class Card extends React.Component<BoxItem,{}> {
     
-    public constructor(props: BlockItem) {
+    public constructor(props: BoxItem) {
         super(props);
     }
     public static defaultProps  = {
@@ -20,7 +20,7 @@ export default class Card extends React.Component<BlockItem,{}> {
         colspan: 4,
         layout: "left"
     }
-    private getItemType(item: BlockItem) {
+    private getItemType(item: BoxItem) {
         if (item.image) {
             return 'image'
         }
@@ -29,7 +29,7 @@ export default class Card extends React.Component<BlockItem,{}> {
         }
         return item.type || 'default'
     }
-    public renderAvatar(item: BlockItem, index: number) {
+    public renderAvatar(item: BoxItem, index: number) {
         
         if (!item.avatar && !item.image) {
             return  <Former.FormerTypes.avatar size={this.getDefaultAvatarSize()} text={''+(index+1)} />
@@ -131,4 +131,4 @@ export default class Card extends React.Component<BlockItem,{}> {
     }
 }
 
-BlockManger.set('card', Card);
+BoxManger.set('card', Card);

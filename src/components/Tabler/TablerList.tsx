@@ -6,7 +6,7 @@ import { List, Skeleton, Empty, Divider, Button } from 'antd';
 import { utils } from '@blocksx/core';
 import { consume } from '../utils/dom';
 import * as FormerTypes from '../Former/types';
-import Block from '../Block';
+import Box from '../Box';
 
 import { TablerProps} from './typings';
 import * as Icons from '../Icons';
@@ -45,7 +45,9 @@ export interface TablerState {
 
     loading?: boolean;
     reflush?: any;
+    optional?: boolean;
 
+    selectedKey?: any;
 }
 
 interface TablerListProps extends TablerProps {
@@ -60,6 +62,10 @@ interface TablerListProps extends TablerProps {
     onGetRequestParams?: Function;
     avatarSize?: number;
     onAddNew?: Function;
+    onRowClick?: Function;
+
+    optional?: boolean;
+
     renderRow?: Function;
     renderRowClassName?: Function;
     renderRowExtra?: Function;
@@ -97,7 +103,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
     private id: any;
 
-    public constructor(props: TablerProps) {
+    public constructor(props: TablerListProps) {
         super(props);
         this.state = {
             pageNumber: 1,
@@ -111,7 +117,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             cacheFilter: {},
             loading: false,
             reflush: props.reflush,
-            
+            optional: props.optional
         };
         
         this.id = utils.uniq('id')
@@ -173,6 +179,12 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                pageNumber: newProps.pageNumber
            })
         }
+
+        if (newProps.optional != this.state.optional) {
+            this.setState({
+                optional: newProps.optional
+            })
+        }
     }
 
     private getTrueSize() {
@@ -189,7 +201,15 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         return (
             <div className='ui-mircotable-extra' onClick={consume}>
                 {this.renderDataExtra(rowItem, index, 'extra', 'renderRowExtra')}
-                {this.props.renderRowOperater && this.props.renderRowOperater(rowItem, index)}
+                {this.props.renderRowOperater && this.props.renderRowOperater(rowItem, index, (operate: any, rowData: any, rowIndex: number) => {
+                   
+                    if (this.props.optional) {
+                        this.setState({
+                            selectedKey: rowData[this.props.rowKey]
+                        })
+                    }
+                    // 
+                })}
             </div>
         )
     }
@@ -378,10 +398,24 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             }).filter(Boolean)
         }   
     }
+
+    private onClickItem = ( operate:any, rowData:any,rowIndex:number) => {
+        if (this.props.onRowClick) {
+            this.props.onRowClick(operate, rowData, rowIndex)
+        }
+
+        this.setState({
+            selectedKey: rowData[this.props.rowKey]
+        })
+    }
     
     private renderListItem = (rowData: any, index: number) => {
 
         let ItemClassName: string = this.props.renderRowClassName ? this.props.renderRowClassName(rowData, index) : '';
+
+        if (this.state.optional && rowData[this.props.rowKey] == this.state.selectedKey) {
+            ItemClassName+= ' ui-tabler-item-selected';
+        }
 
         if (this.props.renderRow) {
             return (
@@ -399,7 +433,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             return (
                 <List.Item
                     actions={[this.renderExtra(rowData, index)]}
-                    onClick={() => { /*this.onClickItem(item, { value: 'view' }) */ }}
+                    onClick={() => { this.onClickItem({ type: 'rowclick' }, rowData, index) }}
                     id={rowData.id}
                     key={'item' + rowData.id + index}
                     extra={this.renderDataExtra(rowData, index, 'itemExtra', 'renderRowItemExtra')}
@@ -466,7 +500,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             if (block.length) {
                 return (
                    <div style={{marginTop: 32}}>
-                        <Block dataSource={block} size="default" events={{
+                        <Box dataSource={block} size="default" events={{
                             create: (params: any) => {
                                 this.props.onAddNew && this.props.onAddNew(params) 
                             }

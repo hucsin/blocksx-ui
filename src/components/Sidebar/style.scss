@@ -33,7 +33,7 @@
         > span {
             display:block;
             font-size: 12px;
-            opacity: .8;
+            opacity: .5;
         }
         .hoofs-sidebar-header-fold-open {
             display: none;
@@ -95,9 +95,14 @@
     height: 100%;
     background: #4338CA;
     color:#C7D2FE;
-    font-size:14px;
+    font-size:16px;
     position: relative;
 
+    dd {
+        span.anticon{
+            font-size: 18px;
+        }
+    }
     
 
     &.hoofs-sidebar-fold {

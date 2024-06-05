@@ -22,6 +22,8 @@
     position: relative;
     height: 100%;
 
+   
+
     .ant-list-item-meta-title  {
         p {
             padding: 0;
@@ -275,6 +277,9 @@
         }
     }
     .ant-list-split .ant-list-item {
+        &.ui-tabler-item-selected {
+            background:#f2f2f2;
+        }
         &.ui-mircotable-group {
             opacity: .5;
             text-transform: uppercase;
@@ -283,19 +288,20 @@
         }
         border-block-end:none;
         background:#fff;
+        
         transform: scale(1) perspective(0) translateZ(0);
         transition: transform .2s,box-shadow .2s,background-color .2s;
         border: 1px solid #eee;
         position: relative;
         cursor: pointer;
         border-radius: 10px;
-        &:not(.stop-animation):hover {
+        &:not(.ui-tabler-item-selected):not(.stop-animation):hover {
             background-color: #fff;
             //position: absolute;
             transform: scale(1.01);
             max-width: calc(100% + 10px);
             z-index: 11;
-            box-shadow: 1px 1px 4px rgba(0,0,0,.086);
+            box-shadow: 1px 1px 4px rgba(0,0,0,.036);
         }
         &.stop-animation {
             cursor: default;;
@@ -313,6 +319,8 @@
     .ant-list-item-meta-description {
         p {
             margin: 0;
+            display: inline;
+            padding-right: 12px;
         }
         > span {
             > span {

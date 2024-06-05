@@ -1,8 +1,4 @@
-import Tabler from './SmartPageTabler';
-import Manger from '../core/SmartPageManger';
-import Former from './SmartPageFormer';
-import Tree from './SmartPageTree'
-
-Manger.registoryComponent('tabler', Tabler);
-Manger.registoryComponent('former', Former);
-Manger.registoryComponent('tree', Tree);
+import './tabler/index';
+import './former/index';
+import './tree/index';
+import './article/index';

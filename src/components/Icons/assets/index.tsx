@@ -14,6 +14,8 @@ export { default as ImageAddUtilityFilled } from './ImageAddUtilityFilled';
 export { default as KingbaseBrandFilled } from './KingbaseBrandFilled';
 export { default as LayoutUtilityFilled } from './LayoutUtilityFilled';
 export { default as LockUtilityFilled } from './LockUtilityFilled';
+export { default as MarkReadUtilityFilled } from './MarkReadUtilityFilled';
+export { default as MarkUnreadUtilityFilled } from './MarkUnreadUtilityFilled';
 export { default as NarrowUtilityFilled } from './NarrowUtilityFilled';
 export { default as OceanbaseBrandFilled } from './OceanbaseBrandFilled';
 export { default as PostgresqlBrandFilled } from './PostgresqlBrandFilled';
@@ -92,7 +94,7 @@ export { default as TableColumnUtilityOutlined } from './TableColumnUtilityOutli
 export { default as TableDataOutlined } from './TableDataOutlined';
 export { default as TableUtilityOutlined } from './TableUtilityOutlined';
 export { default as TemplateUtilityOutlined } from './TemplateUtilityOutlined';
-export { default as ThinkingutilityOutlined } from './ThinkingutilityOutlined';
+export { default as ThinkingUtilityOutlined } from './ThinkingUtilityOutlined';
 export { default as TidbBrandOutlined } from './TidbBrandOutlined';
 export { default as TriggerLinkUtilityOutlined } from './TriggerLinkUtilityOutlined';
 export { default as TriggerUtilityOutlined } from './TriggerUtilityOutlined';

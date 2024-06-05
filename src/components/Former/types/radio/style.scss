@@ -80,7 +80,7 @@
         line-height: 22px;
         padding: 0 8px;
         border:1px solid #d9d9d9;
-        border-left-width: none;
+        border-left-width: 0;
         &:hover {
             color:var(--main-bg-color, #1677ff);
         }

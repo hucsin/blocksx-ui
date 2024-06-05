@@ -4,8 +4,9 @@
  */
 
 import React from 'react';
- 
-import { Select, Radio, Space, Input } from 'antd';
+import { Space, Input } from 'antd';
+import { debounce } from 'throttle-debounce';
+
 
 import { select as FormerSelect , radio as FormerRadio } from '../Former/types'
  
@@ -28,7 +29,8 @@ export interface SearchBarProps {
         type: 'select' | 'radio'; // 类型 select, radio
         mode?: "multiple" | "tags";
         field: string; // 字段
-        data: LabelValue[]
+        data: LabelValue[];
+        defaultValue?: any;
     },
     value?: string;
     query?: string;
@@ -42,7 +44,8 @@ interface SearchBarState {
 
 export default class SearchBar extends React.Component<SearchBarProps, SearchBarState> {
     public static defaultProps = {
-        direction: 'left'
+        direction: 'left',
+        searchKey: 'query'
     }
     public constructor(props: SearchBarProps) {
         super(props);
@@ -53,6 +56,7 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
     }
     private onChangeValue =()=> {
         let value: any = {};
+        
         if (this.props.searchKey) {
             value[this.props.searchKey] = this.state.query;
         }
@@ -65,12 +69,18 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
     }
     private onChangeQuickValue =(event: any)=> {
         let quickValue: any = event && event.target ? event.target.value : event;
+
         this.setState({
             value: quickValue
         }, this.onChangeValue)
     }
+    private onChange = (event: any)=> {
+        this.onChangeQueryValue(event);
+    }
     public onChangeQueryValue =(event: any) => {
+        
         let value: any = event && event.target ? event.target.value : event;
+        
         this.setState({
             query: value
         },this.onChangeValue)
@@ -80,7 +90,8 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
         let { size, quick } = this.props;
         
         if (quick) {
-            let dataSource: any = [...quick.data, { value: '', label: 'All' }]
+            let dataSource: any = [...quick.data];
+
             switch (quick.type) {
                 case 'select':
                     return (
@@ -96,7 +107,7 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
                 default:
                     return (
                         <FormerRadio
-                            value={this.state.value}
+                            value={this.state.value || quick.defaultValue}
                             size={size}
                             dataSource={dataSource}
                             type='string'
@@ -111,26 +122,32 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
         
        return <Input.Search
             size={this.props.size}
+            allowClear
             placeholder={this.props.placeholder}
-            value={this.state.query}
+            defaultValue={this.state.query}
             onSearch={this.onChangeQueryValue}
             disabled={this.state.disabled}
+            onChange={debounce(300,this.onChange)}
         ></Input.Search>
     }
 
     public render() {
+
+        
         if (this.props.direction == 'left') {
             return (
                 <Space size={this.props.size}>
-                    {this.renderSearch()}
                     {this.renderQuick()}
+                    {this.renderSearch()}
+                    
                 </Space>
             )
         } else {
             return (
                 <Space size={this.props.size}>
-                    {this.renderQuick()}
                     {this.renderSearch()}
+                    {this.renderQuick()}
+                    
                 </Space> 
             )
         }

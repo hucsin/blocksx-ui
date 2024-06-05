@@ -103,6 +103,46 @@
       }
    }
 
+   .ui-classify-content-left {
+      
+      width: 100%;
+      overflow: hidden;
+      float:left;
+      transition: all .2s;
+   }
+
+   
+   .ui-classify-content-right {
+      overflow:hidden;
+      padding: 16px 8px;
+      height: calc(100% - 48px);
+      display: none;
+
+      >div {
+         border: 1px solid #eee;
+         border-radius: 7px;
+         padding: 16px;
+         box-sizing: border-box;
+         height: 100%;
+      }
+   }
+
+   .ui-classify-optional-mode {
+      .ant-list-item-meta-description {
+         white-space: nowrap;
+         overflow: hidden;
+         text-overflow: ellipsis;
+      }
+      .ant-list-item-action {
+         display: none;
+      }
+      .ui-classify-content-left {
+         width: 38.2%;
+      }
+      .ui-classify-content-right {
+         display:block;
+      }
+   }
 }
 
 .ant-drawer-body {

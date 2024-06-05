@@ -118,18 +118,29 @@ export default class CleanseSchema {
     public static getSearchQuick(field: any) {
 
         if (field) {
-            let fieldUI: any = field.fieldUI;
+            let fieldUI: any = field.meta;
             let quick: any = fieldUI.quick;
+            let defaultValue: any ;
+            let datasource: any = fieldUI.dict ||field.fieldDict
 
+
+            if (utils.isPlainObject(quick)) {
+                datasource = quick.dict || [];
+                defaultValue =  (datasource.find(it=> it.defaultValue) || {}).value;
+                quick = quick.type;
+            }
+            
             return {
                 type: quick,
                 field: field.fieldKey,
-                data: field.fieldDict
+                data: datasource,
+                defaultValue
             }
         }
     }
     public static getSearch(fields: any) {
-        let quick: any = fields.find(field => field.fieldUI && field.fieldUI.quick);
+        
+        let quick: any = fields.find(field => field.meta && field.meta.quick);
         return {
             searcher: 'query',
             quick: this.getSearchQuick(quick)

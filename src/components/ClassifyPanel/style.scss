@@ -59,9 +59,11 @@
     }
     .ant-tabs-extra-content{
         padding-right:0px;
-        width: 160px;
-        text-align: right;;
         
+        text-align: right;;
+        .ant-input-group-wrapper {
+            max-width: 140px;
+        }
     }
     .ant-tabs-nav{
         background-color: #fff;

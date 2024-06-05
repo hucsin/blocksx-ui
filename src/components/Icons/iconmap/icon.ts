@@ -39,6 +39,8 @@ export const map:any = {
         "ImageAddUtilityFilled",
         "LayoutUtilityFilled",
         "LockUtilityFilled",
+        "MarkReadUtilityFilled",
+        "MarkUnreadUtilityFilled",
         "NarrowUtilityFilled",
         "ProductUtilityFilled",
         "PublishUtilityFilled",
@@ -86,6 +88,7 @@ export const map:any = {
         "TableColumnUtilityOutlined",
         "TableUtilityOutlined",
         "TemplateUtilityOutlined",
+        "ThinkingUtilityOutlined",
         "TriggerLinkUtilityOutlined",
         "TriggerUtilityOutlined",
         "UnlinkUtilityOutlined",
@@ -115,8 +118,5 @@ export const map:any = {
     "common": [
         "FolderCommonOutlined",
         "PageCommonOutlined"
-    ],
-    "thinkingutility": [
-        "ThinkingutilityOutlined"
     ]
 }

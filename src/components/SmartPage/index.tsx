@@ -21,6 +21,7 @@ import './style.scss';
 
 export interface PageMeta {
     title?: string;
+    optional?: any;
     okText?: string;
     description?: string;
     icon?: string;
@@ -56,6 +57,9 @@ export interface SmartPageProps {
 
     pageURI: string;
     mode?: string;
+
+    // 是否是选择模式
+    optional?: any;
     rowSelection?: boolean;
     onChangeValue?: Function;
     onInitPage?: Function;
@@ -94,9 +98,11 @@ export interface SmartPageState {
     noToolbar?: boolean;
     noClassify?: boolean;
 
-
     rowSelection?: boolean;
     mode?: string;
+
+    optional?: boolean;
+    optionalOpen?: boolean;
     value?: any;
 
     defaultClassify: string;
@@ -113,7 +119,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         noClassify: false,
         typeProps: {},
         title: 'View the recrod',
-        okText: 'Save'
+        okText: 'Save',
+        
     }
     private defaultWidthMap: any = {
         tree: 600,
@@ -129,6 +136,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
     private operateContainerRef: any;
     private titleContainerRef: any;
+    private optionalContainerRef: any;
 
     public constructor(props: SmartPageProps) {
         super(props)
@@ -145,6 +153,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             path: '',
             name: props.name,
             reflush: 0,
+            optional: props.optional,
+            optionalOpen: false,
             noFolder: props.noFolder || props.simplicity,
             noHeader: props.noHeader=== false ? false : props.noHeader ||  props.simplicity,
             noToolbar: props.noToolbar || props.simplicity,
@@ -163,7 +173,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
         this.operateContainerRef = React.createRef();
         this.titleContainerRef = React.createRef();
-        
+        this.optionalContainerRef = React.createRef();
     }
     private getDefaultFolder() {
         if (this.props.router) {
@@ -254,7 +264,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         noHeader: this.state.noHeader,
                         noToolbar: this.state.noToolbar,
                         noClassify: this.state.noClassify,
-                        loading: false
+                        loading: false,
+                        optional: !!pageMeta.optional
                     };
                     
                     if (this.props.onInitPage) {
@@ -339,6 +350,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
         this.setState({
             classifyQuery: query,
+            optionalOpen: false,
             reflush: +new Date
         })
     }
@@ -408,8 +420,15 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 toolbarRef= {this.toolbarRef}
                 operateContainerRef={this.operateContainerRef}
                 titleContainerRef={this.titleContainerRef}
+                optionalContainerRef={this.optionalContainerRef}
+                optional={this.state.optional}
                 
                 onChangeValue={this.onChangeValue}
+                onOptionalOpen={(close)=>{
+                    this.setState({
+                        optionalOpen: !close ? true : false
+                    })
+                }}
                 onClose={()=>this.setState({open: false})}
             />
         )
@@ -436,7 +455,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 <>
                 <div className={classnames({
                     'ui-classify-wrapper': true,
-                    'ui-classify-noheader': this.state.noHeader
+                    'ui-classify-noheader': this.state.noHeader,
+                    'ui-classify-optional-mode': this.state.optionalOpen
                 })}>
                     <ClassifyPanel
                         key={37}
@@ -452,7 +472,14 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         return <ClassifyPanel.Panel key={dict.value} label={dict.label} value={dict.value}></ClassifyPanel.Panel>
                     })}
                     </ClassifyPanel>
-                    <div className='ui-classify-content-wrapper'>{this.renderContentView()}</div>
+                    <div className='ui-classify-content-wrapper'>
+                        <div className='ui-classify-content-left'>
+                            {this.renderContentView()}
+                        </div>
+                        <div className='ui-classify-content-right'>
+                            <div ref={this.optionalContainerRef}></div>
+                        </div>
+                    </div>
                 </div>
                 
                 </>

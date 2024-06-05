@@ -8,30 +8,30 @@
 import React from "react";
 import classnames from 'classnames';
 
-import { BlockItem } from './interface';
-import BlockManger from "./BlockManger";
+import { BoxItem } from './interface';
+import BoxManger from "./BoxManger";
 import './types';
 import './index.scss';
 
-export interface BlockProps {
+export interface BoxProps {
     size?: 'small' | 'default' | 'large';
     events?: any;
-    dataSource: BlockItem[];    
+    dataSource: BoxItem[];    
 }
 
-interface BlockState {
+interface BoxState {
 
 }
 
 
-export default class Block extends React.Component<BlockProps, BlockState> {
+export default class Box extends React.Component<BoxProps, BoxState> {
 
-    public constructor(props: BlockProps) {
+    public constructor(props: BoxProps) {
         super(props);
     }
-    public renderChildren(it: BlockItem, index: number) {
-        if (BlockManger.has(it.type)) {
-            let View: any = BlockManger.get(it.type);
+    public renderChildren(it: BoxItem, index: number) {
+        if (BoxManger.has(it.type)) {
+            let View: any = BoxManger.get(it.type);
            
             return <View key={index} {...it} size={this.props.size} events={this.props.events}/>
         }

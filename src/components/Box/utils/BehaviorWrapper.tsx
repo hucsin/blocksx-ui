@@ -3,13 +3,13 @@ import { Drawer, Spin } from 'antd';
 import { utils } from '@blocksx/core';
 import ReactMarkdown from 'react-markdown';
 
-import { BlockBehavior } from '../interface';
+import { BoxBehavior } from '../interface';
 
 interface BehaviorWrapperProps {
     router?: any;
     children?: React.ReactNode;
     title?: string;
-    content:  React.ReactNode | BlockBehavior;
+    content:  React.ReactNode | BoxBehavior;
 
     events?: {
         [event: string] : () => void;
@@ -36,7 +36,7 @@ export default class BehaviorWrapper extends React.Component<BehaviorWrapperProp
     public render() {
 
         if (utils.isPlainObject(this.props.content)) {
-            let contentBehavior: BlockBehavior = this.props.content as any;
+            let contentBehavior: BoxBehavior = this.props.content as any;
 
             switch(contentBehavior.type) {
                 case 'markdown':
@@ -53,15 +53,15 @@ export default class BehaviorWrapper extends React.Component<BehaviorWrapperProp
     }
     // 调用此函数必须事this.props.content为对象引入的时候
     private fetchContent() {
-        let blockBehavior: BlockBehavior = this.props.content as BlockBehavior;
+        let boxBehavior: BoxBehavior = this.props.content as BoxBehavior;
         
 
-        if (utils.isFunction(blockBehavior.content)) {
+        if (utils.isFunction(boxBehavior.content)) {
 
-            let content = blockBehavior.content as Function;;
+            let content = boxBehavior.content as Function;;
             this.setState({loading: false});
 
-            let promiseResult = content(blockBehavior.params);
+            let promiseResult = content(boxBehavior.params);
 
             if (utils.isPromise(promiseResult)) {
                 promiseResult.then(data => {
@@ -78,9 +78,9 @@ export default class BehaviorWrapper extends React.Component<BehaviorWrapperProp
             }
 
         } else {
-            if (utils.isString(blockBehavior.content)) {
+            if (utils.isString(boxBehavior.content)) {
                 this.setState({
-                    content: blockBehavior.content as string
+                    content: boxBehavior.content as string
                 })
             }
         }
