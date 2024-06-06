@@ -37,13 +37,13 @@ export default class FormerJson extends React.Component<FormerJSONProps, FormerC
         this.setState({
             value
         })
-        console.log(value, 3333)
+        
         if (this.props.onChangeValue) {
             this.props.onChangeValue(value)
         }
     }
     public render() {
-        console.log(this.props)
+        
         return (
             <FormerCode title={'Editor the '+ this.props.fieldName} value={this.state.value} language='json' onChangeValue={this.onChangeValue} />
         )

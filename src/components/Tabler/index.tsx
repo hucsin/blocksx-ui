@@ -389,6 +389,11 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
         }
 
         let batchButton: any = batchList.filter((it: RowOperate) => {
+            
+            if (it.place && it.place !== 'list') {
+                return false;
+            }
+        
             return this.filterAuthItem(it);
         });
 
@@ -461,7 +466,10 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             }
             return -1;
         }).filter((it: RowOperate) => {
-
+            
+            if (it.place && it.place !=='list') {
+                return false;
+            }
 
             return this.filterAuthItem(it, rowData)
         });

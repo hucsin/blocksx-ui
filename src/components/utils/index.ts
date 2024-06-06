@@ -1,4 +1,6 @@
+import dayjs from 'dayjs';
 import { utils } from '@blocksx/core';
+
 
 class Utils {
 
@@ -144,6 +146,23 @@ class Utils {
     }
     isMacOS() {
         return navigator.userAgent.includes('Macintosh');
+    }
+    formatDate(date: any, format: string = 'YYYY/MM/DD HH:mm:ss') {
+        return dayjs(date).format(format)
+    }
+    formatSampleDate(date: any, format:string = 'YYYY/MM/DD HH:mm:ss') {
+        let today:any = dayjs();
+        let yesterday: any = today.subtract(1, 'day');
+        
+        let currentDate: any = dayjs(date);
+
+        if (currentDate.isSame(today, 'day')) {
+            return currentDate.format('HH:ss')
+        } else if (currentDate.isSame(yesterday, 'day')) {
+            return 'yesterday'
+        } else {
+            return currentDate.format(format)
+        }
     }
 }
 

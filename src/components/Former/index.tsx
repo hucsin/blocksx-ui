@@ -7,6 +7,8 @@ import classnames from 'classnames';
 import { utils as BUtils } from '@blocksx/core';
 import * as ICONS from '../Icons';
 import * as FormerTypes from './types';
+import ConstValue from './const';
+
 import './style.scss';
 
 
@@ -31,6 +33,7 @@ export interface FormerProps {
     autoclose?: boolean;
 
     operateContainerRef?: any;
+    onlyButton?: boolean;// 只渲染button
     
     //onRelyParams: Function;
     // 获取 依赖的参数
@@ -45,12 +48,13 @@ export interface FormerProps {
     id?: any;
     title?: any;
     okText?: string;
-    cancelText?: string;
+    okIcon?: string;
+    cancelText?: string; 
     width?: number;
     onClose?: Function;
     onVisible?: Function;
     keep?: boolean;
-    size?: string;
+    size?: any;
 
     viewer?: boolean; // 标记视图模式，只展示
 
@@ -288,6 +292,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         let count: number = this.emitter.listenerCount('validation');
         let isBreak: boolean = false;
 
+        ConstValue.isValidError = false;
+
         if (count > 0) {
             if (this.helper) {
                 this.emitter.removeListener('checked', this.helper)
@@ -316,7 +322,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             cb()
         }
     }
-    private onSave = () => {
+    private onSave = (e) => {
+        
+        e.preventDefault();
+        e.stopPropagation();
         if (this.props.onBeforeSave) {
             if (this.props.onBeforeSave() === false) {
                 return;
@@ -516,7 +525,23 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         return this.renderOperateWraper();
     }
     public renderOperateWraper() {
-        
+        if (this.props.onlyButton) {
+            let OkIconView: any = ICONS[this.props.okIcon as any]
+            return (
+                !this.state.viewer 
+                    ? <Button 
+                        loading={this.state.loading} 
+                        size={this.props.size} 
+                        disabled={this.state.disabled} 
+                        onClick={this.onSave} type="primary"
+                        icon={OkIconView && <OkIconView/>}
+                      >
+                        {this.state.okText || 'Ok'}
+                      </Button>
+                     : null
+                    
+            )
+        }
         return (
             <Space>                       
                 {!this.state.viewer ? <Button loading={this.state.loading} disabled={this.state.disabled} onClick={this.onSave} type="primary">

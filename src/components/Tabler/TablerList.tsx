@@ -1,7 +1,7 @@
 import React from 'react';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { List, Skeleton, Empty, Divider, Button } from 'antd';
+import { List, Skeleton, Empty, Divider, Button, Tooltip } from 'antd';
 
 import { utils } from '@blocksx/core';
 import { consume } from '../utils/dom';
@@ -11,6 +11,7 @@ import Box from '../Box';
 import { TablerProps} from './typings';
 import * as Icons from '../Icons';
 import TableUtils from '../utils/tool';
+import BaseUtil from '../utils'
 import i18n from '@blocksx/i18n';
 import classnames from 'classnames';
 
@@ -183,6 +184,13 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         if (newProps.optional != this.state.optional) {
             this.setState({
                 optional: newProps.optional
+            })
+        }
+
+        if (newProps.selectedRowKeys != this.state.selectedRowKeys) {
+            this.setState({
+                selectedRowKeys: newProps.selectedRowKeys,
+                selectedKey: newProps.selectedRowKeys ? newProps.selectedRowKeys[0] || newProps.selectedRowKeys : null
             })
         }
     }
@@ -443,14 +451,27 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                         key={rowData.id + index + 'meta'}
                         avatar={this.renderAvatar(rowData, index)}
                         title={<React.Fragment key={'title'+rowData.id}>{this.renderDataExtra(rowData, index, 'title', 'renderRowTitle')}</React.Fragment>}
-                        description={this.renderDataExtra(rowData, index, 'description', 'renderRowDescription')}
+                        description={this.renderItemDescription(rowData,index)}
                     />
                     {this.renderDataExtra(rowData, index, 'content', 'renderRowContent')}
                 </List.Item>
             )
         }
     }
-
+    private renderItemDescription(rowData: any, index) {
+        return (
+            <>
+                <span className='ui-meta-description-wrapper'>{this.renderDataExtra(rowData, index, 'description', 'renderRowDescription')}</span>
+                {rowData.createdAt && 
+                    <Tooltip placement="top" title={"Created: " + BaseUtil.formatDate(rowData.createdAt, 'YYYY/MM/DD HH:mm:ss ddd')}>
+                        <span className='ui-createdat-wrapper'>
+                            {BaseUtil.formatSampleDate(rowData.createdAt, 'YYYY/MM/DD')}
+                        </span>
+                    </Tooltip>
+                }
+            </>
+        )
+    }
     private renderListContent() {
         let layout: any = this.getLayout();
         return (

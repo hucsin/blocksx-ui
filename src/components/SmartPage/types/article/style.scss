@@ -1,4 +1,5 @@
 .ui-smartpage-article {
+    height: 100%;
     .ant-typography {
         margin: 0;
 
@@ -16,6 +17,9 @@
         .anticon {
             margin-right: 2px;
         }
+        .ui-sp-des-ct {
+            padding-left: 16px;
+        }
     }
     .ui-smartpage-article-title {
         position: relative;
@@ -27,10 +31,70 @@
             position: absolute;
             top: 0;
             right: 0px;
+            .ant-btn:not(.ant-btn-icon-only)>.ant-btn-icon:not(:last-child) {
+                margin-inline-end:2px;
+                
+            }
+            .ant-btn-primary  {
+                background: #fff;
+                border: 1px solid #1677ff;
+                color: #1677ff;
+            }
+            .ant-space-compact {
+                display: inline;
+                margin-left: 8px;
+            }
         }
     }
 
     .ui-smartpage-article-content {
         padding: 8px 0;
+        box-sizing: border-box;
+        height: calc(100% - 64px);
+        overflow: auto;
+        .ant-alert {
+            border-radius: 4px;
+            background:#fdfdfd;
+            border-color:#eee;
+            border-left-width: 4px;
+            margin: 16px 0;
+            opacity: .7;
+        }
+        .ui-former-content {
+            padding-right: 8px;
+        }
+        .ui-article-content {
+            font-size: 14px;
+            padding: 16px;
+            border: 1px dashed #f0f0f0;
+            border-radius: 5px;
+            pre {
+                opacity: .8;
+                white-space: pre-wrap;
+            }
+            ol, ul {
+                padding-inline-start: 2em;
+            }
+
+            >*:first-child{
+                margin-top:0
+            }
+            >*:last-child{
+                margin-bottom:0
+            }
+
+            h1 {
+                opacity: .7;
+                font-size: 24px;
+            }
+            h2 {
+                opacity: .7;
+                font-size: 20px;
+            }
+            h3 {
+                opacity: .7;
+                font-size: 18px;
+            }
+        }
     }
 }

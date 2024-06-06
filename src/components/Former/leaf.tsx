@@ -9,8 +9,9 @@ import * as FormerTypes from './types';
 import { IFormerControl } from './typings';
 import { EventEmitter } from 'events';
 import Validation from './validation';
-
+import ConstValue from './const';
 import { utils } from '@blocksx/core';
+import * as Icons from '../Icons'
 
 
 export interface ILeaf {
@@ -85,7 +86,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     private properties?: any;
     private items?: any;
     private emitterHelper: any;
-
+    private wrapperRef: any;
 
     public constructor(props: ILeaf) {
         super(props);
@@ -118,6 +119,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             originValue: this.getMapOriginValue(value || {}),
             canmodify: props.canmodify
         }
+
+        this.wrapperRef = React.createRef();
     }
 
 
@@ -229,8 +232,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         return this.props.type;
     }
     private verification(cb: Function) {
-        // 验证
-        console.log(this.props.type, this.props, )
+       
         Validation.valid(this.state.value, {...this.props['x-validation'], type: this.getTrueStringType()}, (msg) => {
 
             this.setState({
@@ -243,6 +245,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                     validationState: false
                 })
             }, 4000)
+
+            if (msg && this.wrapperRef.current && !ConstValue.isValidError ) {
+                ConstValue.isValidError  = true;
+                this.wrapperRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
 
             cb(!msg, msg);
         })
@@ -915,10 +922,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                 <Popover
                     placement="topLeft"
                     content={this.state.validationMessage}
-                    open={!!this.state.validationMessage}
+                    open={false && !!this.state.validationState && this.state.validationMessage}
                 >
                     <span
-                        className={classnames({ 'former-open-error': this.state.validationState })}
+                        ref={this.wrapperRef}
+                        className={classnames({ 'former-open-error': this.state.validationMessage })}
                     >
                         <View
                             key={this.leafProps.index || this.leafProps['x-index'] || this.leafProps.path}
@@ -931,7 +939,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             disabled={!this.isAllowModify()}
                             onChangeValue={(val: any, type?: string, originValue?: any) => this.onChangeValue(val, type, originValue)}
                         />
-                        {this.state.validationMessage && <span className='former-error-message'>{this.state.validationMessage}</span>}
+                        {this.state.validationMessage &&  <span className='former-error-message'><Icons.InfoCircleOutlined/> {this.state.validationMessage}</span>}
                     </span>
                 </Popover>
             )

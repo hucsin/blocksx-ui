@@ -296,7 +296,6 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             return null;
         }
         
-        
         return (
             <Former
                 title={this.getDefaultTitle()}

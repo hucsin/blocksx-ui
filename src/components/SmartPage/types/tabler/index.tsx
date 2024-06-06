@@ -132,16 +132,32 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
         return (pageMeta.pageType || pageMeta.title).toLowerCase()
 
     }
-    private getArticleProps() {
-        return {}
+    private getArticleProps(selectedRow?: any) {
+
+        return {
+            onRowAction: (operate: any, rowData: any) => {
+                
+                if (operate.type =='cancel') {
+                    this.hideOptionalWrapper();
+                }
+            }
+        }
     }
     private renderOptional() {
         
         if (this.state.selectedRow && this.props.optionalContainerRef && this.props.optionalContainerRef.current) {
             let id: any = this.state.selectedRow[this.props.rowKey as any];
-            console.log(2222,id, this.props.rowKey)
+            
             return ReactDOM.createPortal(
-                <Article value={this.state.selectedRow} key={id} schema={this.props.schema} pageMeta={this.props.pageMeta} {...this.getArticleProps()} />,
+                <Article 
+                    value={this.state.selectedRow} 
+                    key={id} 
+                    schema={this.props.schema} 
+                    pageMeta={this.props.pageMeta} 
+                    path={this.props.path}
+                    {...this.getArticleProps(this.state.selectedRow)}
+
+                />,
                 this.props.optionalContainerRef.current
             )
         }
@@ -154,8 +170,9 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
         })
     }
     public render() {
-
+        let { selectedRow } = this.state;
         let pageMeta: any = this.props.pageMeta || { title: '' }
+        let selectedRowKeys: any = selectedRow? selectedRow[this.props.rowKey || 'id'] : null;
         
         return (
             <>
@@ -174,6 +191,8 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                     router={this.props.router}
                     
                     onGetRequestParams={this.getRequestParams}
+
+                    selectedRowKeys={selectedRowKeys}
                     
                     searchRef={this.props.searchRef}
                     toolbarRef={this.props.toolbarRef}
