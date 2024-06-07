@@ -12,13 +12,14 @@
             vertical-align: top;
         }
     }
-    >span.anticon {
-    }
+   
     >span:last-child {
         position: absolute;
         transform: scale(.6,.6);
         z-index: 1;
         background-color: #fff;
+        border-radius: 20px;
+        padding: 3px;
     }
 
     &.icons-combine-bottomRight {
@@ -29,8 +30,8 @@
             }
         }
         >span:last-child{
-            bottom: -3px;
-            right: -3px;
+            bottom: -5px;
+            right: -5px;
         }
     }
     &.icons-combine-topRight {

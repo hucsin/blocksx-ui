@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { Space, Input } from 'antd';
+import { Space, Input, Switch } from 'antd';
 import { debounce } from 'throttle-debounce';
 
 
@@ -26,11 +26,12 @@ export interface SearchBarProps {
     //searchField?: string[] | string; // 只在本地数据模式下生效，
     // 只能加入一个快捷检索区域
     quick?: {
-        type: 'select' | 'radio'; // 类型 select, radio
+        type: 'select' | 'radio' | 'switch'; // 类型 select, radio
         mode?: "multiple" | "tags";
         field: string; // 字段
         data: LabelValue[];
         defaultValue?: any;
+        props?: any;
     },
     value?: string;
     query?: string;
@@ -51,7 +52,8 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
         super(props);
 
         this.state = {
-            disabled: props.disabled
+            disabled: props.disabled,
+            value: props.quick?.defaultValue
         }
     }
     private onChangeValue =()=> {
@@ -68,8 +70,9 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
         this.props.onChange && this.props.onChange(value)
     }
     private onChangeQuickValue =(event: any)=> {
-        let quickValue: any = event && event.target ? event.target.value : event;
-
+        let quickValue: any = (event && event.target) ? event.target.value : event;
+        
+        
         this.setState({
             value: quickValue
         }, this.onChangeValue)
@@ -93,6 +96,31 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
             let dataSource: any = [...quick.data];
 
             switch (quick.type) {
+                case 'switch':
+                    let props = quick.props || {};
+                    
+                    return (
+                        <Switch 
+                            unCheckedChildren = {props.unCheckedText}
+                            checkedChildren = {props.checkedText}
+                            onChange={(checked)=> {
+                                let value: any = checked;
+
+                                if (checked) {
+                                    if (typeof props.checkedValue !== 'undefined') {
+                                        value = props.checkedValue
+                                    }
+                                } else {
+                                    if (typeof props.unCheckedValue !== 'undefined') {
+                                        value = props.unCheckedValue ;
+                                    }
+                                }
+
+                                this.onChangeQuickValue(value === null ? undefined : value)
+                            }}
+                        />
+                    )
+                    break;
                 case 'select':
                     return (
                         <FormerSelect 
@@ -107,7 +135,7 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
                 default:
                     return (
                         <FormerRadio
-                            value={this.state.value || quick.defaultValue}
+                            value={this.state.value}
                             size={size}
                             dataSource={dataSource}
                             type='string'

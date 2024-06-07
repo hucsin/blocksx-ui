@@ -2,25 +2,7 @@
     .former-object .former-group-item-content {
         margin-right: 0;
     }
-    .ui-notice {
-        border: 1px solid #f0f0f0;
-        border-radius: 3px;
-        border-left: 7px solid #f0f0f0;
-        padding: 8px 16px;
-        background: #fcfcfc;
-        opacity: .7;
-        color: #333;
-        display: flex;
-        align-items: center;
-        margin-bottom: 8px;
-        > span {
-            margin-inline-end: 16px;
-        }
-        > p {
-            flex: 1 0;
-            width: 0;
-        }
-    }
+    
     .ui-former-buttons {
         position: fixed;
         z-index: 101;

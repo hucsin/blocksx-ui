@@ -7,7 +7,7 @@ import SearchBar from '../SearchBar';
 import TablerFormer from './TablerFormer';
 import SmartDrawer from '../SmartDrawer';
 
-import { DownOutlined, CaretDownOutlined } from '../Icons/index';
+import { DownOutlined, CaretDownOutlined, CombineIcon } from '../Icons/index';
 import i18n from '@blocksx/i18n';
 import { template } from '../utils/string';
 
@@ -73,6 +73,9 @@ interface TablerValueProps extends TablerProps {
     onChangeDatasource?: Function; 
 
     router?: routerParams;
+
+    okText?: string;
+    okIcon?: string;
 }
 
 /**
@@ -292,9 +295,8 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
                 }
             }
-
             if (this.props.onChangeDatasource) {
-                this.props.onChangeDatasource()
+                this.props.onChangeDatasource(isAppend)
             }
 
         } else {
@@ -351,7 +353,8 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             <SearchBar
                 onChange={(val) => {
                     this.setState({
-                        searcher: val
+                        searcher: val,
+                        pageNumber:1
                     }, () => this.resetDataSource())
                 }} {...this.props.searcher}
                 size={this.props.searchSize}
@@ -426,20 +429,26 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
             batchAddList.unshift({
                 type: 'record.create',
-                icon: 'PlusCircleOutlined',
+                icon: this.props.okIcon || this.renderDefaultIcon(),//'PlusCircleOutlined',
                 name: batchOpertateMap['record.create']
                     ? batchOpertateMap['record.create'].name || this.getCreateText()
                     : this.getCreateText()
             })
         }
 
-
-
         return batchAddList;
     }
 
+    private renderDefaultIcon() {
+        let { pageMeta } = this.props;
+        
+        return (
+            <CombineIcon main={TablerUtils.renderIconComponent({icon:pageMeta.icon})} subscript={TablerUtils.renderIconComponent({icon: 'PlusCircleOutlined'})} />
+        )
+    }
+
     private getCreateText() {
-        return i18n.t(['Create', 'the', 'new', this.props.pageType].join(' '))
+        return this.props.okText || i18n.t(['Create', this.props.pageType].join(' '))
     }
     private getRowAction(rowData: any) {
         let { rowOperate = [] } = this.props;
@@ -764,6 +773,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             return null;
         }
 
+
         if (!isGetView && this.props.toolbarRef && this.props.toolbarRef.current) {
 
             return (
@@ -812,7 +822,6 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
         let View: any = this.props.type == 'table' ? TablerTable : TablerList;
         let props: any = this.props;
-
         return (
             <React.Fragment>
                 <SmartDrawer
@@ -830,9 +839,11 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                     action={this.state.formerAction}
                     pageType={this.props.pageType}
                     fields={props.fields}
+                    
                     value={this.state.currentRowData}
                     viewer={this.state.formerAction == 'view'}
                     onView={this.props.onView}
+                    pageMeta={this.props.pageMeta}
                     onClose={() => {
                         this.setState({
                             formerAction: null,
@@ -853,6 +864,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                     total={this.state.total}
                     reflush={this.state.childrenReflush}
                     loading={this.state.loading}
+                    size={this.props.size}
 
                     onGetRequestParams={this.props.onGetRequestParams}
                     mode={this.state.mode}

@@ -13,7 +13,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
-
+import * as Icons from '../Icons'
 import { Spin, Table, Space, Button } from 'antd';
 
 import { utils } from '@blocksx/core';
@@ -512,11 +512,21 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
                 pagination={{
                     pageSize: this.state.pageSize,
                     total: this.state.total,
-
+                    //position: ['bottomCenter'],
+                    itemRender: (_, type, originalElement)=> {
+                        switch(type) {
+                            case 'prev':
+                                return <Button type="text" icon={<Icons.LeftOutlined/>} size="small">Turn to the previous page</Button>
+                            case 'next':
+                                return <Button type="text" iconPosition="end" icon={<Icons.RightOutlined/>} size="small">Turn to the next page</Button>
+                            default:
+                                return originalElement;
+                        }
+                    },
                     onChange: (pageNumber, pageSize) => {
 
                         this.props.onChangePage && this.props.onChangePage({ pageSize, pageNumber })
-                    },
+                    }
                 }}
             ></Table>
         )

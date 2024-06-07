@@ -49,6 +49,7 @@ export interface TablerState {
     optional?: boolean;
 
     selectedKey?: any;
+    scrollTop?: boolean;
 }
 
 interface TablerListProps extends TablerProps {
@@ -117,6 +118,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             cacheSize: {},
             cacheFilter: {},
             loading: false,
+            scrollTop: true,
             reflush: props.reflush,
             optional: props.optional
         };
@@ -408,22 +410,29 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     }
 
     private onClickItem = ( operate:any, rowData:any,rowIndex:number) => {
-        if (this.props.onRowClick) {
-            this.props.onRowClick(operate, rowData, rowIndex)
-        }
+        if (this.state.optional) {
+            if (this.props.onRowClick) {
+                this.props.onRowClick(operate, rowData, rowIndex)
+            }
 
-        this.setState({
-            selectedKey: rowData[this.props.rowKey]
-        })
+            this.setState({
+                selectedKey: rowData[this.props.rowKey]
+            })
+        }
     }
     
     private renderListItem = (rowData: any, index: number) => {
 
         let ItemClassName: string = this.props.renderRowClassName ? this.props.renderRowClassName(rowData, index) : '';
 
-        if (this.state.optional && rowData[this.props.rowKey] == this.state.selectedKey) {
-            ItemClassName+= ' ui-tabler-item-selected';
+        if (this.state.optional ){
+            ItemClassName += ' ui-tabler-item-canselected'
+            if (rowData[this.props.rowKey] == this.state.selectedKey) {
+                ItemClassName+= ' ui-tabler-item-selected';
+            }
         }
+
+
 
         if (this.props.renderRow) {
             return (
@@ -501,6 +510,16 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 loader={this.renderLoadingSkeletion(1)}
                 endMessage={dataSource.length > 10 && <Divider plain>{i18n.t('It is all, nothing more')}</Divider>}
                 scrollableTarget={this.id}
+                onScroll={(e:any)=> {
+                    let isScrollTop: boolean = e.target.scrollTop < 5;
+                    console.log(isScrollTop, 33333, e.target.scrllTop)
+                    if (isScrollTop != this.state.scrollTop) {
+                        this.setState({
+                            scrollTop: isScrollTop
+                        })
+                    }
+                    
+                }}
             >
                 {this.renderListContent()}
             </InfiniteScroll>)
@@ -544,19 +563,26 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     public render() {
         let layout: string = this.getLayout();
         return (
-            <React.Fragment>
+            <div
+                className={
+                    classnames({
+                        'ui-mircotable-scrollTop': !this.state.scrollTop
+                    })
+                }
+            >
                 {this.props.renderSearcher && this.props.renderSearcher()}
                 {this.props.renderOperater && this.props.renderOperater()}
                 <div
                 className={classnames({
                     'ui-mircotable': true,
+                    
                     [`ui-mircotable-${this.props.classify}`]: this.props.classify,
                     [`ui-mircotable-${layout}`]: layout,
                     [`ui-mircotable-${this.props.size}`]: this.props.size
                 })}
                 id={this.id}
                 >{this.renderList()}</div>
-            </React.Fragment>
+            </div>
         )
     }
     

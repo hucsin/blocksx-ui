@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { utils } from '@blocksx/core';
 import Leaf from './leaf';
 import { Drawer, Modal, Space, Button, Popover, Tabs, Spin } from 'antd';
 import { EventEmitter } from 'events';
@@ -21,6 +22,7 @@ export interface ExtraContentType {
 export interface FormerProps {
     type?: 'drawer' | 'modal' | 'popover';
     value?: any;
+    icon?: any;
     schema: any;
     disabled?: boolean;
     extra?: ExtraContentType;
@@ -129,7 +131,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             id: props.id,
             viewer: props.viewer,
             column: this.getDefaultColumn(props.column),
-            disabled: props.disabled || false,
+            disabled: props.disabled || true,
             loading: false,
             fetching: false,
             canmodify: props.canmodify
@@ -167,11 +169,13 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 canmodify: newProps.canmodify
             })
         }
-
+        console.log(newProps.disabled, 'unchange')
         if (newProps.disabled != this.state.disabled) {
-            this.setState({
-                disabled: newProps.disabled
-            })
+            if (!utils.isUndefined(newProps.disabled)) {
+                this.setState({
+                    disabled: newProps.disabled
+                })
+            }
         }
         
         
@@ -263,16 +267,16 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         return false;
     }
     private onChangeValue = (value: any, type?: string) => {
-
+        
         if (!type) {
             if (this.timer) {
                 clearInterval(this.timer);
             }
-
             this.timer = setTimeout(() => {
 
                 this.setState({
                     value,
+                    disabled: false,
                     globalMessage: '',
                     runtimeValue: value
                 });
@@ -282,7 +286,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 //if (this.state.type === 'default') {
                
                 //}
-            }, 200);
+            }, 100);
         }
         if (this.props.onChangeValue) {
             this.props.onChangeValue(value);
@@ -324,8 +328,6 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     private onSave = (e) => {
         
-        e.preventDefault();
-        e.stopPropagation();
         if (this.props.onBeforeSave) {
             if (this.props.onBeforeSave() === false) {
                 return;
@@ -509,7 +511,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
 
     public doDisabledButton(disabled?: boolean) {
-
+        
         this.setState({
             disabled: BUtils.isUndefined(disabled) ? true : disabled
         })
@@ -525,8 +527,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         return this.renderOperateWraper();
     }
     public renderOperateWraper() {
+        
+        let OkIconView: any = ICONS[this.props.okIcon as any]
         if (this.props.onlyButton) {
-            let OkIconView: any = ICONS[this.props.okIcon as any]
             return (
                 !this.state.viewer 
                     ? <Button 
@@ -544,15 +547,24 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
         return (
             <Space>                       
-                {!this.state.viewer ? <Button loading={this.state.loading} disabled={this.state.disabled} onClick={this.onSave} type="primary">
+                {!this.state.viewer ? <Button icon={OkIconView && <OkIconView/>} loading={this.state.loading} disabled={this.state.disabled} onClick={this.onSave} type="primary">
                     {this.state.okText || 'Ok'}
                 </Button> : null}
 
                 {this.renderExtraContent()}
-                <Button onClick={this.onCloseLayer}  style={{ marginRight: 8 }}>
+                <Button className='ui-former-cancel' onClick={this.onCloseLayer}  style={{ marginRight: 8 }}>
                     {this.state.cancelText || 'Cancel'}
                 </Button>
             </Space>
+        )
+    }
+    public renderTitle() {
+        let TitleIcon: any = ICONS[this.props.icon];
+        return (
+            <>
+                {TitleIcon && <FormerTypes.avatar autoColor={false} icon={this.props.icon} size={24}/>}
+                {this.state.title || 'Edit record'}
+            </>
         )
     }
     public render() {
@@ -560,7 +572,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             case 'popover':
                 return (
                     <Popover
-                        title={this.state.title || 'Edit data'}
+                        title={this.renderTitle()}
                         content={this.renderPopoverLeaf()}
                         placement="bottomRight"
 
@@ -583,7 +595,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             case 'modal':
                 return (
                     <Modal
-                        title={this.state.title || 'Edit data'}
+                        title={this.renderTitle()}
                         open={this.state.visible}
                         onOk={this.onSave}
                         closable={false}
@@ -599,7 +611,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             case 'drawer':
                 return (
                     <Drawer
-                        title={this.state.title || 'Edit data'}
+                        title={this.renderTitle()}
                         onClose={this.onCloseLayer}
                         open={this.state.visible}
                         rootClassName={this.props.className}

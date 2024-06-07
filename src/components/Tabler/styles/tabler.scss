@@ -38,7 +38,32 @@
             opacity: 1;
         }
     }
+    .ant-pagination-item {
+        display: none;
+        
+    }
+    .ant-pagination-prev {
+        margin-right: 8px !important;
+        &.ant-pagination-disabled {
+            button {
+                opacity: .3;
+                cursor: not-allowed;
+            }
+        }
+    }
+    .ant-pagination-next {
+        margin-left: 8px !important;
+        &.ant-pagination-disabled {
+            button {
+                opacity: .3;
+                cursor: not-allowed;
+            }
+        }
+    }
     .tabler-batch-selected {
+        &:empty {
+            display: none;
+        }
         position: relative;
         width: 50%;
         overflow: hidden;

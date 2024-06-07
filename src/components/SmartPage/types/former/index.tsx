@@ -28,6 +28,7 @@
     valueMode?: string;
     reflush: any,
     okText: string;
+    okIcon?: string;
     onGetRequestParams?: Function;
     onSave?: Function;
     onCancel?: Function;
@@ -336,6 +337,7 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                             id={this.getDefaultId()}
                             schema={pageSchema}
                             okText={this.getDefaultOkText()}
+                            okIcon={this.props.okIcon}
                             operateContainerRef={this.props.operateContainerRef}
                             onSave={(value: any, former: any) => {
                                 return this.onChangeValue(value, former)

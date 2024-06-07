@@ -35,7 +35,7 @@ export interface IFormerType {
     action?: any;
     fields?: any;
     value: any;
-
+    pageMeta?: any;
     onChangeValue: Function;
     onClose: Function;
     onView?: Function;
@@ -219,6 +219,11 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             }
         }
     }
+    private getDefaultIcon() {
+        let { pageMeta = {} } = this.props;
+
+        return pageMeta.icon 
+    }
     private getDefaultOkText() {
         if (this.state.isStepMode && this.state.isStepOne) {
             return 'Next';
@@ -299,6 +304,8 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         return (
             <Former
                 title={this.getDefaultTitle()}
+                icon={this.getDefaultIcon()}
+                size={'default'}
                 id={this.getDefaultId()}
                 type={this.props.formerType}
                 schema={pageSchema}

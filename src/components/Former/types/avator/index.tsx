@@ -55,6 +55,13 @@ export default class MircoAvatar extends React.Component<IMircoAvator> {
             if (icon.match(/[\/\.]/)) {
                 return <Avatar size={props.size} shape={props.shape} style={{backgroundColor:color, ...props.style}}  src={icon} />
             }
+            // 如果icon是 xxx#ffff模式
+            if (icon.match(/#/)) {
+                let matchicon: any = icon.split('#');
+                icon = matchicon[0];
+                color = '#' + matchicon[1];
+            }
+
             let IconView: any = Icons[icon];
             if (IconView) {
                 return <Avatar 

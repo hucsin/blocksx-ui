@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert } from 'antd';
+import Notice from '../../../Former/types/notice';
 import Markdown from '../../../Markdown';
 import { utils } from '@blocksx/core';
 
@@ -44,7 +44,7 @@ export default class ArticleContent extends React.Component<ArticleContentProps>
     public render() {
         return (
             <>
-                {this.props.summary && <Alert message={this.props.summary} />}
+                {this.props.summary && <Notice value={this.props.summary} />}
                 <div className='ui-article-content'>{this.renderContent()}</div>
             </>
         )

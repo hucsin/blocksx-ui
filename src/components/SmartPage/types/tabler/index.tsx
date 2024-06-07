@@ -21,13 +21,16 @@ export interface SmartPageTablerProps {
     operateContainerRef?: any;
     optionalContainerRef?: any;
     noOperater?: boolean;
+    noSearcher?: boolean;
     mode?: string;
     rowSelection?: boolean;
 
     optional?: any;
+    okText?: string;
+    okIcon?: string;
 
     router: routerParams;
-
+    size?: any;
     rowKey?: any;
 
     onOptionalOpen?: Function;
@@ -133,7 +136,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
 
     }
     private getArticleProps(selectedRow?: any) {
-
+        
         return {
             onRowAction: (operate: any, rowData: any) => {
                 
@@ -162,21 +165,23 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
             )
         }
     }
-    private hideOptionalWrapper =() => {
+    private hideOptionalWrapper =(noHide?: boolean) => {
 
-        this.props.onOptionalOpen && this.props.onOptionalOpen(true)
-        this.setState({
-            selectedRow: null
-        })
+        if (!noHide) {
+            this.props.onOptionalOpen && this.props.onOptionalOpen(true)
+            this.setState({
+                selectedRow: null
+            })
+        }
     }
     public render() {
         let { selectedRow } = this.state;
         let pageMeta: any = this.props.pageMeta || { title: '' }
         let selectedRowKeys: any = selectedRow? selectedRow[this.props.rowKey || 'id'] : null;
-        
+
         return (
             <>
-                {this.renderOptional()}
+                {this.props.optional && this.renderOptional()}
                 <Tabler 
                     multilineEdit={false} 
                     {...this.state.tableProps}
@@ -189,11 +194,12 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                     onAdd={this.CreateRequest}
                     onView={this.ViewRequest}
                     router={this.props.router}
+                    size={this.props.size}
                     
                     onGetRequestParams={this.getRequestParams}
 
                     selectedRowKeys={selectedRowKeys}
-                    
+                    noSearcher={this.props.noSearcher}
                     searchRef={this.props.searchRef}
                     toolbarRef={this.props.toolbarRef}
                     
@@ -202,6 +208,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                     optional={this.state.optional}
                     onChangeValue={this.onChangeValue}
                     onChangeDatasource = {this.hideOptionalWrapper}
+                    
                     onRowAction={(operate:any, rowData: any, _)=>{
                         if (operate.type == 'rowclick') {
                             this.props.onOptionalOpen && this.props.onOptionalOpen();
@@ -211,8 +218,10 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                             selectedRow: rowData
                         })
                     }}
-                    
+                    okText={this.props.okText}
+                    okIcon={this.props.okIcon}
                     {...pageMeta.props}
+                    
                 />
             </>
         )

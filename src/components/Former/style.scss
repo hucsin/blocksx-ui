@@ -15,7 +15,14 @@
         margin-left: 5px;
     }
 }
-
+.ant-drawer .ant-drawer-close  {
+    margin-left: -8px;
+}
+.ant-drawer-title {
+    >span {
+        margin-right: 8px;
+    }
+}
 .former-error-message {
     color: red;
     display: block;

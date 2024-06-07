@@ -7,8 +7,9 @@
  */
 
 import React from 'react';
+import { utils } from '@blocksx/core'
 
-import { Alert } from 'antd';
+
 import { Typography, Button, Space, Tooltip } from "antd";
 import Manger from '../../core/SmartPageManger';
 import * as FormerTypes from '../../../Former/types';
@@ -18,6 +19,7 @@ import Util from '../../../utils';
 import ArticleContent from './content';
 import Box from '../../../Box';
 import Former from '../../../Former';
+import SmartPage from '../../index';
 
 import { pick } from 'lodash'
 
@@ -39,10 +41,13 @@ interface SmartPageActicleProps {
 
 interface SmartPageActicleState {
     title?: string;
+    summary?: string;
     icon?: string;
     value: any;
     loading?: boolean;
     dataSource: any;
+    optional?: any;
+    createdAt?: boolean;
 }
 
 export default class SmartPageArticle extends React.Component<SmartPageActicleProps, SmartPageActicleState> {
@@ -53,24 +58,32 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
     public operateContainerRef: any
     public constructor(props: SmartPageActicleProps) {
         super(props);
-
+        let {pageMeta = {}} = props;
         this.state = {
             loading: false,
             value: props.value || {},
-            dataSource: props.dataSource
+            dataSource: props.dataSource,
+            title: props.title,
+            optional: pageMeta ? pageMeta.optional : null,
+            createdAt: pageMeta && pageMeta.optional ? utils.isUndefined(pageMeta.optional.createdAt) ? true : pageMeta.optional.createdAt : true
+
         }
         this.requestMap = {};
         this.operateContainerRef = React.createRef()
     }
 
     public componentDidMount(): void {
-        let { pageMeta = {} } = this.props;
+        let { optional  } = this.state;
 
-        if (pageMeta.optional) {
-            if (pageMeta.optional.URI) {
-                for(let pro in pageMeta.optional.URI) {
-                    this.createRequst(pro, pageMeta.optional.URI[pro])
+        if (optional) {
+            if (optional.URI) {
+                for(let pro in optional.URI) {
+                    this.createRequst(pro, optional.URI[pro])
                 }
+            }
+
+            if (optional.type) {
+                this.initDefaultDataSource()
             }
         }
         
@@ -99,34 +112,49 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
             })
         }
 
+        
+
     }
     // TODO 先写死，后续加上SLOT
     private initDefaultDataSource() {
-        let { value = {} } = this.state;
-        let datasource: any = []
-        // schema
-        if (['markdown', 'text', 'richtext'].indexOf(value.contentType) == -1) {
-            datasource.push({
-                type: 'notice',
-                notice: value.summary || value.content
-            })
-            // 添加scheam
-            datasource.push({
-                type: value.contentType,
-                schema: value.schema,
-                value: value.playload,
-                okText: (value.schema || {}).okText,
-                okIcon: (value.schema ||{}).okIcon
-            })
+        let { value = {}, optional } = this.state;
+        let datasource: any = [];
+
+        if (optional && optional.type) {
+            switch(optional.type) {
+                case 'smartpage':
+                    datasource.push({
+                        type: 'smartpage',
+                        path: this.props.path + '/' + (optional.URI && optional.URI['record.schema'] || 'pageschema'),
+                        name: value.id // TODO
+                    })
+                    break;
+            }
         } else {
-            datasource.push({
-                type: 'content',
-                contentType: value.contentType,
-                summary: value.summary,
-                content: value.content,
-                template: value.template,
-                playload: value.playload || value
-            })
+            // schema
+            if (['markdown', 'text', 'richtext'].indexOf(value.contentType) == -1) {
+                datasource.push({
+                    type: 'notice',
+                    notice: value.summary || value.content
+                })
+                // 添加scheam
+                datasource.push({
+                    type: value.contentType,
+                    schema: value.schema,
+                    value: value.playload,
+                    okText: (value.schema || {}).okText,
+                    okIcon: (value.schema ||{}).okIcon
+                })
+            } else {
+                datasource.push({
+                    type: 'content',
+                    contentType: value.contentType,
+                    summary: value.summary,
+                    content: value.content,
+                    template: value.template,
+                    playload: value.playload || value
+                })
+            }
         }
         this.setState({
             dataSource: datasource
@@ -164,7 +192,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                     let matchitem: any = it.dict.find(it=> it.value == trueValue);
                     if (matchitem) {
                         return (
-                            <FormerTypes.avatar  key={'a'+index} icon={matchitem.icon} />
+                            <FormerTypes.avatar autoColor={false}  key={'a'+index} icon={matchitem.icon} />
                         )
                     }
                 } 
@@ -212,12 +240,13 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
     }
     private renderTitle() {
         let { value = {} } = this.state;
+        
         return (
             <div className='ui-smartpage-article-title'>
-                <Typography.Title level={3}>{this.renderByPlace('avatar')}{this.renderByPlace('title')}</Typography.Title>
+                <Typography.Title level={3}>{this.renderByPlace('avatar')}{this.state.title || this.renderByPlace('title')}</Typography.Title>
                 <div className='ui-smartpage-article-des'>
-                    {this.renderByPlace('summary')}
-                    {value.createdAt && 
+                    {this.state.summary || this.renderByPlace('summary')}
+                    {this.state.createdAt && value.createdAt && 
                         <Tooltip title={'Created: ' + Util.formatDate( value.createdAt, 'YYYY/MM/DD HH:mm:ss ddd')}>
                             <span className='ui-sp-des-ct'>{Util.formatDate( value.createdAt)}</span>
                         </Tooltip>}
@@ -231,6 +260,32 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
     }
     private renderItemContent =(item: any, index)=> {
         switch (item.type) {
+            case 'smartpage':
+                    return (
+                        <SmartPage 
+                            key={index}
+                            pageURI={item.path}
+                            name={item.name}
+                            noFolder={true}
+                            noHeader={true}
+                            noClassify={true}
+                            noTitle={true}
+                            noToolbar={false}
+                            rowSelection={true}
+                            noSearcher={true}
+                            size={'small'}
+                            operateContainerRef={this.operateContainerRef}
+                            onInitPage={(data)=> {
+                                
+                                let {pageMeta = {}} = data;
+                                this.setState({
+                                    title: pageMeta.title,
+                                    summary: pageMeta.summary
+                                   
+                                })
+                            }}
+                        />
+                    )
             case 'content':
                 return (
                     <ArticleContent key={index} {...item} type={item.contentType}  />
@@ -256,7 +311,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
             case 'box':
                 return <Box key={index}  dataSource={item.dataSource} />
             case 'notice':
-                return <Alert key={index} message={item.notice} />
+                return <FormerTypes.notice key={index} value={item.notice} />
                 
         }
     }

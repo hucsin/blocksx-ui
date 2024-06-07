@@ -1,10 +1,7 @@
 import React from 'react';
 import { utils } from '@blocksx/core';
-import ReactMarkdown from 'react-markdown';
-
 import SmartPage from '../../../SmartPage';
-import Avatar from '../avator';
-import { Drawer, Alert } from 'antd';
+import { Drawer } from 'antd';
 
 interface ButtonDrawerProps {
     record: any;
@@ -54,10 +51,6 @@ export default class ButtonDrawer extends React.Component<ButtonDrawerProps, But
                     this.props.onClose && this.props.onClose();
                 }}
             >
-                <div className='ui-notice'>
-                    <Avatar size={42} icon={this.state.pageMeta.icon}/>
-                    <ReactMarkdown>{this.state.pageMeta.notice}</ReactMarkdown>
-                </div>
                 <SmartPage
                     pageURI={meta.path}
                     name={name}

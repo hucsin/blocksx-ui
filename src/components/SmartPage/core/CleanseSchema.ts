@@ -121,12 +121,14 @@ export default class CleanseSchema {
             let fieldUI: any = field.meta;
             let quick: any = fieldUI.quick;
             let defaultValue: any ;
+            let props: any = {};
             let datasource: any = fieldUI.dict ||field.fieldDict
 
 
             if (utils.isPlainObject(quick)) {
                 datasource = quick.dict || [];
                 defaultValue =  (datasource.find(it=> it.defaultValue) || {}).value;
+                props = quick;
                 quick = quick.type;
             }
             
@@ -134,7 +136,8 @@ export default class CleanseSchema {
                 type: quick,
                 field: field.fieldKey,
                 data: datasource,
-                defaultValue
+                defaultValue,
+                props
             }
         }
     }

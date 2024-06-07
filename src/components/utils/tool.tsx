@@ -23,10 +23,13 @@ export default class TablerUtils {
     }
 
     public static renderIconComponent(field: any) {
-        if (field.icon && Icons[field.icon]) {
-            let UIView: any = Icons[field.icon];
-            return <UIView key={field.key || field.icon} />
+        if (utils.isString(field.icon)) {
+            if (field.icon && Icons[field.icon]) {
+                let UIView: any = Icons[field.icon];
+                return <UIView key={field.key || field.icon} />
+            }
         }
+        return field.icon;
     }
     public static renderComponentByField(field: any, props: any, defaultComponent?: any) {
         // 当当前字段是存在action的时候

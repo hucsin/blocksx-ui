@@ -49,7 +49,7 @@
         })
     }
     private getLabelValue(value: any) {
-        if (utils.isLabelValue(value)){
+        if (value && utils.isLabelValue(value)){
             return value.value;
         }
         return value;
@@ -62,7 +62,7 @@
                 disabled: newProps.disabled
             })
         }
-        
+        console.log(newProps.value)
         if (newProps.value !== this.state.value) {
             this.setState({
                 value: newProps.value
@@ -76,7 +76,7 @@
             return;
         }
         let { value } = e.target;
-
+        
         this.setState({
             value: value
         }, () => this.props.onChangeValue(value));
@@ -115,8 +115,10 @@
                 {dataSource.map((it: any) => {
                     
                     let VIcon = it.icon ? FormerIcon[`${it.icon}`] : null;
+                    
                     return (
                         <label onClick={()=>{
+                            console.log(it.value, this.state.value, value, 3333)
                             this.onChangeValue({
                                 target: {
                                     value: it.value

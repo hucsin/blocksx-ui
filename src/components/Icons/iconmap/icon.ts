@@ -20,7 +20,9 @@ export const map:any = {
     ],
     "data": [
         "DatasourceDataFilled",
+        "DocumentAddDataFilled",
         "FilterDataFilled",
+        "ListAddDataFilled",
         "SchemaDataFilled",
         "TableAddDataFilled",
         "DatasourceAddDataOutlined",

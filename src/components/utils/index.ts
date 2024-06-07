@@ -159,7 +159,7 @@ class Utils {
         if (currentDate.isSame(today, 'day')) {
             return currentDate.format('HH:ss')
         } else if (currentDate.isSame(yesterday, 'day')) {
-            return 'yesterday'
+            return 'Yesterday'
         } else {
             return currentDate.format(format)
         }

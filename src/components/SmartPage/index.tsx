@@ -14,6 +14,7 @@ import CleanseSchema from './core/CleanseSchema'
 import SmartRequest from '../utils/SmartRequest';
 import ClassifyPanel from '../ClassifyPanel';
 import FilterFolder from '../FilterFolder';
+import Notice from '../Former/types/notice'
 
 import withRouter, { routerParams } from '../utils/withRouter';
 import './style.scss';
@@ -22,7 +23,10 @@ import './style.scss';
 export interface PageMeta {
     title?: string;
     optional?: any;
+    notice?: string;
+    noticeIcon?: string;
     okText?: string;
+    okIcon?: string;
     description?: string;
     icon?: string;
     type?: string;
@@ -44,13 +48,17 @@ export interface SmartPageProps {
     name: string; // 页面的一个唯一ID
     pageMeta?: PageMeta;
     okText?: string;
+    okIcon?: string;
+    notice?: string;
     icon?: string;
 
     simplicity?: boolean; /** 简约模式 */
     noClassify?: boolean;
     noFolder?: boolean;
+    noSearcher?: boolean;
     noHeader?: boolean;
     noToolbar?: boolean;
+    noTitle?: boolean;
 
     defaultFolder?: string;
     defaultClassify?: string;
@@ -63,7 +71,8 @@ export interface SmartPageProps {
     rowSelection?: boolean;
     onChangeValue?: Function;
     onInitPage?: Function;
-
+    operateContainerRef?: any;
+    size?: any;
     triggerMap?: {
         [key:string] : Function;
     }
@@ -75,6 +84,7 @@ export interface SmartPageState {
     uiType: string;
     schema: any;
     okText?: string;
+    okIcon?: string;
     loading: boolean;
     icon?: string;
 
@@ -104,6 +114,7 @@ export interface SmartPageState {
     optional?: boolean;
     optionalOpen?: boolean;
     value?: any;
+    notice?: any;
 
     defaultClassify: string;
     defaultFolder?: string;
@@ -147,6 +158,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             schema: null,
             pageMeta: {},
             okText: props.okText,
+            
             title: props.title,
             metaKey: '',
             uiType: props.uiType,
@@ -154,7 +166,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             name: props.name,
             reflush: 0,
             optional: props.optional,
+            noTitle: props.noTitle,
             optionalOpen: false,
+            notice: props.notice,
             noFolder: props.noFolder || props.simplicity,
             noHeader: props.noHeader=== false ? false : props.noHeader ||  props.simplicity,
             noToolbar: props.noToolbar || props.simplicity,
@@ -169,9 +183,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
         this.canShow = false;
         this.searchRef = React.createRef();
-        this.toolbarRef = React.createRef();
+        this.toolbarRef = props.operateContainerRef || React.createRef();
 
-        this.operateContainerRef = React.createRef();
+        this.operateContainerRef = props.operateContainerRef || React.createRef();
         this.titleContainerRef = React.createRef();
         this.optionalContainerRef = React.createRef();
     }
@@ -258,6 +272,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         path,
                         icon: pageMeta.icon,
                         okText: pageMeta.okText,
+                        okIcon: pageMeta.okIcon,
                         metaKey: this.getMetaKey(pageMeta),
                         reflush: +new Date,
                         noFolder: this.state.noFolder,
@@ -265,7 +280,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         noToolbar: this.state.noToolbar,
                         noClassify: this.state.noClassify,
                         loading: false,
-                        optional: !!pageMeta.optional
+                        optional: !!pageMeta.optional,
+                        notice: pageMeta.notice
                     };
                     
                     if (this.props.onInitPage) {
@@ -412,7 +428,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 reflush = {this.state.reflush}
                 onGetRequestParams = {this.getQueryParams}
                 okText={this.state.okText}
+                okIcon={this.state.okIcon}
                 rowSelection={this.state.rowSelection}
+                noSearcher={this.props.noSearcher}
                 mode={this.state.mode}
                 searchRef= {this.searchRef}
                 noTitle={this.state.noTitle}
@@ -422,7 +440,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 titleContainerRef={this.titleContainerRef}
                 optionalContainerRef={this.optionalContainerRef}
                 optional={this.state.optional}
-                
+                size={this.props.size}
                 onChangeValue={this.onChangeValue}
                 onOptionalOpen={(close)=>{
                     this.setState({
@@ -537,9 +555,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         return this.renderRightContent();
     }
     public renderContent() {
+        let { pageMeta } = this.state;
+        
         return (
             <div className='ui-smartpage-wrapper'>
                 <Spin spinning={this.state.loading}>
+                    {this.state.notice && <Notice value={this.state.notice} icon={pageMeta.noticeIcon} />}
                     {this.state.uiType ? this.renderMainContent() : <Empty/>}
                 </Spin>
             </div>
