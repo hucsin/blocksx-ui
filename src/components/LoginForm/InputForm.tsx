@@ -37,7 +37,7 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
         }
     }
 
-    public UNSAFE_componentWillUpdate(newProps:InputFormProps) {
+    public UNSAFE_componentWillReceiveProps(newProps:InputFormProps) {
         if (newProps.logo != this.state.logo) {
             this.setState({
                 logo: newProps.logo

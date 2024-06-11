@@ -71,7 +71,7 @@ export default class FormerIcon extends React.Component<IFormerIcon, {open: bool
             searchValue: ''
         };
     }
-    public UNSAFE_componentWillUpdate(newProps: any) {
+    public UNSAFE_componentWillReceiveProps(newProps: any) {
         
         if (newProps.value != this.state.value) {
             

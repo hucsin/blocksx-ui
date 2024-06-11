@@ -150,7 +150,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         }
      }
 
-    public UNSAFE_componentWillUpdate(newProps: any) {
+    public UNSAFE_componentWillReceiveProps(newProps: any) {
         if (newProps.reflush !== this.state.reflush) {
             this.setState({
                 dataSource: this.getDataSource(),
@@ -212,11 +212,11 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             <div className='ui-mircotable-extra' onClick={consume}>
                 {this.renderDataExtra(rowItem, index, 'extra', 'renderRowExtra')}
                 {this.props.renderRowOperater && this.props.renderRowOperater(rowItem, index, (operate: any, rowData: any, rowIndex: number) => {
-                    console.log(operate, 11)
+                    // TODO
                     if (this.props.optional && ['view','edit', 'delete'].indexOf(operate.type) == -1 ) {
-                        this.setState({
-                            selectedKey: rowData[this.props.rowKey]
-                        })
+                        //this.setState({
+                        //    selectedKey: rowData[this.props.rowKey]
+                        //})
                     }
                     // 
                 })}

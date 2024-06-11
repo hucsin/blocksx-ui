@@ -94,7 +94,7 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
         ContextMenu.setContextMenu(this.state.namespace, this);
     }
 
-    public UNSAFE_componentWillUpdate (newProps: any) {
+    public UNSAFE_componentWillReceiveProps (newProps: any) {
         
         if (this.state.namespace.indexOf(newProps.namespace) ==-1) {
             this.setState({

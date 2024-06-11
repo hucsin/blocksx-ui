@@ -10,12 +10,15 @@ import i18n from '@blocksx/i18n';
 import * as Icons from '../Icons';
 import SplitPane from '../SplitPane';
 
+import TablerUtils from '../utils/tool'
+
 
 import './style.scss';
 
 
 interface FolderMeta {
     value?: string;
+    icon?: string;
     label: string | Function;
     description?: string;
     total?: number;
@@ -27,6 +30,7 @@ export interface FilterFolderProps {
     title: string;
     icon: string;
     leftSize: number;
+    mode?: 'filter' | 'folder';
     
     currentKey?: string;
 
@@ -41,10 +45,13 @@ export interface FilterFolderProps {
     children?: any;
 
     router?: routerParams;
+
+    reflush?: any;
 }
 
 interface FilterFolderState {
     currentKey?: string;
+    currentIcon?: string;
     searchValue?: string;
     orignFolders: FolderMeta[];
     folders: FolderMeta[];
@@ -61,12 +68,15 @@ interface FilterFolderState {
     title: string;
     icon: string;
 
+    reflush: any;
+    expand: boolean;
 }
 
 export default class FilterFolder extends React.Component<FilterFolderProps, FilterFolderState> {
     
     static defaultProps = {
         leftSize: 240,
+        mode: 'folder',
         sysFolders: [
             { 
                 value: 'all',
@@ -96,22 +106,35 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
             loading: false,
             searchValue: '',
             icon: props.icon,
-            title: props.title
+            title: props.title,
+
+            reflush: props.reflush,
+            expand: props.currentKey && props.currentKey!=='all' ? false : true,
+            currentIcon: '',
         }
-        
+
     }
 
     public componentDidMount() {
-
         this.fetch();
     }
-    public UNSAFE_componentWillUpdate(newProps: any) {
+    public UNSAFE_componentWillReceiveProps(newProps: any) {
         
         if (newProps.title != this.state.title) {
             this.setState({
                 title: newProps.title,
                 icon: newProps.icon
             }, this.fetch)
+        }
+        
+        if (newProps.reflush != this.state.reflush) {
+            this.setState({
+                currentKey: '',
+                reflush: newProps.reflush
+            }, () => {
+                console.log(this.state.reflush)
+                this.fetch();
+            })
         }
     }
 
@@ -124,13 +147,15 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
             }).then((result: any)=>{
                 
                 let fetchData: any = (utils.isArray(result.data) ? result.data:result).map(it => { return {...it, key: it.id}})
-
+                
+                let findItem: any = fetchData.find(it=> it.value === this.state.currentKey)
                 this.setState({
                     loading: false,
                     orignFolders: fetchData,
-                    folders: fetchData
+                    folders: fetchData,
+                    currentIcon: findItem ? findItem.icon : ''
                 }, ()=> {
-                    this.doSelectFolder();
+                   // this.doSelectFolder();
                 })
 
 
@@ -145,7 +170,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
 
         let find: any = orignFolders.find(it => it.value === currentKey);
 
-        if (utils.isFunction(find.label)) {
+        if (find && utils.isFunction(find.label)) {
             find.label = find.label(this.props)
         }
         return find;
@@ -193,10 +218,14 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
             return this.state.title
         }
     }
+
+
     
-    private onSelect(key: string) {
+    private onSelect(key: string, folder: any) {
+        
         this.setState({
-            currentKey: key
+            currentKey: key,
+            currentIcon: folder.icon
         }, ()=> {
 
             this.props.onChange && this.props.onChange(key, this.getCurrentValue(key))
@@ -226,6 +255,13 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
             })
         }
     }
+    private renderItemIcon(folder: FolderMeta) {
+        if (folder.icon) {
+            return TablerUtils.renderIconComponent(folder)
+        }
+
+        return folder.value == this.state.currentKey ? <FolderOpenOutlined/> : <FolderOutlined/>
+    }
     private renderItem(folder: FolderMeta, hasTotal:boolean) {
 
         let itemTotal: any = folder.total ? (Math.max(folder.total || 0, 0)) : 0;
@@ -241,11 +277,11 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                     let className: string = target.className || '';
                     
                     if (className.indexOf('ui-title') > -1 || className.indexOf('anticon-folder') > -1 || target.nodeName =='DD') {
-                        this.onSelect(folder.value as string)
+                        this.onSelect(folder.value as string, folder)
                     }
                 }}
             >
-                {folder.value == this.state.currentKey ? <FolderOpenOutlined/> : <FolderOutlined/>}
+                {this.renderItemIcon(folder)}
                 <span className='ui-title'>{this.getLabelName(folder)}</span>
 
                 {hasTotal && this.props.onRemoveCustomFolder 
@@ -262,7 +298,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                             <CloseOutlined />
                     </Popconfirm>
                  }
-                {hasTotal && <span className='ui-total'>{typeof itemTotal == 'undefined' ? folder.total || 0 : itemTotal}</span>}
+                {hasTotal && folder.total && <span className='ui-total'>{typeof itemTotal == 'undefined' ? folder.total || 0 : itemTotal}</span>}
             </dd>
         )
     }
@@ -385,28 +421,43 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
         }
 
     }
+    private displaySystemFolder() {
+        return this.props.mode !== 'filter'
+    }
+    private onExpand=()=> {
+        this.setState({
+            expand: !this.state.expand
+        })
+    }
     public render() {
-
+        let { expand }  = this.state;
         return (
-            <div className='ui-folder-wraper'>
-                <SplitPane minSize={200} size={this.props.leftSize || 240}  maxSize={400}>
+            <div className={
+                classnames({
+                    'ui-folder-wraper': true,
+                    'ui-folder-mode-filter': !this.displaySystemFolder()
+                })
+            }>
+                <SplitPane minSize={expand? 0: 140} size={expand ? 0 : this.props.leftSize || 240}  maxSize={expand? 0 :400}>
                     <SplitPane.Pane  >
                         <div className='ui-filter-folder'>
-                        <div className='ui-filter-folder-title'>{this.renderTitle()}</div>
+                          
+                            <div className='ui-filter-folder-title'>{this.renderTitle()}</div>
                             <Input
                                 suffix={<SearchOutlined/>}
                                 onChange={this.onSearch}
+                                size="small"
                             />
                         { this.state.loading ? <Skeleton active/> :<>
                             
-                            <dl 
+                            {this.props.mode !=='filter' && <dl 
                                 key={1}
                                 className={classnames({
                                     'ui-has-child': this.state.folders && this.state.folders.length
                                 })}
                             >
                                 <dt>
-                                    <span className='title'>{i18n.t('folders')} </span>
+                                    <span className='title'>{i18n.t(this.props.mode + 's')} </span>
                                     {this.props.onAddCustomFolder && <Popover
                                         title={i18n.t('add new folder')}
                                         placement='bottomLeft'
@@ -419,15 +470,17 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                                         <Button icon={<PlusOutlined/>} size="small"></Button>
                                     </Popover>}
                                 </dt>
-                                {this.props.sysFolders && this.props.sysFolders.map(it => {
+                                {this.displaySystemFolder() && this.props.sysFolders.map(it => {
                                     return this.renderItem(it, false)
                                 })}
-                            </dl>
+                            </dl>}
                             {this.renderFolders()}
                             </>}
+
                         </div>
                     </SplitPane.Pane>
                     <SplitPane.Pane>
+                        {!this.displaySystemFolder() && <div onClick={this.onExpand} className='ui-filter-expand'> {TablerUtils.renderIconComponent({icon: this.state.currentIcon || 'SearchOutlined'})}{expand ?<Icons.ArrowRightOutlined/> :<Icons.ArrowLeftOutlined/>}</div>}
                         <div className='ui-folder-body'>{this.props.children}</div>
                     </SplitPane.Pane>
                 </SplitPane>

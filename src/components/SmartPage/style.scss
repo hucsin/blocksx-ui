@@ -127,7 +127,9 @@
             .icons-combine-bottomRight {
                font-size:16px;
                >span:last-child {
-                  right: -6px;
+                  right: -8px;
+                  bottom: -6px;
+                  transform: scale(0.5, 0.5);
                   background-color: rgba(22, 119, 255, .9);
                }
             }

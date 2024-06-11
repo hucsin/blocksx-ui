@@ -106,7 +106,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
         this.tableDOM = this.tableRef.current;//ReactDOM.findDOMNode(this);
     }
 
-    public UNSAFE_componentWillUpdate(newProps: any) {
+    public UNSAFE_componentWillReceiveProps(newProps: any) {
         if (newProps.reflush !== this.state.reflush) {
             this.setState({
                 dataSource: this.getDataSource(),
@@ -183,7 +183,6 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
         return ['pickone', 'pickmore'].indexOf(this.state.mode) > -1;
     }
     private isTablerColumn(it: any) {
-
         if (this.isPickMode()) {
             if (it.motion || it.major == false) {
                 return false
@@ -480,6 +479,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
             <Table
                 rowKey={this.props.rowKey || 'id'}
                 key={1}
+                
                 title={() => this.renderTitle()}
                 size={this.props.size}
                 columns={this.getColumns()}

@@ -49,7 +49,7 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
             })
         }
     }
-    public UNSAFE_componentWillUpdate(newProps: IFormerLabel) {
+    public UNSAFE_componentWillReceiveProps(newProps: IFormerLabel) {
 
         if (newProps.value != this.state.value) {
             this.setState({

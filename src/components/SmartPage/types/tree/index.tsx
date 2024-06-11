@@ -119,7 +119,7 @@ export default class SmartPageTree extends React.Component<SmartPageTreeProps, S
         }
     }
 
-    public UNSAFE_componentWillUpdate(newProps: SmartPageTreeProps) {
+    public UNSAFE_componentWillReceiveProps(newProps: SmartPageTreeProps) {
         if (newProps.height != this.state.height) {
             this.setState({
                 height: newProps.height

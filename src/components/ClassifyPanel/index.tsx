@@ -71,7 +71,7 @@ export default class ClassifyPanel extends React.Component<ClassifyPanelProps, C
     public componentDidMount() {
         //this.getTotalDict();
     }
-    public UNSAFE_componentWillUpdate(newProps: ClassifyPanelProps) {
+    public UNSAFE_componentWillReceiveProps(newProps: ClassifyPanelProps) {
        
         if (newProps.title != this.state.title) {
         

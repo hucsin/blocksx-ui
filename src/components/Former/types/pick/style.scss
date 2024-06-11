@@ -1,0 +1,12 @@
+.ui-pick-wrapper {
+    padding-top: 8px;
+    .tabler-wrapper .ant-table.ant-table-layout-fixed .ant-table-content {
+        border-left: none;
+        border-right: none;
+    }
+    .tabler-searcher {
+        .ant-select {
+            min-width: 100px !important;
+        }
+    }
+}

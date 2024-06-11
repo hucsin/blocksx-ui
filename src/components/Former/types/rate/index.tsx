@@ -43,7 +43,7 @@ export default class FormerRate extends React.Component<FormerRateProps, FormerR
             disabled: false
         }
     }
-    public UNSAFE_componentWillUpdate(newProps: FormerRateProps) {
+    public UNSAFE_componentWillReceiveProps(newProps: FormerRateProps) {
         let newValue: any = newProps.value ? 1 : 0;
 
         if (newValue!== this.state.value) {

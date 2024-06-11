@@ -151,7 +151,32 @@ export default class TablerUtils {
         }
     }
 
+    public static getDefaultFieldSchema(it:any, index) {
+        
+        return {
+            ...it,
+            type: it.type || 'string', // 统一当string处理
+            defaultValue: it.defaultValue,
+            title: it.name,
+            description: it.description,
+            column: it.column,
 
+            'x-modify': it.modify || it['x-modify'],
+            'x-group': it.group,
+            'x-classify': it.group,
+            'x-half-width': false,
+
+            'x-type-props': Object.assign({}, it.props, it.meta && it.meta.props),
+            'x-type': it.uiType || 'input',
+            'x-colspan': it.colspan,
+
+            'x-index': utils.isNullValue(it.index) ? index : it.index,
+            'x-control': it.control,
+            'x-validation': this.getValidationValue(it),
+            properties: it.fields ? this.getDefaultSchemaProperties(it.fields) : null,
+            ... this.getDefaultPropsByItem(it)
+        }
+    }
     public static getDefaultSchemaProperties(fields?: any) {
         let fieldsObject: any = {};
 
@@ -159,29 +184,7 @@ export default class TablerUtils {
             let fieldKey: string = it.key || it.fieldKey;
 
             if (it.column !== 'only') {
-                fieldsObject[fieldKey] = {
-                    ...it,
-                    type: it.type || 'string', // 统一当string处理
-                    defaultValue: it.defaultValue,
-                    title: it.name,
-                    description: it.description,
-                    column: it.column,
-
-                    'x-modify': it.modify || it['x-modify'],
-                    'x-group': it.group,
-                    'x-classify': it.group,
-                    'x-half-width': false,
-
-                    'x-type-props': Object.assign({}, it.props, it.meta && it.meta.props),
-                    'x-type': it.uiType || 'input',
-                    'x-colspan': it.colspan,
-
-                    'x-index': utils.isNullValue(it.index) ? index : it.index,
-                    'x-control': it.control,
-                    'x-validation': this.getValidationValue(it),
-                    properties: it.fields ? this.getDefaultSchemaProperties(it.fields) : null,
-                    ... this.getDefaultPropsByItem(it)
-                }
+                fieldsObject[fieldKey] = this.getDefaultFieldSchema(it, index)
             }
         });
 

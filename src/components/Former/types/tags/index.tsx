@@ -22,7 +22,7 @@ export default class FormerTags extends React.Component<FormerTagsProps, FormerT
         }
     }
 
-    public UNSAFE_componentWillUpdate(newProps: FormerSelectProps) {
+    public UNSAFE_componentWillReceiveProps(newProps: FormerSelectProps) {
         if (newProps.value != this.state.value) {
             this.setState({
                 value:  newProps.value 

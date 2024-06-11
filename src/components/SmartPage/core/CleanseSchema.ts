@@ -10,6 +10,32 @@ export default class CleanseSchema {
     private static tablerRecordTypeMap = {
         clone: 'edit'
     }
+    public static makeField(field:any) {
+        let fieldMeta: any = field.meta || {
+            type: 'input'
+        }
+        return {
+            ...field,
+            key: field.fieldKey,
+            fieldKey: field.fieldKey,
+            ...fieldMeta,
+            control: field.fieldControl,
+            uiType: fieldMeta.type,
+            type: field.fieldType,
+            column: fieldMeta.column,
+            columnGroup: field.columnGroup,
+            tablerColumn: fieldMeta.column ? {
+                filter: field.isIndexed,
+            } : null,
+            colspan: fieldMeta.colspan || 1,
+            dict: field.fieldDict,
+            step: fieldMeta.step,
+            defaultValue: field.defaultValue,
+            name: field.fieldName || field.fieldKey,
+            validation: this.getFieldValidation(field),
+            'x-label-hidden': fieldMeta.label === false ? true : false
+        }
+    }
     public static getFieldProps(path: string, fields: any) {
         let fieldsList: any = [];
 
@@ -19,27 +45,7 @@ export default class CleanseSchema {
                 type: 'input'
             }
 
-            let fieldObject: any = {
-                ...field,
-                key: field.fieldKey,
-                fieldKey: field.fieldKey,
-                ...fieldMeta,
-                control: field.fieldControl,
-                uiType: fieldMeta.type,
-                type: field.fieldType,
-                column: fieldMeta.column,
-                columnGroup: field.columnGroup,
-                tablerColumn: fieldMeta.column ? {
-                    filter: field.isIndexed,
-                } : null,
-                colspan: fieldMeta.colspan || 1,
-                dict: field.fieldDict,
-                step: fieldMeta.step,
-                defaultValue: field.defaultValue,
-                name: field.fieldName || field.fieldKey,
-                validation: this.getFieldValidation(field),
-                'x-label-hidden': fieldMeta.label === false ? true : false
-            };
+            let fieldObject: any = this.makeField(field);
 
             if (fieldMeta.motion) {
                 fieldObject.motion = SmartRequst.createPOST(path + `/${fieldMeta.motion}`, ['id', fieldObject.key], true)
@@ -126,7 +132,7 @@ export default class CleanseSchema {
 
 
             if (utils.isPlainObject(quick)) {
-                datasource = quick.dict || [];
+                datasource = quick.dict || datasource || []; 
                 defaultValue =  (datasource.find(it=> it.defaultValue) || {}).value;
                 props = quick;
                 quick = quick.type;

@@ -5,9 +5,65 @@
     position: relative;
     height: 100%;
     z-index: 0;
+    
+    .Pane:hover {
+       > .ui-filter-expand {
+            left: 0;
+            > span:last-child {
+                opacity: 1;
+            }
+            > span:first-child {
+                opacity: 0;
+            }
+        }
+    }
+    
+    .ui-filter-expand {
+        position: absolute;
+        top: 16px;
+        height: 16px;
+        width: 16px;
+        border-radius: 0 15px 15px 0;
+        background: #edeff3;
+        padding: 3px 4px;
+        font-size: 16px;
+        left: -12px;
+        cursor: pointer;
+        border:1px solid #ddd;
+        border-left: none;
+        opacity: .5;
+        transition: all .2s;
+        
+        > span {
+            position: absolute;
+            transition: all .2s;
+        }
+        > span:last-child {
+            opacity: 0;
+        }
+        &:hover {
+            opacity: 1;
+            > span:last-child {
+                opacity: 1;
+            }
+            > span:first-child {
+                opacity: 0;
+            }
+        }
+    }
 
     .ui-folder-body {
         height: 100%;;
+    }
+
+    &.ui-folder-mode-filter {
+        .ui-filter-folder {
+            .ui-filter-folder-title {
+                font-size:16px;
+            }
+            dl dd  {
+            }
+        }
     }
 
     .ui-filter-folder {
@@ -25,23 +81,23 @@
             span {
                 margin-right:8px;
             }
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid #ddd;
             margin-bottom: 16px;
-            padding-bottom: 8px;
+            padding-bottom: 16px;
         }
 
         dl {
             font-size:14px;
             &.ui-has-child {
-                border-bottom: 1px dashed #ccc;
+                border-bottom: 1px dashed #ddd;
             }
-            padding-bottom: 16px;
+            padding-bottom: 8px;
 
             dt {
                 overflow: hidden;;
                 span.title {
                     text-transform: uppercase;
-                    opacity: .5;
+                    opacity: .4;
                 }
                 .ant-btn {
                     float:right;
@@ -68,8 +124,7 @@
                     text-transform:capitalize
                 }
                 &.ui-select {
-                    color:#4338CA;
-                    font-weight: bold;
+                    color:#1677ff;
                 }
                 .anticon {
                     position: relative;

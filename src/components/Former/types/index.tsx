@@ -34,6 +34,7 @@ export { default as json } from './json';
 export { default as color } from './color';
 export { default as hidden } from './hidden';
 
+export { default as pick } from './pick';
 export { default as pickone } from './pickone';
 export { default as pickmore } from './pickmore';
 

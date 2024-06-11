@@ -59,7 +59,7 @@ class FormerPickViewer extends React.Component<FormerPickProps> {
     }
 }
 
-export default class FormerPick extends React.Component<FormerPickProps, FormerPickState> {
+export default class FormerPickOne extends React.Component<FormerPickProps, FormerPickState> {
     public static Viewer: any = FormerPickViewer;
     private searbarRef: any;
     private labelValueMap: any;

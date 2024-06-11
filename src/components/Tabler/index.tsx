@@ -63,6 +63,7 @@ interface TablerValueProps extends TablerProps {
     pageType?: string;
     pageMeta?: any;
     avator?: string;
+    autoInit?: boolean;
 
     selectedRowKeys?: any[];
     batchOpertate?: any[]
@@ -132,15 +133,18 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
     }
 
     public componentDidMount() {
-        this.initDataSource(this.props)
+        if (this.props.autoInit !== false) {
+            this.initDataSource(this.props)
+        }
     }
 
-    public UNSAFE_componentWillUpdate(newProps: any) {
-
+    public UNSAFE_componentWillReceiveProps(newProps: any) {
+        
         if (newProps.reflush != this.state.reflush) {
             this.setState({
                 reflush: newProps.reflush
             }, () => {
+                
                 this.resetDataSource();
 
             })
@@ -338,7 +342,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
     }
 
     private renderSearcher = (isGetView?: boolean) => {
-
+        
         if (this.props.noSearcher) {
             return null;
         }
@@ -348,7 +352,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 ReactDOM.createPortal(this.renderSearcher(true), this.props.searchRef.current)
             )
         }
-
+        
         return (
             <SearchBar
                 onChange={(val) => {

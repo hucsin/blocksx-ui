@@ -101,6 +101,8 @@ export interface SmartPageState {
 
     classifyField?: any;
     folderField?: any;
+    folderMode?: any;
+    folderReflush?: any;
 
     noTitle?: boolean;
     noFolder?: boolean;
@@ -176,7 +178,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             rowSelection: props.rowSelection,
             mode: props.mode,
             defaultClassify: this.getDefaultClassify(),
-            defaultFolder: this.getDefaultFolder()
+            defaultFolder: this.getDefaultFolder(),
+            folderReflush: +new Date
         }
 
         this.requestHelper = SmartRequest.createPOST(props.pageURI);
@@ -288,10 +291,25 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         this.props.onInitPage(initStateConfig)
                     }
 
+                    if (classifyField) {
+                        if (classifyField.meta.classify == 'noall' && classifyField.dict[0]) {
+                            
+                            if (!this.state.defaultClassify || this.state.defaultClassify=='all') {
+                                
+                                initStateConfig.defaultClassify = classifyField.dict[0].value;
+                            }
+                           
+                        }
+                        
+                    }
 
                     if (!this.state.noFolder) {
                         initStateConfig.folderField =  
                             initStateConfig.noFolder ? null : this.getFolderField(schema.fields);
+                        
+                        if (initStateConfig.folderField) {
+                            initStateConfig.folderMode = utils.isString(initStateConfig.folderField.meta.folder) ? 'filter' : 'folder'
+                        }
                     }
 
                     this.setState(initStateConfig)
@@ -307,7 +325,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     
 
-    public UNSAFE_componentWillUpdate(newProps: any) {
+    public UNSAFE_componentWillReceiveProps(newProps: any) {
 
         if (newProps.pageMeta) {
             let newMetaKey: string = this.getMetaKey(newProps.pageMeta || {});
@@ -357,17 +375,28 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         }
     }
     private onClassifyChange = (query: any) => {
-        
+        let { folderMode } = this.state;
+        let isFolderFilter = folderMode == 'filter';
+
         if (this.props.router) {
             this.props.router.utils.goQuery({
-                classify: query
+                classify: query,
+                folder: null
             })
         }
-
+        
         this.setState({
             classifyQuery: query,
+            folderMeta: isFolderFilter ? null: this.state.folderMeta,
+            folderQuery: isFolderFilter ? '' : this.state.folderQuery,
             optionalOpen: false,
             reflush: +new Date
+        }, () => {
+            if (this.state.folderMode == 'filter') {
+                this.setState({
+                  // folderReflush: +new Date
+                })
+            }
         })
     }
     private onFolderChange =(query: any, folderMeta: any) => {
@@ -413,14 +442,14 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     public renderContentView() {
         let ViewComponent: any = PageManger.findComponentByType(this.state.uiType);
-        
         return (
              this.state.schema && <ViewComponent 
-                key={this.state.reflush}
+                //key={this.state.reflush}
+                key={this.state.classifyQuery}
                 schema = {this.state.schema}
                 value = {this.state.value}
                 pageMeta = {this.state.pageMeta}
-
+                autoInit = {!this.state.folderField}
                 router={this.props.router}
                 title={this.state.title}
                 triggerMap = {this.props.triggerMap}
@@ -453,18 +482,19 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
 
     public renderRightContent() {
-        let { classifyField = {}, pageMeta, folderMeta, folderField, noClassify } = this.state;
+        let { classifyField = { meta: {}}, pageMeta, folderMeta, folderField, noClassify } = this.state;
 
         // 不支持classify的情况
         if (!noClassify) {
 
             let classifyMeta: any = {
-                label: folderMeta ? folderMeta.label :  folderField ? '-' : pageMeta.title,
-                description: folderMeta ? folderMeta.description :  folderField ? '-' : pageMeta.description,
-                icon: folderField ? '' : pageMeta.icon
+                label: folderMeta ? folderMeta.label :  folderField ? pageMeta.title : pageMeta.title,
+                description: folderMeta ? folderMeta.description :  folderField ? pageMeta.description : pageMeta.description,
+                icon: folderField ?pageMeta.icon : pageMeta.icon
             }
-                
-            let dictmap: any = [{value: 'all', label: 'All'}];
+            
+            
+            let dictmap: any = classifyField.meta.classify == 'noall' ? [] : [{value: 'all', label: 'All'}];
 
             classifyField.dict && (dictmap = dictmap.concat(classifyField.dict))
             
@@ -509,28 +539,66 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         
     }
     private getOnFetchFolder(folderField: any, type?: string): any {
-       
-        if (folderField && folderField.factor) {
-            let fetch: any = SmartRequest.createPOST(folderField.factor.path + '/' + (type || folderField.factor.type || 'list'));
+        let { folderMode, classifyQuery, defaultClassify } = this.state;
+        let fetchREQ: any;
+        
+        if (folderMode == 'filter') {
+            // 过滤模式
+            if (type == 'list') {
+                fetchREQ = SmartRequest.createPOST(this.state.path + '/' + folderField.folder) ;
+
+                return (value) => {
+                    return fetchREQ({
+                        ...value,
+                        classify: classifyQuery || defaultClassify
+                    })
+                }
+
+            }
+        } else if (folderField && folderField.factor) {
+            let fetchREQ: any = SmartRequest.createPOST(folderField.factor.path + '/' + (type || folderField.factor.type || 'list'));
 
             return (value) => {
                 if (folderField.factor.parent) {
                     value.parent = folderField.factor.parent
                 }
-                return fetch(value)
+                return fetchREQ(value)
             }
         }
     }
     private hasLeftNavContent() {
-        let { folderField } = this.state;
-        return folderField && folderField.factor;
+        let { folderField, folderMode } = this.state;
+        
+        if (folderField) {
+
+            if (folderMode == 'filter') {
+                return true;
+            }
+            return  folderField.factor
+        }
+        
     }
     // 是否在弹窗里面
     private inFloatMode() {
         return this.props.type !=='default'
     }
+    private getFolderTitle() {
+        let { folderMode,folderField, pageMeta } = this.state;
+
+        return folderMode == 'filter' ?  folderField.fieldName : pageMeta.title;
+    }
+    private getFolderLeftSize () {
+        let { folderMode } = this.state;
+        return folderMode == 'filter' ? 160 :this.inFloatMode() ? 200 : 240
+    }
+    private getFolderIcon() {
+        let { folderMode, pageMeta } = this.state;
+
+        return folderMode == 'filter' ? '' : pageMeta.icon as any
+
+    }
     public renderMainContent() {
-        let { folderField, pageMeta } = this.state;
+        let { folderField, folderMode, classifyQuery } = this.state;
 
         if (this.hasLeftNavContent()) {
             //let folder: any = folderField.meta.folder || {};
@@ -538,10 +606,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             
             return (
                 <FilterFolder 
-                    key={pageMeta.title || pageMeta.icon}
-                    title={pageMeta.title as any}
-                    leftSize={this.inFloatMode() ? 200 : 240}
-                    icon={pageMeta.icon as any}
+                    key={1}
+                    mode={folderMode}
+                    title={this.getFolderTitle()}
+                    leftSize={this.getFolderLeftSize()}
+                    reflush={folderMode == 'filter' ? classifyQuery : '0'}
+                    icon={this.getFolderIcon()}
                     onFetchCustomFolders= {this.getOnFetchFolder(folderField, 'list')}
                     onAddCustomFolder={this.getOnFetchFolder(folderField, 'create')}
                     onChange={this.onFolderChange}

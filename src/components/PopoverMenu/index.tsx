@@ -42,7 +42,7 @@ export default class PopoverMenu extends React.Component<PopoverMenuProps, Popov
 
         
     }
-    public UNSAFE_componentWillUpdate(newProps: PopoverMenuProps) {
+    public UNSAFE_componentWillReceiveProps(newProps: PopoverMenuProps) {
         let cacheKey: string = JSON.stringify(newProps.menu);
         if (cacheKey != this.state.cacheKey) {
             this.setState({

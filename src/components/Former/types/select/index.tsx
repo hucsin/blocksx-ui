@@ -27,6 +27,7 @@ export interface FormerSelectProps extends IFormerBase {
     'x-mode'?: 'lazy' | 'cache',
     popupClassName?: string;
     dataSource?: any;
+    autoClear?: any;
 }
 
 
@@ -182,12 +183,14 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
     public render() {
         return (
             <Select
+                allowClear={this.props.autoClear}    
                 {...this.props['x-type-props']}
                 onFocus={() => {
                     if (this.isLazyLoader()) {
                         this.fetchData();
                     }
                 }}
+                
                 mode={this.props.mode}
                 showSearch={true}
                 popupClassName={this.props.popupClassName}

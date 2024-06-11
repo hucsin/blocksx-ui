@@ -127,6 +127,7 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
                             value={this.state.value} 
                             size={size}
                             type='string'
+                            autoClear={true}
                             onChangeValue={this.onChangeQuickValue}
                             dataSource={dataSource}
                             x-type-props={{mode:quick.mode}} 

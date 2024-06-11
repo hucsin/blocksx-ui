@@ -44,7 +44,7 @@ export default class TablerCell extends React.Component<TablerCellProps, TablerC
             editable: props.editable
         }
     }
-    public UNSAFE_componentWillUpdate(newProps:TablerCellProps) {
+    public UNSAFE_componentWillReceiveProps(newProps:TablerCellProps) {
         if(newProps.editable !== this.state.editable) {
             this.setState({
                 editable: newProps.editable

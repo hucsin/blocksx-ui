@@ -61,7 +61,7 @@ export default class SmartDrawer extends React.Component<SmartDrawerProps, Smart
             width: props.width || document.body.offsetWidth * 2 / 3
         }
     }
-    public UNSAFE_componentWillUpdate(newProps: SmartDrawerProps) {
+    public UNSAFE_componentWillReceiveProps(newProps: SmartDrawerProps) {
         if (newProps.open != this.state.open) {
             this.setState({
                 open: newProps.open

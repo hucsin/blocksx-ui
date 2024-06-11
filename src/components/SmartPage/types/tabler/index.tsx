@@ -11,6 +11,7 @@ import Article from '../article/index'
 export interface SmartPageTablerProps {
     schema: any,
     pageMeta: any,
+    autoInit?: boolean;
     path: string;
     triggerMap: any,
     reflush: any,
@@ -38,6 +39,7 @@ export interface SmartPageTablerProps {
 export interface SmartPageTablerState {
     tableProps: any;
     reflush: any;
+    autoInit?: boolean;
     rowSelection: any;
     mode?: string;
     optional?: any;
@@ -71,13 +73,19 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
 
         this.initRequset();
     }   
-    public UNSAFE_componentWillUpdate(newProps: SmartPageTablerProps) {
+    public UNSAFE_componentWillReceiveProps(newProps: SmartPageTablerProps) {
 
         if (newProps.reflush!= this.state.reflush) {
             
             this.setState({
                 reflush: newProps.reflush,
                 mode: newProps.mode
+            })
+        }
+
+        if (newProps.autoInit !== this.state.autoInit) {
+            this.setState({
+                autoInit: newProps.autoInit
             })
         }
 
@@ -184,6 +192,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                 {this.props.optional && this.renderOptional()}
                 <Tabler 
                     multilineEdit={false} 
+                    autoInit={this.state.autoInit}
                     {...this.state.tableProps}
                     pageMeta={pageMeta}
                     reflush={this.state.reflush}

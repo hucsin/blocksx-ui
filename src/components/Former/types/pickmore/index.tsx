@@ -70,7 +70,7 @@ export default class FormerPickMore extends React.Component<FormerPickProps, For
             return it
         }) : []
     }
-    public UNSAFE_componentWillUpdate(newProps: any) {
+    public UNSAFE_componentWillReceiveProps(newProps: any) {
         let trueValue: any = this.getDefaultValue(newProps.value);
         if (trueValue.toString() != this.state.value.toString()) {
             this.setState({
