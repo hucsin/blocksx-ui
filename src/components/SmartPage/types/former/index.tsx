@@ -181,6 +181,7 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                         <span className='ui-choose' onClick={()=> {
                             
                             this.setState({
+                                setpOneValue: null,
                                 isStepOne: true
                             })
                         }}>
@@ -196,10 +197,11 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
             
         }
         private getStepTitle(IconsView) {
-            
-             
+            console.log(this.state.setpOneValue, 777)
             return (
-                <div className='ui-header'>
+                <div className={classnames({
+                    'ui-header': true
+                })}>
                     {IconsView && <IconsView/>}
                     <span className='ui-stepone'>{this.getStepFistTitle()}</span>
                     <RightOutlined/>

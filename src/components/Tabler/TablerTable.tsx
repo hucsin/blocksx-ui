@@ -474,6 +474,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
         )
     }
     private renderTable() {
+        let { total = 0, pageSize = 0 } = this.state;
 
         return (
             <Table
@@ -509,16 +510,16 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
                     }
                 }}
 
-                pagination={{
+                pagination={(total < pageSize) ? false : {
                     pageSize: this.state.pageSize,
                     total: this.state.total,
                     //position: ['bottomCenter'],
                     itemRender: (_, type, originalElement)=> {
                         switch(type) {
                             case 'prev':
-                                return <Button type="text" icon={<Icons.LeftOutlined/>} size="small">Turn to the previous page</Button>
+                                return <Button type="text" icon={<Icons.LeftOutlined/>} size="small">Previous page</Button>
                             case 'next':
-                                return <Button type="text" iconPosition="end" icon={<Icons.RightOutlined/>} size="small">Turn to the next page</Button>
+                                return <Button type="text" iconPosition="end" icon={<Icons.RightOutlined/>} size="small">Next page</Button>
                             default:
                                 return originalElement;
                         }

@@ -29,6 +29,7 @@ export interface IFormerType {
     children?: any;
     pageType?: string;
     formerType: any;
+    rowKey?: string;
     name?: string;
     column?: string;
     formerSchema?: any;
@@ -62,7 +63,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         super(props);
         this.state = {
             visible: !!props.action,
-            schema: this.getSchema(props.fields),
+            schema: this.getSchema(props.fields, props.viewer),
             action: props.action,
             
             value: props.value,
@@ -100,10 +101,11 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 this.resetValue()
             }
         }
-
+        
         if (newProps.viewer != this.state.viewer) {
             this.setState({
-                viewer: newProps.viewer
+                viewer: newProps.viewer,
+                schema: this.getSchema(newProps.fields || this.state.fields, newProps.viewer)
             })
         }
     }
@@ -126,14 +128,16 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
 
 
-    private getSchema(fields?: any) {
+    private getSchema(fields?: any, viewer?: boolean) {
         let { formerSchema, action = 'edit' } = this.props;
+        let hviewer: any = typeof viewer !== 'undefined' ? viewer : this.state.viewer;
 
         if (formerSchema && formerSchema[action]) {
             return formerSchema[action]
         }
         // 如果是step模型
-        if (this.isStepFormer(fields)) {
+       
+        if (!hviewer && this.isStepFormer(fields)) {
 
             return {
                 firstField: this.splitStepField(fields, true)[0] || {},
@@ -142,6 +146,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             }
 
         } else {
+       
             return TablerUtils.getDefaultSchema(fields);
         }
     }
@@ -166,14 +171,21 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             let keyValue: any = this.state.setpOneValue[firstField.key];
             let value: any = utils.isPlainObject(keyValue) ? keyValue.value : keyValue;
             let item: any = dict.find(it => it.value === value);
+            let stateValue: any = this.state.value || {};
+            let isDeny: any = firstField.modify == 'deny' && stateValue[this.props.rowKey || 'id'];
+           
             
             if (item) {
                 return (
-                    <span className='ui-choose' onClick={()=> {
-                        
-                        this.setState({
-                            isStepOne: true
-                        })
+                    <span className={classnames({
+                        'ui-choose': true,
+                        'ui-disabeld': isDeny
+                    })} onClick={()=> {
+                        if (!isDeny) {
+                            this.setState({
+                                isStepOne: true
+                            })
+                        }
                     }}>
                         {item && TablerUtils.renderIconComponent(item)}
                         {item.label}
@@ -196,7 +208,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 <span className={
                     classnames({
                         'ui-steptwo': true,
-                        'ui-disabeld': !this.state.setpOneValue
+                        'ui-disabeld': this.state.isStepOne
                     })
                 }>2. {isEdit ? 'Edit' : 'Complete'} the record </span >
             </div>
@@ -209,6 +221,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             return this.getStepTitle(this.state.action == 'edit');
 
         } else {
+
             switch (this.state.action) {
                 case 'add': 
                 case 'create':
@@ -290,8 +303,8 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
     public render() {
         
-        let { schema, visible, isStepMode, isStepOne } = this.state;
-        let pageSchema: any = isStepMode 
+        let { schema, visible, isStepMode, isStepOne, viewer } = this.state;
+        let pageSchema: any = !viewer && isStepMode 
             ? isStepOne 
                 ?  schema.firstStep
                 :  schema.other
@@ -300,12 +313,13 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         if (!visible) {
             return null;
         }
-        
+
         return (
             <Former
                 title={this.getDefaultTitle()}
                 icon={this.getDefaultIcon()}
                 size={'default'}
+                rowKey={this.props.rowKey}
                 id={this.getDefaultId()}
                 type={this.props.formerType}
                 schema={pageSchema}

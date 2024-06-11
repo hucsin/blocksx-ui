@@ -212,8 +212,8 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             <div className='ui-mircotable-extra' onClick={consume}>
                 {this.renderDataExtra(rowItem, index, 'extra', 'renderRowExtra')}
                 {this.props.renderRowOperater && this.props.renderRowOperater(rowItem, index, (operate: any, rowData: any, rowIndex: number) => {
-                   
-                    if (this.props.optional) {
+                    console.log(operate, 11)
+                    if (this.props.optional && ['view','edit', 'delete'].indexOf(operate.type) == -1 ) {
                         this.setState({
                             selectedKey: rowData[this.props.rowKey]
                         })

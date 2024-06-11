@@ -23,6 +23,7 @@ export interface FormerProps {
     type?: 'drawer' | 'modal' | 'popover';
     value?: any;
     icon?: any;
+    rowKey?: string;
     schema: any;
     disabled?: boolean;
     extra?: ExtraContentType;
@@ -169,7 +170,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 canmodify: newProps.canmodify
             })
         }
-        console.log(newProps.disabled, 'unchange')
+        
         if (newProps.disabled != this.state.disabled) {
             if (!utils.isUndefined(newProps.disabled)) {
                 this.setState({

@@ -210,6 +210,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                     onChangeDatasource = {this.hideOptionalWrapper}
                     
                     onRowAction={(operate:any, rowData: any, _)=>{
+                        
                         if (operate.type == 'rowclick') {
                             this.props.onOptionalOpen && this.props.onOptionalOpen();
                         }
