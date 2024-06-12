@@ -149,7 +149,7 @@ export default class CleanseSchema {
     }
     public static getSearch(fields: any) {
         
-        let quick: any = fields.find(field => field.meta && field.meta.quick);
+        let quick: any = fields.find(field => !field.classify && field.meta && field.meta.quick);
         return {
             searcher: 'query',
             quick: this.getSearchQuick(quick)

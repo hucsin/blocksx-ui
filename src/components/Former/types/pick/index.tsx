@@ -11,6 +11,7 @@ interface FormerPickProps extends IFormerBase {
     fields?: any[];
     extendsFor?: any;
     value?: any;
+    meta?: any;
 }
 
 interface FormerPickState {
@@ -25,7 +26,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
             value: props.value || 'mysql'
         }
         let { extendsFor } = props;
-        console.log(props, 33333)
+        
         this.requestHelper =  SmartRequest.createPOST(extendsFor.path +'/list')
     }
     
@@ -57,9 +58,17 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
             searcher
         }
     }
+    private getDefaultPageSize() {
+        let { meta } = this.props;
+        if (meta && meta.props) {
+            return meta.props.pageSize || 6;
+        }
+        return 6;
+    }
     public render() {
         let value:any = {};
-        let schema: any = this.getSchema()
+        let schema: any = this.getSchema();
+        let pageSize: number = this.getDefaultPageSize();
         
         return (
             <div className='ui-pick-wrapper'>
@@ -69,6 +78,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
                     fields={schema.fields}
                     searcher={schema.searcher}
                     dataSource={this.requestHelper}
+                    pageSize = {pageSize}
                     size='small'
                     selectedRowKeys={value? [value.id]: []}
                     mode="pickone"

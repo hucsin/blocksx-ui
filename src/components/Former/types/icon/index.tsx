@@ -8,7 +8,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { utils } from '@blocksx/core';
+
 import { IFormerBase } from '../../typings';
 import { IconMap } from '../../../Icons/iconmap/index';
 import * as Icons from '../../../Icons';
@@ -29,8 +29,8 @@ class FormerIconView extends React.Component<{value: string}> {
         if (IconView) {
             return (
                 <Space>
-                    {<IconView/>}
-                    {this.props.value}
+                    <Tooltip title={this.props.value}><IconView/></Tooltip>
+                    
                 </Space>
             )
         }

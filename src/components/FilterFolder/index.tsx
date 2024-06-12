@@ -30,11 +30,13 @@ export interface FilterFolderProps {
     title: string;
     icon: string;
     leftSize: number;
+    params?: any;
     mode?: 'filter' | 'folder';
     
     currentKey?: string;
 
     sysFolders?: FolderMeta[] | any;
+    defaultDescription?: string;
     folders?: FolderMeta[];
 
     onAddCustomFolder?(folderMeta: FolderMeta): Promise<any>;
@@ -84,14 +86,15 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                     return 'all records';
                     //return props.title ? i18n.join('all', props.title) : i18n.t('all')
                 },
-                description: 'View all data records'
+               // description: 'View all data records'
             },
             {
                 value: 'none',
                 label: i18n.t('uncategorized'),
-                description: 'No grouped records'
+                description: 'Display the {title} records without grouping.'
             }
-        ]
+        ],
+        defaultDescription: 'Display the data records for category {value}.'
     }
     
     public constructor(props: FilterFolderProps) {
@@ -109,14 +112,14 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
             title: props.title,
 
             reflush: props.reflush,
-            expand: props.currentKey && props.currentKey!=='all' ? false : true,
+            expand: (props.mode !== 'filter'|| props.currentKey && props.currentKey!=='all') ? false : true,
             currentIcon: '',
         }
 
     }
 
     public componentDidMount() {
-        this.fetch();
+        this.fetch(true);
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
         
@@ -132,32 +135,29 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                 currentKey: '',
                 reflush: newProps.reflush
             }, () => {
-                console.log(this.state.reflush)
                 this.fetch();
             })
         }
     }
 
-    private fetch =()=> {
+    private fetch =(init?: boolean)=> {
         if (this.props.onFetchCustomFolders) {
             this.setState({loading: true})
             this.props.onFetchCustomFolders({
                 pageNumber: 1,
                 pageSize: 50
             }).then((result: any)=>{
-                
                 let fetchData: any = (utils.isArray(result.data) ? result.data:result).map(it => { return {...it, key: it.id}})
-                
-                let findItem: any = fetchData.find(it=> it.value === this.state.currentKey)
+                let findItem: any = fetchData.find(it=> it.value === this.state.currentKey);
+
                 this.setState({
                     loading: false,
                     orignFolders: fetchData,
                     folders: fetchData,
                     currentIcon: findItem ? findItem.icon : ''
                 }, ()=> {
-                   // this.doSelectFolder();
+                    this.doSelectFolder(init);
                 })
-
 
             }, ()=> {
                 this.setState({loading: false})
@@ -175,14 +175,33 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
         }
         return find;
     }
-    private doSelectFolder() {
+    private doSelectFolder(init?: boolean) {
         
         let currentFolder: any = this.getCurrentValue();
+    
+        currentFolder && this.onChange(this.state.currentKey, currentFolder, init)
+    }
+    private onChange(currentKey: any, folder: any, init?: boolean) {
         
+        let params: any = this.props.params || {};
         if (this.props.onChange) {
-            this.props.onChange(this.state.currentKey, currentFolder)
+            if (currentKey !== 'all') {
+                if (!folder.description) {
+                    folder.description = this.props.defaultDescription;
+                    params = folder;
+                }
+
+                if (folder.description.indexOf('{') > -1) {
+                    folder.description = utils.template(folder.description, params)
+                }
+                
+            }
+
+            this.props.onChange(currentKey, folder, init)
         }
     }
+
+
     private getLabelName(it: FolderMeta) {
         if (typeof it.label == 'function') {
             return it.label(this.props)
@@ -227,8 +246,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
             currentKey: key,
             currentIcon: folder.icon
         }, ()=> {
-
-            this.props.onChange && this.props.onChange(key, this.getCurrentValue(key))
+            this.onChange(key, this.getCurrentValue(key))
         })
         
     }

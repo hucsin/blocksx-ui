@@ -399,7 +399,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             }
         })
     }
-    private onFolderChange =(query: any, folderMeta: any) => {
+    private onFolderChange =(query: any, folderMeta: any, isint?: boolean) => {
         
         if (this.props.router) {
             this.props.router.utils.goQuery({
@@ -410,7 +410,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         this.setState({
             folderQuery: query,
             folderMeta,
-            reflush: +new Date
+            reflush: isint ? this.state.reflush : +new Date
         })
     }
     private getQueryParams = ()=> {
@@ -482,14 +482,14 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
 
     public renderRightContent() {
-        let { classifyField = { meta: {}}, pageMeta, folderMeta, folderField, noClassify } = this.state;
+        let { classifyField = { meta: {}}, pageMeta, folderMeta, folderMode, folderField, noClassify } = this.state;
 
         // 不支持classify的情况
         if (!noClassify) {
 
             let classifyMeta: any = {
                 label: folderMeta ? folderMeta.label :  folderField ? pageMeta.title : pageMeta.title,
-                description: folderMeta ? folderMeta.description :  folderField ? pageMeta.description : pageMeta.description,
+                description: folderMeta ? folderMeta.description || pageMeta.description :  folderField ? pageMeta.description : pageMeta.description,
                 icon: folderField ?pageMeta.icon : pageMeta.icon
             }
             
@@ -498,7 +498,6 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
             classifyField.dict && (dictmap = dictmap.concat(classifyField.dict))
             
-
             return (
                 <>
                 <div className={classnames({
@@ -510,7 +509,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         key={37}
                         title = {classifyMeta.label as any}
                         description = {classifyMeta.description}
-                        icon = {this.props.icon || classifyMeta.icon}
+                        icon = {folderMode =='folder' ? '' : this.props.icon || classifyMeta.icon}
                         extra ={<span ref={this.toolbarRef}></span>}
                         tabsExtra = {<span ref={this.searchRef}></span>}
                         onChange={this.onClassifyChange}
@@ -598,7 +597,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
     }
     public renderMainContent() {
-        let { folderField, folderMode, classifyQuery } = this.state;
+        let { folderField, folderMode, classifyQuery, pageMeta = {} } = this.state;
 
         if (this.hasLeftNavContent()) {
             //let folder: any = folderField.meta.folder || {};
@@ -608,6 +607,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 <FilterFolder 
                     key={1}
                     mode={folderMode}
+                    params={{
+                        title: pageMeta.title?.toLowerCase()
+                    }}
                     title={this.getFolderTitle()}
                     leftSize={this.getFolderLeftSize()}
                     reflush={folderMode == 'filter' ? classifyQuery : '0'}

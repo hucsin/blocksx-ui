@@ -53,6 +53,13 @@
 .ui-smartpage-wrapper {
    height: 100%;
    min-height: 420px;
+   .ant-tabs-extra-content {
+      .ant-space-item {
+         .ant-select {
+            min-width: 100px;
+         }
+      }
+   }
    .ant-table-title {
       display: none;
    }

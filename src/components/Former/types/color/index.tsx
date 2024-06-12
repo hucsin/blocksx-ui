@@ -7,7 +7,7 @@
  * @FilePath: /designer/Users/iceet/work/hucsin/blocksx/packages/design-components/src/former/types/input/index.tsx
  */
 import React from 'react';
-import { ColorPicker } from 'antd';
+import { ColorPicker, Tooltip } from 'antd';
 import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
 import './style.scss'

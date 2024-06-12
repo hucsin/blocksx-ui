@@ -8,7 +8,7 @@
  import { IFormerBase } from '../../typings';
  import * as FormerIcon from '../../../Icons';
  import UtilsDatasource from '../../../utils/datasource';
- import { Radio } from 'antd';
+ import { Tooltip } from 'antd';
  import './style.scss';
 
  interface IFormerRadio extends IFormerBase {
@@ -62,7 +62,7 @@
                 disabled: newProps.disabled
             })
         }
-        console.log(newProps.value)
+        
         if (newProps.value !== this.state.value) {
             this.setState({
                 value: newProps.value
@@ -118,7 +118,7 @@
                     
                     return (
                         <label onClick={()=>{
-                            console.log(it.value, this.state.value, value, 3333)
+                            
                             this.onChangeValue({
                                 target: {
                                     value: it.value
@@ -126,7 +126,7 @@
                             })
                         }} className={classnames({
                             'ui-selected': it.value == value
-                        })} key={it.value} >{VIcon ? <VIcon/> :it.label}</label>
+                        })} key={it.value} >{VIcon ? <Tooltip title={it.description || it.label}><VIcon/></Tooltip> :it.label}</label>
                     )
                 })}
             </div>
