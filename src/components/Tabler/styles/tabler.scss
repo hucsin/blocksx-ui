@@ -25,6 +25,15 @@
     }
 }
 .tabler-wrapper {
+    .ui-tabler-selected-summary {
+        position: absolute;
+        margin-top: -40px;
+        opacity: .5;
+        &.ui-tabler-nopagebar {
+            margin-top: 16px;
+            position: relative;
+        }
+    }
     position: relative;
     z-index: 111;;
     .tabler-cell-first {

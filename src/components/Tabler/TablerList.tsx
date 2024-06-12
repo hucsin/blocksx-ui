@@ -60,6 +60,7 @@ interface TablerListProps extends TablerProps {
     layout?: 'horizontal' | 'card' | 'avatar' | 'connections' | 'info';
     maxIcon?: number;
     minIcon?: number;
+    icon?: string;
     classify?: 'mini' | 'default';
     onGetRequestParams?: Function;
     avatarSize?: number;
@@ -124,6 +125,8 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         };
         
         this.id = utils.uniq('id')
+
+        console.log(this.props.layout, this.props)
     }
     
     public componentDidMount() {
@@ -131,6 +134,9 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         this.setState({
             dataSource: this.getDataSource()
         })
+    }
+    private getDefaultLayout() {
+        return this.props.avator
     }
     private resetDataSource(datasource?: any) {
         this.props.onResetDataSource && this.props.onResetDataSource(datasource);
@@ -271,7 +277,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
         let { maxIcon = 1, minIcon = 0 } = this.getMinMaxAvatar();
 
-        if (this.props.layout == 'connections') {
+        if (this.props.layout == 'connections' || this.props.avator) {
             return [avatars[0]]
         }
 
@@ -349,10 +355,11 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 return this.renderAvatorAuto(avatarPlace, rowData);
 
             } else {
-                if (this.props.layout == 'connections') {
+                console.log(this.props, 333)
+                if (this.props.layout == 'connections' || this.props.avator ==='connections') {
                     return (
                         <span className='ui-mircotable-avatar-con'>
-                            <FormerTypes.avatar key={1} type="string" viewer={true} color='#4338CA' icon='Bytehubs' size={40} />
+                            <FormerTypes.avatar key={1} type="string" viewer={true}  icon={this.props.icon} size={40} />
                             <Icons.ConnectionsDirectivityOutlined key={2} />
                             <FormerTypes.avatar key={3} type="string" {...avatars[0]} size={40} />
                         </span>

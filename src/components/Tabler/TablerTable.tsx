@@ -14,7 +14,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import * as Icons from '../Icons'
-import { Spin, Table, Space, Button } from 'antd';
+import { Spin, Table, Space, Button, Tag } from 'antd';
 
 import { utils } from '@blocksx/core';
 import i18n from '@blocksx/i18n';
@@ -472,64 +472,90 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
             </div>
         )
     }
+    private renderSelecteSummary (nopagebar?: boolean) {
+        if (this.isPickMode()) {
+            let { selectedRowKeys = [] } = this.state;
+            
+            if (selectedRowKeys.length > 0) {
+                return (
+                    <Space className={
+                        classnames({
+                            'ui-tabler-selected-summary': true,
+                            'ui-tabler-nopagebar': nopagebar
+                        })
+                    }>
+                        <span>Selected:</span>
+                        {selectedRowKeys.slice(0, 3).map((it, key)=> {
+                            return <Tag closable={false} key={key}>{it}</Tag>
+                        })}
+                        {selectedRowKeys.length > 3 && <Tag closable={false}>+{selectedRowKeys.length - 3}</Tag>}
+                    </Space>
+                
+                )
+            }
+        }
+    }
     private renderTable() {
         let { total = 0, pageSize = 0 } = this.state;
 
         return (
-            <Table
-                rowKey={this.props.rowKey || 'id'}
-                key={1}
-                
-                title={() => this.renderTitle()}
-                size={this.props.size}
-                columns={this.getColumns()}
-                tableLayout={'fixed'}
-                dataSource={this.getDataSource()}
-                ref={this.tableRef}
+            <>
+                <Table
+                    rowKey={this.props.rowKey || 'id'}
+                    key={1}
+                    
+                    title={() => this.renderTitle()}
+                    size={this.props.size}
+                    columns={this.getColumns()}
+                    tableLayout={'fixed'}
+                    dataSource={this.getDataSource()}
+                    ref={this.tableRef}
 
-                scroll={this.columns.length <= this.props.resizeMaxColumns + 1 ? undefined : { x: this.getTableWidth() }}
-                rowSelection={this.isPickMode() && {
-                    selectedRowKeys: this.state.selectedRowKeys,
-                    onChange: this.onSelectChange,
-                    type: this.state.mode == 'pickmore' ? 'checkbox' : 'radio',
-                    columnWidth: 40,
-                    fixed: true
-                } as any}
-                rowClassName={(record: any) => {
-                    let { selectedRowKeys } = this.state;
-                    if (selectedRowKeys) {
-                        if (selectedRowKeys.indexOf(record[this.props.rowKey || 'id']) > -1) {
-                            return 'ui-tabler-selected'
+                    scroll={this.columns.length <= this.props.resizeMaxColumns + 1 ? undefined : { x: this.getTableWidth() }}
+                    rowSelection={this.isPickMode() && {
+                        selectedRowKeys: this.state.selectedRowKeys,
+                        onChange: this.onSelectChange,
+                        type: this.state.mode == 'pickmore' ? 'checkbox' : 'radio',
+                        columnWidth: 40,
+                        fixed: true
+                    } as any}
+                    rowClassName={(record: any) => {
+                        let { selectedRowKeys } = this.state;
+                        if (selectedRowKeys) {
+                            if (selectedRowKeys.indexOf(record[this.props.rowKey || 'id']) > -1) {
+                                return 'ui-tabler-selected'
+                            }
                         }
-                    }
-                    return ''
-                }}
-                components={{
-                    header: {
-                        cell: ResizableTitle
-                    }
-                }}
-
-                pagination={(total < pageSize) ? false : {
-                    pageSize: this.state.pageSize,
-                    total: this.state.total,
-                    //position: ['bottomCenter'],
-                    itemRender: (_, type, originalElement)=> {
-                        switch(type) {
-                            case 'prev':
-                                return <Button type="text" icon={<Icons.LeftOutlined/>} size="small">Previous page</Button>
-                            case 'next':
-                                return <Button type="text" iconPosition="end" icon={<Icons.RightOutlined/>} size="small">Next page</Button>
-                            default:
-                                return originalElement;
+                        return ''
+                    }}
+                    components={{
+                        header: {
+                            cell: ResizableTitle
                         }
-                    },
-                    onChange: (pageNumber, pageSize) => {
+                    }}
 
-                        this.props.onChangePage && this.props.onChangePage({ pageSize, pageNumber })
-                    }
-                }}
-            ></Table>
+                    pagination={(total < pageSize) ? false : {
+                        pageSize: this.state.pageSize,
+                        total: this.state.total,
+                        //position: ['bottomCenter'],
+                        itemRender: (_, type, originalElement)=> {
+                            switch(type) {
+                                case 'prev':
+                                    return <Button type="text" icon={<Icons.LeftOutlined/>} size="small">Previous page</Button>
+                                case 'next':
+                                    return <Button type="text" iconPosition="end" icon={<Icons.RightOutlined/>} size="small">Next page</Button>
+                                default:
+                                    return originalElement;
+                            }
+                        },
+                        onChange: (pageNumber, pageSize) => {
+
+                            this.props.onChangePage && this.props.onChangePage({ pageSize, pageNumber })
+                        }
+                    }}
+                ></Table>
+                {this.renderSelecteSummary(total < pageSize)}
+            </>
         )
     }
 }

@@ -23,13 +23,21 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
     public constructor(props: FormerPickProps) {
         super(props);
         this.state = {
-            value: props.value || 'mysql'
+            value: props.value || 'MySQL'
         }
         let { extendsFor } = props;
         
         this.requestHelper =  SmartRequest.createPOST(extendsFor.path +'/list')
     }
-    
+    private onChange =(value: any) => {
+        this.setState({
+            value: value
+        })
+
+        if (this.props.onChangeValue) {
+            this.props.onChangeValue(value)
+        }
+    }
     private getSchema() {
         let searcher: any = {};
         let trueFields: any = this.props.fields || []
@@ -46,7 +54,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
                         ...CleanseSchema.getSearchQuick(field)
                         
                     },
-                    placeholder: this.state.value ? 'current:' + this.state.value: null,
+                    placeholder: 'Filter and select record',
                     direction: 'right'
                 };
             }
@@ -61,12 +69,19 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
     private getDefaultPageSize() {
         let { meta } = this.props;
         if (meta && meta.props) {
-            return meta.props.pageSize || 6;
+            return meta.props.pageSize || 7;
         }
-        return 6;
+        return 7;
+    }
+    private getDefaultRowKey() {
+        let { meta } = this.props;
+        if (meta && meta.props && meta.props.rowKey) {
+            return meta.props.rowKey
+        }
+        return 'id';
     }
     public render() {
-        let value:any = {};
+        
         let schema: any = this.getSchema();
         let pageSize: number = this.getDefaultPageSize();
         
@@ -74,17 +89,18 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
             <div className='ui-pick-wrapper'>
                 <Tabler
                     key={2}
+                    rowKey={this.getDefaultRowKey()}
                     multilineEdit={false} 
                     fields={schema.fields}
                     searcher={schema.searcher}
                     dataSource={this.requestHelper}
                     pageSize = {pageSize}
                     size='small'
-                    selectedRowKeys={value? [value.id]: []}
+                    selectedRowKeys={[this.state.value]}
                     mode="pickone"
                     onChangeValue={(rowKeys: any, row: any)=> {
                         //this.onSelected(row[0])
-                        console.log(row, rowKeys)
+                       this.onChange(rowKeys[0])
                     }}
                     noOperater={true}
                 />

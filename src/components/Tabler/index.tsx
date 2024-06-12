@@ -128,7 +128,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             query: {},
             optional:props.optional
         }
-
+        
         this.authFilter = new AuthFilter(this);
     }
 

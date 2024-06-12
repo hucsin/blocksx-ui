@@ -2,11 +2,13 @@ import React from 'react';
 import classnames from 'classnames';
 import i18n from '@blocksx/i18n';
 import { RightOutlined } from '@ant-design/icons'
+import { Spin } from 'antd';
 import Former from '../Former';
 
 import { utils } from '@blocksx/core';
 import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExtendEnum';
 import TablerUtils from '../utils/tool';
+import SmartRequest from '../utils/SmartRequest';
 
 import {  upperFirst } from 'lodash'
 
@@ -47,6 +49,7 @@ export interface SFormerType {
     visible: boolean;
     value?: any;
     schema?: any;
+    dynamicSchema?: any;
     action?: any;
     name?: string;
     fields?: any;
@@ -54,11 +57,12 @@ export interface SFormerType {
     isStepMode?: boolean;
     isStepOne?: boolean;
     setpOneValue?: any;
+    loading?: boolean;
 }
 
 export default class TablerFormer extends React.Component<IFormerType, SFormerType>  {
     private former: any;
-   
+    private nextDyamicRequest: any;
     public constructor(props: IFormerType) {
         super(props);
         this.state = {
@@ -71,10 +75,44 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             viewer: props.viewer,
             isStepOne: props.value ? false: true,
             isStepMode: this.isStepFormer(props.fields),
-            setpOneValue: props.value
+            setpOneValue: props.value,
+            loading: false
+        }
+
+        if (this.isStepDynamicFormer()) {
+            
+            this.nextDyamicRequest = SmartRequest.createPOST(this.getStepDynamicFormer())
         }
     }
+    private getStepDynamicFormer() {
+        
+        let { pageMeta = {}}  = this.props;
+        let stepnext: any = pageMeta && pageMeta.props && pageMeta.props.stepnext;
 
+        if (stepnext) {
+
+            return pageMeta.path ? pageMeta.path + '/' + stepnext : stepnext;
+        }
+    }
+    private isStepDynamicFormer () {
+        return !!this.getStepDynamicFormer();
+    }
+    private onDynamicStepChange(value: any) {
+        this.setState({loading: true})
+        this.nextDyamicRequest(value).then((result) => {
+            let trueValue: any = {
+                ...this.state.setpOneValue,
+                ...result.value
+            }
+            this.setState({
+                loading:false,
+                dynamicSchema: result.schema,
+                setpOneValue: utils.clone(trueValue),
+                value: trueValue,
+                isStepOne: false
+            })
+        })
+    }
     private isStepFormer(fields: any) {
         return !!fields.filter(field => {
             return field.step
@@ -139,9 +177,12 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
        
         if (!hviewer && this.isStepFormer(fields)) {
 
+            let firstFields: any = this.splitStepField(fields, true)
+
             return {
-                firstField: this.splitStepField(fields, true)[0] || {},
-                firstStep: TablerUtils.getDefaultSchema(this.splitStepField(fields, true)),
+                firstFields,
+                firstField: firstFields[0] || {},
+                firstStep: TablerUtils.getDefaultSchema(firstFields),
                 other: TablerUtils.getDefaultSchema(this.splitStepField(fields))
             }
 
@@ -166,8 +207,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         let fistName: string = ['Choose the ', firstField.key].join('');
 
         if (this.state.setpOneValue) {
-            
-            let dict: any = firstField.dict;
+            let dict: any = firstField.dict || [];
             let keyValue: any = this.state.setpOneValue[firstField.key];
             let value: any = utils.isPlainObject(keyValue) ? keyValue.value : keyValue;
             let item: any = dict.find(it => it.value === value);
@@ -303,11 +343,11 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
     public render() {
         
-        let { schema, visible, isStepMode, isStepOne, viewer } = this.state;
+        let { schema,dynamicSchema, visible, isStepMode, isStepOne, viewer } = this.state;
         let pageSchema: any = !viewer && isStepMode 
             ? isStepOne 
                 ?  schema.firstStep
-                :  schema.other
+                : dynamicSchema ||  schema.other
             : schema;
 
         if (!visible) {
@@ -315,66 +355,80 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         }
 
         return (
-            <Former
-                title={this.getDefaultTitle()}
-                icon={this.getDefaultIcon()}
-                size={'default'}
-                rowKey={this.props.rowKey}
-                id={this.getDefaultId()}
-                type={this.props.formerType}
-                schema={pageSchema}
-                visible={this.state.visible}
-                okText={this.getDefaultOkText()}
-                onSave={(value: any, former: any) => {
-                    return this.onChangeValue(value, former)
-                }}
-                onBeforeSave= {() => {
-                    if (this.state.isStepMode && this.state.isStepOne) {
-                        this.setState({
-                            isStepOne: false
-                        })
-                        return false;
-                    }
-                }}
-                onChangeValue={(value)=> {
-                    if (this.state.isStepMode && this.state.isStepOne) {
-                        let currentField: any = schema.firstField;
-                        let setpOneValue: any = this.state.setpOneValue || {};
-                        let newValue: any = value[currentField.key];
-                        
-                        if (newValue && ( newValue != setpOneValue[currentField.key])) {
+            <Spin spinning={this.state.loading}>
+                <Former
+                    title={this.getDefaultTitle()}
+                    icon={this.getDefaultIcon()}
+                    size={'default'}
+                    rowKey={this.props.rowKey}
+                    id={this.getDefaultId()}
+                    type={this.props.formerType}
+                    schema={pageSchema}
+                    visible={this.state.visible}
+                    okText={this.getDefaultOkText()}
+                    onSave={(value: any, former: any) => {
+                        console.log('save', value)
+                        return this.onChangeValue(value, former)
+                    }}
+                    
+                    onBeforeSave= {() => {
+                        console.log('befeorsave')
+                        if (this.state.isStepMode && this.state.isStepOne) {
                             this.setState({
-                                setpOneValue: utils.clone(value),
-                                value: value,
                                 isStepOne: false
                             })
+                            return false;
                         }
-                    }
-                }}
-                
-                disabled = {this.state.isStepMode && !this.state.setpOneValue}
-                value = {this.state.value}
-                viewer = {this.state.viewer}
-                canmodify = {this.state.value && this.state.value.id}
-                onGetDependentParameters = {(value: any)=> {
-                    return this.state.value ? {
-                        [RelationshipExtendEnum.MASTERID]: this.state.value.id
-                    } : {}
-                }}
-                onInit = {(former: any) => {
-                    this.former = former;
+                    }}
+                    onChangeValue={(value)=> {
+
+                        //return ;
+                        if (this.state.isStepMode && this.state.isStepOne && schema.firstFields.length == 1) {
+
+                            let currentField: any = schema.firstField;
+                            let setpOneValue: any = this.state.setpOneValue || {};
+                            let newValue: any = value[currentField.key];
+                            if (newValue && ( newValue != setpOneValue[currentField.key])) {
+
+                                if (this.isStepDynamicFormer()) {
+
+                                    this.onDynamicStepChange(value);
+                                } else {
+                                
+                                    this.setState({
+                                        setpOneValue: utils.clone(value),
+                                        value: value,
+                                        isStepOne: false
+                                    })
+                                }
+                            }
+                        }
+                    }}
                     
-                }}
-                autoclose = {false}
-                column = {this.props.column ? this.props.column as any : 'two'}
-                width = {(this.props.column =='one' ? 500 : 700)}
-                onClose={() => {
-                    this.setState({
-                        visible: false
-                    })
-                    this.props.onClose();
-                }}
-            >{this.props.children}</Former>
+                    disabled = {this.state.isStepMode && !this.state.setpOneValue}
+                    value = {this.state.value}
+                    viewer = {this.state.viewer}
+                    canmodify = {this.state.value && this.state.value.id}
+                    onGetDependentParameters = {(value: any)=> {
+                        return this.state.value ? {
+                            [RelationshipExtendEnum.MASTERID]: this.state.value.id
+                        } : {}
+                    }}
+                    onInit = {(former: any) => {
+                        this.former = former;
+                        
+                    }}
+                    autoclose = {false}
+                    column = {this.props.column ? this.props.column as any : 'two'}
+                    width = {(this.props.column =='one' ? 500 : 700)}
+                    onClose={() => {
+                        this.setState({
+                            visible: false
+                        })
+                        this.props.onClose();
+                    }}
+                >{this.props.children}</Former>
+            </Spin>
         )
     }
 }
