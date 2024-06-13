@@ -151,7 +151,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             }
         }
     }
-
+    
     public UNSAFE_componentWillReceiveProps(newProps: any) {
         
         if (newProps.value != this.state.value) {
@@ -335,20 +335,21 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
         return object;
     }
-
+    
     private getValueByProps(value: any, props: any, allValue?: any,  prop?: string) {
-
 
         if (utils.isString(prop)) {
             let dotProp: any = prop?.split('.');
+            
             if (dotProp.length == 2) {
                 return utils.get(allValue, prop)
             }
         }
         
-        if (utils.isUndefined(value)) {
-            return utils.isUndefined(props.defaultValue) ? props.value : props.defaultValue;
+        if (utils.isUndefined(value) || utils.isNull(value)) {
+            return utils.isUndefined(props.defaultValue) ? props.value || this.getDefaultValue(props) : props.defaultValue;
         }
+
         return value;
     }
     private onChangeValue(value: any, type?: string, originValue?: any[]) {
@@ -693,7 +694,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         let groupList = this.getGroupList();
         let Group = this.getNodeByType('group');
         let GroupItem = this.getSubNodeByType('group');
-
+        
         children.push(
             <Group key={children.length}>
                 {groupList.map((it: { title: string; group: any[] }, index: number) => {
@@ -706,12 +707,14 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         return prevItem['x-index'] > nextItem['x-index'] ? 1 : -1;
                     }).map((prop: any, index: number) => {
                         // 不存在隐藏的情况
+                        
                         if (this.isShowObjectKeyByProp(prop)) {
                             let properties: any = this.getObjectItemProperties(prop);//this.clone(this.properties[prop]);
                             let childrenControl: any = this.state.childrenControl ? this.state.childrenControl[prop] : null;
                             // 计算oneOf
                             let props: any = this.properties[prop];
                             let hidden: boolean = props['x-type'] == 'hidden';
+                            let itemvalue: any = this.getValueByProps(value[prop], properties, value, prop);
                             
                             return (
                                 <Child
@@ -724,12 +727,12 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                     }}
 
                                     size={this.props.size}
-                                    value={this.getValueByProps(value[prop], properties, value, prop)}
+                                    value={itemvalue}
                                     defaultValue={this.getDefaultValue({
                                         type: properties.type
                                     })}
                                     oneOf={this.getObjectItemOneOfNode(prop)}
-                                    key={prop}
+                                    key={[this.path,prop, index].join('.')}
                                     //需要
                                     onGetDependentParameters={this.props.onGetDependentParameters}
                                 >
@@ -738,11 +741,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                         path={prop}
                                         parentPath={this.path}
                                         runtimeValue={this.state.runtimeValue}
-                                        value={this.getValueByProps(value[prop], properties, value, prop)}
+                                        value={itemvalue}
                                         onDealControl={(control: IControl) => {
                                             this.onDealControl(control)
                                         }}
-                                        key="1"
+                                        key={[this.path, prop, index, 'leaf'].join('.')}
                                         viewer={this.state.viewer}
                                         canmodify={this.state.canmodify}
 
@@ -929,7 +932,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         className={classnames({ 'former-open-error': this.state.validationMessage })}
                     >
                         <View
-                            key={this.leafProps.index || this.leafProps['x-index'] || this.leafProps.path}
+                            key={ this.leafProps.path || this.leafProps.index || this.leafProps['x-index']}
                             {...this.leafProps}
                             children={children}
                             size={this.props.size}

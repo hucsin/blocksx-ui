@@ -119,7 +119,9 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
     }
 
     public componentDidMount() {
-        this.fetch(true);
+        if (!this.state.expand) {
+            this.fetch(true);
+        }
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
         
@@ -135,7 +137,9 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                 currentKey: '',
                 reflush: newProps.reflush
             }, () => {
-                this.fetch();
+                if (!this.state.expand) {
+                    this.fetch();
+                }
             })
         }
     }
@@ -443,8 +447,15 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
         return this.props.mode !== 'filter'
     }
     private onExpand=()=> {
+        
         this.setState({
             expand: !this.state.expand
+        }, ()=> {
+            let { expand, orignFolders } = this.state;
+
+            if (!expand && (!orignFolders|| orignFolders.length ==0)) {
+                this.fetch(true)
+            } 
         })
     }
     public render() {

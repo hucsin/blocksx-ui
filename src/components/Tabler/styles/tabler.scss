@@ -3,10 +3,14 @@
         color: #1890ff
     }
 }
+.former-object-item-content {
+    p{ padding:0; margin:0 }
+}
 .ui-former {
+   
     .ui-disabeld {
-        color:#ccc;
-        cursor:not-allowed;
+        opacity: .5;
+        cursor:not-allowed !important;
     }
     .ui-choose {
         cursor: pointer;

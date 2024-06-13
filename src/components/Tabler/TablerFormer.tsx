@@ -50,6 +50,7 @@ export interface SFormerType {
     value?: any;
     schema?: any;
     dynamicSchema?: any;
+    id?: any;
     action?: any;
     name?: string;
     fields?: any;
@@ -67,7 +68,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         super(props);
         this.state = {
             visible: !!props.action,
-            schema: this.getSchema(props.fields, props.viewer),
+            schema: this.getSchema(props.fields),
             action: props.action,
             
             value: props.value,
@@ -76,13 +77,18 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             isStepOne: props.value ? false: true,
             isStepMode: this.isStepFormer(props.fields),
             setpOneValue: props.value,
-            loading: false
+            loading: false,
+            id: 0
         }
 
         if (this.isStepDynamicFormer()) {
             
             this.nextDyamicRequest = SmartRequest.createPOST(this.getStepDynamicFormer())
         }
+    }
+    public componentDidMount(): void {
+
+      
     }
     private getStepDynamicFormer() {
         
@@ -94,21 +100,65 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             return pageMeta.path ? pageMeta.path + '/' + stepnext : stepnext;
         }
     }
+    private getStepDynamicNextKey () {
+        let { pageMeta = {}}  = this.props;
+        return pageMeta && pageMeta.props && pageMeta.props.nextKey;
+
+    }
     private isStepDynamicFormer () {
         return !!this.getStepDynamicFormer();
+    }
+    private getDynamicSchema(dyschema: any) {
+        let { schema = {}}  = this.state;
+        let nextKey: any = this.getStepDynamicNextKey();
+
+        // 在原来的schema上加上新的
+        if (schema) {
+            let trueSchema:any = utils.clone(schema.other ? schema.other : schema);
+            
+            if (trueSchema) {
+                if (nextKey) {
+                    
+                    trueSchema.properties[nextKey] = Object.assign({}, dyschema, {
+                        uiType: 'object',
+                        'x-colspan': 2,
+                        'x-index': 10,
+                        'x-group': nextKey,
+                        fieldKey: nextKey,
+                        title: ''
+                    })
+                    trueSchema.title = nextKey;
+                   
+                } else {    
+                    // 把dyschema的属性复制到原来的schema
+
+                    if (dyschema && dyschema.properties) {
+                        Object.assign(trueSchema.properties, dyschema.properties)
+                    }
+                }
+                
+                return trueSchema;
+            }
+        }
+
+
+        return schema;
+
     }
     private onDynamicStepChange(value: any) {
         this.setState({loading: true})
         this.nextDyamicRequest(value).then((result) => {
-            let trueValue: any = {
+            
+            let trueValue: any =  {
                 ...this.state.setpOneValue,
                 ...result.value
-            }
+            };
             this.setState({
                 loading:false,
-                dynamicSchema: result.schema,
+                dynamicSchema: this.getDynamicSchema(result.schema),
                 setpOneValue: utils.clone(trueValue),
                 value: trueValue,
+                id: this.state.id + 1,
                 isStepOne: false
             })
         })
@@ -134,6 +184,11 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 isStepMode: this.isStepFormer(newProps.fields),
                 setpOneValue: utils.clone(newProps.value)
             })
+            if (newProps.value && this.isStepDynamicFormer()) {
+                this.onDynamicStepChange(newProps.value)
+            }
+
+            
             
             if (!!newProps.action) {
                 this.resetValue()
@@ -143,7 +198,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         if (newProps.viewer != this.state.viewer) {
             this.setState({
                 viewer: newProps.viewer,
-                schema: this.getSchema(newProps.fields || this.state.fields, newProps.viewer)
+                schema: this.getSchema(newProps.fields || this.state.fields)
             })
         }
     }
@@ -166,21 +221,22 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
 
 
-    private getSchema(fields?: any, viewer?: boolean) {
+    private getSchema(fields?: any) {
         let { formerSchema, action = 'edit' } = this.props;
-        let hviewer: any = typeof viewer !== 'undefined' ? viewer : this.state.viewer;
+       // let hviewer: any = typeof viewer !== 'undefined' ? viewer : this.state.viewer;
 
         if (formerSchema && formerSchema[action]) {
             return formerSchema[action]
         }
         // 如果是step模型
        
-        if (!hviewer && this.isStepFormer(fields)) {
+        if ( this.isStepFormer(fields)) {
 
             let firstFields: any = this.splitStepField(fields, true)
 
             return {
                 firstFields,
+                fields,
                 firstField: firstFields[0] || {},
                 firstStep: TablerUtils.getDefaultSchema(firstFields),
                 other: TablerUtils.getDefaultSchema(this.splitStepField(fields))
@@ -198,24 +254,71 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
     private getDefaultId() {
         let value: any = this.state.value;
-
-        return value ? value.id : 0;
+        console.log(value, value ? value.id || this.state.id : this.state.id ,2)
+        return value ? value.id || this.state.id : this.state.id;
     }
+    private getDefaultNotice() {
+        let { schema={}} = this.state;
+        if (schema.firstField) {
+            let firstItem: any = this.getFirstItem(schema.firstField);
+
+            return firstItem && firstItem.description;
+        }
+    }
+    private slotMap:any ={
+        summary: 'description'
+    }
+    private getSlotTitleIcon(fields: any) {
+        let { value = {} } = this.state;
+        let slot: any = {};
+        if (value) {
+            fields.forEach(it => {
+                if (it.meta ){
+                    let slotType:string = it.meta.slot;
+                    if (slotType) {   
+                        slot[this.slotMap[slotType]|| slotType] = value[it.fieldKey] 
+                    }
+                }
+            })
+        }
+        return slot;
+    }
+    private getFirstItem(firstField:any) {
+        let { schema, setpOneValue, value } = this.state;
+        
+        if (this.isStepDynamicFormer() && schema.fields) {
+            let slot: any = this.getSlotTitleIcon(schema.fields)
+            if (slot.title) {
+                return {
+                    label: slot.title,
+                    icon: slot.icon,
+                    description: slot.description
+                }
+            }
+        }
+        if (value && setpOneValue) {
+            let dict: any = firstField.dict || [];
+            let keyValue: any = this.state.setpOneValue[firstField.key];
+            let value: any = utils.isPlainObject(keyValue) ? keyValue.value : keyValue;
+            return dict.find(it => it.value === value);
+        }
+
+    } 
     private getStepFistTitle() {
 
         let firstField: any = this.state.schema.firstField;
         let fistName: string = ['Choose the ', firstField.key].join('');
 
         if (this.state.setpOneValue) {
-            let dict: any = firstField.dict || [];
-            let keyValue: any = this.state.setpOneValue[firstField.key];
-            let value: any = utils.isPlainObject(keyValue) ? keyValue.value : keyValue;
-            let item: any = dict.find(it => it.value === value);
+
+            let item: any = this.getFirstItem(firstField);
+            
             let stateValue: any = this.state.value || {};
             let isDeny: any = firstField.modify == 'deny' && stateValue[this.props.rowKey || 'id'];
            
             
             if (item) {
+                
                 return (
                     <span className={classnames({
                         'ui-choose': true,
@@ -238,7 +341,14 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         
         
     }
-    private getStepTitle(isEdit?: boolean) {
+    private stepActionMap: any = {
+        'create': 'Complete',
+        'edit': 'Edit',
+        'view': 'View'
+    }
+    private getStepTitle(type?: string) {
+        
+        let { pageMeta = {} } = this.props;
         
          
         return (
@@ -250,15 +360,15 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                         'ui-steptwo': true,
                         'ui-disabeld': this.state.isStepOne
                     })
-                }>2. {isEdit ? 'Edit' : 'Complete'} the record </span >
+                }>2. {this.stepActionMap[type as any] ||  'Complete'} the {(pageMeta.title ||'record').toLowerCase()} </span >
             </div>
         )
     }
     private getDefaultTitle() {
 
-        if (this.state.isStepMode && !this.state.viewer) {
+        if (this.state.isStepMode ) {
              
-            return this.getStepTitle(this.state.action == 'edit');
+            return this.getStepTitle(this.state.action);
 
         } else {
 
@@ -343,23 +453,29 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
     public render() {
         
-        let { schema,dynamicSchema, visible, isStepMode, isStepOne, viewer } = this.state;
-        let pageSchema: any = !viewer && isStepMode 
+        let { schema, dynamicSchema, visible, isStepMode, isStepOne, viewer } = this.state;
+        let notice: any = this.getDefaultNotice();
+        
+        let pageSchema: any = isStepMode 
             ? isStepOne 
                 ?  schema.firstStep
                 : dynamicSchema ||  schema.other
-            : schema;
+            : dynamicSchema || schema;
 
+            
         if (!visible) {
             return null;
         }
-
+        
         return (
             <Spin spinning={this.state.loading}>
+               
                 <Former
                     title={this.getDefaultTitle()}
                     icon={this.getDefaultIcon()}
                     size={'default'}
+                    notice={notice}
+                    className="ui-tabler-former"
                     rowKey={this.props.rowKey}
                     id={this.getDefaultId()}
                     type={this.props.formerType}
@@ -367,12 +483,12 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                     visible={this.state.visible}
                     okText={this.getDefaultOkText()}
                     onSave={(value: any, former: any) => {
-                        console.log('save', value)
+                        
                         return this.onChangeValue(value, former)
                     }}
                     
                     onBeforeSave= {() => {
-                        console.log('befeorsave')
+                        
                         if (this.state.isStepMode && this.state.isStepOne) {
                             this.setState({
                                 isStepOne: false

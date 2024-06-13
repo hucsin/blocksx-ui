@@ -28,10 +28,8 @@ class FormerIconView extends React.Component<{value: string}> {
         let IconView: any = Icons[this.props.value];
         if (IconView) {
             return (
-                <Space>
-                    <Tooltip title={this.props.value}><IconView/></Tooltip>
-                    
-                </Space>
+                <Tooltip title={this.props.value}><IconView/></Tooltip>
+                
             )
         }
         return (<span className='ui-empty'>{'<empty>'}</span>)

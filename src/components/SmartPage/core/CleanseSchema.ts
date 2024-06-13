@@ -120,8 +120,31 @@ export default class CleanseSchema {
 
         return fieldsList;
     }
+    public static matchItem(value:any, schema: any) {
+        switch(schema.type) {
+            case 'notIn':
+                return schema.value.indexOf(value) ==-1;
+            case 'in':
+                return schema.value.indexOf(value) > -1;
 
-    public static getSearchQuick(field: any) {
+        }
+    }
+    public static filterDict(dict:any, key: string, where: any, dictKey: string ='value') {
+        if (where && dict) {
+
+            return dict.filter(it => {
+                if (utils.isPlainObject(where[key])) {
+                    return this.matchItem(it[dictKey], where[key])
+                } else {
+                 
+                    return utils.isUndefined(where[key]) ? true : where[key] === it[dictKey];
+                }
+            })
+        } else {
+            return dict;
+        }
+    }
+    public static getSearchQuick(field: any, where: any= null) {
 
         if (field) {
             let fieldUI: any = field.meta;
@@ -132,7 +155,7 @@ export default class CleanseSchema {
 
 
             if (utils.isPlainObject(quick)) {
-                datasource = quick.dict || datasource || []; 
+                datasource = this.filterDict(quick.dict || datasource || [], field.fieldKey , where); 
                 defaultValue =  (datasource.find(it=> it.defaultValue) || {}).value;
                 props = quick;
                 quick = quick.type;

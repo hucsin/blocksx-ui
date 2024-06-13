@@ -23,10 +23,10 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
     public constructor(props: FormerPickProps) {
         super(props);
         this.state = {
-            value: props.value || 'MySQL'
+            value: props.value
         }
         let { extendsFor } = props;
-        
+
         this.requestHelper =  SmartRequest.createPOST(extendsFor.path +'/list')
     }
     private onChange =(value: any) => {
@@ -51,8 +51,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
                 field.meta.column = false;
                 searcher = {
                     quick: {
-                        ...CleanseSchema.getSearchQuick(field)
-                        
+                        ...CleanseSchema.getSearchQuick(field, this.getDefaultParams())
                     },
                     placeholder: 'Filter and select record',
                     direction: 'right'
@@ -64,6 +63,12 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
         return {
             fields,
             searcher
+        }
+    }
+    private getDefaultParams() {
+        let { meta } = this.props;
+        if (meta && meta.props) {
+            return meta.props.params || {};
         }
     }
     private getDefaultPageSize() {
@@ -84,6 +89,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
         
         let schema: any = this.getSchema();
         let pageSize: number = this.getDefaultPageSize();
+        let defaultParams: any = this.getDefaultParams();
         
         return (
             <div className='ui-pick-wrapper'>
@@ -93,10 +99,12 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
                     multilineEdit={false} 
                     fields={schema.fields}
                     searcher={schema.searcher}
-                    dataSource={this.requestHelper}
+                    dataSource={(params: any)=> {
+                        return this.requestHelper([params, defaultParams])
+                    }}
                     pageSize = {pageSize}
                     size='small'
-                    selectedRowKeys={[this.state.value]}
+                    selectedRowKeys={this.state.value ? [this.state.value]: []}
                     mode="pickone"
                     onChangeValue={(rowKeys: any, row: any)=> {
                         //this.onSelected(row[0])

@@ -126,7 +126,6 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         
         this.id = utils.uniq('id')
 
-        console.log(this.props.layout, this.props)
     }
     
     public componentDidMount() {
@@ -355,7 +354,6 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 return this.renderAvatorAuto(avatarPlace, rowData);
 
             } else {
-                console.log(this.props, 333)
                 if (this.props.layout == 'connections' || this.props.avator ==='connections') {
                     return (
                         <span className='ui-mircotable-avatar-con'>
@@ -519,7 +517,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 scrollableTarget={this.id}
                 onScroll={(e:any)=> {
                     let isScrollTop: boolean = e.target.scrollTop < 5;
-                    console.log(isScrollTop, 33333, e.target.scrllTop)
+                    
                     if (isScrollTop != this.state.scrollTop) {
                         this.setState({
                             scrollTop: isScrollTop

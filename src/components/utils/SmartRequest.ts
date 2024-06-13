@@ -27,6 +27,7 @@ class SmartRequest {
         }
         return value;
     }
+    
     private getEncodeWrapper(params: any) {
         let validParams: any = this.getValidParmas(params)
         return validParams;
@@ -41,6 +42,24 @@ class SmartRequest {
     public reqcache(req) {
         this.req = req;
     }
+    public combineParamsList(paramsList: any) {
+        let params: any = {};
+
+        paramsList.forEach(it => {
+            for(let prop in it) {
+                if (!params[prop]) {
+                    params[prop] = it[prop];
+                } else {
+                    if (!Array.isArray(params[prop])) {
+                        params[prop] = [params[prop]]
+                    }
+                    params[prop].push(it[prop])
+                }
+            }
+        })
+
+        return params;
+    }
     /**
      * 创建request请求
      */
@@ -53,15 +72,15 @@ class SmartRequest {
         }
 
         return (request: any) => {
-
-            let params: any = fields ? pick(request, fields) : request;
+            let inputParams: any = Array.isArray(request) ?  this.combineParamsList(request): request;
+            let params: any = fields ? pick(inputParams, fields) : inputParams;
 
             if (!noCache) {
                 let cacheKey: string = this.getCacheParamsKey(params);
                 if (this.hasCache(cacheKey)) {
                     return new Promise((resolve)=> {
                         let result: any = this.getCache(cacheKey);
-                        call && call(request, result);
+                        call && call(inputParams, result);
                         resolve(result)
                     })
                 }
@@ -77,7 +96,7 @@ class SmartRequest {
                 Request.post(url, this.getEncodeWrapper(params)).then(({code, result}) => {
                     // 正常响应
                     if (code == 200) {
-                        call && call(request, result);
+                        call && call(inputParams, result);
                         resolve(result)
                     } else {
                         // 302 跳转

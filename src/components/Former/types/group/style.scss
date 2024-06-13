@@ -62,11 +62,28 @@
         border: 1px dashed #f0f0f0;
         border-radius: 5px;
         padding: 16px 0;
-        padding-bottom: 20px;
+        padding-bottom: 16px;
 
         margin-bottom: 16px;
         &:Hover {
             background-color: #fcfcfc;
+        }
+        .former-group-item-content {
+            padding-bottom: 0;
+            padding-top: 0;
+        }
+        &.former-group-item-border {
+            >.former-object-colspan-two {
+               .former-group-item-content {
+                .former-object-item  {
+                    padding-left:0;
+                    padding-right:0;
+                }
+               }
+            }
+            .former-group-item-content:not(.former-group-item-border){
+                border:none;
+            }
         }
     }
 

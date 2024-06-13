@@ -66,6 +66,7 @@ export interface FormerProps {
     children?: any;
 
     canmodify?: boolean;
+    notice?: string;
 }
 
 interface FormerState {
@@ -91,6 +92,7 @@ interface FormerState {
     loading?: boolean;
     fetching?: boolean;
     globalMessage?: string;
+    notice?: string;
 }
 /**
  * 三种模式
@@ -135,7 +137,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             disabled: props.disabled || true,
             loading: false,
             fetching: false,
-            canmodify: props.canmodify
+            canmodify: props.canmodify,
+            notice: props.notice
         };
         
         this.timer = null;
@@ -158,6 +161,13 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 classify: this.splitClassifySchema(newProps.schema)
             })
         }
+
+        if (newProps.notice != this.state.notice) {
+            this.setState({
+                notice: newProps.notice
+            })
+        }
+
         if (newProps.viewer != this.state.viewer) {
             this.setState({
                 viewer: newProps.viewer
@@ -208,8 +218,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             })
         }
         if (newProps.id != this.state.id) {
+            
             this.setState({
-                id: newProps.id
+                id: newProps.id,
+                value: newProps.value || {config: {}}
             })
         }
     }
@@ -420,7 +432,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
     }
     private renderLeaf() {
-        let { schema = {}, classify, visible, column } = this.state;
+        let { schema = {}, classify, visible, column, notice } = this.state;
 
 
         if (!schema && !visible) {
@@ -437,6 +449,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 })
             }>
                 <Spin spinning={this.state.fetching}>
+                    {notice && <FormerTypes.notice value={notice}/>}
                     <Leaf
                         key={this.getUniqKey(schema)}
                         size={this.props.size}

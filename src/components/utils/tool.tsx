@@ -23,10 +23,16 @@ export default class TablerUtils {
     }
 
     public static renderIconComponent(field: any) {
-        if (utils.isString(field.icon)) {
-            if (field.icon && Icons[field.icon]) {
-                let UIView: any = Icons[field.icon];
-                return <UIView key={field.key || field.icon} />
+        let icon: string = field.icon;
+
+        if (utils.isString(icon)) {
+
+            let iconsplit: any = icon.split('#');
+            let iconstring: string = iconsplit[0];
+
+            if (iconstring && Icons[iconstring]) {
+                let UIView: any = Icons[iconstring];
+                return <UIView key={field.key || iconstring} />
             }
         }
         return field.icon;

@@ -10,7 +10,7 @@
     "@blocksx/i18n": "latest",
     "@blocksx/swap": "latest",
     "@blocksx/validator": "latest",
-    "antd": "^5.17.4",
+    "antd": "^5.18.1",
     "axios": "^0.19.0",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.11",
