@@ -541,7 +541,11 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         if (pageMeta && pageMeta.block) {
             let params: any = Object.assign(onGetRequestParams && onGetRequestParams() || {}, {name: 'empty'})
             let block: any = pageMeta.block.filter(it => TableUtils.isMatchValue(it.filter, params))
-         
+            
+            if (block.length == 0) {
+                block = [pageMeta.block[0]];
+            }
+
             if (block.length) {
                 return (
                    <div style={{marginTop: 32}}>

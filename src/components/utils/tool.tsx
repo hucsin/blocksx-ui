@@ -32,7 +32,7 @@ export default class TablerUtils {
 
             if (iconstring && Icons[iconstring]) {
                 let UIView: any = Icons[iconstring];
-                return <UIView key={field.key || iconstring} />
+                return <UIView style={{color:field.color}} key={field.key || iconstring} />
             }
         }
         return field.icon;
@@ -76,19 +76,30 @@ export default class TablerUtils {
             }
         }
         let value: any = props.displayValue || props.value;
+        
         if (utils.isValidValue(value)) {
             return (
                 <Space size={'small'} key={'c' + field.key}>
-                    {TablerUtils.renderIconComponent({
-                        icon: field.icon || value.icon
+                    <span>{TablerUtils.renderIconComponent({
+                        icon: this.findIconInField(field, value)
                     })}
-                    {TablerUtils.renderValue(field, value)}
+                    {TablerUtils.renderValue(field, value)}</span>
                     {props.suffix}
                 </Space>
             )
         } else {
             return defaultComponent ? defaultComponent : <span key={233} className='ui-label-empty'>{'<null>'}</span>
         }
+    }
+
+    public static findIconInField(field: any, value) {
+        if (field.dict) {
+            let find: any = field.dict.find(it => it.value == value);
+            if (find && find.icon) {
+                return find.icon
+            }
+        }
+        return field.icon || value.icon;
     }
 
     public static renderValue(field: any, value: any) {

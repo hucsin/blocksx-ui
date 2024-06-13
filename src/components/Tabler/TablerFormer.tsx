@@ -259,10 +259,10 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
     private getDefaultNotice() {
         let { schema={}} = this.state;
-        if (schema.firstField) {
+        if (schema.firstField && !this.state.isStepOne) {
             let firstItem: any = this.getFirstItem(schema.firstField);
 
-            return firstItem && firstItem.description;
+            return firstItem && firstItem;
         }
     }
     private slotMap:any ={
@@ -292,6 +292,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 return {
                     label: slot.title,
                     icon: slot.icon,
+                    color: slot.color,
                     description: slot.description
                 }
             }
@@ -304,21 +305,23 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         }
 
     } 
-    private getStepFistTitle() {
-
+    private isDenyBack() {
         let firstField: any = this.state.schema.firstField;
-        let fistName: string = ['Choose the ', firstField.key].join('');
+        let stateValue: any = this.state.value || {};
+        return firstField.modify == 'deny' && stateValue[this.props.rowKey || 'id'];
+           
+    }
+    private getStepFistTitle() {
+        let firstField: any = this.state.schema.firstField;
+        let fistName: string = ['Choose the ', firstField.name.toLowerCase()].join('');
 
         if (this.state.setpOneValue) {
 
             let item: any = this.getFirstItem(firstField);
-            
-            let stateValue: any = this.state.value || {};
-            let isDeny: any = firstField.modify == 'deny' && stateValue[this.props.rowKey || 'id'];
+            let isDeny: any = this.isDenyBack();
            
             
             if (item) {
-                
                 return (
                     <span className={classnames({
                         'ui-choose': true,
@@ -330,8 +333,8 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                             })
                         }
                     }}>
-                        {item && TablerUtils.renderIconComponent(item)}
                         {item.label}
+                        {item && TablerUtils.renderIconComponent(item)}
                     </span>
                 )
             }
@@ -395,8 +398,22 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             case 'add':
                 return 'Create';
             default:
-                return this.state.name || this.state.action;
+                return upperFirst(this.state.name || this.state.action);
         }
+    }
+    private cancelDoback() {
+        if (!this.state.isStepOne && this.state.isStepMode) {
+            return !this.isDenyBack();
+        }
+        return false;
+    }
+    private getDefaultCancelText() {
+        if (this.state.isStepMode) {
+            if ( this.cancelDoback()) {
+                return 'Go back'
+            }
+        }
+        return 'Cancel'
     }
     private cleanLabelValueToValue(value: any, fields?: any) {
 
@@ -482,6 +499,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                     schema={pageSchema}
                     visible={this.state.visible}
                     okText={this.getDefaultOkText()}
+                    cancelText={this.getDefaultCancelText()}
                     onSave={(value: any, former: any) => {
                         
                         return this.onChangeValue(value, former)
@@ -537,11 +555,22 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                     autoclose = {false}
                     column = {this.props.column ? this.props.column as any : 'two'}
                     width = {(this.props.column =='one' ? 500 : 700)}
-                    onClose={() => {
+                    onClose={(isInitiate?: any) => {
+                        
+                        if (isInitiate) {
+                            if (this.cancelDoback()) {
+                                return this.setState({
+                                    isStepOne: true
+                                });
+                            }
+                        } 
+
+                        // 关闭
                         this.setState({
                             visible: false
                         })
                         this.props.onClose();
+                    
                     }}
                 >{this.props.children}</Former>
             </Spin>

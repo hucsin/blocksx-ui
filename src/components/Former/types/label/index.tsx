@@ -15,6 +15,7 @@ import { utils } from '@blocksx/core';
 
 import { IFormerBase } from '../../typings';
 import UtilsDatasource from '../../../utils/datasource';
+import TablerUtils from '../../../utils/tool';
 
 import './style.scss'
 
@@ -70,6 +71,14 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
                 }
             })
             if (find) {
+                if (find.icon) {
+                    return (
+                        <>
+                            {TablerUtils.renderIconComponent(find)}
+                            {find.label || find.name}
+                        </>
+                    )
+                }
                 return find.label || find.name;
             }
         }

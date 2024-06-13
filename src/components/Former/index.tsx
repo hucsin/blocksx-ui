@@ -66,7 +66,7 @@ export interface FormerProps {
     children?: any;
 
     canmodify?: boolean;
-    notice?: string;
+    notice?: any;
 }
 
 interface FormerState {
@@ -92,7 +92,7 @@ interface FormerState {
     loading?: boolean;
     fetching?: boolean;
     globalMessage?: string;
-    notice?: string;
+    notice?: any;
 }
 /**
  * 三种模式
@@ -214,7 +214,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
         if (newProps.cancelText != this.state.cancelText) {
             this.setState({
-                okText: newProps.cancelText
+                cancelText: newProps.cancelText
             })
         }
         if (newProps.id != this.state.id) {
@@ -449,7 +449,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 })
             }>
                 <Spin spinning={this.state.fetching}>
-                    {notice && <FormerTypes.notice value={notice}/>}
+                    {notice && (utils.isPlainObject(notice) ? <FormerTypes.notice {...notice} value={notice.description || notice.label}/> : <FormerTypes.notice value={notice}/>)}
                     <Leaf
                         key={this.getUniqKey(schema)}
                         size={this.props.size}
@@ -485,12 +485,13 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             </>
         )
     }
-    public onCloseLayer = () => {
+    public onCloseLayer = (e?:any) => {
+        
         this.setState({
             visible: true,
             loading: false
         });
-        this.props.onClose && this.props.onClose();
+        this.props.onClose && this.props.onClose(e === true);
     }
 
     private renderExtraLogo() {
@@ -566,7 +567,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 </Button> : null}
 
                 {this.renderExtraContent()}
-                <Button className='ui-former-cancel' onClick={this.onCloseLayer}  style={{ marginRight: 8 }}>
+                <Button className='ui-former-cancel' onClick={()=> this.onCloseLayer(true)}  style={{ marginRight: 8 }}>
                     {this.state.cancelText || 'Cancel'}
                 </Button>
             </Space>
@@ -613,10 +614,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         open={this.state.visible}
                         onOk={this.onSave}
                         closable={false}
-                        onCancel={this.onCloseLayer}
+                        onCancel={()=> this.onCloseLayer(true)}
                         width={this.state.width || 500}
-                        okText={this.state.okText || '确认'}
-                        cancelText="取消"
+                        okText={this.state.okText || 'Ok'}
+                        cancelText={this.state.cancelText}
                         maskClosable={!this.props.keep}
                     >
                         {this.renderLeaf()}

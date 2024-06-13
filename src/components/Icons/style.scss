@@ -41,3 +41,14 @@
         }
     }
 }
+
+.anticon[data-color] {
+    &::after{
+        content: ' ';
+        display: block;
+        width: 0;
+        height: 0;
+        --custom-color: attr(data-color); 
+    }
+    color:var(--custom-color)
+}
