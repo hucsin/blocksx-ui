@@ -74,6 +74,7 @@ export { default as OpenWindowUtilityOutlined } from './OpenWindowUtilityOutline
 export { default as OpengaussBrandOutlined } from './OpengaussBrandOutlined';
 export { default as OracleBrandOutlined } from './OracleBrandOutlined';
 export { default as PageCommonOutlined } from './PageCommonOutlined';
+export { default as PaymentCommonOutlined } from './PaymentCommonOutlined';
 export { default as PickUtilityOutlined } from './PickUtilityOutlined';
 export { default as PluginUtilityOutlined } from './PluginUtilityOutlined';
 export { default as PolardbBrandOutlined } from './PolardbBrandOutlined';

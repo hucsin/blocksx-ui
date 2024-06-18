@@ -537,7 +537,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     }
     public renderEmpty() {
         let { pageMeta, onGetRequestParams } = this.props;
-
+        
         if (pageMeta && pageMeta.block) {
             let params: any = Object.assign(onGetRequestParams && onGetRequestParams() || {}, {name: 'empty'})
             let block: any = pageMeta.block.filter(it => TableUtils.isMatchValue(it.filter, params))

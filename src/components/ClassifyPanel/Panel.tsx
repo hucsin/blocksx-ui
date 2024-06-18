@@ -12,10 +12,6 @@ export default class Panel extends React.Component<IPanel>{
         super(props)
     }
     public render() {
-        return (
-            <React.Fragment>
-                {this.props.children}
-            </React.Fragment>
-        )
+        return this.props.children
     }
 }

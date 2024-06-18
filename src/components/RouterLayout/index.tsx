@@ -2,6 +2,7 @@ import React from 'react';
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WithRouterSmartPage }  from '../SmartPage';
+import { WithRouterSmartPageGroup } from '../SmartPage/group';
 import SmartRequest from '../utils/SmartRequest';
 import { utils } from '@blocksx/core'
 
@@ -111,20 +112,26 @@ export default class RouterLayout extends React.Component<RouterLayoutProps, Rou
     private renderRouterItem = (router: any, index: number)=> {
         let pageComponentMap: any = this.props.pageComponentMap;
         let RouterComponent: any = pageComponentMap[router.componentName];
-        
-        if (router.pageType == 'SmartPage') {
-            
-            return (
-                <Route key={index} path={router.pagePath} element={<WithRouterSmartPage key={index} name={router.componentName} />} />
-            )
+    
+        switch (router.pageType) {
+            case 'SmartPage':
+                return (
+                    <Route key={index} path={router.pagePath} element={<WithRouterSmartPage key={index} name={router.componentName} />} />
+                )
+            case 'SmartPageGroup':
+                return (
+                    <Route key={index} path={router.pagePath} element={<WithRouterSmartPageGroup key={index} name={router.componentName} />} />
+                )
+            default:
+
+                let ViewUI: any = RouterComponent 
+                    ? <RouterComponent key={index}/> 
+                    : <pageComponentMap.PageNotFound key={index}/>
+
+
+                return <Route path={router.pagePath}  key={index}  element ={ViewUI}/>
         }
 
-        let ViewUI: any = RouterComponent 
-            ? <RouterComponent key={index}/> 
-            : <pageComponentMap.PageNotFound key={index}/>
-
-
-        return <Route path={router.pagePath}  key={index}  element ={ViewUI}/>
     }
 
     private renderRouter() {

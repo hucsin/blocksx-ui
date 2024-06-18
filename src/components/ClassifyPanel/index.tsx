@@ -3,6 +3,7 @@ import { Tabs, Spin } from 'antd';
 
 import ReactMarkdown from 'react-markdown';
 import * as Icons from '../Icons';
+import TableUtils from '../utils/tool';
 
 //import withRouter from '../withRouter';
 //import MiniSearch from '../MiniSearch';
@@ -101,6 +102,7 @@ export default class ClassifyPanel extends React.Component<ClassifyPanelProps, C
 
         return (
             <span className='ui-label'>
+                {TableUtils.renderIconComponent(props)}
                 {label}
                
             </span>
@@ -110,9 +112,10 @@ export default class ClassifyPanel extends React.Component<ClassifyPanelProps, C
         return React.Children.map(this.props.children, (item: any, index: number) => {
             
             let { props = {} } = item;
+            
             return {
                 label: this.getTabLabel(props),//props.label || props.title,
-                key: props.value || index,
+                key: item.value || item.key || index,
                 children: item
             };
         })
@@ -151,7 +154,7 @@ export default class ClassifyPanel extends React.Component<ClassifyPanelProps, C
                 {<Tabs 
                     items={this.getTabsItems()}
                     activeKey={this.state.activeKey}
-                
+                    key={'t2'}
                     tabBarExtraContent={this.props.tabsExtra}
                     onChange={this.onChange}
                 />}

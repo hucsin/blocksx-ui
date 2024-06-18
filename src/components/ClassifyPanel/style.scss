@@ -1,7 +1,7 @@
 .ui-classify-panel {
     .ui-mircotable {
-        height: calc(100vh - 100px);
-        overflow: auto;
+        height: calc(100% - 100px);
+        //overflow: auto;
         .infinite-scroll-component__outerdiv{
             .infinite-scroll-component  {
                 padding: 0px;
@@ -19,6 +19,7 @@
         font-size:24px;
         padding-top: 4px;
         position: relative;
+        line-height: 24px;
         .ui-title {
             text-transform:capitalize;
             opacity: .6;
@@ -28,8 +29,9 @@
                 vertical-align: bottom;
                 color:#aaa;
                 padding-left: 16px;
+                line-height: 16px;
                 p {
-                    display:inline-block;
+                    display:inline;
                     padding: 0;
                     margin: 0
                 }
@@ -43,7 +45,7 @@
     
     }
     .ui-label {
-        span {
+        span:not(.anticon) {
             background: #ddd;
             border-radius: 3px;
             margin-left:4px;
@@ -52,6 +54,10 @@
             padding: 0 2px;
             transform: scale(.5);
         }
+        span.anticon {
+            margin-right:4px;
+        }
+
     }
     .ant-tabs-nav-list {
         padding-left: 0px;

@@ -10,27 +10,21 @@ import './types';
 import * as DomUtils  from '../utils/dom';
 
 import PageManger from './core/SmartPageManger';
-import CleanseSchema from './core/CleanseSchema'
 import SmartRequest from '../utils/SmartRequest';
 import ClassifyPanel from '../ClassifyPanel';
 import FilterFolder from '../FilterFolder';
-import Notice from '../Former/types/notice'
+import Notice from '../Former/types/notice';
 
 import withRouter, { routerParams } from '../utils/withRouter';
+import { PageMeta } from './interface';
+import SmartUtil from './core/utils';
+
 import './style.scss';
+import SmartPageUtils from './core/utils';
 
 
-export interface PageMeta {
-    title?: string;
-    optional?: any;
-    notice?: string;
-    noticeIcon?: string;
-    okText?: string;
-    okIcon?: string;
-    description?: string;
-    icon?: string;
-    type?: string;
-}
+
+
 
 
 export interface SmartPageProps {
@@ -43,7 +37,7 @@ export interface SmartPageProps {
     onClose?: Function;
     width?: number;
     type: 'default' | 'drawer' | 'popover';
-    uiType: 'tree' | 'tabler' | 'former' | '';
+    uiType: 'tree' | 'tabler' | 'former' | 'group' | '';
     title: string;
     name: string; // 页面的一个唯一ID
     pageMeta?: PageMeta;
@@ -125,7 +119,7 @@ export interface SmartPageState {
 export default class SmartPage extends React.Component<SmartPageProps, SmartPageState> {
 
     public static defaultProps = {
-        pageURI: '/api/smartpage/find',
+        pageURI: '/eos/smartpage/find',
         type: 'default',
         uiType: '',
         open: false,
@@ -191,6 +185,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         this.operateContainerRef = props.operateContainerRef || React.createRef();
         this.titleContainerRef = React.createRef();
         this.optionalContainerRef = React.createRef();
+
     }
     private getDefaultFolder() {
         if (this.props.router) {
@@ -223,7 +218,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     private getFolderField(fields: any[]) {
         return fields.find(field => {
-            return field.folder;
+            return field.folder; 
         })
     }
     public componentDidMount() {
@@ -242,84 +237,62 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
         if (!this.hasLoading()) {
             this.setLoading(true)
-            
-            this.requestHelper({
-                page: this.state.name
-            }).then(async (data) => {
-                let { schema = {}, uiType, path } = data;
-                let trueUiType: string = this.props.uiType || uiType;
-                let classifyField: any
-                
-                if (PageManger.has(trueUiType)) {
-                    let pageMeta: PageMeta = schema.meta || this.props.pageMeta || {};
 
-                    // 清洗fields
-                    schema.fields = CleanseSchema.getFieldProps(path, schema.fields);
+            SmartUtil.fetchPageSchema(this.props.pageURI, this.state.name, this.props).then(async (data:any) => {
+
+                if (!this.state.noClassify) {
+                    let classifyField = this.getClassifyField(data.schema.fields);
                     
-                    if (!this.state.noClassify) {
-                        classifyField = this.getClassifyField(schema.fields);
-                        
-                        if (classifyField && classifyField.factor) {
-                            try {
-                                let folder: any = await this.getOnFetchFolder(classifyField)({})
-                                classifyField.dict = folder;
-                            } catch(e){console.log(e)}
-                        }
+                    if (classifyField && classifyField.factor) {
+                        try {
+                            let folder: any = await this.getOnFetchFolder(classifyField)({})
+                            classifyField.dict = folder;
+                        } catch(e){console.log(e)}
                     }
 
-                    let initStateConfig: any = {
-                        schema: schema,
-                        uiType: trueUiType,
-                        pageMeta: pageMeta,
-                        classifyField: classifyField,
-                        path,
-                        icon: pageMeta.icon,
-                        okText: pageMeta.okText,
-                        okIcon: pageMeta.okIcon,
-                        metaKey: this.getMetaKey(pageMeta),
-                        reflush: +new Date,
-                        noFolder: this.state.noFolder,
-                        noHeader: this.state.noHeader,
-                        noToolbar: this.state.noToolbar,
-                        noClassify: this.state.noClassify,
-                        loading: false,
-                        optional: !!pageMeta.optional,
-                        notice: pageMeta.notice
-                    };
-                    
-                    if (this.props.onInitPage) {
-                        this.props.onInitPage(initStateConfig)
-                    }
+                    data.classifyField = classifyField;
 
                     if (classifyField) {
                         if (classifyField.meta.classify == 'noall' && classifyField.dict[0]) {
                             
                             if (!this.state.defaultClassify || this.state.defaultClassify=='all') {
                                 
-                                initStateConfig.defaultClassify = classifyField.dict[0].value;
+                                data.defaultClassify = classifyField.dict[0].value;
                             }
                            
                         }
                         
                     }
-
-                    if (!this.state.noFolder) {
-                        initStateConfig.folderField =  
-                            initStateConfig.noFolder ? null : this.getFolderField(schema.fields);
-                        
-                        if (initStateConfig.folderField) {
-                            initStateConfig.folderMode = utils.isString(initStateConfig.folderField.meta.folder) ? 'filter' : 'folder'
-                        }
-                    }
-
-                    this.setState(initStateConfig)
-                    this.setLoading();
-                } else {
-                    throw new Error(`Component type [${trueUiType}] does not exist!`);
                 }
-            }).catch((e) => {
-                console.log(e)
-                this.setState({loading: false})
+
+                if (!this.state.noFolder) {
+                    data.folderField =  
+                        data.noFolder ? null : this.getFolderField(data.schema.fields);
+                    
+                    if (data.folderField) {
+                        data.folderMode = utils.isString(data.folderField.meta.folder) ? 'filter' : 'folder'
+                    }
+                }
+
+                Object.assign(data, {
+
+                    metaKey: this.getMetaKey(data.pageMeta),
+                    reflush: +new Date,
+                    noFolder: this.state.noFolder,
+                    noHeader: this.state.noHeader,
+                    noToolbar: this.state.noToolbar,
+                    noClassify: this.state.noClassify
+                })
+
+                if (this.props.onInitPage) {
+                    this.props.onInitPage(data)
+                }
+
+                this.setState(data)
+                this.setLoading();
+
+            }, () => {
+                this.setLoading()
             })
         }
     }
@@ -441,44 +414,40 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         }
     }
     public renderContentView() {
-        let ViewComponent: any = PageManger.findComponentByType(this.state.uiType);
-        return (
-             this.state.schema && <ViewComponent 
-                //key={this.state.reflush}
-                key={this.state.classifyQuery}
-                schema = {this.state.schema}
-                value = {this.state.value}
-                pageMeta = {this.state.pageMeta}
-                autoInit = {!this.state.folderField}
-                router={this.props.router}
-                title={this.state.title}
-                triggerMap = {this.props.triggerMap}
-                path={this.state.path}
-                reflush = {this.state.reflush}
-                onGetRequestParams = {this.getQueryParams}
-                okText={this.state.okText}
-                okIcon={this.state.okIcon}
-                rowSelection={this.state.rowSelection}
-                noSearcher={this.props.noSearcher}
-                mode={this.state.mode}
-                searchRef= {this.searchRef}
-                noTitle={this.state.noTitle}
-                noOperater= {this.state.noToolbar}
-                toolbarRef= {this.toolbarRef}
-                operateContainerRef={this.operateContainerRef}
-                titleContainerRef={this.titleContainerRef}
-                optionalContainerRef={this.optionalContainerRef}
-                optional={this.state.optional}
-                size={this.props.size}
-                onChangeValue={this.onChangeValue}
-                onOptionalOpen={(close)=>{
-                    this.setState({
-                        optionalOpen: !close ? true : false
-                    })
-                }}
-                onClose={()=>this.setState({open: false})}
-            />
-        )
+
+        return SmartPageUtils.renderPageType(this.state.uiType, {
+            key: this.state.classifyQuery,
+            schema: this.state.schema,
+            pageMeta: this.state.pageMeta,
+            autoInit: !this.state.folderField,
+            router: this.props.router,
+            title: this.state.title,
+            path: this.state.path,
+            reflush: this.state.reflush,
+            okText: this.state.okText,
+            onIcon: this.state.okIcon,
+            rowSelection: this.state.rowSelection,
+            noSearcher: this.props.noSearcher,
+            noTitle: this.state.noTitle,
+            noOperater: this.state.noToolbar,
+            toolbarRef: this.toolbarRef,
+            operateContainerRef:this.operateContainerRef,
+            titleContainerRef:this.titleContainerRef,
+            optionalContainerRef:this.optionalContainerRef,
+            optional:this.state.optional,
+            size:this.props.size,
+            onChangeValue:this.onChangeValue,
+            mode: this.state.mode,
+            searchRef: this.searchRef,
+            
+            onGetRequestParams: this.getQueryParams,
+            onOptionalOpen:(close)=>{
+                this.setState({
+                    optionalOpen: !close ? true : false
+                })
+            },
+            onClose:()=>this.setState({open: false})
+        })
     }
 
     public renderRightContent() {

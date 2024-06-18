@@ -124,6 +124,7 @@ export const map:any = {
     ],
     "common": [
         "FolderCommonOutlined",
-        "PageCommonOutlined"
+        "PageCommonOutlined",
+        "PaymentCommonOutlined"
     ]
 }

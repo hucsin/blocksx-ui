@@ -29,8 +29,8 @@ export  class SideHeader extends React.Component<SideHeaderProps> {
                     <div className='hoofs-sidebar-header-icon'>
                         <HoofsIcons.DbqueryMiniBrandFilled />
                     </div>
-                    <p>bytehubs</p>
-                    <span>Production</span>
+                    <p>anyhubs</p>
+                    <span>Connect anything</span>
                     <div className='hoofs-sidebar-header-fold' onClick={()=> {this.props.onFoldSwitch()}}>
                         <HoofsIcons.DoubleLeftOutlined/>
                     </div>

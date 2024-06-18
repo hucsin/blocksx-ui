@@ -166,7 +166,7 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
         
         if (this.props.direction == 'left') {
             return (
-                <Space size={this.props.size}>
+                <Space className='ui-searchbar' size={this.props.size}>
                     {this.renderQuick()}
                     {this.renderSearch()}
                     
@@ -174,7 +174,7 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
             )
         } else {
             return (
-                <Space size={this.props.size}>
+                <Space  className='ui-searchbar' size={this.props.size}>
                     {this.renderSearch()}
                     {this.renderQuick()}
                     
