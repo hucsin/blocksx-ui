@@ -112,7 +112,7 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
                     {group && group.length && <ClassifyPanel
                             key={111}
                             title = {this.state.title as string}
-                            description = {this.state.description}
+                            description = {current.description || this.state.description}
                             icon = {this.state.icon}
                             extra ={<span style={{display:'none'}} ref={this.toolbarRef}></span>}
                             tabsExtra = {<span ref={this.searchRef}></span>}

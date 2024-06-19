@@ -36,7 +36,10 @@
     height: 100%;
 
     
-   
+    .ui-block-item-type-outline {
+        border: 1px solid #f0f0f0;
+        padding: 64px;
+    }
 
     .ant-list-item-meta-title  {
         p {
