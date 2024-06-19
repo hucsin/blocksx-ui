@@ -4,12 +4,13 @@
     font-weight: bold;
     position: relative;
     margin: 0 24px;
-    color:#C7D2FE;
+    color:var(--main-bg-color);
     border-bottom: 1px solid rgba(255,255,255, .094);
-
+    height: 36px;
     .hoofs-sidebar-header-title {
         position: relative;
         padding-left: 32px;
+        height: 100%;;
 
         .hoofs-sidebar-header-icon {
             width: 32px;
@@ -22,18 +23,24 @@
             top: 50%;
             margin-top: -16px;
             font-size: 32px;
+            opacity: 1;
+            transition: all .2s;
         }
         p {
             display:block;
             padding: 0;
             margin: 0;
             font-size: 14px;
-            color:#fff;
+            color:var(--main-front-color);
+            overflow: hidden;
         }
         > span {
             display:block;
             font-size: 12px;
+            color:var(--main-front-color);
             opacity: .5;
+            overflow: hidden;
+            height: 16px;
         }
         .hoofs-sidebar-header-fold-open {
             display: none;
@@ -49,9 +56,13 @@
             margin-top: -15px;
             border-radius: 3px;
             right: -8px;
+            color:var(--main-front-color);
+            opacity: .5;
+            transition: all .2s;
             cursor: pointer;
             &:hover {
-                background-color: #4e44d7;
+                opacity: .7;
+                background-color: var(--main-active-background-color);
             }
 
             span {
@@ -63,7 +74,7 @@
 }
 
 .hoofs-sidebar-fold {
-    width: 60px;
+    width: 95px;
     .hoofs-sidebar-header-fold {
         display:none;
     }
@@ -73,7 +84,7 @@
     
     .hoofs-sidebar-header:hover {
         .hoofs-sidebar-header-icon {
-            display: none;
+            opacity: 0;
         }
         .hoofs-sidebar-header-fold-open {
             right: auto !important;
@@ -81,11 +92,15 @@
             display: block !important;
         }
     }
+    .hoofs-sidebar-menu-text {
+        width: 0;
+        
+    }
     .hoofs-sidebar-header-title {
-
+       
         >span,
         >p {
-            visibility: hidden;
+            display: none
         }
     }
 }
@@ -93,13 +108,25 @@
 .hoofs-sidebar {
     width: 245px;
     height: 100%;
-    background: #4338CA;
-    color:#C7D2FE;
+    color:var(--main-front-color, #333);
     font-size:16px;
     position: relative;
     z-index: 110;
 
+    box-sizing: border-box;
+
+    padding: 16px;
+    padding-right: 0;
+    transition: all .2s;
+    .ui-sidebar-wrapper {
+        border-radius: 6px;
+        background:#fff;
+        height: 100%;
+    }
+
     dd {
+        height: 21px;
+        overflow: hidden;
         span.anticon{
             font-size: 18px;
         }
@@ -107,7 +134,7 @@
     
 
     &.hoofs-sidebar-fold {
-        width: 60px;
+        width: 75px;
        
         dd {
             
@@ -118,13 +145,14 @@
             &:hover {
                 .hoofs-sidebar-menu-text {
                     display: block;
-                    background:rgba(0,0,0,.8);
+                    background:#fff;
                     border-radius: 4px;
                     position: absolute;
                     white-space: nowrap;
                     top: 0;
-                    left: 50px;
+                    left: 55px;
                     padding: 5px 8px;
+                    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
                 }
             }
         }
@@ -136,18 +164,18 @@
         dt {
             padding-left: 8px;
             padding-bottom: 8px;
-            color:#818CEE;
+            opacity: .3;
             text-transform: capitalize;
         }
         
         dd {
             position: relative;
             &:hover {
-                background-color: #4e44d7;
+                background-color: var(--main-hover-background-color) !important;
             }
             &.ui-select {
-                background-color: #342BAA;
-                color:#fff;
+                background-color: var(--main-active-background-color);
+                color:var(--main-focus-front-color)
             }
             border-radius: 8px;;
             margin: 4px 0;
@@ -162,12 +190,13 @@
             .hoofs-sidebar-menu-text {
                 padding-left: 8px;
                 text-transform: capitalize;
+                overflow: hidden;
             }
             .hoofs-sidebar-tool {
                 position: absolute;
                 right: 8px;
                 font-size:14px;
-                top:5px;
+                top:8px;
                 opacity: .5;
             }
         }
@@ -178,8 +207,11 @@
     opacity: .6;
     position: absolute;
     width: 100%;
+    box-sizing: border-box;
     bottom: 0;
     left: 0;
+    padding: 16px;
+    padding-right: 0;
     dl {
         margin-bottom: 16px;
     }

@@ -3,7 +3,9 @@
 }
 .ui-folder-wraper {
     position: relative;
-    height: 100%;
+    height: calc(100% - 32px);
+    
+    margin: 16px 0;
     z-index: 0;
     
     .Pane:hover {
@@ -71,6 +73,8 @@
         box-sizing: border-box;
         height:100%;
         background-color: #edeff3;
+        border-radius: 6px;
+        margin-left: 24px;
         .ant-input-suffix {
             color:#ddd;
         }
@@ -84,6 +88,7 @@
             border-bottom: 1px solid #ddd;
             margin-bottom: 16px;
             padding-bottom: 16px;
+            padding-top: 6px;
         }
 
         dl {
@@ -124,7 +129,7 @@
                     text-transform:capitalize
                 }
                 &.ui-select {
-                    color:#1677ff;
+                    color:var(--main-bg-color);
                 }
                 .anticon {
                     position: relative;

@@ -7,7 +7,6 @@ export default class SmartPageBlocks extends React.Component<{schema: any}> {
 
 
     public render() {
-        console.log(this.props, 88989)
         let {schema = {}} = this.props;
 
         return (

@@ -42,7 +42,7 @@
     .ant-collapse {
         height: calc(100% - 38px);
         padding-top: 8px;
-        overflow: auto;;
+        overflow-y: auto;
     }
     .ant-collapse>.ant-collapse-item >.ant-collapse-header {
         padding: 4px 0;

@@ -8,3 +8,11 @@
         overflow: hidden;
     }
 }
+
+.ant-tooltip .ant-tooltip-inner  {
+    background-color: #fff;
+    color:var(--main-front-color);
+}
+.ant-tooltip .ant-tooltip-arrow:before {
+    background-color:#fff;
+}

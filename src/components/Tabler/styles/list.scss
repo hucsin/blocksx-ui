@@ -296,7 +296,7 @@
     }
     .ant-list-split .ant-list-item {
         &.ui-tabler-item-selected {
-            background:#f2f2f2;
+            background: var(--main-active-background-color);
         }
         &.ui-mircotable-group {
             opacity: .5;

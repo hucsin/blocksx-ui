@@ -198,6 +198,7 @@ export default class Siderbar extends React.Component<SidebarProps, sidebarState
                     [`hoofs-sidebar-mode-${this.props.mode}`]: this.props.mode
                 })}
             >
+                <div className='ui-sidebar-wrapper'>
                 <SideHeader onFoldSwitch={()=>{
                     this.setState({
                         foldState: undefined,
@@ -254,6 +255,7 @@ export default class Siderbar extends React.Component<SidebarProps, sidebarState
                 }
 
                 { this.props.mode == 'Platform' && <SideFooter/>}
+                </div>
             </div>
         )
     }

@@ -2,7 +2,7 @@
    .ui-smartpage-wrapper {
       .ui-folder-body {
          padding: 24px;
-         overflow: auto;;
+         overflow-y: auto;
       }
    }
    
@@ -21,7 +21,7 @@
        padding: 8px;
        padding-bottom: 0;
        max-height: calc(100vh - 100px);
-       overflow: auto;
+       overflow-y: auto;
    }
    .ant-popover-title {
        opacity: .7;
@@ -69,7 +69,9 @@
    .ui-former-notice {
       margin-bottom: 16px;
    }
-   
+   .Resizer {
+      background-color: transparent;
+   }
    .ui-classify-wrapper {
       padding: 0 24px;
       height: 100%;
@@ -82,7 +84,7 @@
       }
    }
    .ui-mircotable {
-      height: calc(100vh - 123px);
+      height: 100%;
       overflow-y: auto;
       box-sizing: border-box;
       padding: 0 16px;
@@ -90,7 +92,7 @@
       margin-left: -16px;
 
       .ant-list {
-         padding-top: 16px;
+         padding-top: 0px;
       }
    }
 
@@ -106,7 +108,8 @@
       }
    }
    .ui-classify-content-wrapper {
-      height: calc(100% - 92px);
+      height: calc(100% - 134px);
+      margin-top: 16px;
    }
    .ui-header {
       margin-top: 24px;
@@ -121,28 +124,9 @@
          }
       }
    }
-   .ui-classify-panel {
-      .ui-extra {
-         .tabler-batch-add {
-            button:hover {
-               .icons-combine-bottomRight {
-                  >span:last-child {
-                     background-color: #529aff
-                  }
-               }
-            }
-            .icons-combine-bottomRight {
-               font-size:16px;
-               >span:last-child {
-                  right: -8px;
-                  bottom: -6px;
-                  transform: scale(0.5, 0.5);
-                  background-color: rgba(22, 119, 255, .9);
-               }
-            }
-         }
-      }
-   }
+ 
+  
+
 
    .ant-list-item-meta-description {
       .ui-meta-description-wrapper {
@@ -168,10 +152,13 @@
    width: 100%;
    float:left;
    transition: all .2s;
+   height: 100%;
+   > div {
+      height: 100%;
+   }
    > .tabler-wrapper {
-      padding-top: 16px;
       overflow-y: auto;
-      height: calc(100vh - 139px);
+      height: 100%;
       overflow-y: auto;
    }
 }
@@ -179,10 +166,10 @@
 
 .ui-classify-content-right {
    overflow:hidden;
-   padding: 16px 8px;
+   padding: 0px 8px;
    padding-right: 0;
    padding-left: 16px;
-   height: calc(100% - 48px);
+   height: calc(100% - 12px);
    display: none;
 
    >div {
@@ -192,6 +179,7 @@
       box-sizing: border-box;
       height: 100%;
       padding-right: 0px;
+      background-color: #fff;
    }
 }
 
@@ -230,13 +218,12 @@
 .ui-smartpage-group {
    padding: 24px;
    box-sizing: content-box;
-   height: calc(100vh -  30px);
+   height: calc(100vh -  56px);
    .ui-block {
-      padding: 32px 64px;
+      padding: 0px 0px;
    }
    .ui-classify-panel {
       height: 100%;
-      overflow: hidden;;
    }
 
    .ant-tabs-tabpane {
@@ -259,9 +246,47 @@
    }
    .ant-tabs-content-holder {
       height: calc(100% - 130px);
-      overflow: auto;
+      .ui-toolbar-ref {
+         position: absolute;
+         top: -94px;
+         right: 0
+      }
+      .ant-tabs-content {
+         height: 100%;
+         .ant-tabs-tabpane {
+            height: 100%;
+            .ui-classify-group-wrapper {
+               height: 100%;
+               .ui-classify-content-wrapper {
+                  height: 100%;
+                  overflow-y: auto;
+                  overflow-x:hidden;
+               }
+            }
+         }
+      }
    }
    .ant-tabs {
-      height: calc(100% - 48px)
+      height: calc(100% - 28px)
+   }
+}
+.tabler-batch-add {
+   button:hover {
+      .icons-combine-bottomRight {
+         >span:last-child {
+            background-color: var(--main-bg-color);
+            opacity: .7;
+
+         }
+      }
+   }
+   .icons-combine-bottomRight {
+      font-size:16px;
+      >span:last-child {
+         right: -8px;
+         bottom: -6px;
+         transform: scale(0.5, 0.5);
+         background-color: var(--main-bg-color);
+      }
    }
 }

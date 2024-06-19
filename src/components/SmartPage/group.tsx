@@ -88,7 +88,9 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
                 name: meta.title,
                 //title: meta.title,
                 pageMeta: pageMeta,
-                ref: React.createRef()
+                toolbarContainerRef: React.createRef(),
+                searcherContainerRef: React.createRef(),
+                optionalContainerRef: React.createRef()
                 //path: it.path,
                 //uiType: it.
             }
@@ -114,8 +116,7 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
                             title = {this.state.title as string}
                             description = {current.description || this.state.description}
                             icon = {this.state.icon}
-                            extra ={<span style={{display:'none'}} ref={this.toolbarRef}></span>}
-                            tabsExtra = {<span ref={this.searchRef}></span>}
+                            
                             onChange={(v)=> {
                                 this.onSwitchItem(v);
                             }}
@@ -127,17 +128,20 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
                                 
                                 <ClassifyPanel.Panel icon={dict.icon} key={dict.name} label={dict.title} value={dict.title}>
                                 <div className={classnames({
-
+                                    'ui-classify-group-wrapper': true,
                                     'ui-classify-optional-mode': this.state.optionalOpen[current.name]
                                 })}>
+                                    <span className='ui-searchbar-ref' ref={dict.searcherContainerRef}></span>
+                                    <span className='ui-toolbar-ref' ref={dict.toolbarContainerRef}></span>
                                     {dict.notice && <Notice value={dict.notice} icon={dict.icon}/>}
                                     <div className='ui-classify-content-wrapper'>
                                         <div className='ui-classify-content-left'>
                                             {SmartPageUtil.renderPageType(dict.uiType, {
                                                 ...dict,
 
-                                                toolbarRef: this.toolbarRef,
-                                                optionalContainerRef: dict.ref,
+                                                toolbarRef: dict.toolbarContainerRef,
+                                                optionalContainerRef: dict.optionalContainerRef,
+                                                searchRef: dict.searcherContainerRef,
                                                 onOptionalOpen:(isClose?:boolean)=>{
                                                     let { optionalOpen = {} } = this.state;
                                                     optionalOpen[dict.name] = !isClose ? dict.name : false
@@ -149,7 +153,7 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
                                             })}
                                         </div>
                                         
-                                        <div className='ui-classify-content-right' key={dict.name} ref={dict.ref}></div>
+                                        <div className='ui-classify-content-right' key={dict.name} ref={dict.optionalContainerRef}></div>
                                     </div>
                                 </div>        
                                 </ClassifyPanel.Panel>

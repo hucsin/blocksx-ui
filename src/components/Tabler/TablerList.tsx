@@ -548,7 +548,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
             if (block.length) {
                 return (
-                   <div style={{marginTop: 32}}>
+                   <div >
                         <Box dataSource={block} size="default" events={{
                             create: (params: any) => {
                                 this.props.onAddNew && this.props.onAddNew(params) 

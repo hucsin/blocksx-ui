@@ -6,7 +6,6 @@
         .ant-avatar {
             margin-right: 8px;
         }
-        opacity: .7;
     }
     .former-group .former-group-item-content {
         border: 1px solid #f1f1f1;
@@ -70,7 +69,7 @@
         padding: 8px 0;
         box-sizing: border-box;
         height: calc(100% - 64px);
-        overflow: auto;
+        overflow-y: auto;
         padding-top: 24px;
         padding-right: 16px;
         

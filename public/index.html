@@ -10,15 +10,27 @@
 
 	<title>React App</title>
   
-
+  <script>
+    window.__main_bg_color = '#4d53e8';
+  </script>
   <style>
+   
+    :root {
+      --main-bg-color: #4d53e8;
+      --main-front-color: #383743;
+      --main-focus-front-color: #111;
+      --main-background-color: #f2f3f5;
+
+      --main-active-background-color: #0607090a;
+      --main-hover-background-color:#0607092a;
+      --main-border-color: #e7e7e7
+    } 
     html {
       font-family: Inter, sans-serif;
 
       scroll-behavior: smooth;
-    } 
-    :root {
-      --main-bg-color: #1677ff
+      background-color: var(--main-background-color);
+      color:var(--main-front-color)
     } 
   </style>
 </head>

@@ -31,6 +31,11 @@
     }
 }
 .tabler-wrapper {
+    .former-radio-button label.ui-selected {
+        background: var(--main-active-background-color);
+        border-color:var(--main-hover-background-color);
+        color:var(--main-front-color)
+    }
     .ui-tabler-selected-summary {
         position: absolute;
         margin-top: -40px;
@@ -44,7 +49,7 @@
     z-index: 111;;
     .tabler-cell-first {
         
-        color: #1890ff;
+        color: var(--main-bg-color);
         
         cursor: pointer;
         opacity: .8;
@@ -90,15 +95,15 @@
     }
     overflow: hidden;
     .ui-tabler-selected {
-        color:#1890ff;
+        color: var(--main-bg-color);
         position: relative;
 
         >td:first-child:before {
             content: '';
             position: absolute;
             border: 6px dashed transparent;
-            border-left-color:#1890ff;
-            border-top-color:#1890ff;
+            border-left-color: var(--main-bg-color);;
+            border-top-color:var(--main-bg-color);;
             left: 0;
             top: 0;
         }

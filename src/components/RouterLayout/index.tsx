@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { ConfigProvider } from 'antd';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WithRouterSmartPage }  from '../SmartPage';
 import { WithRouterSmartPageGroup } from '../SmartPage/group';
@@ -167,7 +167,24 @@ export default class RouterLayout extends React.Component<RouterLayoutProps, Rou
     public render() {
         return (
             <React.Fragment>
+                <ConfigProvider theme={{
+                    token: {
+                        colorBgSpotlight: '#999999',
+                        colorPrimary: window['__main_bg_color'],
+                        colorLink: 'var(--main-front-color)',
+                        colorText: 'var(--main-front-color)'
+                    },
+                    components: {
+                        Tabs: {
+
+                        },
+                        Button: {
+                            groupBorderColor: 'var(--main-bg-color)'
+                        }
+                    }
+                }}>
                 {this.renderRouter()}
+                </ConfigProvider>
             </React.Fragment>
         )
     }
