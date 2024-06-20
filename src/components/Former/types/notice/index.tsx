@@ -1,10 +1,11 @@
 import React from 'react';
+import { utils } from '@blocksx/core';
 import Markdown from '../../../Markdown';
 import Avatar from '../avator';
 
 import './style.scss';
 
-export default class FormerNotice extends React.Component<{value: any, icon?: any, props?: any}, {color: any,icon:any,value: any}> {
+export default class FormerNotice extends React.Component<{value?: any, icon?: any, props?: any, notice?: any}, {notice: any,color: any,icon:any,value: any}> {
 
     public static defaultProps ={
         icon: 'NotificationOutlined#ccc'
@@ -15,7 +16,8 @@ export default class FormerNotice extends React.Component<{value: any, icon?: an
         this.state = {
             icon: this.getDefaultIcon(props),
             value: props.value,
-            color: this.getDefaultColor(props)
+            color: this.getDefaultColor(props),
+            notice: props.notice
         }
     }
     private getDefaultIcon(propsc: any) {
@@ -33,14 +35,38 @@ export default class FormerNotice extends React.Component<{value: any, icon?: an
                 icon: this.getDefaultIcon(nextProps)
             })
         }
+
+        if (nextProps.notice != this.state.notice) {
+            this.setState({
+                notice: nextProps.notice
+            })
+        }
     }
     public render() {
+
+        let { icon, color, notice, value } = this.state;
+
+        if (utils.isPlainObject(notice)) {
+            if (notice.icon) {
+                icon = notice.icon
+            }
+            if (notice.notice) {
+                value = notice.notice;
+            }
+            if (notice.color) {
+                color = notice.color;
+            }
+        } else {
+            if (utils.isString(notice)) {
+                value = notice;
+            }
+        }
         
-        return (
+        return value ? (
             <div className='ui-former-notice'>
-                {this.state.icon && <Avatar size={this.props.icon ? 36 :24} color={this.state.color} icon={this.state.icon}/>}
-                <Markdown>{this.state.value}</Markdown>
+                {icon && <Avatar size={this.props.icon ? 36 :24} color={color} icon={icon}/>}
+                <Markdown>{value}</Markdown>
             </div>
-        )
+        ) : null;
     }
 }

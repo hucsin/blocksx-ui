@@ -20,8 +20,11 @@ import './style.scss';
 export interface FormerSelectProps extends IFormerBase {
     value: any,
     size?: any,
+    dict?: any;
     mode?: string,
+    viewer?: boolean;
     onChangeValue: Function,
+    placeholder?: string;
     relyon?: any;
     'x-type-props'?: any
     'x-mode'?: 'lazy' | 'cache',
@@ -44,7 +47,9 @@ export interface FormerSelectState {
     query?: string;
 }
 
+
 export default class FormerSelect extends React.Component<FormerSelectProps, FormerSelectState> {
+    
     public static defaultProps = {
         'x-mode': 'lazy'
     }
@@ -180,10 +185,13 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         }))
     }
 
+   
     public render() {
+       
         return (
             <Select
                 allowClear={this.props.autoClear}    
+                placeholder={this.props.placeholder}
                 {...this.props['x-type-props']}
                 onFocus={() => {
                     if (this.isLazyLoader()) {

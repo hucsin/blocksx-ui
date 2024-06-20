@@ -1,6 +1,6 @@
 import React from 'react';
 import { utils } from '@blocksx/core';
-import { Tag, Space } from 'antd'
+import { Tag, Space, Tooltip } from 'antd'
 import * as FormerTypes from '../Former/types';
 import * as Icons from '../Icons';
 
@@ -79,12 +79,16 @@ export default class TablerUtils {
         let value: any = props.displayValue || props.value;
         
         if (utils.isValidValue(value)) {
+            let iconField: any = this.findIconInField(field, value);
+            console.log(iconField)
             return (
                 <Space size={'small'} key={'c' + field.key}>
-                    <span>{TablerUtils.renderIconComponent({
-                        icon: this.findIconInField(field, value)
-                    })}
-                    {TablerUtils.renderValue(field, value)}</span>
+                    <span>
+                        {iconField ? <Tooltip title={field.fieldName}>{TablerUtils.renderIconComponent({
+                            icon: this.findIconInField(field, value)
+                        })}</Tooltip> : null}
+                        {TablerUtils.renderValue(field, value)}
+                    </span>
                     {props.suffix}
                 </Space>
             )

@@ -13,6 +13,7 @@ export interface SmartPageTablerProps {
     pageMeta: any,
     autoInit?: boolean;
     path: string;
+    notice?: any;
     triggerMap: any,
     reflush: any,
     onGetRequestParams?: Function;
@@ -204,6 +205,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                     onView={this.ViewRequest}
                     router={this.props.router}
                     size={this.props.size}
+                    notice={this.props.notice}
                     
                     onGetRequestParams={this.getRequestParams}
 

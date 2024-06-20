@@ -108,10 +108,11 @@
       }
    }
    .ui-classify-content-wrapper {
-      height: calc(100% - 134px);
+      height: calc(100% - 148px);
       margin-top: 16px;
    }
-   .ui-header {
+   
+   .ui-classify-panel .ui-header {
       margin-top: 24px;
    }
    .ui-classify-noheader {
@@ -218,7 +219,7 @@
 .ui-smartpage-group {
    padding: 24px;
    box-sizing: content-box;
-   height: calc(100vh -  56px);
+   height: calc(100vh -  48px);
    .ui-block {
       padding: 0px 0px;
    }
@@ -245,7 +246,7 @@
       padding-top:0;
    }
    .ant-tabs-content-holder {
-      height: calc(100% - 130px);
+      height: calc(100% );
       .ui-toolbar-ref {
          position: absolute;
          top: -94px;
@@ -267,7 +268,7 @@
       }
    }
    .ant-tabs {
-      height: calc(100% - 28px)
+      height: calc(100% - 42px)
    }
 }
 .tabler-batch-add {
@@ -289,4 +290,7 @@
          background-color: var(--main-bg-color);
       }
    }
+}
+.ui-searchbar-ref {
+
 }

@@ -55,6 +55,7 @@ export interface TablerState {
 interface TablerListProps extends TablerProps {
     autoColor?: boolean;
     avator?: string;
+    notice?: any;
     pageMeta?: any;
     grid?: any;
     layout?: 'horizontal' | 'card' | 'avatar' | 'connections' | 'info';
@@ -548,13 +549,11 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
             if (block.length) {
                 return (
-                   <div >
-                        <Box dataSource={block} size="default" events={{
-                            create: (params: any) => {
-                                this.props.onAddNew && this.props.onAddNew(params) 
-                            }
-                        }} />
-                    </div>
+                    <Box dataSource={block} size="default" events={{
+                        create: (params: any) => {
+                            this.props.onAddNew && this.props.onAddNew(params) 
+                        }
+                    }} />
                 )
             }
         }
@@ -571,16 +570,19 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
     public render() {
         let layout: string = this.getLayout();
+       
         return (
             <div
                 className={
                     classnames({
+                        'ui-mircotable-wrapper': true,
                         'ui-mircotable-scrollTop': !this.state.scrollTop
                     })
                 }
             >
                 {this.props.renderSearcher && this.props.renderSearcher()}
                 {this.props.renderOperater && this.props.renderOperater()}
+                
                 <div
                 className={classnames({
                     'ui-mircotable': true,
@@ -590,7 +592,9 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                     [`ui-mircotable-${this.props.size}`]: this.props.size
                 })}
                 id={this.id}
-                >{this.renderList()}</div>
+                >   {this.props.notice && <FormerTypes.notice notice={this.props.notice}/>}
+                    {this.renderList()}
+                </div>
             </div>
         )
     }

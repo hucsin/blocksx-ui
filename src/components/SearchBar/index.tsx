@@ -8,7 +8,9 @@ import { Space, Input, Switch } from 'antd';
 import { debounce } from 'throttle-debounce';
 
 
-import { select as FormerSelect , radio as FormerRadio } from '../Former/types'
+import { select as FormerSelect , radio as FormerRadio } from '../Former/types';
+
+import './style.scss';
  
 export interface LabelValue {
     label: any;
@@ -122,12 +124,14 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
                     )
                     break;
                 case 'select':
+                    let cprops: any = quick.props || {};
+                    
                     return (
                         <FormerSelect 
                             value={this.state.value} 
                             size={size}
                             type='string'
-                            
+                            placeholder={cprops.placeholder || 'Search'}
                             autoClear={true}
                             onChangeValue={this.onChangeQuickValue}
                             dataSource={dataSource}

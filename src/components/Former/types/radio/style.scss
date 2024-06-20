@@ -88,6 +88,13 @@
             background-color: var(--main-bg-color, #1677ff);
             border-color: var(--main-bg-color, #1677ff);
             color:#fff;
+            &.ui-viewer {
+                background-color: var(--main-active-background-color);
+                border-color: var(--main-hover-background-color);
+                color: var(--main-front-color);
+                line-height: 16px;
+                padding: 2px 4px;
+            }
         }
         &:first-child {
             border-top-left-radius: 4px;

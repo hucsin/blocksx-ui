@@ -3,15 +3,16 @@
 export interface SidebarMenuItem {
     
     type?: "Shortcut" | "Action" | "Hot" | "Link"; // 类型: 快捷键 | 动作 | 热度 |  外链
-    shortcut?: String;
+    shortcut?: string;
 
     key: string;
-    name: String;
+    name: string;
 
     autoFold?: boolean;
 
-    icon: String;
-    group?: String;
+    icon: string;
+    activeIcon?: string;
+    group?: string;
 
     onSelect?: Function;
     onAction?: Function;

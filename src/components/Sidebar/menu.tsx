@@ -101,13 +101,15 @@ export default class SidebarMenu extends React.Component<SiderbarMenuProps, Side
                 {name ? <dt>{name}</dt> : null}
                 <>
                     {menu && menu.map((it: SidebarMenuItem) => {
-                        let IconView: any = HoofsIcons[it.icon as any];
-
+                        let isSelected: boolean = it.key == this.state.currentKey;
+                        let iconstring: any = (isSelected ? it.activeIcon : it.icon) || it.icon; 
+                        let IconView: any = HoofsIcons[iconstring];
+                        
                         return (
                             <dd 
                                 key={it.key}
                                 className={classnames({
-                                    'ui-select': it.key == this.state.currentKey
+                                    'ui-select': isSelected
                                 })}
                                 onClick={()=> {
                                     it.onSelect && it.onSelect(it);

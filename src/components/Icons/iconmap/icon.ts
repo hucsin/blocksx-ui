@@ -7,7 +7,9 @@ export const map:any = {
         "GussdbBrandFilled",
         "KingbaseBrandFilled",
         "OceanbaseBrandFilled",
+        "PaypalBrandFilled",
         "PostgresqlBrandFilled",
+        "StripeBrandFilled",
         "BytehubsBrandOutlined",
         "DbqueryBrandOutlined",
         "GbaseBrandOutlined",
@@ -18,27 +20,13 @@ export const map:any = {
         "PolardbBrandOutlined",
         "TidbBrandOutlined"
     ],
-    "data": [
-        "DatasourceDataFilled",
-        "DocumentAddDataFilled",
-        "FilterDataFilled",
-        "ListAddDataFilled",
-        "SchemaDataFilled",
-        "TableAddDataFilled",
-        "DatasourceAddDataOutlined",
-        "DatasourceDefaultDataOutlined",
-        "DatasourceMiniDataOutlined",
-        "DatasourceSmallDataOutlined",
-        "ModelDataOutlined",
-        "RunLogDataOutlined",
-        "StatisticsDataOutlined",
-        "TableDataOutlined"
-    ],
     "utility": [
+        "ConnectUtilityFilled",
         "DatasourceSettingUtilityFilled",
         "EditUtilityFilled",
         "EnlargeUtilityFilled",
         "ImageAddUtilityFilled",
+        "InboxUtilityFilled",
         "LayoutUtilityFilled",
         "LockUtilityFilled",
         "MarkReadUtilityFilled",
@@ -49,6 +37,7 @@ export const map:any = {
         "RemoveUtilityFilled",
         "StartCircleUtilityFilled",
         "StopCircleUtilityFilled",
+        "ThinkingUtilityFilled",
         "ValidationUtilityFilled",
         "ViewOffUtilityFilled",
         "ViewUtilityFilled",
@@ -106,6 +95,23 @@ export const map:any = {
         "WorkspaceUtilityOutlined",
         "ViewUtilityCombine"
     ],
+    "data": [
+        "DatasourceDataFilled",
+        "DatasourceDefaultDataFilled",
+        "DocumentAddDataFilled",
+        "FilterDataFilled",
+        "ListAddDataFilled",
+        "SchemaDataFilled",
+        "TableAddDataFilled",
+        "DatasourceAddDataOutlined",
+        "DatasourceDefaultDataOutlined",
+        "DatasourceMiniDataOutlined",
+        "DatasourceSmallDataOutlined",
+        "ModelDataOutlined",
+        "RunLogDataOutlined",
+        "StatisticsDataOutlined",
+        "TableDataOutlined"
+    ],
     "directivity": [
         "GoLeftDirectivityFilled",
         "GoRightDirectivityFilled",
@@ -114,6 +120,14 @@ export const map:any = {
         "LeftCircleDirectivityOutlined",
         "UpMiniDirectivityOutlined"
     ],
+    "common": [
+        "ProductCommonFilled",
+        "FolderCommonOutlined",
+        "PageCommonOutlined",
+        "PaymentCommonOutlined",
+        "PaymentPlatformCommonOutlined",
+        "ProfessionalCommonOutlined"
+    ],
     "suggestion": [
         "DotSuggestionOutlined",
         "EllipsisSuggestionOutlined",
@@ -121,10 +135,5 @@ export const map:any = {
         "QuerySuggestionOutlined",
         "RelatedSuggestionOutlined",
         "RemotingSuggestionOutlined"
-    ],
-    "common": [
-        "FolderCommonOutlined",
-        "PageCommonOutlined",
-        "PaymentCommonOutlined"
     ]
 }

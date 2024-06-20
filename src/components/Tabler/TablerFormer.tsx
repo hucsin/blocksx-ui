@@ -485,95 +485,94 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         }
         
         return (
-            <Spin spinning={this.state.loading}>
-               
-                <Former
-                    title={this.getDefaultTitle()}
-                    icon={this.getDefaultIcon()}
-                    size={'default'}
-                    notice={notice}
-                    className="ui-tabler-former"
-                    rowKey={this.props.rowKey}
-                    id={this.getDefaultId()}
-                    type={this.props.formerType}
-                    schema={pageSchema}
-                    visible={this.state.visible}
-                    okText={this.getDefaultOkText()}
-                    cancelText={this.getDefaultCancelText()}
-                    onSave={(value: any, former: any) => {
-                        
-                        return this.onChangeValue(value, former)
-                    }}
+            <Former
+                title={this.getDefaultTitle()}
+                icon={this.getDefaultIcon()}
+                size={'default'}
+                notice={notice}
+                loading={this.state.loading}
+                className="ui-tabler-former"
+                rowKey={this.props.rowKey}
+                id={this.getDefaultId()}
+                type={this.props.formerType}
+                schema={pageSchema}
+                visible={this.state.visible}
+                okText={this.getDefaultOkText()}
+                cancelText={this.getDefaultCancelText()}
+                onSave={(value: any, former: any) => {
                     
-                    onBeforeSave= {() => {
-                        
-                        if (this.state.isStepMode && this.state.isStepOne) {
-                            this.setState({
-                                isStepOne: false
-                            })
-                            return false;
-                        }
-                    }}
-                    onChangeValue={(value)=> {
-
-                        //return ;
-                        if (this.state.isStepMode && this.state.isStepOne && schema.firstFields.length == 1) {
-
-                            let currentField: any = schema.firstField;
-                            let setpOneValue: any = this.state.setpOneValue || {};
-                            let newValue: any = value[currentField.key];
-                            if (newValue && ( newValue != setpOneValue[currentField.key])) {
-
-                                if (this.isStepDynamicFormer()) {
-
-                                    this.onDynamicStepChange(value);
-                                } else {
-                                
-                                    this.setState({
-                                        setpOneValue: utils.clone(value),
-                                        value: value,
-                                        isStepOne: false
-                                    })
-                                }
-                            }
-                        }
-                    }}
+                    return this.onChangeValue(value, former)
+                }}
+                
+                onBeforeSave= {() => {
                     
-                    disabled = {this.state.isStepMode && !this.state.setpOneValue}
-                    value = {this.state.value}
-                    viewer = {this.state.viewer}
-                    canmodify = {this.state.value && this.state.value.id}
-                    onGetDependentParameters = {(value: any)=> {
-                        return this.state.value ? {
-                            [RelationshipExtendEnum.MASTERID]: this.state.value.id
-                        } : {}
-                    }}
-                    onInit = {(former: any) => {
-                        this.former = former;
-                        
-                    }}
-                    autoclose = {false}
-                    column = {this.props.column ? this.props.column as any : 'two'}
-                    width = {(this.props.column =='one' ? 500 : 700)}
-                    onClose={(isInitiate?: any) => {
-                        
-                        if (isInitiate) {
-                            if (this.cancelDoback()) {
-                                return this.setState({
-                                    isStepOne: true
-                                });
-                            }
-                        } 
-
-                        // 关闭
+                    if (this.state.isStepMode && this.state.isStepOne) {
                         this.setState({
-                            visible: false
+                            isStepOne: false
                         })
-                        this.props.onClose();
+                        return false;
+                    }
+                }}
+                onChangeValue={(value)=> {
+
+                    //return ;
+                    if (this.state.isStepMode && this.state.isStepOne && schema.firstFields.length == 1) {
+
+                        let currentField: any = schema.firstField;
+                        let setpOneValue: any = this.state.setpOneValue || {};
+                        let newValue: any = value[currentField.key];
+                        if (newValue && ( newValue != setpOneValue[currentField.key])) {
+
+                            if (this.isStepDynamicFormer()) {
+
+                                this.onDynamicStepChange(value);
+                            } else {
+                            
+                                this.setState({
+                                    setpOneValue: utils.clone(value),
+                                    value: value,
+                                    isStepOne: false
+                                })
+                            }
+                        }
+                    }
+                }}
+                
+                disabled = {this.state.isStepMode && !this.state.setpOneValue}
+                value = {this.state.value}
+                viewer = {this.state.viewer}
+                canmodify = {this.state.value && this.state.value.id}
+                onGetDependentParameters = {(value: any)=> {
+                    return this.state.value ? {
+                        [RelationshipExtendEnum.MASTERID]: this.state.value.id
+                    } : {}
+                }}
+                onInit = {(former: any) => {
+                    this.former = former;
                     
-                    }}
-                >{this.props.children}</Former>
-            </Spin>
+                }}
+                autoclose = {false}
+                column = {this.props.column ? this.props.column as any : 'two'}
+                width = {(this.props.column =='one' ? 500 : 700)}
+                onClose={(isInitiate?: any) => {
+                    
+                    if (isInitiate) {
+                        if (this.cancelDoback()) {
+                            return this.setState({
+                                isStepOne: true
+                            });
+                        }
+                    } 
+
+                    // 关闭
+                    this.setState({
+                        visible: false
+                    })
+                    this.props.onClose();
+                
+                }}
+            >{this.props.children}</Former>
+            
         )
     }
 }

@@ -23,6 +23,7 @@ export interface FormerProps {
     type?: 'drawer' | 'modal' | 'popover';
     value?: any;
     icon?: any;
+    loading?: boolean;
     rowKey?: string;
     schema: any;
     disabled?: boolean;
@@ -135,7 +136,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             viewer: props.viewer,
             column: this.getDefaultColumn(props.column),
             disabled: props.disabled || true,
-            loading: false,
+            loading: props.loading || false,
             fetching: false,
             canmodify: props.canmodify,
             notice: props.notice
@@ -189,7 +190,12 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             }
         }
         
-        
+        if (newProps.loading != this.state.loading) {
+            this.setState({
+                loading: newProps.loading
+            })
+        }
+
         if (newProps.value && newProps.value != this.state.value) {
             this.setState({
                 value: newProps.value

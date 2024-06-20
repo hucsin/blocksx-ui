@@ -18,16 +18,19 @@
     }
 }
 .ui-mircotable-scrollTop {
+    position: relative;
     &::before {
         display:block;
         content: ' ';
-        position: relative;
-        height: 0px;
+        position: absolute;
+        height: 8px;
         width: 100%;
         z-index: 12;
-        top: 0px;
+        top: -10px;
         left: 0;
-        box-shadow: 0 0px 18px 1px rgba(0, 0, 0, 0.010), 0 2px 4px 1px rgba(0, 0, 0, 0.07), 0 0px 0px 0px rgba(0, 0, 0, 0.2);
+        background-color: transparent;
+        border-bottom: 0.5px solid rgb(240, 240, 245);
+        box-shadow: rgba(0, 0, 0, 0.08) 0px 6px 6px 0px;
     }
 }
 .ui-mircotable {
@@ -35,22 +38,43 @@
     position: relative;
     height: 100%;
 
+    .ui-block {
+        height: 100%;
+    }
     
     .ui-block-item-type-outline {
         border: 1px solid #f0f0f0;
         padding: 64px;
+        height: calc(100% - 129px)
     }
 
     .ant-list-item-meta-title  {
+        .anticon {
+            margin-right: 2px;
+        }
+        .ant-space {
+            padding-right: 8px;
+        }
         p {
             padding: 0;
             margin: 0;
+        }
+    }
+
+    .former-radio-button {
+        .ui-selected {
+            background-color: var(--main-active-background-color);
+            border-color: var(--main-hover-background-color);
+            color: var(--main-front-color);
+            line-height: 16px;
+            padding: 0 4px;
         }
     }
     .ant-list-item-meta-description {
         .ant-space-gap-col-small {
             column-gap: 4px !important;
         }
+        .former-radio-button,
         .ant-space {
             margin-right: 8px;
         }
@@ -264,6 +288,11 @@
             margin-left: 16px;
             vertical-align: middle;
         }
+        .ant-space {
+            .ant-space-item {
+                
+            }
+        }
     }
     button {
         text-transform:capitalize;
@@ -426,6 +455,13 @@
             opacity: .6;
             margin: 0 4px;
             vertical-align: middle;
+        }
+    }
+}
+.ui-mircotable-wrapper {
+    .ui-mircotable {
+        .ui-former-notice {
+            margin-bottom: 16px;
         }
     }
 }

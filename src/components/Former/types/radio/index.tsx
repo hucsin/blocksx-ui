@@ -15,6 +15,7 @@
     size?: any;
     dict?: any;
     dataSource?: any;
+    viewer?: boolean;
     onChangeValue: Function;
     value: any;
     disabled?: boolean;
@@ -125,6 +126,7 @@
                                 }
                             })
                         }} className={classnames({
+                            'ui-viewer': this.props.viewer,
                             'ui-selected': it.value == value
                         })} key={it.value} >{VIcon ? <Tooltip title={it.description || it.label}><VIcon/></Tooltip> :it.label}</label>
                     )

@@ -861,7 +861,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 <View
                     key={'2view'}
                     {...this.props}
-                
+                    
                     pageMeta={this.props.pageMeta}
                     pageSize={this.state.pageSize}
                     pageNumber={this.state.pageNumber}

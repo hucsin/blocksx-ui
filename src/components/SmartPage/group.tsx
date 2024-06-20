@@ -133,12 +133,15 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
                                 })}>
                                     <span className='ui-searchbar-ref' ref={dict.searcherContainerRef}></span>
                                     <span className='ui-toolbar-ref' ref={dict.toolbarContainerRef}></span>
-                                    {dict.notice && <Notice value={dict.notice} icon={dict.icon}/>}
+                                   
                                     <div className='ui-classify-content-wrapper'>
                                         <div className='ui-classify-content-left'>
                                             {SmartPageUtil.renderPageType(dict.uiType, {
                                                 ...dict,
-
+                                                notice: {
+                                                    notice: dict.notice,
+                                                    icon: dict.icon
+                                                },
                                                 toolbarRef: dict.toolbarContainerRef,
                                                 optionalContainerRef: dict.optionalContainerRef,
                                                 searchRef: dict.searcherContainerRef,
