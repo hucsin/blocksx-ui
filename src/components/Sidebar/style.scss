@@ -127,7 +127,14 @@
 
     dd {
         height: 21px;
-        overflow: hidden;
+        word-break: break-all;
+        white-space: nowrap;
+        text-overflow: ellipsis; 
+        
+        .hoofs-sidebar-menu-text {
+            transition: all .2s;
+            opacity: 1;
+        }
         span.anticon{
             font-size: 18px;
         }
@@ -138,18 +145,23 @@
         width: 80px;
        
         dd {
-            
+            .hoofs-sidebar-menu-text  {
+                opacity: 0;
+            }
             .hoofs-sidebar-tool,
             .hoofs-sidebar-menu-text  {
                 display:none;
             }
             &:hover {
                 .hoofs-sidebar-menu-text {
-                    display: block;
+                    display: inline-table;
                     background:#fff;
                     border-radius: 4px;
+                    opacity: 1;
                     position: absolute;
+                    overflow: hidden;
                     white-space: nowrap;
+                    border-radius: 12px;
                     top: 0;
                     left: 55px;
                     padding: 5px 8px;

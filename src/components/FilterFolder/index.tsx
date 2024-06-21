@@ -223,7 +223,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                         return this.renderItem(it, true)
                     })}
                 </dl>
-                :<Empty description={false} />}
+                :null}
             </div>
         )
     }

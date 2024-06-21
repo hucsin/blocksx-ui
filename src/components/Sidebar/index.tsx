@@ -134,8 +134,8 @@ export default class Siderbar extends React.Component<SidebarProps, sidebarState
 
     public onChange(currentKey:any, current:any) {
         this.props.onChange && this.props.onChange(currentKey, current);
-        
-        if (current.autoFold) {
+
+        if (current && current.autoFold) {
             this.setState({
                 foldState: this.state.folding,
                 folding: true
@@ -244,7 +244,7 @@ export default class Siderbar extends React.Component<SidebarProps, sidebarState
                 </div>
 
                 { 
-                    this.props.roadmap && 
+                    this.props.roadmap && !this.state.children && 
                     <div className='hoofs-sidebar-roadmap'>
                         <SideMenu 
                             currentKey={this.state.currentKey} 

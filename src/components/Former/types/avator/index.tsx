@@ -24,16 +24,13 @@ export default class MircoAvatar extends React.Component<IMircoAvator> {
         shape: 'circle'
     }
     private defaultColor: any = [
-        '#f56a00',
-        '#87d068',
-        '#1677ff',
-        '#e916ff',
-        '#4907c9',
-        '#02a79f',
-        '#0a7c1f',
-        '#847a02',
-        '#841b02',
-        '#d2ac05'
+        '#2ECC71',
+        '#3498DB',
+        '#9B59B6',
+        '#6C7A89',
+        '#F2CA27',
+        '#E67E22',
+        '#E74C3C',
     ]
     private getColor(text) {
         let hash: number = Math.abs(utils.hashcode(text));

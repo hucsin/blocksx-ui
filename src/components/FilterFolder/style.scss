@@ -67,12 +67,16 @@
             }
         }
     }
+    .ant-empty-image {
+        margin-top: 64px;
+        opacity: .4;
+    }
 
     .ui-filter-folder {
         padding: 16px;
         box-sizing: border-box;
         height:calc(100% - 32px);
-        background-color: #edeff3;
+        background-color: #fff;
         border-radius: 12px;
         margin-left: 24px;
         margin-top: 16px;
@@ -80,17 +84,32 @@
         .ant-input-suffix {
             color:#ddd;
         }
+        .ant-input-outlined {
+            border-color:#f1f1f1;
+        }
         .ui-filter-folder-title {
             font-size:20px;
-            opacity: .5;
             text-transform: uppercase;
             span {
                 margin-right:8px;
+
             }
-            border-bottom: 1px solid #ddd;
+            color:var(--main-front-color);
+            border-bottom: 4px solid var(--main-border-color);
             margin-bottom: 16px;
-            padding-bottom: 13px;
+            padding-bottom: 9px;
             padding-top: 0px;
+            position: relative;
+            opacity: .7;
+            &::after {
+                content: " ";
+                position: absolute;
+                height: 4px;
+                width: 24px;
+                background-color: var(--main-bg-color);
+                left: 0;
+                bottom: -4px;
+            }
         }
 
         dl {
@@ -98,7 +117,7 @@
             &.ui-has-child {
                 border-bottom: 1px dashed #ddd;
             }
-            padding-bottom: 8px;
+            padding-bottom: 16px;
             margin-top: 20px;
             dt {
                 overflow: hidden;;
@@ -174,7 +193,7 @@
                 }
             }
             &.ui-folder-more {
-
+                margin-top: 16px;
                 dd:not(.ui-select):hover {
                     
                     .ui-total{
