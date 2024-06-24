@@ -1,7 +1,7 @@
 import React from 'react';
 import { utils } from '@blocksx/core';
 import Markdown from '../../../Markdown';
-import Avatar from '../avator';
+import Avatar from '../avatar';
 
 import './style.scss';
 

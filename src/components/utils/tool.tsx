@@ -42,8 +42,16 @@ export default class TablerUtils {
         // 当当前字段是存在action的时候
         //if (field.action) {
         let uiType: string = field.uiType || field.type;
-        let UiView: any = FormerTypes[uiType];
 
+        if (utils.isPlainObject(field.column)) {
+            if (field.column.uiType) {
+                uiType = field.column.uiType;
+            }
+        }
+
+
+        let UiView: any = FormerTypes[uiType];
+       
         let record: any = props.recordValue || {};
         let DisplayValue: any = record['DisplayValue_' + field.key]
 
@@ -54,6 +62,8 @@ export default class TablerUtils {
         if (utils.isFunction(defaultComponent)) {
             return defaultComponent(field)
         }
+
+        
         
         if (UiView) {
             if (utils.isFunction(field.motion)) {
@@ -80,7 +90,7 @@ export default class TablerUtils {
         
         if (utils.isValidValue(value)) {
             let iconField: any = this.findIconInField(field, value);
-            console.log(iconField)
+            
             return (
                 <Space size={'small'} key={'c' + field.key}>
                     <span>
@@ -174,6 +184,8 @@ export default class TablerUtils {
     }
 
     public static getDefaultFieldSchema(it:any, index) {
+        //console.log(it.type, it, it.column, 111)
+        let { column } = it;
         
         return {
             ...it,

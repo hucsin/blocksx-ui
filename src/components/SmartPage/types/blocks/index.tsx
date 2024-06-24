@@ -8,11 +8,9 @@ export default class SmartPageBlocks extends React.Component<{schema: any}> {
 
     public render() {
         let {schema = {}} = this.props;
-
+        let blocks: any [] = !Array.isArray(schema.blocks) ? [schema.blocks] : schema.blocks;
         return (
-            <div>
-                <Box dataSource={schema.blocks || []}></Box>
-            </div>
+            <Box dataSource={blocks || []}></Box>
         )
     }
 }

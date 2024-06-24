@@ -9,7 +9,7 @@ export interface BoxTag {
 export interface BoxBehavior {
     type: 'markdown' | 'link' | 'video' | 'router';
     title?: string;
-    contentType?: 'icon' | 'avator' | 'default' | 'image' | 'video' ,
+    contentType?: 'icon' | 'avatar' | 'default' | 'image' | 'video' ,
     content: string | Function;
     confirm?: string;
     href?: string;
@@ -29,7 +29,12 @@ export type BoxValue = string | BoxBehavior;
 
 export interface BoxItemBase {
     name?: string;
+    value?: any;
+    label?: string;
+    subtitle?: string;
     title?: string; // 标题
+    slogan?: string;
+    price?: number;
     description?: string; // 描述
     type?: string;
 
@@ -58,5 +63,6 @@ export interface BoxItem extends BoxItemBase {
     colspan?: number;
     layout?: "left" | "center",
     events?: any;
+    motion?: any;
     items?: BoxItemBase[];
 }

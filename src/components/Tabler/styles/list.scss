@@ -303,26 +303,7 @@
             margin-bottom:8px;
         }
     }
-    &.ui-mircotable-card {
-        .ui-mircotable-avatar {padding-left: 0;}
-        .ant-list-item {
-            margin-bottom: 24px;
-            padding: 16px;
-            .ant-list-item-extra{
-                margin-inline-start: 0px;
-            }
-        }
-        .ant-list-item-action {
-            position:absolute;
-            right: 16px;
-            top: 16px;
-            margin-block-start:0;
-            opacity: 1;
-            li {
-                padding:0;
-            }
-        }
-    }
+    
     .ant-list-split .ant-list-item {
         &.ui-tabler-item-selected {
             background: var(--main-active-background-color);
@@ -457,11 +438,80 @@
             vertical-align: middle;
         }
     }
+
+    .ui-subtitle {
+        display: none;;
+    }
+    &.ui-mircotable-card {
+        .ui-mircotable-extra {
+            .ui-toolbar {
+                float: right;
+                .ant-space-item {
+                    float:left;
+                    margin-left: 8px;
+                }
+                .ant-dropdown-button {
+                    display: inline;
+                }
+            }
+            .ui-avatar-group {
+                .ant-space-item {
+                    display: inline-block;
+                }
+            }
+        }
+        .ant-list-item-meta-description .ui-meta-description-wrapper {
+            white-space:initial;
+            height: 64px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;           /* 使用 flexbox 模型 */
+            -webkit-box-orient: vertical;   /* 设置 flex 方向为垂直 */
+            -webkit-line-clamp: 3;          /* 显示的行数 */
+            
+        }
+
+        .ant-list-item .ant-list-item-meta {
+            margin-block-end: 32px;
+        }
+        .ui-mircotable-avatar > .ant-avatar-circle {
+            border-radius: 12px;;   
+        }
+        .ui-subtitle {
+            display: block;
+            font-size:14px;
+            opacity: .2;
+            font-weight: 400;
+        }
+        .ant-list .ant-list-item .ant-list-item-meta {
+            align-items: start;
+        }
+        .ant-list .ant-list-item {
+
+            padding: 16px;
+            box-shadow: 0 6px 8px 0 rgba(28, 31, 35, .06);
+            cursor: pointer;
+        }
+        .ant-list-vertical .ant-list-item .ant-list-item-meta .ant-list-item-meta-title {
+            margin-block-end: 8px;
+        }
+        .ant-list-item-action {
+            width: 100%;
+            padding-top: 14px;
+            border-top:.5px solid var(--secondary-border-color);
+            position: inherit;
+            li {
+                width: 100%;
+                text-align: left;
+            }
+        }
+    }
 }
 .ui-mircotable-wrapper {
     .ui-mircotable {
         .ui-former-notice {
             margin-bottom: 16px;
+            border-radius: 6px;
         }
     }
 }

@@ -1,8 +1,12 @@
 .ui-block {
     .ui-block-item {
-        margin-bottom: 64px;
+        margin-bottom: 10em;
         &:last-child {
             margin-bottom: 0;
+        }
+        .block-subtitle {
+            opacity: .6;
+            margin-bottom: 6em;
         }
     }
 }

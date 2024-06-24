@@ -1,5 +1,4 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import ReactMarkdown from 'react-markdown';
 import { utils } from '@blocksx/core';
@@ -28,7 +27,7 @@ export default class Outline extends React.Component<BoxItem, any> {
     private getAvatarSize() {
         return this.avatarSizeMap[this.props.size || 'large']
     }
-    private renderAvator() {
+    private renderAvatar() {
         let icon: any = this.props.icon;
         
         if (utils.isArray(icon)) {
@@ -100,9 +99,9 @@ export default class Outline extends React.Component<BoxItem, any> {
     public render() {
         return (
             <>
-                {this.renderAvator()}
-                {this.props.title && <Typography.Title level={this.getTitleLevel()}>{this.props.title}</Typography.Title>}
-                {this.props.description && <Typography.Paragraph className='block-outline-subtitle'><ReactMarkdown>{this.props.description}</ReactMarkdown></Typography.Paragraph>}
+                {this.renderAvatar()}
+                {this.props.title && <Typography.Title level={1}>{this.props.title}</Typography.Title>}
+                {this.props.description && <Typography.Paragraph className='block-subtitle'><ReactMarkdown>{this.props.description}</ReactMarkdown></Typography.Paragraph>}
                 {this.renderActions()}
                 {this.renderTags()}
             </>

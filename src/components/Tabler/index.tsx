@@ -62,7 +62,7 @@ interface TablerState {
 interface TablerValueProps extends TablerProps {
     pageType?: string;
     pageMeta?: any;
-    avator?: string;
+    avatar?: string;
     autoInit?: boolean;
 
     selectedRowKeys?: any[];
@@ -609,7 +609,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
         }
     }
 
-    private renderRowOperate = (rowData: any, rowIndex: number, callback?: Function) => {
+    private renderRowOperate = (rowData: any, rowIndex: number, callback?: Function, size?:any  ) => {
 
         let actionList: any = this.getRowAction(rowData) || [];
         let operateSize: number = this.operateSize[this.props.type] || this.operateSize.table;
@@ -632,7 +632,8 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                     >
                         <Button
                             type="link"
-                            size={this.props.size}
+                            
+                            size={size || this.props.size}
                             danger={it.danger}
                             key={index}
                         >
@@ -645,7 +646,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 return (
                     <Button
                         type="link"
-                        size={this.props.size}
+                        size={size || this.props.size}
                         danger={it.danger}
                         key={index}
                         disabled={disabled}
@@ -660,7 +661,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 return (
                     <Dropdown.Button
                         disabled={disabled}
-                        size={this.props.size}
+                        size={size || this.props.size}
                         key="dropdown"
                         menu={this.renderBatchMenu(actionMore, rowData, rowIndex, callback)}
                         onClick={() => {

@@ -5,7 +5,7 @@ import { utils } from '@blocksx/core';
 import * as Icons from '../Icons';
 
 
-export interface IMircoAvator {
+export interface IMircoAvatar {
     size?: any;
     icon?: string;
     url?: string;
@@ -18,7 +18,7 @@ export interface IMircoAvator {
 }
 
 
-export default class MircoAvatar extends React.Component<IMircoAvator> {
+export default class MircoAvatar extends React.Component<IMircoAvatar> {
     static defaultProps = {
         autoColor: true,
         shape: 'circle'

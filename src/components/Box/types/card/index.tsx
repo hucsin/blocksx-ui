@@ -99,12 +99,13 @@ export default class Card extends React.Component<BoxItem,{}> {
         if (this.props.theme == 'section') {
             return 1;
         }
-        return 2;
+        return 1;
     }
     public render() {
 
         let theme: string = this.props.theme || 'border';
         let type: string = (this.props.type || 'index').replace(/(_[a-z]|[A-Z])$/g, '');
+        let colspan: number = this.props.colspan || 3;
 
         return (
             <div 
@@ -115,12 +116,22 @@ export default class Card extends React.Component<BoxItem,{}> {
                     [`block-card-theme-${theme}`]: theme
                 })}
             >
-                <Typography.Title level={this.getTitleLeval()}>{this.renderTitleIcon()}{this.props.title}</Typography.Title>
+                <Typography.Title level={1}>{this.renderTitleIcon()}{this.props.title}</Typography.Title>
 
-                {this.props.description && <Typography.Paragraph className='block-card-subtitle'>{this.props.description}</Typography.Paragraph>}
+                {this.props.description && <Typography.Paragraph className='block-subtitle'>{this.props.description}</Typography.Paragraph>}
 
                 <List
-                    grid={{ gutter: 16, column: this.props.colspan }}
+                    grid={{ 
+                        gutter: 16, 
+                        column: colspan,
+                        xs: 1,
+                        sm: 1,
+                        md: 1,
+            
+                        lg: colspan> 2? colspan - 1 : colspan,
+                        xl: colspan,
+                        xxl: colspan
+                    }}
                     dataSource={this.props.items}
                     className=''
 

@@ -23,13 +23,15 @@ export default class SmartPageUtils {
                 let { schema = {}, uiType, path } = data;
                     let trueUiType: string = props.uiType || uiType;
                     let classifyField: any
+
                     
                     if (PageManger.has(trueUiType)) {
                         let pageMeta: PageMeta = schema.meta || props.pageMeta || {};
     
                         // 清洗fields
-                        schema.fields = CleanseSchema.getFieldProps(path, schema.fields);
-                       
+                        if (schema.fields) {
+                            schema.fields = CleanseSchema.getFieldProps(path, schema.fields);
+                        }
                         resolve({
                             schema: schema,
                             uiType: trueUiType,

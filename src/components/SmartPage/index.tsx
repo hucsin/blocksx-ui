@@ -114,6 +114,7 @@ export interface SmartPageState {
 
     defaultClassify: string;
     defaultFolder?: string;
+    layout?: string;
 }
 
 export default class SmartPage extends React.Component<SmartPageProps, SmartPageState> {
@@ -173,7 +174,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             mode: props.mode,
             defaultClassify: this.getDefaultClassify(),
             defaultFolder: this.getDefaultFolder(),
-            folderReflush: +new Date
+            folderReflush: +new Date,
+            layout: ''
         }
 
         this.requestHelper = SmartRequest.createPOST(props.pageURI);
@@ -239,39 +241,48 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             this.setLoading(true)
 
             SmartUtil.fetchPageSchema(this.props.pageURI, this.state.name, this.props).then(async (data:any) => {
-
+                
                 if (!this.state.noClassify) {
-                    let classifyField = this.getClassifyField(data.schema.fields);
-                    
-                    if (classifyField && classifyField.factor) {
-                        try {
-                            let folder: any = await this.getOnFetchFolder(classifyField)({})
-                            classifyField.dict = folder;
-                        } catch(e){console.log(e)}
-                    }
 
-                    data.classifyField = classifyField;
+                    if (data.schema.fields) {
 
-                    if (classifyField) {
-                        if (classifyField.meta.classify == 'noall' && classifyField.dict[0]) {
-                            
-                            if (!this.state.defaultClassify || this.state.defaultClassify=='all') {
-                                
-                                data.defaultClassify = classifyField.dict[0].value;
-                            }
-                           
-                        }
+                        let classifyField = this.getClassifyField(data.schema.fields);
                         
-                    }
-                }
+                        if (classifyField && classifyField.factor) {
+                            try {
+                                let folder: any = await this.getOnFetchFolder(classifyField)({})
+                                classifyField.dict = folder;
+                            } catch(e){console.log(e)}
+                        }
 
-                if (!this.state.noFolder) {
-                    data.folderField =  
-                        data.noFolder ? null : this.getFolderField(data.schema.fields);
+                        data.classifyField = classifyField;
+
+                        if (classifyField) {
+                            if (classifyField.meta.classify == 'noall' && classifyField.dict[0]) {
+                                
+                                if (!this.state.defaultClassify || this.state.defaultClassify=='all') {
+                                    
+                                    data.defaultClassify = classifyField.dict[0].value;
+                                }
+                            
+                            }
+                            
+                        }
                     
-                    if (data.folderField) {
-                        data.folderMode = utils.isString(data.folderField.meta.folder) ? 'filter' : 'folder'
+
+                        if (!this.state.noFolder) {
+                            data.folderField =  
+                                data.noFolder ? null : this.getFolderField(data.schema.fields);
+                            
+                            if (data.folderField) {
+                                data.folderMode = utils.isString(data.folderField.meta.folder) ? 'filter' : 'folder'
+                            }
+                        }
+                    } else {
+
+                        data.layout = 'page'
                     }
+                    
                 }
 
                 Object.assign(data, {
@@ -291,7 +302,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 this.setState(data)
                 this.setLoading();
 
-            }, () => {
+            }, (eeee) => {
+                console.log(eeee)
                 this.setLoading()
             })
         }
@@ -414,6 +426,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         }
     }
     public renderContentView() {
+        let { pageMeta} = this.state;
+        console.log('rendercontentview')
 
         return SmartPageUtils.renderPageType(this.state.uiType, {
             key: this.state.classifyQuery,
@@ -430,6 +444,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             noSearcher: this.props.noSearcher,
             noTitle: this.state.noTitle,
             noOperater: this.state.noToolbar,
+            notice:  this.state.notice && {notice: this.state.notice,icon: pageMeta.icon},
             toolbarRef: this.toolbarRef,
             operateContainerRef:this.operateContainerRef,
             titleContainerRef:this.titleContainerRef,
@@ -452,7 +467,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
     public renderRightContent() {
         let { classifyField = { meta: {}}, pageMeta, folderMeta, folderMode, folderField, noClassify } = this.state;
-
+        
         // 不支持classify的情况
         if (!noClassify) {
 
@@ -472,6 +487,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 <div className={classnames({
                     'ui-classify-wrapper': true,
                     'ui-classify-noheader': this.state.noHeader,
+                    'ui-classify-notabtitle': dictmap.length <=1,
                     'ui-classify-optional-mode': this.state.optionalOpen
                 })}>
                     <ClassifyPanel
@@ -488,7 +504,10 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         return <ClassifyPanel.Panel key={dict.value} label={dict.label} value={dict.value}></ClassifyPanel.Panel>
                     })}
                     </ClassifyPanel>
-                    <div className='ui-classify-content-wrapper'>
+                    <div className={classnames({
+                        'ui-classify-content-wrapper': true,
+                        //[`ui-classify-content-type-${}`]
+                    })}>
                         <div className='ui-classify-content-left'>
                             {this.renderContentView()}
                         </div>
@@ -567,7 +586,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     public renderMainContent() {
         let { folderField, folderMode, classifyQuery, pageMeta = {} } = this.state;
-
+        
         if (this.hasLeftNavContent()) {
             //let folder: any = folderField.meta.folder || {};
             //let tagC = tag.meta.tag;
@@ -597,11 +616,15 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     public renderContent() {
         let { pageMeta } = this.state;
-        
+
+            
         return (
-            <div className='ui-smartpage-wrapper'>
+            <div className={classnames({
+                'ui-smartpage-wrapper': true,
+                [`ui-smartpage-layout-${this.state.layout}`]: this.state.layout
+            })}>
                 <Spin spinning={this.state.loading}>
-                    {this.state.notice && <Notice value={this.state.notice} icon={pageMeta.noticeIcon} />}
+                   
                     {this.state.uiType ? this.renderMainContent() : <Empty/>}
                 </Spin>
             </div>

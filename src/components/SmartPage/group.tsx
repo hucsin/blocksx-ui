@@ -105,6 +105,7 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
     }
     public render() {
         let { group, current } = this.state;
+
         return (
             <Spin spinning={!this.state.group}>
                 <div className={classnames({
@@ -134,7 +135,10 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
                                     <span className='ui-searchbar-ref' ref={dict.searcherContainerRef}></span>
                                     <span className='ui-toolbar-ref' ref={dict.toolbarContainerRef}></span>
                                    
-                                    <div className='ui-classify-content-wrapper'>
+                                    <div className={classnames({
+                                        'ui-classify-content-wrapper': true,
+                                        [`ui-classify-content-type-${dict.uiType}`]: dict.uiType
+                                    })}>
                                         <div className='ui-classify-content-left'>
                                             {SmartPageUtil.renderPageType(dict.uiType, {
                                                 ...dict,

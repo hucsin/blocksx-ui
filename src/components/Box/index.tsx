@@ -30,6 +30,7 @@ export default class Box extends React.Component<BoxProps, BoxState> {
         super(props);
     }
     public renderChildren(it: BoxItem, index: number) {
+        
         if (BoxManger.has(it.type)) {
             let View: any = BoxManger.get(it.type);
            
@@ -41,6 +42,7 @@ export default class Box extends React.Component<BoxProps, BoxState> {
         
         return (
             <div className="ui-block">
+
                 {this.props.dataSource.map((it, index)=>{
                     return (
                         <div key={index} className={classnames({
