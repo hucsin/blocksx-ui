@@ -12,6 +12,9 @@ import LayoutLoginDemo from './demo/Login';
 import RouterLayout from './components/RouterLayout';
 
 import SmartPage from './components/SmartPage';
+
+import PageWorkflowDetail from './pages/PageWorkflowDetail';
+
 import './style.css';
 
 const rootElement = document.getElementById("root");
@@ -220,13 +223,7 @@ class PageHome extends React.Component{
   }
 }
 
-class TextOther extends React.Component<{text: string}> {
-  public render() {
-    return (
-      <p>WorkflowDetail</p>
-    )
-  }
-}
+
 
 class DemoLayout extends React.Component {
   public render() {
@@ -249,7 +246,7 @@ class DemoLayout extends React.Component {
           PageOther: PageOther,
           PageNotFound: Text404,
           PageLogin: LayoutLoginDemo,
-          WorkflowDetail: PageOther,
+          WorkflowDetail: PageWorkflowDetail,
           PageHome: PageHome
         }}
       />

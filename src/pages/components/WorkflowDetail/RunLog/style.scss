@@ -1,0 +1,127 @@
+.ui-mircoflow-log {
+    position: absolute;
+    top: 60px;
+    right: 0px;
+    width: 400px;
+    bottom: 24px;
+    background-color: var(--main-inverse-bg-color);
+    border-left: 1px solid var(--main-border-color);
+    z-index: 12;
+    padding: 0px 16px ;
+
+    .ui-mircoflow-log-close {
+        position: absolute;
+        left: -10px;
+        font-size:18px;
+        top: 50%;
+        margin-top: -50px;
+        
+        
+        span {
+            opacity: .2;
+            transition: all .3s;
+        }
+        cursor: pointer;
+        &:hover {
+            
+            span {
+                opacity: .8;
+                transform: rotate(90deg);
+            }
+        }
+    }
+    .ui-step-number {
+        position: absolute;
+        right: 8px;
+        top: 0px;
+        font-size:12px;
+        opacity: .2;
+    }
+    .ui-runlog-go {
+        .ant-list-item-meta-title {
+            background:var(--module-go-bg-color)
+        }
+    }
+    .ui-runlog-router {
+        .ant-list-item-meta-title {
+            background:var(--module-router-bg-color)
+        }
+    }
+    .ui-runlog-module,
+    .ui-runlog-control {
+        .ant-list-item-meta-title {
+            background:var(--module-module-bg-color)
+        }
+    }
+    .ui-mircotable {
+        
+        &.ui-mircotable-mini .ant-list-split .ant-list-item {
+            margin-bottom: 0;
+            &::after{
+                display:none;
+            }
+        }
+    }
+    .anticon-check-circle {
+        color:var(--main-success-color)
+    }
+    .anticon-loading {
+        color: var(--main-process-color)
+    }
+    .anticon-warning {
+        color: var(--main-error-color)
+    }
+    .ant-divider-horizontal.ant-divider-with-text  {
+        margin: 8px 0;
+        margin-bottom: 0;
+    }
+    
+    .ant-list-item-meta-title {
+        padding: 0px 2px;
+        background:var(--emphasize-bg-color);
+        color: var(--main-bg-color) !important;
+    }
+    table {
+        border-spacing: 0;
+    }
+    .ant-alert-with-description .ant-alert-icon {
+        font-size:16px;
+    }
+    .ant-descriptions-header {
+        margin-bottom: 4px;
+    }
+    .ant-descriptions .ant-descriptions-row >td{
+        margin-bottom: 0;
+        padding-bottom: 0;
+
+    }
+    .ant-descriptions-title {
+        span {
+            opacity: .7;
+            .anticon {
+                margin-right: 8px;
+            }
+        }
+    }
+    .ant-descriptions .ant-descriptions-item-container .ant-descriptions-item-label {
+        width: 75px;
+        padding-left: 8px;
+    }
+    .ant-descriptions-item-content {
+        opacity: .6;
+        overflow:hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        .ant-space {
+            opacity: .6;
+            padding-top: 8px;
+            .ant-space-item {
+                padding: 0px 4px;
+                border-radius: 5px;
+                background-color: var(--emphasize-bg-color);
+                font-size: 12px;
+
+            }
+        }
+    }
+}

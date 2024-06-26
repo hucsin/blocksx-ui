@@ -1,0 +1,286 @@
+.mircoflow-publish {
+    &.ant-menu-light.ant-menu-root.ant-menu-vertical{
+        border-inline-end:none;
+    }
+    &.ant-menu-vertical >.ant-menu-item {
+        height: 32px;
+        line-height: 32px;
+        padding: 0 4px;
+    }
+}
+.ui-mircoflow {
+    height: 100%;
+    position: relative;
+
+    .ui-mircoflow-body {
+        position: relative;
+        z-index: 10;
+        height: calc(100% - 130px);
+        top: 50px;
+    }
+    .ui-mircoflow-action-toolbar {
+        position: absolute;
+        z-index: 11;
+        top: 16px;
+        right: 24px;
+        .ant-btn-default {
+        }
+        .ant-switch {
+            margin-right: 16px;
+            
+        }
+        .ant-space-compact {
+            button {
+                &:first-child {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                }
+            }
+        }
+    }
+    .ui-mircoflow-header {
+        position: absolute;
+        z-index: 11;
+        left: 24px;
+        top: 16px;
+        font-size: 20px;
+        right: 360px;
+        padding-left: 40px;
+
+        .ui-title {
+            padding-left: 32px;
+            padding-right: 32px;
+            .ui-text{
+                opacity: .6;
+            }
+            position: relative;
+            display: inline-block;
+            box-sizing: border-box;
+            width: auto;
+            max-width: 100%;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+
+            .ui-node {
+                position: absolute;
+                top: 1px;
+                right: 0px;
+                z-index: 10;
+            }
+            
+        }
+        > span.anticon:first-child {
+            margin-left: -40px;
+            font-size: 32px;
+        }
+    }
+    .ui-mircoflow-flowlist {
+        
+        position: absolute;
+        width: calc(100% - 40px);
+        top:40px;
+        left: 20px;
+        height: calc(100% - 120px);
+    }
+    &.ui-runlog-show {
+        .ui-runtest-toolbar {
+            right: 450px;
+        }
+        .ui-mircoflow-body {
+            width: calc(100% - 430px);
+        }
+        .ui-mircoflow-flowlist {
+            width: calc(100% - 20px);
+        }
+    }
+    &.ui-runtest-show {
+        
+        .ui-mircoflow-body {
+            height: calc(100% - 390px);
+        }
+        .ui-mircoflow-flowlist {
+            height: calc(100% - 60px)
+        }
+        .ui-runtest-toolbar {
+            .ui-body {
+                height: 300px;
+                box-sizing: border-box;
+                padding-top: 8px;;
+                border-top: 1px solid var(--main-border-color)
+                
+            }
+        }
+        .ui-mircotable {
+            height: 300px;
+            overflow: auto;
+        }
+    }
+    
+    .ui-mircoflow-log {
+        bottom: 24px;
+        .ui-mircotable {
+            height: calc(100% - 130px);
+        }
+    }
+}
+
+
+@media screen and (max-height: 800px) {
+    .ui-mircoflow {
+        
+        .ui-mircoflow-log {
+            width: 260px;
+        }
+        &.ui-runlog-show {
+            .ui-mircoflow-body {
+                width: calc(100% - 290px);
+            }
+            .ui-runtest-toolbar {
+                right: 310px;
+            }
+        }
+        .ui-mircoflow-flowlist {
+            height: calc(100% - 60px)
+        }
+        .ui-mircoflow-body {
+            height: calc(100% - 80px);
+        }
+        &.ui-runtest-show {
+            
+            .ui-mircoflow-body {
+                height: calc(100% - 260px);
+            }
+            .ui-runtest-toolbar {
+                
+                .ui-body {
+                    height: 160px;
+                }
+            }
+            .ui-mircotable {
+                height: 160px;
+                overflow: auto;
+            }
+        }
+        .ui-mircoflow-log {
+            
+            .ui-mircotable {
+                overflow: auto;
+                height: calc(100% - 120px)
+            }
+        }
+        
+        
+    }
+}
+
+.ui-mircoflow-response-wrapper {
+    position: absolute;
+    width: 200px;
+    top: 60px;
+    left: 50%;
+    height: 40px;
+    margin-left: -100px;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity .2s ;
+    &.chinampa-show  {
+        opacity: 1;
+        z-index: 100;
+    }
+
+    .ui-mircoflow-response-item {
+        position: absolute;
+        width: 60px;
+        left: 50%;
+        margin-left: -30px;
+        height: 30px;
+        border: 3px dashed rgb(204, 204, 204);
+        border-radius: 10px;
+        line-height: 30px;
+        text-align: center;
+        
+        border-color: rgb(204, 204, 204);
+        color:rgb(204, 204, 204);
+        background-color: rgba(255, 255, 255, .4);
+        transition: all .2s ;
+        span {
+            font-size:18px;
+            vertical-align: middle;
+        }
+        &.chinampa-actived {
+            border-color:rgb(244, 203, 70);
+            color: rgb(244, 203, 70);
+            
+            background-color: rgba(244, 203, 70, .4);
+        }
+
+        &.chinampa-actived-animation {
+            animation: borderFlash .4s infinite;
+        }
+    }
+
+    @keyframes borderFlash {
+        0% {
+            
+            border-color: rgb(255, 0, 0);
+            color:rgb(255, 0, 0);
+            
+            background-color: rgba(255, 0, 0,.4);
+        }
+        50% {
+            
+            border-color:rgb(244, 203, 70);
+            color: rgb(244, 203, 70);
+           
+            background-color: rgba(244, 203, 70, .4);
+        }
+        100% {
+            
+            border-color: rgb(255, 0, 0);
+            color:rgb(255, 0, 0);
+
+            
+            background-color: rgba(255, 0, 0,.4);
+        }
+    }
+
+    &.dragging-active {
+        height: 80px;
+        .ui-mircoflow-response-item {
+            width: 120px;
+            height: 80px;
+            margin-left: -60px;
+            line-height: 80px;
+            
+            &:last-child {
+                &::before ,
+                &::after {
+                    content: "Left";
+                    position: absolute;
+                    font-size: 12px;
+                    height: 100%;
+                    width: 30px;
+                    left: 0;
+                    top: 0;
+                    background-color: rgba(255, 255, 255, .4);
+                    border-right: 3px dashed rgba(204, 204, 204, 0.3);
+                }
+                &::before {
+                    content: "Right";
+                    left: auto;
+                    right: 0;
+                    border-right: none;
+                    border-left:  3px dashed rgba(204, 204, 204, 0.3);
+                }
+            }
+            span {
+                font-size: 28px;
+                
+            }
+        }
+    }
+}
+
+
+

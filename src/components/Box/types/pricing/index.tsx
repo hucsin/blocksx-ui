@@ -1,6 +1,7 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import classnames from 'classnames'
-import { Tooltip, Typography, Tag, Space } from 'antd';
+import { Tooltip, Typography, Tag, Space, Switch, Button } from 'antd';
 import * as Icons from '../../../Icons';
 
 import SmartRequest from '../../../utils/SmartRequest';
@@ -10,14 +11,30 @@ import { BoxItem, BoxAction, BoxTag } from '../../interface';
 import BoxManger from '../../BoxManger';
 import './style.scss';
 
-export default class BoxPricing extends React.Component<BoxItem, {features: any, plans}> {
+interface PricingProps extends BoxItem {
+    discount: number;
+    toolbarRef: any;
+}
+
+export default class BoxPricing extends React.Component<PricingProps, {selected: string,isCut:boolean, features: any, plans}> {
+    public static defaultProps = {
+        discount: 10
+    }
     private requestHelper: any;
-    public constructor(props: BoxItem) {
+    private defaultSelectd: any;
+    
+    public constructor(props: PricingProps) {
         super(props);
+
+        if (Array.isArray(props.items)) {
+            this.defaultSelectd = props.items[1] && props.items[1].value; 
+        }
 
         this.state = {
             features: [],
-            plans: []
+            plans: [],
+            isCut: false,
+            selected: this.defaultSelectd
         }
 
         if (props.motion) {
@@ -47,7 +64,6 @@ export default class BoxPricing extends React.Component<BoxItem, {features: any,
     public getGroupPlans(plans: any) {
         let group: any = [];
         let groupCache: any = {};
-        console.log(plans, 333)
         plans.sort((a,b)=>a.sortno < b.sortno ? -1 : 1).forEach(plan => {
             if (!groupCache[plan.name]) {
                 group.push(groupCache[plan.name] = {
@@ -144,9 +160,10 @@ export default class BoxPricing extends React.Component<BoxItem, {features: any,
     private renderSubmitPrice(it: any) {
         
         if (it.price) {
+            let price: number = this.state.isCut ? it.price * (100-this.props.discount)/100 : it.price;
             return (
                 <span className='price'>
-                    ${it.price}
+                    ${price}
                     <span className='sub'>/mo</span>
                 </span>
             )
@@ -190,8 +207,20 @@ export default class BoxPricing extends React.Component<BoxItem, {features: any,
 
                     return (
                         <dl className={classnames({
-                            [`ui-pricing-submit-${it.value}`]: it.value
-                        })}>
+                            [`ui-pricing-submit-${it.value}`]: it.value,
+                            'ui-selected': it.value == this.state.selected
+                        })}
+                            onMouseEnter={()=> {
+                                this.setState({
+                                    selected: it.value
+                                })
+                            }}
+                            onMouseLeave={()=> {
+                                this.setState({
+                                    selected: this.defaultSelectd
+                                })
+                            }}
+                        >
                             <dt>
                                 <Tag closable={false}>{it.label}</Tag>
                                 <p className='price-wrapper'>
@@ -199,25 +228,52 @@ export default class BoxPricing extends React.Component<BoxItem, {features: any,
                                 </p>
                                 <p>{it.slogan}</p>
                             </dt>
+
+                            <dd className='ui-price-buy'>
+                                <Button size='large' block type={it.value != this.state.selected ? 'primary' : 'default'}>
+                                    {it.value =='free' ? 'Start for free' : 'Add the plan'}
+                                </Button>
+                            </dd>
                             {
                                 this.state.plans.map(row => this.renderLinePrice(row, it.value))
                             }
-                            
                         </dl>
                     )
                 })}
             </div>
         )
     }
+    private renderSwitch() {
+        if (this.props.toolbarRef && this.props.toolbarRef.current) {
+           return  ReactDOM.createPortal(
+                    <Space className={classnames({
+                        'ui-box-price-switch': true,
+                        'ui-box-price-cut': this.state.isCut
+                    })}>
+                        Billed monthly
+                        <span className='ui-box-price'>
+                            <span>Save {this.props.discount}%</span>
+                            <Switch size='default' onChange={(e)=> {
+                                this.setState({isCut: e})
+                            }}/>
+                        </span>
+                        Billed yearly
+                    </Space>
+                  ,this.props.toolbarRef.current)
+        }
+    }
     public render() {
         
-       return <>
+       return <div className='ui-box-pricing-inner'>
+            
+            {this.renderSwitch()}
             {this.props.title && <Typography.Title level={1}>{this.props.title}</Typography.Title>}
             {this.props.description && <Typography.Paragraph className='block-subtitle'>{this.props.description}</Typography.Paragraph>}
+            <Typography.Title className='all-features' level={3}> {!this.state.isCut ? 'Billed monthly' : 'Billed yearly (Save up to '+this.props.discount+'%)'}</Typography.Title>
             {this.renderPricingSubmit()}
             <Typography.Title className='all-features' level={3}> All plan features</Typography.Title>
             {this.renderPricingTable()}
-        </>
+        </div>
     }
 }
 

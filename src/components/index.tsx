@@ -3,6 +3,7 @@ export { StateComponent, StateModel, StateX } from './StateX';
 export * from './core';
 
 export { default as Sidebar } from './Sidebar';
+export { default as SearchBar } from './SearchBar';
 export { default as SmartPage } from './SmartPage';
 export { default as PopoverMenu } from './PopoverMenu';
 export { default as ContextMenu } from './ContextMenu';

@@ -309,6 +309,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                     />
                 )
             case 'box':
+                
                 return <Box key={index}  dataSource={item.dataSource} />
             case 'notice':
                 return <FormerTypes.notice key={index} value={item.notice} />

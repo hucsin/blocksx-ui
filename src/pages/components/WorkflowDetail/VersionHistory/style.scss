@@ -1,0 +1,12 @@
+.ui-workflow-versionhistory {
+    
+    .ant-drawer-body {
+        overflow:hidden;
+        .ant-alert-warning {
+            margin-bottom:16px;
+        }
+        .ui-mircotable {
+            height: calc(100vh - 170px)
+        }
+    }
+}

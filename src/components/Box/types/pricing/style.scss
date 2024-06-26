@@ -1,3 +1,37 @@
+.ui-box-price-switch {
+    background-color: #fff;
+    border-radius: 32px;
+    padding: 8px 16px;
+    font-size: .6em;
+    border: .5px solid var(--main-border-color);
+    box-shadow: 0 2px 4px 0 rgba(30, 30, 31, 0.0392156863);
+
+    .ui-box-price {
+        position: relative;
+        span {
+            position: absolute;
+            top: -22px;
+            display: block;
+            width: 120px;
+            text-align: center;
+            
+            left: 32px;
+            font-size: .7em;
+            color: var(--main-bg-color);
+        }
+    }
+    .ant-space-item:last-child {
+        opacity: .5;
+    }
+    &.ui-box-price-cut {
+        .ant-space-item:first-child {
+            opacity:.5;
+        }
+        .ant-space-item:last-child {
+            opacity: 1;
+        }
+    }
+}
 .ui-block-item  {
     .ui-box-pricing {
         background: #fff;
@@ -5,6 +39,10 @@
         border-radius: 16px;
     }
     &.ui-block-item-type-pricing {
+
+        position: relative;
+
+
         .all-features {
             opacity: .3;
             font-weight:initial;
@@ -88,21 +126,28 @@
 
         display: flex;
         gap: 24px;
-        padding: 0 54px;
+        padding: 0 80px;
         margin-bottom: 64px;
+
+
         dl {
             flex: 1; 
             border-radius: 12px;
             background-color: var(--main-background-color);
             color:var(--main-front-color);
             transition: all .4s;
-            &:hover {
+            padding-bottom: 32px;
+            
+            &.ui-selected {
                 background-color: var(--main-bg-color);
                 color:#fff;
                 dd {
                     border-top-color: var(--secondary-bg-color)
                 }
             }
+
+
+
             dt {
                 text-align: center;
                 padding: 32px;
@@ -124,12 +169,22 @@
                     height: 2em;
                 }
             }
+
             dd {
                 text-align: left;
                 margin-inline-start: 0;
                 margin: 0 32px;
                 border-top: 1px solid var(--main-border-color);
-                span {
+                transition: border-top .2s;
+                &.ui-price-buy {
+                    padding-top: 32px;
+                    bottom: 0;
+                    padding-bottom: 32px;
+                    button {
+                        transition: all .2s;
+                    }
+                }
+                span.anticon {
                     opacity: .6;
                     cursor: help;
                 }

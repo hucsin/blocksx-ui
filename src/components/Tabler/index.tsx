@@ -22,7 +22,6 @@ import { routerParams } from '../utils/withRouter';
 
 
 
-
 interface TablerState {
     loading: boolean;
     searcher: any;
@@ -84,6 +83,8 @@ interface TablerValueProps extends TablerProps {
  * 2、将公共部分逻辑迁移到这里
  */
 export default class Tabler extends React.Component<TablerValueProps, TablerState> {
+
+    static TablerList: any = TablerList;
     static defaultProps = {
         type: 'table',
         searchSize: 'small',

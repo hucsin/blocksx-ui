@@ -1,0 +1,95 @@
+.ui-reco-filter {
+    min-width: 500px;
+    max-width: 500px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    .ui-mircotable.ui-mircotable-small .ant-list-item-meta .ant-list-item-meta-avatar .ui-more-icon> span:not(.ant-avatar) {
+        width: 14px;
+        height: 14px;
+        position: absolute;
+        color: #fff;
+        border-radius: 14px;
+        padding: 3px;
+        text-align: center;
+        line-height: 14px;
+        border: 2px solid #fff;
+        font-size:12px;
+        top: -2px;
+    }
+    .ui-recofilter-title {
+        position: relative;
+
+        .ui-back {
+            opacity: .6;
+            cursor: pointer;
+            span {
+                font-size:24px;
+                vertical-align: top;
+                margin-right: 4px;
+            }
+            &:hover {
+                opacity: .8;
+            }
+        }
+        .ui-tit {
+            opacity: .8;
+            span {
+                font-size:18px;
+                vertical-align: middle;
+                margin-right: 8px;
+                opacity: .6;
+            }
+        }
+        .ant-space-item-split {
+            font-size:12px;
+            opacity: .6;
+        }
+        .ui-minisearch {
+            position: absolute;
+            top: -4px;
+            right: 0px;
+        }
+    }
+    .ant-popover-title {
+        border-bottom: 1px solid var(--main-inverse-border-color);
+        padding-bottom: 8px;
+    }
+    .ant-tag {
+        margin-inline-end: 0;
+        padding-inline: 4px;
+        line-height: 16px;
+        font-size:12px;
+    }
+    .ui-header {
+        opacity: .5;
+        padding-bottom: 8px;
+        position: relative;
+
+       
+    }
+    .ant-popover-title {
+        opacity: .7;
+    }
+    .ui-bodyer {
+        
+        .ui-mircotable {
+            height: calc(90vh - 100px);
+            max-height: 600px;
+            overflow: auto;
+            font-size:12px;
+            opacity: .8;
+        }
+        .ant-list .ant-list-item .ant-list-item-meta .ant-list-item-meta-title {
+            opacity: .9;
+        }
+
+        .ui-mircotable.ui-mircotable-small .ant-list .ant-list-item .ant-list-item-meta .ant-list-item-meta-avatar {
+            margin-top: 3px;
+        }
+        .ant-list-item .ant-list-item-meta .ant-list-item-meta-description {
+            font-size:12px;
+            padding-top: 2px;
+            line-height: 14px;
+        }
+    }
+}
