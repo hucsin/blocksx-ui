@@ -1,0 +1,10 @@
+.ui-avatar-merge {
+    display: inline-block;
+    position: relative;
+    .ui-sub {
+        position: absolute;
+        z-index: 111;
+        bottom: -10px;
+        right: -7px;
+    }
+}

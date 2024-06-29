@@ -61,10 +61,13 @@ interface TablerListProps extends TablerProps {
     layout?: 'horizontal' | 'card' | 'avatar' | 'connections' | 'info';
     maxIcon?: number;
     minIcon?: number;
+    avatarShape?: any;
+    groupKey?: string;
     icon?: string;
     classify?: 'mini' | 'default';
     onGetRequestParams?: Function;
     avatarSize?: number;
+    avatarMerge?: boolean;
     onAddNew?: Function;
     onRowClick?: Function;
 
@@ -78,17 +81,21 @@ interface TablerListProps extends TablerProps {
     renderRowTitle?: Function;
     renderRowDescription?: Function;
     renderRowContent?: Function;
+
+    onFetchList?: Function
 }
 
 export default class TablerList extends React.Component<TablerListProps, TablerState> {
 
     static defaultProps = {
         pageSize: 10,
+        pageNumber: 1,
         type: 'table',
         layout: 'avatar',
         formerAction: '',
         classify: 'default',
         quickValue: '',
+        avatarMerge: false,
         rowSelection: false,
         autoColor: true,
         grid: {
@@ -129,11 +136,19 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
     }
     
-    public componentDidMount() {
+    public componentDidMount () {
         //this.initDataSource(this.props);
-        this.setState({
-            dataSource: this.getDataSource()
-        })
+        if (this.props.onFetchList) {
+
+            this.fetchDataSource({
+                pageNumber: this.state.pageNumber,
+                pageSize: this.state.pageSize
+            });
+        } else {
+            this.setState({
+                dataSource: this.getDataSource()
+            })
+        }
     }
     private getDefaultLayout() {
         return this.props.avatar
@@ -144,24 +159,83 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     public getNextDatasource = () => {
         
         if (this.state.pageNumber * this.state.pageSize < this.state.total) {
-            this.props.onChangePage && this.props.onChangePage({
-                pageNumber: this.state.pageNumber + 1,
-                pageSize: this.state.pageSize
-            }, true)
+            if (this.props.onFetchList) {
+                
+                this.fetchDataSource({
+                    pageNumber: this.state.pageNumber + 1,
+                    pageSize: this.state.pageSize
+                });
+
+            } else {
+                this.props.onChangePage && this.props.onChangePage({
+                    pageNumber: this.state.pageNumber + 1,
+                    pageSize: this.state.pageSize
+                }, true)
+            }
         }
     }
     private getDataSource(): any {
         if (this.props.getDataSource) {
-            return this.props.getDataSource() as any[];
+            let datasource: any =  this.props.getDataSource(this.state.pageNumber, this.state.pageSize) as any[];
+            
+            // group
+            if (this.props.groupKey) {
+                let cacheGroup: any = {};
+                let trueDatasource: any = [];
+                let groupKey: string = this.props.groupKey;
+                datasource.forEach(it => {
+                    let value: any = it[groupKey];
+                    if (!cacheGroup[value]) {
+                        cacheGroup[value] = []
+                    }
+                    cacheGroup[value].push(it)
+                })
+
+                Object.keys(cacheGroup).map(it => {
+
+                    trueDatasource.push({
+                        $type: 'group',
+                        title: it
+                    })
+
+                    trueDatasource.push.apply(trueDatasource, cacheGroup[it]);
+
+                })
+                return trueDatasource;
+            }
+
+            return datasource;
         }
-     }
+    }
+
+    public fetchDataSource(params: any) {
+        if (this.props.onFetchList){
+            this.props.onFetchList(params).then(result => {
+                this.setState({
+                    pageNumber: result.pageNumber,
+                    pageSize: result.pageSize,
+                    total: result.total,
+                    dataSource: result.data
+                })
+            })
+        }
+    }
 
     public UNSAFE_componentWillReceiveProps(newProps: any) {
         if (newProps.reflush !== this.state.reflush) {
-            this.setState({
-                dataSource: this.getDataSource(),
-                reflush: newProps.reflush
-            }, ()=> this.resetDataSource())
+
+            if (this.props.onFetchList) {
+                this.setState({reflush: newProps.reflush})
+                this.fetchDataSource({
+                    pageNumber: 1,
+                    pageSize: this.state.pageSize
+                });
+            } else {
+                this.setState({
+                    dataSource: this.getDataSource(),
+                    reflush: newProps.reflush
+                }, ()=> this.resetDataSource())
+            }
         }
 
         if (newProps.total !== this.state.total) {
@@ -259,6 +333,9 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         return layout;
     }
     private getAvatarShape() {
+        if (this.props.avatarShape ) {
+            return this.props.avatarShape;
+        }
         if (['info', 'card'].indexOf(this.props.layout as any) > -1 ) {
             return 'square'
         }
@@ -324,6 +401,10 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             let avatarData: any = rowData[avatarField.key];
 
             if (avatarData) {
+                if (this.props.avatarMerge) {
+                    return avatarData;
+                }
+
                 let avatars: any = Array.isArray(avatarData) ? avatarData : [avatarData];
                 
                 return this.paddingAvatar(avatars.map(it => {
@@ -331,7 +412,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         
                     let icon: string = temp.icon || temp.url || temp.avatar || temp.image ||'';
                     //let iconMaps: any = this.props.iconMaps || {}
-        
+                    
                     return icon ? {
                         icon: icon,
                         //type: icon.match(/[\/\.]/) ? 'img' : 'icon',
@@ -368,6 +449,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         }
 
         if (avatars = this.getAvatarsByRowData(rowData, rowIndex, avatarPlace = this.getFieldByPlace('avatar'))) {
+            
             if (this.props.avatar == 'auto') {
 
 
@@ -383,12 +465,12 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                         </span>
                     )
                 }
-
+                
                 return (
                     <span className='ui-mircotable-avatar'>
-                        {avatars.map((avatar, index) => {
+                        {!this.props.avatarMerge ? avatars.map((avatar, index) => {
                             return <FormerTypes.avatar shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} key={index} {...avatar} size={this.getAvatarSize()} style={{ zIndex: avatars.length - index }} />
-                        })}
+                        }) : <FormerTypes.avatar shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} key ='at' size={this.getActionSize()} icon={avatars}  />}
                     </span>
                 )
             }
@@ -437,11 +519,12 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     }
 
     private onClickItem = ( operate:any, rowData:any,rowIndex:number) => {
-        if (this.state.optional) {
-            if (this.props.onRowClick) {
-                this.props.onRowClick(operate, rowData, rowIndex)
-            }
+        
+        if (this.props.onRowClick) {
+            this.props.onRowClick(operate, rowData, rowIndex)
+        }
 
+        if (this.state.optional) {
             this.setState({
                 selectedKey: rowData[this.props.rowKey]
             })
@@ -534,7 +617,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         let { dataSource } = this.state;
 
         if (dataSource && dataSource.length) {
-           
+          
             return (<InfiniteScroll
                 dataLength={dataSource.length}
                 next={this.getNextDatasource}

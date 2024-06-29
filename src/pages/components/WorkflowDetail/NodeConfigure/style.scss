@@ -3,19 +3,16 @@
     max-width: 500px;
     padding-top: 10px;
     padding-bottom: 10px;
-    .ui-mircotable.ui-mircotable-small .ant-list-item-meta .ant-list-item-meta-avatar .ui-more-icon> span:not(.ant-avatar) {
-        width: 14px;
-        height: 14px;
-        position: absolute;
-        color: #fff;
-        border-radius: 14px;
-        padding: 3px;
-        text-align: center;
-        line-height: 14px;
-        border: 2px solid #fff;
-        font-size:12px;
-        top: -2px;
+
+    .ant-popover-inner {
+        padding: 16px;
     }
+    .ui-searchbar {
+        position: absolute;
+        right: 0;
+        width: 140px;
+    }
+   
     .ui-recofilter-title {
         position: relative;
 
@@ -50,6 +47,15 @@
             right: 0px;
         }
     }
+    .ui-mircotable.ui-mircotable-small .ant-list-split .ant-list-item::after {
+        display:none;
+    }
+    .ui-mircotable.ui-mircotable-small .ant-list-item-meta .ant-list-item-meta-title ,
+    .ui-mircotable.ui-mircotable-small .ant-list-item-meta .ant-list-item-meta-description {
+        display: block;
+        margin-left: 0;
+        font-weight: initial;
+    }
     .ant-popover-title {
         border-bottom: 1px solid var(--main-inverse-border-color);
         padding-bottom: 8px;
@@ -65,7 +71,7 @@
         padding-bottom: 8px;
         position: relative;
 
-       
+        padding-left: 8px;
     }
     .ant-popover-title {
         opacity: .7;
@@ -90,6 +96,30 @@
             font-size:12px;
             padding-top: 2px;
             line-height: 14px;
+        }
+        .ant-list-item {
+            cursor: pointer;
+            border: 0.5px solid #fff;
+            
+            &:not(.stop-animation):hover {
+                box-shadow: 0 2px 4px 0 rgba(30, 30, 31, 0.0392156863);
+                border: 0.5px solid var(--secondary-border-color);
+                margin-left: -0.5px;
+                margin-top: -0.5px;
+
+                transform: scale(1.01);
+                max-width: calc(100% + 10px);
+            }
+        }
+    }
+}
+.ui-node-configure-wrapper {
+    .ui-createdat-wrapper {
+        display: none;
+    }
+    .ui-mircatable-type-avatar {
+        .ui-mircotable-avatar span {
+            //color:#fff
         }
     }
 }

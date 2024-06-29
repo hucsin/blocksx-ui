@@ -179,7 +179,7 @@
         // 按钮模式
         switch(props.type) {
             case 'block':
-                return this.renderBlock();
+                return this.props.viewer ? this.renderButton() : this.renderBlock();
             default:
                 return this.renderButton();
         }

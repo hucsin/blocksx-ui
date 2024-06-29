@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import './style.scss';
 import { FetchMap } from '../typing';
 import NodeConfigure from '../NodeConfigure';
-import { DomUtils, MircoAvatar, ContextMenu, Icons, SmartPage, PluginManager } from '@blocksx/ui';
+import { DomUtils, FormerTypes, ContextMenu, Icons, SmartPage, PluginManager } from '@blocksx/ui';
 
 import i18n from '@blocksx/i18n';
 import { PlusOutlined } from '@ant-design/icons';
@@ -15,7 +15,7 @@ interface IMircoFlowNode {
     left: number;
     top: number;
     color: string;
-    subicon?: string;
+    icon?: string;
     props: any;
     isNew?: boolean;
     fetchMap: FetchMap;
@@ -170,6 +170,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     }
     private getIcon() {
         let { props ={} } = this.state;
+        let subicon: string ;
 
         if (this.state.type == 'empty') {
             return 'PlusOutlined'
@@ -177,14 +178,17 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         if (this.state.type =='router') {
             return 'RouterUtilityOutlined';
         }
+
         if (props.icon) {
             if (typeof props.icon =='string') {
-                return props.icon;
+                subicon = props.icon;
             } else {
-                return props.icon.icon;
+                subicon =  props.icon.icon;
             }
+            return [this.props.icon, subicon]
         }
-        return this.state.color;
+        
+        return [this.props.icon];
     }
     private addRouterChildren =(event?: any)=> {
         this.props.onAddNodeChildren 
@@ -201,12 +205,12 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     private consume(event?: any) {
         event && DomUtils.consume(event);
     }
-    public renderDefaultNodeContent(icon: string, color: string) {
+    public renderDefaultNodeContent(icon: any, color: string) {
         let { props = {}} = this.state;
-      
+        console.log(icon, 33332323)
         return (
             <>
-                <MircoAvatar icon={icon} color={color}/>
+                <FormerTypes.avatar size={100}  icon={icon} color={color}/>
                 <div className='ui-adder'  onClick={this.addRouterChildren}><PlusOutlined/></div>
                 {this.state.type == 'go' && <div className='ui-adder-router' onClick={this.addTiggerNode}><PlusOutlined/></div>}
                 {props.title &&<div className='ui-title'>{props.title }</div>}
@@ -227,7 +231,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
 
                         onFetchRecoFilter={(parmas)=>{
                         
-                            return this.props.fetchMap['programs']({...parmas}, 'other')
+                            return this.props.fetchMap['programs']({...parmas}, 'notrigger')
                         }}
                         onClassifyClick={(row) => {
                             this.props.onUpdateNode && this.props.onUpdateNode(this.props.name, row);
@@ -240,7 +244,6 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             case 'router':
             case 'go':
             default:
-                console.log(this.state.openSetting)
                 return (
                     <SmartPage
                         name={defaultProps.componentName || 'router'}
@@ -284,8 +287,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     public render () {
         
         let color: string = this.getColor();
-        let icon: string = this.getIcon();
-
+        let icon: any = this.getIcon();
+        console.log(this.props.icon, 333)
         // 
         return (
             <div 
@@ -309,15 +312,15 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                    // type ={this.state.type} 
                     menu={this.getContextMenu()}
                 />
-                {this.renderNodeContent(icon, color)} 
-                {this.renderNodeSubIcon()}
+                {this.renderNodeContent(icon[0], color)} 
+                {icon[1] && this.renderNodeSubIcon(icon[1])}
             </div>
         )
     }
-    private renderNodeSubIcon() {
+    private renderNodeSubIcon(icon?: string) {
         let { props ={} } = this.state;
 
-        let Iconview: any = Icons[props.subicon];
+        let Iconview: any = Icons[icon || props.subicon];
         
         if (Iconview) {
             

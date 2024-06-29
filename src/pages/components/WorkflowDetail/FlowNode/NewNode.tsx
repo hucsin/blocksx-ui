@@ -33,6 +33,19 @@ export default class NewNode extends React.Component<NewNodeProps, {open: any}> 
                         return this.props.fetchMap['programs']({...parmas},  this.props.workflowType)
                     }}
                     onClassifyClick={(row) => {
+
+                        // 修改icon
+                        if (Array.isArray(row.icon) && row.icon.length == 2) {
+                            //row.icon = row.icon[1];
+                            
+                            //if (row.props) {
+                              //  row.props.icon = row.icon[1];
+                            //}
+                        }
+                        
+                        //row.icon = row.icon.replace(/#[a-z0-9A-Z]+$/, '');
+
+                        
                         this.props.onAddNewNode(row, this.newRef.getBoundingClientRect())
                     }}
                     onOpenChange={(v)=> {this.setState({open: v})}}

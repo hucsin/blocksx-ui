@@ -115,8 +115,8 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
         return (
             <div className='ui-recofilter-title'>
                 {this.getTitleContent()}
-                <SearchBar value={this.state.query} placeholder='search' 
-                onChange={(query)=> {
+                <SearchBar value={this.state.query} size={'small'} placeholder='search' 
+                onChange={({query})=> {
                     this.setState({
                         query: query
                     }, ()=> {
@@ -155,7 +155,7 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
             })
         }
     }
-    private onItemClick =(rowItem: any)=> {
+    private onItemClick =(_:any, rowItem: any)=> {
         // 分类点击
         if (this.state.path == "category") {
 
@@ -189,7 +189,7 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
         if (query) {
 
             return data.filter(it => {
-                let name: string = (it.title || '').toLowerCase();
+                let name: string = (it.name || '').toLowerCase();
                 let description: string = (it.description||'') .toLowerCase();
 
                 return name.indexOf(query) > -1 || description.indexOf(query) > -1;
@@ -198,9 +198,9 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
         return data;
     }
     public renderContent() {
-
+        
         return (
-            <div className='' 
+            <div className='ui-node-configure-wrapper' 
                 onContextMenu={DomUtils.consume}
                 onMouseUp={DomUtils.consume}
             >
@@ -217,7 +217,7 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
                                 checked={tag.value == this.state.category}
                                 onChange={(checked) => this.handleChange(tag.value, checked)}
                             >
-                               <Tooltip mouseLeaveDelay={.3} placement='bottom' title={tag.description}>{tag.label}</Tooltip> 
+                               <Tooltip mouseLeaveDelay={.3} placement='top' title={tag.description}>{tag.label}</Tooltip> 
                             </Tag.CheckableTag>
                         ))}
                     </Space>
@@ -231,13 +231,26 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
                             minIcon={1}
                             reflush = {this.state.reflush}
                             size='small'
-                            
+                            fields={[
+                                {
+                                    key: 'icon',
+                                    place: 'avatar' 
+                                },
+                                {
+                                    key: 'name',
+                                    place: 'title' 
+                                },
+                                {
+                                    key: 'description',
+                                    place: 'description'
+                                }
+                            ]}
                             avatarSize={40}
                             avatarShape='square'
                             actionSize='small'
                             classify='mini'
                             iconKey='status'
-                            onItemClick={this.onItemClick}
+                            onRowClick={this.onItemClick}
                             renderItemClassName={it => `ui-runlog-${it.type}`}
                             onFetchList={(params: any) => {
                                 return this.props.onFetchRecoFilter({
@@ -259,21 +272,26 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
                             reflush = {this.state.reflushDataSource}
                             size='small'
                             groupKey='type'
+                            avatarMerge={true}
                             avatarSize={40}
-                            renderAvatar= {(item: any)=> {
-                                let IconsView: any = Icons[item.subicon];
-
-                                return <span className='ui-mircotable-avatar ui-more-icon'>
-                                    <MircoAvatar shape="square" size={40} color={item.color} icon={item.icon} />
-                                    {IconsView ?<IconsView style={{backgroundColor:item.color}}/> :null}
-                                </span>
-                            }}
+                            fields={[
+                                {
+                                    key: 'icon',
+                                    place: 'avatar' 
+                                },
+                                {
+                                    key: 'name',
+                                    place: 'title' 
+                                },
+                                {
+                                    key: 'description',
+                                    place: 'description'
+                                }
+                            ]}
                             avatarShape='square'
-                            dataSource={this.getFilterData(this.state.dataSource)}
-                            actionSize='small'
-                            classify='mini'
-                            iconKey='status'
-                            onItemClick={this.onItemClick}
+                            getDataSource={()=> this.getFilterData(this.state.dataSource)}
+                            
+                            onRowClick={this.onItemClick}
                             renderExtra={() => { }}
                         ></Tabler.TablerList>}
                     </div>

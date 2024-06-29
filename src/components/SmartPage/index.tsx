@@ -427,8 +427,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     public renderContentView() {
         let { pageMeta} = this.state;
-        console.log('rendercontentview')
-
+        
         return SmartPageUtils.renderPageType(this.state.uiType, {
             key: this.state.classifyQuery,
             schema: this.state.schema,

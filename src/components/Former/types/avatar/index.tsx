@@ -6,13 +6,18 @@ import { utils } from '@blocksx/core';
 import * as Icons from '../../../Icons/index';
 import { IFormerBase } from '../../typings';
 
+import './style.scss';
+
 export interface IMircoAvatar extends IFormerBase {
     size?: any;
     icon?: string;
     url?: string;
     value?: string;
     text?: string;
+    
     color?: string;
+    subcolor?: string;
+
     autoColor?: boolean;
     style?: any;
     shape?: 'circle' | 'square'
@@ -39,7 +44,7 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
         let number = hash % this.defaultColor.length;
         return this.defaultColor[number];
     }
-    public renderItem(props: any, icon: string, color: string, tips?: string) {
+    public renderItem(props: any, icon: string, color: string, tips: string= '', fontColor?: string) {
 
         
         if (props.text) {
@@ -53,24 +58,40 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
                 return (<Tooltip title={tips}><Avatar size={props.size} shape={props.shape} style={{backgroundColor:color, ...props.style}}  src={icon} /></Tooltip>)
             }
             // 如果icon是 xxx#ffff模式
-            if (icon.match(/#/)) {
-                let matchicon: any = icon.split('#');
-                icon = matchicon[0];
-                color = '#' + matchicon[1];
-            }
-
-            let IconView: any = Icons[icon];
+            
+            let iconreg: any = this.getColorByIcon(icon);
+            let IconView: any = Icons[iconreg.icon];
+            
             if (IconView) {
                 return (<Tooltip title={tips}><Avatar 
                  shape = {props.shape}
                  size = {props.size} style={{
-                    background:color, 
-                    fontColor: props.autoColor ? '#fff' : '',
-                    ...props.style
+                    background:iconreg.color || color, 
+                    ...props.style,
+                    fontSize: props.size  * 2/3 ,
+
+                    color: fontColor || (props.autoColor ? '#fff' : '')
                 }} icon={<IconView/>} /></Tooltip>)
             }
         }
         return <Avatar/>
+    }
+    public getColorByIcon(icon:string) {
+        let iconRex: any = {};
+        if (icon) {
+            if (icon.match(/#/)) {
+                let matchicon: any = icon.split('#');
+                iconRex.icon = matchicon[0];
+                iconRex.color = '#' + matchicon[1];
+            } else {
+                iconRex.icon = icon;
+            }
+        }
+        return iconRex;
+    }
+    private getSubSize()  {
+        let size: any = this.props.size /2;
+        return parseInt(size, 10)
     }
     public render() {
         
@@ -78,11 +99,25 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
         let icon: any  = props.value || props.icon || props.url;
         
         if (Array.isArray(icon)) {
-            return (
-                <Avatar.Group className='ui-avatar-group'>
-                    {icon.map(ic => this.renderItem(props,ic.icon, ic.color, ic.name))}
-                </Avatar.Group>
-            )
+
+            if (utils.isArrayObject(icon)) {
+       
+                return (
+                    <Avatar.Group className='ui-avatar-group'>
+                        {icon.map(ic => this.renderItem(props,ic.icon, ic.color, ic.name))}
+                    </Avatar.Group>
+                )
+            } else {
+                
+                let iconreg: any = this.getColorByIcon(icon[0]);
+                // merge 模式
+                return (
+                    <div className='ui-avatar-merge'>
+                        {this.renderItem(props, icon[0], iconreg.color)}
+                        {icon[1] && <span className='ui-sub'>{this.renderItem({...props, shape: 'sh', size: this.getSubSize()}, icon[1], this.props.subcolor || '#ffffff', '', iconreg.color || this.props.color)}</span>}
+                    </div>
+                )
+            }
         } else {
             return this.renderItem(props, icon, props.color || (props.autoColor && this.getColor(icon || props.text)) || '')
         }

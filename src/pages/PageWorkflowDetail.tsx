@@ -4,6 +4,8 @@ import WorkflowDetail  from './components/WorkflowDetail';
 
 //import { getFormerSchema } from './former';
 
+import { omit } from 'lodash';
+
 interface IFlowEdit {
     router: routerParams;
     
@@ -12,15 +14,15 @@ interface IFlowEdit {
 
 class PageWorkflowDetail extends React.Component<IFlowEdit> {
     private fetchViewRequest: any = SmartRequest.createPOST('/api/thinking/view', true);
-    private fetchUpdateRequest: any = SmartRequest.createPOST('/api/workflow/update', true);
-    private fetchToggleStatusRequest: any = SmartRequest.createPOST('/api/workflow/toggleStatus', true);
-    private fetchToggleFavoritesRequest: any = SmartRequest.createPOST('/api/workflow/toggleFavorites', true);
-    private fetchPublishRequest: any = SmartRequest.createPOST('/api/workflow/publish', true);
+    private fetchUpdateRequest: any = SmartRequest.createPOST('/api/thinking/update', true);
+    private fetchToggleStatusRequest: any = SmartRequest.createPOST('/api/thinking/toggleStatus', true);
+    private fetchToggleFavoritesRequest: any = SmartRequest.createPOST('/api/thinking/toggleFavorites', true);
+    private fetchPublishRequest: any = SmartRequest.createPOST('/api/thinking/publish', true);
 
-    private fetchPragramsRequest: any =  SmartRequest.createPOST('/api/pragrams/list');
-    private fetchVersionHistoryRequest: any = SmartRequest.createPOST('/api/workflow/history');
-    private fetchRestoreRequest: any = SmartRequest.createPOST('/api/workflow/restoreHistory', true)
-    private fetchCloneRequest: any = SmartRequest.createPOST('/api/workflow/clone', true);
+    private fetchPragramsRequest: any =  SmartRequest.createPOST('/eos/programs/list');
+    private fetchVersionHistoryRequest: any = SmartRequest.createPOST('/api/thinking/history');
+    private fetchRestoreRequest: any = SmartRequest.createPOST('/api/thinking/restoreHistory', true)
+    private fetchCloneRequest: any = SmartRequest.createPOST('/api/thinking/clone', true);
 
 
     private router: routerParams;
@@ -50,7 +52,6 @@ class PageWorkflowDetail extends React.Component<IFlowEdit> {
                     }
                 }}
                 onFetchValue={()  => {
-                    console.log(this.props.router)
                     return this.fetchViewRequest({id: this.props.router.params.id})
                 }}
                 onPublishValue={this.fetchPublishRequest}
@@ -141,22 +142,22 @@ class PageWorkflowDetail extends React.Component<IFlowEdit> {
                                 pageNumber: params.pageNumber,
                                 pageSize: params.pageSize,
                                 actionType: workflowType,
-                                query: params.query
+                                query: params.query,
+                                $core: true
                             }).then(result => {
                                 
-                                return {data: result.data.map(it => {
-                                
+                                return {...omit(result, ['']), data: result.data.map(it => {
+                                    it.icon = it.icon + it.color;
                                     it.actions = it.actions ? it.actions.map(ac => {
                                         return {
                                             ...ac,
                                             color: it.color,
-                                            icon: it.icon,
-                                            subicon: ac.icon,
+                                            icon: [it.icon, ac.icon],
                                             componentName: [it.name, ac.name].join('.')
                                         };
                                     }) : []
                                     return it;
-                                }),total: result.total};
+                                })};
                             })
                         }
                     }

@@ -209,6 +209,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                 },
                 new: {
                     type: 'empty',
+                    icon: 'empty',
                     color:'#cccccc'
                 }
             },
@@ -386,12 +387,23 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     }
     public getFlowNodeByNodeInfo(nodeInfo: any) {
         let type: string = nodeInfo.actionType =='trigger' ? 'go' : 'module';
+        let icon: any = nodeInfo.icon; 
+        let subicon: string = '';
+
+        if (Array.isArray(icon)) {
+            icon = icon[0].replace(/#[a-zA-Z0-9]+/, '')
+            subicon = nodeInfo.icon[1] || icon;
+        }
+        console.log(nodeInfo, subicon, icon)
+
         return {
             color: nodeInfo.color,
+            icon: icon,
             type: nodeInfo.type || type,
             props: {
                 type: type,
-                ...nodeInfo
+                ...nodeInfo,
+                icon: subicon
             }
         }
     }
