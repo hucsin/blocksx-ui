@@ -13,7 +13,7 @@ import PageManger from './core/SmartPageManger';
 import SmartRequest from '../utils/SmartRequest';
 import ClassifyPanel from '../ClassifyPanel';
 import FilterFolder from '../FilterFolder';
-import Notice from '../Former/types/notice';
+
 
 import withRouter, { routerParams } from '../utils/withRouter';
 import { PageMeta } from './interface';
@@ -22,9 +22,13 @@ import SmartUtil from './core/utils';
 import './style.scss';
 import SmartPageUtils from './core/utils';
 
+import { cloudTexture, mainTexture} from './core/texture'
 
 
 
+
+
+const svgbgstring = cloudTexture;
 
 
 export interface SmartPageProps {
@@ -365,10 +369,10 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         if (this.props.router) {
             this.props.router.utils.goQuery({
                 classify: query,
-                folder: null
+                folder: isFolderFilter ? '' : this.state.folderQuery
             })
         }
-        
+
         this.setState({
             classifyQuery: query,
             folderMeta: isFolderFilter ? null: this.state.folderMeta,
@@ -398,8 +402,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         })
     }
     private getQueryParams = ()=> {
-        let { folderQuery, classifyQuery, defaultClassify } = this.state;
+        let { folderQuery, classifyQuery, defaultClassify, defaultFolder } = this.state;
         let classifyName: string = classifyQuery || defaultClassify;
+        let folderName: any = folderQuery || defaultFolder;
         let params: any = {};
 
         
@@ -408,11 +413,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 params[this.state.classifyField.key] = classifyName
             }
         }
-        if (this.state.folderField && folderQuery) {
-            if (folderQuery !== 'all') {
-                params[this.state.folderField.key] = folderQuery;
+        if (this.state.folderField && folderName) {
+            if (folderName !== 'all') {
+                params[this.state.folderField.key] = folderName;
             }
         }
+
         return params;
     }
     private onChangeValue =(value: any)=> {
@@ -436,7 +442,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             title: this.state.title,
             path: this.state.path,
             reflush: this.state.reflush,
-            value: this.props.value,
+            value: this.state.value,
             okText: this.state.okText,
             onIcon: this.state.okIcon,
             rowSelection: this.state.rowSelection,
@@ -509,11 +515,14 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     })}>
                         <div className='ui-classify-content-left'>
                             {this.renderContentView()}
+                            <div className='ui-background-dw' dangerouslySetInnerHTML={{ __html: svgbgstring }}>
+                            </div>
                         </div>
                         <div className='ui-classify-content-right'>
                             <div ref={this.optionalContainerRef}></div>
                         </div>
                     </div>
+                    <div className='ui-background-dwbg' dangerouslySetInnerHTML={{ __html: mainTexture }}></div>
                 </div>
                 
                 </>
@@ -669,7 +678,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         let offsetY:number = Math.abs(event.pageY - downAt.pageY);
         
 
-        this.canShow = offsetX < 10 && offsetY < 10;
+        this.canShow = offsetX < 1 && offsetY < 1;
     }
     public renderTitle() {
         return (

@@ -7,6 +7,8 @@ import { DomUtils, FormerTypes, ContextMenu, Icons, SmartPage, PluginManager } f
 
 import i18n from '@blocksx/i18n';
 import { PlusOutlined } from '@ant-design/icons';
+import { omit } from 'lodash';
+
 
 
 interface IMircoFlowNode {
@@ -39,12 +41,11 @@ interface SMircoFlowNode {
     props: any;
     cacheProps: any;
     openSetting: boolean;
-    
+    hasChanged: boolean;
 }
 
 export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMircoFlowNode> {
     
-   
     private defaultColor: string = '#cccccc';
     private mircoFlow: any;
     
@@ -52,7 +53,6 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         let noDelete: boolean = type == 'router';
         let isTrigger: boolean = type == 'go';
 
-       
         return [
             {
                 name: i18n.t('Setting'),
@@ -67,11 +67,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 type: 'add',
                 icon: 'PlusOutlined'
             },
-            {
+            /*{
                 name: i18n.t('Clone the {name}', { name: type =='go' ? 'trigger' : 'module' }),
                 type: 'clone',
                 icon: 'CopyOutlined'
-            },
+            },*/
             !isTrigger ? false : {
                 type: 'divider'
             },
@@ -81,12 +81,12 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 type: 'addTrigger',
                 icon: 'PlusOutlined'
             },
-
+            /*
             noDelete ? false : {
                 type: 'divider'
-            },
+            },*/
             noDelete ? false : {
-                name: i18n.t('Delete the {name}', { name: type == 'go' ? 'trigger' : 'module'}),
+                name: i18n.t('Delete {name}', { name: type == 'go' ? 'trigger' : 'module'}),
                 type: 'delete',
                 icon: 'DeleteOutlined',
                 danger: {
@@ -116,7 +116,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             isNew: props.isNew,
             props: cprops,
             cacheProps: JSON.stringify(cprops),
-            openSetting: false
+            openSetting: false,
+            hasChanged: false
         };
 
         this.mircoFlow = props.mircoFlow;
@@ -250,20 +251,34 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         name={defaultProps.componentName || 'router'}
                         type="popover"
                         simplicity
-                        value={this.state.props}
+                        icon="SettingOutlined"
+                        value={this.state.props || {}}
                         onChangeValue={(props)=> {
-                            //console.log(props, 89898989)
+                            
+                           // let pickvalue: any = pick(this.state.props, ['icon', 'color'])
+                            //console.log(pickvalue, props, 222, this.state.props)
+                            this.setState({
+                                props: props,
+                                hasChanged: true
+                            })
                         }} 
                         noToolbar
                         open={this.state.openSetting}
                         onShow={()=>this.setState({openSetting: true})}
-                        onClose={()=>this.setState({openSetting: false})}
+                        onClose={()=> this.onCloseLayer()}
                     >
                         {this.renderDefaultNodeContent(icon, color)}
                     </SmartPage>
                 )
         }
         
+    }
+    private onCloseLayer() {
+        this.setState({openSetting: false})
+
+        if (this.state.hasChanged) {
+            this.props.onUpdateNode && this.props.onUpdateNode(this.props.name, this.state.props, this)
+        }
     }
     public getContextMenu(): any {
 

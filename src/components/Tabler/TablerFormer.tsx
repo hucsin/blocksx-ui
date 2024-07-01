@@ -254,7 +254,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
     private getDefaultId() {
         let value: any = this.state.value;
-        console.log(value, value ? value.id || this.state.id : this.state.id ,2)
+        
         return value ? value.id || this.state.id : this.state.id;
     }
     private getDefaultNotice() {
@@ -483,7 +483,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         if (!visible) {
             return null;
         }
-        
+        console.log(JSON.stringify(pageSchema), 2222)
         return (
             <Former
                 title={this.getDefaultTitle()}

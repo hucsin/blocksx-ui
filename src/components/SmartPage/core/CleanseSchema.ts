@@ -54,7 +54,7 @@ export default class CleanseSchema {
             if (factor) {
 
                 let factorRequst: any = SmartRequst.createPOST(
-                    factor.path + `/${field.factor.type}`,
+                    factor.path + `/${field.factor.type || field.factor.name}`,
                     true
                 );
                 fieldObject.dataSource = (value: any) => {

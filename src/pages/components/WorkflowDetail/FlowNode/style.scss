@@ -72,6 +72,7 @@
         left: -50%;
         top: 130px;
         opacity: .6;
+        pointer-events: none;
     }
     &:hover {
         z-index: 110;

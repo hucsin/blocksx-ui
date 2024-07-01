@@ -85,7 +85,7 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
         }
     }
     
-    public componentWillUpdate(newProps: any) {
+    public UNSAFE_componentWillReceiveProps(newProps: any) {
         if (this.state.open !== newProps.open ) {
             this.setState({
                 open: newProps.open
@@ -95,8 +95,8 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
     private getTitleContent() {
         if (this.state.path == 'category') {
             return (<span className='ui-tit'>
-                    <Icons.WorkflowUtilityOutlined/>
-                    {i18n.t('Select the program to connect')}
+                    <Icons.ConfigurationUtilityOutlined/>
+                    {i18n.t('Select integration platform')}
                 </span>)
         } else {
             return (

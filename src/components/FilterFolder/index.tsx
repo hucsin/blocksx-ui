@@ -350,6 +350,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                             <Input  
                                 width={'50%'}
                                 size='small' 
+                                disabled
                                 placeholder='folder label'
                                 value={this.state.formLabel}
                                 maxLength={128}
@@ -363,7 +364,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                         </Space.Compact>
 
                     </div>
-                    <div className='ui-label'>{i18n.t('description')}</div>
+                    <div className='ui-label'>{i18n.t('description')} *</div>
                     <div>
                         <Input.TextArea 
                             size='small'
@@ -380,7 +381,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                         <Button 
                             type='primary'
                             size='small'
-                            disabled={!this.state.formInput || !this.state.formLabel }
+                            disabled={!this.state.formInput || !this.state.formLabel || !this.state.formText }
                             onClick={this.onSaveAddFolder} 
                         > {i18n.t('save')} </Button>
                     </div>
@@ -418,9 +419,9 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
             description: formText
         }
         
-        if (!formInput) {
+        if (!formInput && !formText) {
             return this.setState({
-                error: i18n.t('folder name  must be filled in') + '!'
+                error: i18n.t('Must be filled in all fields') + '!'
             })
         }
 
@@ -488,7 +489,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                                 <dt>
                                     <span className='title'>{i18n.t(this.props.mode + 's')} </span>
                                     {this.props.onAddCustomFolder && <Popover
-                                        title={i18n.t('add new folder')}
+                                        title={i18n.t('add folder')}
                                         placement='bottomLeft'
                                         trigger={['click']}
                                         content={this.renderPopoverContent}

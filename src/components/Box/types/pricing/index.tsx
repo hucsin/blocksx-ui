@@ -7,6 +7,7 @@ import * as Icons from '../../../Icons';
 import SmartRequest from '../../../utils/SmartRequest';
 import TablerUtils from '../../../utils/tool'
 import { BoxItem, BoxAction, BoxTag } from '../../interface';
+import { mainTexture } from '../../../SmartPage/core/texture';
 
 import BoxManger from '../../BoxManger';
 import './style.scss';
@@ -221,6 +222,7 @@ export default class BoxPricing extends React.Component<PricingProps, {selected:
                                 })
                             }}
                         >
+                            <div className='ui-background-dwbg' dangerouslySetInnerHTML={{ __html: mainTexture }}></div>
                             <dt>
                                 <Tag closable={false}>{it.label}</Tag>
                                 <p className='price-wrapper'>

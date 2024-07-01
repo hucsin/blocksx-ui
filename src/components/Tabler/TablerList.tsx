@@ -378,6 +378,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             if (newAvatars.length) {
                 newAvatars.push({
                     type: 'default',
+                    color: '#ccc',
                     text: '+' + (avatars.length - 3)
                 });
                 return newAvatars;
@@ -452,9 +453,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             
             if (this.props.avatar == 'auto') {
 
-
                 return this.renderAvatarAuto(avatarPlace, rowData);
-
             } else {
                 if (this.props.layout == 'connections' || this.props.avatar ==='connections') {
                     return (
@@ -493,8 +492,6 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             let extraList: any [] = this.getFieldsByPlace(place);
             let smartRequestMap: any = this.props.smartRequestMap || {};
 
-
-            
             return extraList.map((field, index) => {
                 return TableUtils.renderComponentByField(field, {
                     value: rowData[field.key],
@@ -520,6 +517,19 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
     private onClickItem = ( operate:any, rowData:any,rowIndex:number) => {
         
+        let { pageMeta = {} } = this.props;
+        let { props = {}} = pageMeta;
+
+        if (props.rowClickOperate) {
+            if (Array.isArray(pageMeta.rowoperate)) {
+                let find: any = pageMeta.rowoperate.find(it => it.name == props.rowClickOperate);
+                if (find) {
+                    operate = find;
+                }
+            }
+            
+        }
+        
         if (this.props.onRowClick) {
             this.props.onRowClick(operate, rowData, rowIndex)
         }
@@ -530,14 +540,21 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             })
         }
     }
-    
+    private canRowClick () {
+        let { pageMeta = {} } = this.props;
+        let { props = {}} = pageMeta;
+
+        return this.state.optional || props.rowClickOperate ;
+    }
     private renderListItem = (rowData: any, index: number) => {
 
         let ItemClassName: string = this.props.renderRowClassName ? this.props.renderRowClassName(rowData, index) : '';
-
-        if (this.state.optional ){
+        
+        
+        if (this.canRowClick() ){
             ItemClassName += ' ui-tabler-item-canselected'
-            if (rowData[this.props.rowKey] == this.state.selectedKey) {
+
+            if ( this.state.optional&& rowData[this.props.rowKey] == this.state.selectedKey) {
                 ItemClassName+= ' ui-tabler-item-selected';
             }
         }

@@ -137,6 +137,16 @@
             color:var(--main-front-color);
             transition: all .4s;
             padding-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+            .ui-background-dwbg {
+                right: auto;
+                top: auto;
+                left: -25px;
+                bottom: 0;
+                z-index: 0;
+                transform: rotate(0deg);
+            }
             
             &.ui-selected {
                 background-color: var(--main-bg-color);

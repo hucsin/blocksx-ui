@@ -14729,7 +14729,10 @@ var PLUMB_JS =  {};
             }
             else if (style[STROKE_DASHARRAY]) {
                 node.setAttribute(STROKE_DASHARRAY, style[STROKE_DASHARRAY]);
+                
             }
+            // by wangjian
+            node.setAttribute('style', 'cursor: pointer;')
 
             // extra attributes such as join type, dash offset.
             for (var i in svgAttributeMap) {

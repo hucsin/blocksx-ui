@@ -1,11 +1,11 @@
 import React from 'react';
-import { Button, Space, Dropdown, Tooltip, Popover, Menu, Spin } from 'antd';
+import { Button, Space, Dropdown, Tooltip, Popover, Menu, Spin, Input } from 'antd';
 
 import { utils } from '@blocksx/core';
 import i18n from '@blocksx/i18n';
 
 //import  { FlowNodeType,FlowNode } from '../ScenFlow/MiniFlow/typing'
-import { FlowNodeType, FlowNode, FlowConnector, MiniFlow, Icons, SmartPage, FormerTypes} from '@blocksx/ui';
+import { FlowNodeType, FlowNode, FlowConnector, MiniFlow, Icons, SmartPage, FormerTypes, mainTexture} from '@blocksx/ui';
 
 import { FormOutlined, CopyOutlined,HistoryOutlined } from '@ant-design/icons';
 import { FetchResult, withRouter } from '@blocksx/ui'
@@ -99,6 +99,9 @@ interface MircoFlowState {
     publishing: boolean;
     editLoading: boolean;
     reflush: any;
+
+    titleIsInput: boolean;
+    titleOffsetWidth: number;
 }
 
 class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState> {
@@ -114,6 +117,8 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         super(props)
         this.router = props.router;
         this.state = {
+            titleIsInput: false,
+            titleOffsetWidth: 0,
             nodes: [],
             workflowType: '',
             value: {},
@@ -230,9 +235,12 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                 isPublish: false,
                 connectors: data.connector
             }, () => {
-                this.props.onSaveFlowList && this.props.onSaveFlowList(this.state.value, data.nodes, data.connector)
+                this.saveFlowList(this.state.value, data.nodes, data.connector)
             })
         })
+    }
+    public saveFlowList(value: any, nodes: any, connector: any) {
+        this.props.onSaveFlowList && this.props.onSaveFlowList(value, nodes, connector)
     }
     private getQueryValue(queryKey: string) {
         let { query = {} } = this.router;
@@ -248,6 +256,34 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             formerType: typeof e == 'string' ? e : e.key
         })
     }
+    
+    public onTitleClick =(event) => {
+        let { value = {}} = this.state;
+        
+        this.setState({
+            titleIsInput: true,
+            titleOffsetWidth: Math.max(120, event.target.offsetWidth + 0)
+        })
+    } 
+    public onBlurTitle =(event) => {
+        
+        let { value = {}} = this.state;
+        this.setState({
+            titleIsInput: false
+        })
+
+        this.props.onEditorValue && this.props.onEditorValue(value)
+
+    }
+    public onChangeTitle =(e )=>  {
+        
+        let { value= {}} = this.state;
+        this.setState({
+            value: {...value, title: e.target.value},
+            //titleOffsetWidth: this.getWidthByValue(e.target.value)
+        })
+        
+    }
     public renderHeader() {
         let { value = {} } = this.state;
         return (
@@ -260,7 +296,18 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         })
                         return this.props.onEditorValue({id: this.state.value.id,  favorites: state})
                     }} value={this.state.favorites} /></span>
-                    <span className='ui-text'>{value.title}</span>
+                    <span className='ui-text'>
+                        {!this.state.titleIsInput 
+                            ? <span onClick={this.onTitleClick}>{value.title}</span> 
+                            : <Input 
+                                autoFocus
+                                value={value.title} 
+                                onBlur={this.onBlurTitle}
+                                style={{width: this.state.titleOffsetWidth}}
+                                onChange={this.onChangeTitle} 
+                            />
+                        }
+                    </span>
                 </span>
                 
             </div>
@@ -339,7 +386,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         return (
             <div className='ui-mircoflow-action-toolbar'>
                 <Space>
-                    <MagicSwitch unCheckedIcon='StartCircleUtilityFilled' checkedIcon='StopCircleUtilityFilled' size="default" loading={true}  value={this.state.status} onChangeValue={(state: boolean)=> {
+                    <MagicSwitch  size="default" loading={true}  value={this.state.status} onChangeValue={(state: boolean)=> {
                         this.setState({
                             status: state
                         })
@@ -360,9 +407,9 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                             this.miniFlow.doZoomNodeCanvas();
                         }} icon={<Icons.AutoZoomUtilityOutlined/>}/>
                     </Tooltip>
-                    <Dropdown.Button loading={this.state.editLoading} onClick={() => {this.doAction('edit')}} menu={{items: [{label: i18n.t('Clone'), key: 'clone', icon: <CopyOutlined/>}], onClick: this.doAction}}>
+                    {false&&<Dropdown.Button loading={this.state.editLoading} onClick={() => {this.doAction('edit')}} menu={{items: [{label: i18n.t('Clone'), key: 'clone', icon: <CopyOutlined/>}], onClick: this.doAction}}>
                         <FormOutlined />
-                    </Dropdown.Button>
+                    </Dropdown.Button>}
                 </Space>
             </div>
         )
@@ -393,7 +440,6 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             icon = icon[0].replace(/#[a-zA-Z0-9]+/, '')
             subicon = nodeInfo.icon[1] || icon;
         }
-        console.log(nodeInfo, subicon, icon)
 
         return {
             color: nodeInfo.color,
@@ -406,7 +452,21 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             }
         }
     }
-    public updateNodeByName =(id: string, nodeInfo: any)=> {
+    public patchNodeByName = (id: string, props: any) => {
+        let nodeInfo: any = this.miniFlow.getNodeByName(id);
+
+        if (nodeInfo.props) {
+            Object.assign(nodeInfo.props, props)
+        } else {
+            nodeInfo.props = props;
+        }
+        
+        this.miniFlow.updateNodeByName(id, nodeInfo, true)
+    }
+    public updateNodeByName =(id: string, nodeInfo: any, isPatch: boolean = false)=> {
+        if (isPatch) {
+            return this.patchNodeByName(id, nodeInfo);
+        }
         this.miniFlow.updateNodeByName(id, this.getFlowNodeByNodeInfo(nodeInfo), true)
     }
     public addNodeChildrenByName =(id:string) => {
@@ -547,6 +607,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                 {this.state.openLog && <MircoRunLog  router={this.router} fetchMap={this.props.fetchMap} logId={this.state.openLog} logType={this.state.logType} />}
                 {this.renderNewNodeToolbar()}
                 {this.state.value.id && <MirceVersionHistory onReflush={()=>{ this.reloadData() }} onClose={()=>{this.setState({openVersion:false})}} fetchMap={this.props.fetchMap}  open={this.state.openVersion} id={this.state.value.id}/>}
+                <div className='ui-background-dwbg' dangerouslySetInnerHTML={{ __html: mainTexture }}></div>
             </div>
         )
     }

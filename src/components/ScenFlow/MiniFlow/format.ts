@@ -51,6 +51,7 @@ export default class CanvasFormat {
             connect: {}
         }
 
+        
         startNodes.forEach((startNode:any, index:number) => {
             let fistNotStartNode: any = this.miniFlow.getConnectorBySourceName(startNode.name)[0];
 
@@ -136,15 +137,16 @@ export default class CanvasFormat {
         let startNodes: any = flow.data.map(it => this.miniFlow.getNodeByName(it));
         let maxPadding: number = Math.max(nickNode.paddingNumber, startNodes.length)
         let maxSize: number = maxPadding * paddingSize;
+        
+        
+        // 填写当前节点
+        this.repaintNodeSizeByNodeName([nickNode], nickNode, maxSize, paddingSize, true);
         // 先计算start节点
         
         this.repaintNodeSizeGroup(startNodes,  paddingSize, {
             ...nickNode,
-            paddingNumber: startNodes.length
+            //paddingNumber: startNodes.length +1
         });
-        
-        // 填写当前节点
-        this.repaintNodeSizeByNodeName([nickNode], nickNode, maxSize, paddingSize, true);
 
     }
     private repaint(flowMaps:any, paddingSize: number) {

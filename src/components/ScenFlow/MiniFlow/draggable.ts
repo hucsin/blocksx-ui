@@ -66,23 +66,34 @@ export default class CanvasDraggle {
             let step = 0.005;
             let detail = event.detail != 0 ? -event.detail : event.wheelDelta;
 
-            this.setZoom(this.diagram.getZoom() + detail * step);
+            
+            this.setZoom(this.diagram.getZoom() + (Math.min(Math.abs(detail), 6) * (detail < 0 ? -1 : 1)) * step);
         }
+        
         event.preventDefault();
         
     }
     public setZoom(zoom: number) {
 
-        zoom = this.getSafeZoom(zoom)
+        if (this.canZoom(zoom)) {
+            zoom = this.getSafeZoom(zoom)
 
-        let canvasPosition = Object.assign({}, this.diagram.getPosition());
-        canvasPosition.transform = `scale(${zoom})`;
+            let canvasPosition = Object.assign({}, this.diagram.getPosition());
+            canvasPosition.transform = `scale(${zoom})`;
 
+            
+            this.diagram.setZoom(this.zoom = zoom)
+            this.diagram.setPosition(canvasPosition);
 
-        this.diagram.setZoom(this.zoom = zoom)
-        this.diagram.setPosition(canvasPosition);
+            
 
-        this.canvas.style.transform = canvasPosition.transform;
+            this.canvas.style.transform = canvasPosition.transform;
+            this.canvas.style.transformOrigin = 'center'
+        }
+    }
+    public canZoom(zoom: number) {
+       return true;
+        // return this.canvas.offsetWidth * zoom > 400;
     }
     public getSafeZoom(zoom: number) {
         return Math.min(this.zoomMaxNumber, Math.max(this.zoomMinNumber, zoom))

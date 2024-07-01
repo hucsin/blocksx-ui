@@ -47,11 +47,35 @@
         right: 360px;
         padding-left: 40px;
 
+        input {
+            font-size: 20px;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            padding-left: 0px;
+            padding-right: 0px;
+            height: 28px;
+        }
         .ui-title {
-            padding-left: 32px;
+            padding-left: 16px;
+        
             padding-right: 32px;
+            
             .ui-text{
                 opacity: .6;
+                span {
+                    display:inline-block;
+                    border-bottom: 1px solid transparent
+                }
+                &:hover {
+                    span {
+
+                        border-bottom: 1px solid var(--main-bg-color)
+                    }
+                }
             }
             position: relative;
             display: inline-block;
@@ -61,6 +85,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
+            vertical-align: middle;
 
             .ui-node {
                 position: absolute;
@@ -72,7 +97,13 @@
         }
         > span.anticon:first-child {
             margin-left: -40px;
-            font-size: 32px;
+            font-size: 42px;
+            opacity: .6;
+            transition: all .2s;
+            vertical-align: middle;
+            &:hover {
+                opacity: 1
+            }
         }
     }
     .ui-mircoflow-flowlist {

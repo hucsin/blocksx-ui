@@ -9,6 +9,7 @@ import PositioningCanvas from './positioning';
 import FormatCanvas from './format';
 
 import { IRect, IPointCoord, FlowNode, FlowConnector } from './typing';
+import { text } from 'stream/consumers';
 /**
  * 一个极简交互的流程图绘制工具
  */
@@ -198,7 +199,7 @@ export default class MiniFlow extends EventEmitter {
     private hasNode(name: string) {
         return !!this.getNodeByName(name);
     }
-    private getNodeByName(name: string): any {
+    public getNodeByName(name: string): any {
         return this.nodes.find(it => it.name == name)
     }
     // 判断该节点是否有路由节点连线
@@ -691,6 +692,21 @@ export default class MiniFlow extends EventEmitter {
             this.connectorMap[sourceTargetName] = null;
         }
     }
+    private getSafeOpacityColor(color:string) {
+        if (color) {
+            if (color.length > 5) {
+                return color + '66'
+            } else if (color.length ==4) {
+                return color.split('').map(it=> {
+                    if (it !=='#') {
+                        return it+ it;
+                    }
+                    return it;
+                }).join('') + '66'
+            }
+            return color;
+        }
+    }
     /**
      * 添加节点
      * @param source 
@@ -703,30 +719,42 @@ export default class MiniFlow extends EventEmitter {
 
         let sourceColor: string = isTemporary ? '#e2e2e2' : sourceNode.color;
         let targetColor: string = isTemporary ? '#e2e2e2' : targetNode.color;
-        
 
+        
+        //this.instance.setCursor('pointer');
         if (this.hasConnectorBySourceTarget(source, target) && !this.connectorMap[this.getConnectorName(source, target)]) {
             this.instance.connect({
                 source: source,
                 target: target,
-
+                events:{
+                    click:function() { alert("you clicked on the arrow overlay")}
+                },
                 //endpoints:["Rectangle", 'Rectangle'],
                 endpointStyles: [{ fill: sourceColor }, { fill: targetColor }],
                 deleteEndpointsOnDetach: false,
                 connectionsDetachable: false,
                 connector: ['Straight'],
+                cssClass: 'link-hand',
                 paintStyle: {
+                    gradient: {
+                        stops: [
+                            [0, this.getSafeOpacityColor(sourceColor)],
+                            [0.8, this.getSafeOpacityColor(targetColor)]
+                        ]
+                    },
+                    "dashstyle": "1.4 .2",
+                    fillStyle: targetColor,
+                    stroke: targetColor,
+                    strokeWidth: 10,
+                    curror: 'pointer'
+                },
+                hoverPaintStyle: {
                     gradient: {
                         stops: [
                             [0, sourceColor],
                             [0.8, targetColor]
                         ]
                     },
-                    "dashstyle": "1 1",
-                    fillStyle: targetColor,
-                    stroke: targetColor,
-                    strokeWidth: 10,
-
                 },
                 overlays: [
                     ["Custom", {

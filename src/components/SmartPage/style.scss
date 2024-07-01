@@ -28,6 +28,7 @@
        border-bottom: 1px solid var(--main-inverse-border-color, rgba(5, 5, 5, 0.06));
        padding-bottom: 8px;
        font-size: 16px;
+       text-transform: capitalize;
        .anticon {
            margin-right: 4px;
            font-size:18px;
@@ -167,16 +168,69 @@
 
 
 }
+.ui-background-dwbg {
+   position: absolute;
+   top: -30px;
+   right: 0;
+   transform: rotate(-90deg);
+    z-index: -1;
+    opacity: .5;
+}
+.ui-background-dw {
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   width: 100%;
+   z-index: -1;
+   opacity: .7;
+   background-image: linear-gradient(to top, var(--main-background-color) 20%, var(--main-background-color) 80%);
+   @keyframes move-forever {
+      0% {
+      transform: translate3d(-90px,0,0);
+      }
+      100% { 
+        transform: translate3d(85px,0,0);
+      }
+    }
 
+    .parallax > use {
+      animation: move-forever 25s cubic-bezier(.55,.5,.45,.5)     infinite;
+    }
+    .parallax > use:nth-child(1) {
+      animation-delay: -2s;
+      animation-duration: 10s;
+    }
+    .parallax > use:nth-child(2) {
+      animation-delay: -3s;
+      animation-duration: 16s;
+    }
+    .parallax > use:nth-child(3) {
+      animation-delay: -4s;
+      animation-duration: 19s;
+    }
+    .parallax > use:nth-child(4) {
+      animation-delay: -5s;
+      animation-duration: 26s;
+    }
+   svg {
+      border-radius: 0 0 16px 16px;
+   }
+}
 .ui-classify-content-left {
   
    width: 100%;
    float:left;
    transition: all .2s;
    height: 100%;
-  
+   position: relative;
+   
+   > .ui-mircotable-wrapper{
+
+      height: 100%;
+      
+   }
+   
    > .tabler-wrapper {
-      overflow-y: auto;
       height: 100%;
       overflow-y: auto;
    }
@@ -241,7 +295,12 @@
    .ui-classify-content-type-blocks {
       background-color: #fff;
       border-radius: 16px;
-      padding-top: 48px;
+      >.ui-classify-content-left {
+         padding-top: 48px;
+         padding-left: 32px; 
+         padding-right: 32px;
+         box-sizing: border-box;
+      }
    }
    .ui-block {
       padding: 0px 0px;

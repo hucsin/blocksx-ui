@@ -601,7 +601,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         open={this.state.visible}
                         autoAdjustOverflow={true}
 
-                        onVisibleChange={(visible: boolean) => {
+                        onOpenChange={(visible: boolean) => {
                             if (!this.props.keep || visible) {
                                 this.setState({
                                     visible

@@ -305,6 +305,11 @@
     }
     
     .ant-list-split .ant-list-item {
+        &:Hover {
+            .ui-mircotable-avatar {
+                opacity: 1;
+            }
+        }
         &.ui-tabler-item-selected {
             background: var(--main-active-background-color);
         }
@@ -365,6 +370,7 @@
     }
     .ui-mircotable-avatar {
         padding-left: 8px;
+        opacity: .7;
         > span {
             position: relative;
             margin-left: -16px;

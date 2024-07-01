@@ -8,6 +8,8 @@ import ClassifyPanel from '../ClassifyPanel';
 import SmartPageUtil from './core/utils';
 import CleanseSchema from './core/CleanseSchema';
 
+import { mainTexture} from './core/texture';
+
 /**
  * 
  */
@@ -168,6 +170,7 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
                             )
                         })}
                     </ClassifyPanel>}
+                    <div className='ui-background-dwbg' dangerouslySetInnerHTML={{ __html: mainTexture }}></div>
                 </div>
             </Spin>
         )

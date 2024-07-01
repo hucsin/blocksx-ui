@@ -28,7 +28,7 @@ export * from './utils/withRouter';
 export * from './utils/typing';
 export * from './ScenFlow/MiniFlow/typing'
 
-
+export * from './SmartPage/core/texture'
 export * from './ContextMenu/typing';
 export * from './EditorCore/core';
 export *  as Icons from './Icons';
