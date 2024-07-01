@@ -23,8 +23,10 @@
     viewer: boolean;
     pageMeta: any,
     title: any;
+    onChangeValue?: Function;
     path: string;
     value: any;
+    
     valueMode?: string;
     reflush: any,
     okText: string;
@@ -42,6 +44,7 @@
     toolbarRef?: any;
 
     noTitle?: boolean;
+    noToolbar?: boolean;
 }
 
 interface SmartPageFormerState {
@@ -90,13 +93,20 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
         }
         public componentDidMount(): void {
             
-            this.ViewRequest(this.getDefaultParams()).then((result) => {
-                
+            if (this.props.value) {
                 this.setState({
-                    value: result,
+                    value: this.props.value,
                     loading: false
                 })
-            })
+            } else {
+                this.ViewRequest(this.getDefaultParams()).then((result) => {
+                    
+                    this.setState({
+                        value: result,
+                        loading: false
+                    })
+                })
+            }
         }
         private isStepFormer(schema: any) {
             let { fields = []} = schema ||{};
@@ -107,7 +117,7 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
     
         public UNSAFE_componentWillReceiveProps(newProps: SmartPageFormerProps) {
             
-            if (newProps.title !== this.state.title) {
+            if (newProps.title !== this.state.title && newProps.schema) {
                 
                 this.setState({
                     schema: this.getSchema(newProps.schema),
@@ -197,7 +207,7 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
             
         }
         private getStepTitle(IconsView) {
-            console.log(this.state.setpOneValue, 777)
+            
             return (
                 <div className={classnames({
                     'ui-header': true
@@ -366,6 +376,10 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                                         })
                                     }
                                 }
+
+                                if (this.props.onChangeValue) {
+                                    this.props.onChangeValue(value)
+                                }
                             }}
                             
                             disabled = {this.state.isStepMode && !this.state.setpOneValue}
@@ -375,7 +389,7 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                                 this.props.onCancel && this.props.onCancel();
                             }}
                             column = {pageMeta.column ? pageMeta.column as any : 'two'}
-                            
+                            hideButtons
                         />}
                     </Spin>
                 </>

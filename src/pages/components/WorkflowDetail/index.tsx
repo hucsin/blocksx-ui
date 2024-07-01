@@ -16,9 +16,7 @@ import MircoRunLog from './RunLog';
 import MirceVersionHistory from './VersionHistory';
 
 import { FetchMap } from './typing';
-
-import { omit } from 'lodash'
-
+import { omit } from 'lodash';
 import classnames from 'classnames';
 
 import './style.scss'
@@ -205,12 +203,13 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             templateMap: {
                 router: {
                     type: 'router',
+                    icon: '',
                     color: '#87d068'
                 },
                 new: {
                     type: 'empty',
-                    icon: 'empty',
-                    color:'#cccccc'
+                    icon: '',
+                    color:'#ccc'
                 }
             },
             nodes: this.state.nodes as FlowNode[],

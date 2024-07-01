@@ -177,7 +177,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             folderReflush: +new Date,
             layout: ''
         }
-
+        
         this.requestHelper = SmartRequest.createPOST(props.pageURI);
 
         this.canShow = false;
@@ -224,7 +224,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         })
     }
     public componentDidMount() {
-        if (!this.inFloatMode()) {
+        if (!this.inFloatMode() || this.props.open === true) {
             this.fetch();
         }
     }
@@ -284,9 +284,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     }
                     
                 }
-
+                let { meta = {} } = data.schema;
                 Object.assign(data, {
-
+                    title: meta.title || this.state.title,
                     metaKey: this.getMetaKey(data.pageMeta),
                     reflush: +new Date,
                     noFolder: this.state.noFolder,
@@ -302,8 +302,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 this.setState(data)
                 this.setLoading();
 
-            }, (eeee) => {
-                console.log(eeee)
+            }, (e) => {
                 this.setLoading()
             })
         }
@@ -323,8 +322,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             }
         }
         
-        if (newProps.title != this.state.title) {
-            
+        if (newProps.name != this.state.name) {
             this.setState({
                 name: newProps.name,
                 title: newProps.title,
@@ -355,6 +353,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
     }
     private needInitSchema() {
+
         if (this.inFloatMode() && !this.state.schema ) {
             this.fetch();
         }
@@ -437,6 +436,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             title: this.state.title,
             path: this.state.path,
             reflush: this.state.reflush,
+            value: this.props.value,
             okText: this.state.okText,
             onIcon: this.state.okIcon,
             rowSelection: this.state.rowSelection,

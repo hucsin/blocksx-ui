@@ -235,7 +235,7 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
         return (
             <>
                 {this.renderIcon(it)}
-                {it.label}
+                {it.label || it.name}
             </>
         )
     }

@@ -67,10 +67,11 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
                  shape = {props.shape}
                  size = {props.size} style={{
                     background:iconreg.color || color, 
-                    ...props.style,
+                    
                     fontSize: props.size  * 2/3 ,
-
-                    color: fontColor || (props.autoColor ? '#fff' : '')
+                    
+                    color: fontColor || (props.autoColor ? '#fff' : ''),
+                    ...props.style,
                 }} icon={<IconView/>} /></Tooltip>)
             }
         }
@@ -90,13 +91,24 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
         return iconRex;
     }
     private getSubSize()  {
-        let size: any = this.props.size /2;
+        let props: any = this.getProps();
+        let size: any = props.size * 2/3;
         return parseInt(size, 10)
+    }
+    private getProps() {
+        let props: any = {...this.props, ...this.props['x-type-props']};
+
+        if (typeof props.size !='number') {
+            props.size=  32
+        }
+
+        return  props;
     }
     public render() {
         
-        let props: any = {...this.props, ...this.props['x-type-props']};
+        let props: any = this.getProps();
         let icon: any  = props.value || props.icon || props.url;
+        let subsize: number = this.getSubSize();
         
         if (Array.isArray(icon)) {
 
@@ -114,7 +126,7 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
                 return (
                     <div className='ui-avatar-merge'>
                         {this.renderItem(props, icon[0], iconreg.color)}
-                        {icon[1] && <span className='ui-sub'>{this.renderItem({...props, shape: 'sh', size: this.getSubSize()}, icon[1], this.props.subcolor || '#ffffff', '', iconreg.color || this.props.color)}</span>}
+                        {icon[1] && <span className='ui-sub'>{this.renderItem({...props, shape: 'sh',style :{ width: subsize, height: subsize, fontSize: 14}, size: subsize}, icon[1], this.props.subcolor || '#ffffff', '', iconreg.color || this.props.color)}</span>}
                     </div>
                 )
             }

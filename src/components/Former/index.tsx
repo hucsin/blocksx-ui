@@ -68,6 +68,7 @@ export interface FormerProps {
 
     canmodify?: boolean;
     notice?: any;
+    hideButtons?: boolean
 }
 
 interface FormerState {
@@ -665,9 +666,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                     <div className='ui-former-content'>
                         
                         {this.renderLeaf()}
-                        <div className='ui-former-buttons'>
+                        {!this.props.hideButtons && <div className='ui-former-buttons'>
                             {this.renderOperateButton()}
-                        </div>
+                        </div>}
                     </div>
                 )
         }

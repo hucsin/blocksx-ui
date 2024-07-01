@@ -57,13 +57,13 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             {
                 name: i18n.t('Setting'),
                 type: 'setting',
-                icon: 'Setting'
+                icon: 'SettingUtilityOutlined'
             },
             {
                 type: 'divider'
             },
             {
-                name: i18n.t('Add a new module'),
+                name: i18n.t('Add a module'),
                 type: 'add',
                 icon: 'PlusOutlined'
             },
@@ -91,10 +91,10 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 icon: 'DeleteOutlined',
                 danger: {
                     errTips: i18n.t('Quietly delete the last start node, keep at least one start node'),
-                    condition:(_, nodeId: string) => {
+                    condition:(_, nodeName: string) => {
                         let starts:any = state.miniFlow.getStartNodes();
-                        let nodeInfo: any = state.miniFlow.getNodeById(nodeId);
-                        let targets: any = state.miniFlow.getConnectorBySourceId(nodeId);
+                        let nodeInfo: any = state.miniFlow.getNodeByName(nodeName);
+                        let targets: any = state.miniFlow.getConnectorBySourceName(nodeName);
 
                         return targets.length == 0 ? true : nodeInfo.type != 'go' || (!starts || starts.length > 1);
                     }
@@ -173,10 +173,10 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         let subicon: string ;
 
         if (this.state.type == 'empty') {
-            return 'PlusOutlined'
+            return ['PlusOutlined']
         } 
         if (this.state.type =='router') {
-            return 'RouterUtilityOutlined';
+            return ['RouterUtilityOutlined'];
         }
 
         if (props.icon) {
@@ -207,20 +207,19 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     }
     public renderDefaultNodeContent(icon: any, color: string) {
         let { props = {}} = this.state;
-        console.log(icon, 33332323)
         return (
             <>
                 <FormerTypes.avatar size={100}  icon={icon} color={color}/>
                 <div className='ui-adder'  onClick={this.addRouterChildren}><PlusOutlined/></div>
                 {this.state.type == 'go' && <div className='ui-adder-router' onClick={this.addTiggerNode}><PlusOutlined/></div>}
-                {props.title &&<div className='ui-title'>{props.title }</div>}
+                {props.description &&<div className='ui-title'>{props.description }</div>}
             </>
         )
     }
     public renderNodeContent(icon: string, color: string) {
         
         let defaultProps: any = this.props.props || {};
-
+        
         switch (this.state.type) {
             case 'empty':
                 return (
@@ -244,11 +243,18 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             case 'router':
             case 'go':
             default:
+
                 return (
                     <SmartPage
+                        pageURI='/api/thinking/findPage'
                         name={defaultProps.componentName || 'router'}
                         type="popover"
                         simplicity
+                        value={this.state.props}
+                        onChangeValue={(props)=> {
+                            //console.log(props, 89898989)
+                        }} 
+                        noToolbar
                         open={this.state.openSetting}
                         onShow={()=>this.setState({openSetting: true})}
                         onClose={()=>this.setState({openSetting: false})}
@@ -266,10 +272,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
 
     public onContextMenu = (event)=> {
         
-        let contextMenu: any = PluginManager.getContextMenu(this.props.name)
-        contextMenu.show({
-            event
-        })
+        ContextMenu.showContextMenu(this.props.name, event, {})
     }
     public onMenuClick =(item: any)=> {
         switch(item.type) {
@@ -280,7 +283,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 this.addRouterChildren()
                 break;
             case 'delete':
-                this.mircoFlow.miniFlow.deleteNodeById(this.props.name)
+                this.mircoFlow.miniFlow.deleteNodeByName(this.props.name)
                 break;
         }
     }
@@ -288,7 +291,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         
         let color: string = this.getColor();
         let icon: any = this.getIcon();
-        console.log(this.props.icon, 333)
+
         // 
         return (
             <div 
