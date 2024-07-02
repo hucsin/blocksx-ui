@@ -79,7 +79,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit> {
                         case 'favorites':
                             return this.fetchToggleFavoritesRequest(value)
                         default:
-                            return this.fetchUpdateRequest(value);
+                            return this.fetchUpdateRequest(omit(value, ['nodes', 'connectors','folder', 'favorites', 'status' ]));
                     }
                 }}
                 fetchMap={

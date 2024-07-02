@@ -46,6 +46,7 @@
         font-size: 20px;
         right: 360px;
         padding-left: 40px;
+        pointer-events: none;
 
         input {
             font-size: 20px;
@@ -63,7 +64,7 @@
             padding-left: 16px;
         
             padding-right: 32px;
-            
+            pointer-events: auto;
             .ui-text{
                 opacity: .6;
                 span {
@@ -101,6 +102,7 @@
             opacity: .6;
             transition: all .2s;
             vertical-align: middle;
+            pointer-events: auto;
             &:hover {
                 opacity: 1
             }
@@ -208,7 +210,7 @@
 .ui-mircoflow-response-wrapper {
     position: absolute;
     width: 200px;
-    top: 60px;
+    top: 10px;
     left: 50%;
     height: 40px;
     margin-left: -100px;

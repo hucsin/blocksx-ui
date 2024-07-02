@@ -261,11 +261,11 @@ export default class MiniFlow extends EventEmitter {
     private getConnectorName(source: string, target: string) {
         return [source, target].join('_');
     }
-    private hasConnectorBySourceTarget(source: string, target: string) {
+    private getConnectorBySourceTarget(source: string, target: string) {
         return this.connector.find(it => (it.source == source) && (it.target == target))
     }
     private addConnectorBySourceTarget(source: string, target: string, isTemporary?: boolean, noAutoConn?: boolean) {
-        if (!this.hasConnectorBySourceTarget(source, target)) {
+        if (!this.getConnectorBySourceTarget(source, target)) {
 
             this.connector.push({
                 source,
@@ -716,18 +716,26 @@ export default class MiniFlow extends EventEmitter {
     private addConnectorNodeBySourceTarget(source: string, target: string, isTemporary?: boolean) {
         let sourceNode: FlowNode = this.getNodeByName(source);
         let targetNode: FlowNode = this.getNodeByName(target);
+        let connector: any = this.getConnectorBySourceTarget(source, target);
+        let connectorProps: any = connector.props;
 
         let sourceColor: string = isTemporary ? '#e2e2e2' : sourceNode.color;
         let targetColor: string = isTemporary ? '#e2e2e2' : targetNode.color;
 
         
         //this.instance.setCursor('pointer');
-        if (this.hasConnectorBySourceTarget(source, target) && !this.connectorMap[this.getConnectorName(source, target)]) {
+        if (connector && !this.connectorMap[this.getConnectorName(source, target)]) {
+            
             this.instance.connect({
                 source: source,
                 target: target,
                 events:{
-                    click:function() { alert("you clicked on the arrow overlay")}
+                    click:(target,event) => {
+                        this.emit('connectClick', {
+                            event,
+                            target
+                        })
+                    }
                 },
                 //endpoints:["Rectangle", 'Rectangle'],
                 endpointStyles: [{ fill: sourceColor }, { fill: targetColor }],
@@ -738,8 +746,8 @@ export default class MiniFlow extends EventEmitter {
                 paintStyle: {
                     gradient: {
                         stops: [
-                            [0, this.getSafeOpacityColor(sourceColor)],
-                            [0.8, this.getSafeOpacityColor(targetColor)]
+                            [0, connectorProps ? sourceColor : this.getSafeOpacityColor(sourceColor)],
+                            [0.8, connectorProps ? targetColor : this.getSafeOpacityColor(targetColor)]
                         ]
                     },
                     "dashstyle": "1.4 .2",

@@ -162,7 +162,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                 cache[it.value] = true;
                 return true;
             }
-        })
+        }).map (it => ({value: it.value,label: it.label}))
     }
 
     private renderRemarks(remarks: any) {

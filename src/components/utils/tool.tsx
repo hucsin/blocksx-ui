@@ -223,8 +223,11 @@ export default class TablerUtils {
         });
 
 
-
         return fieldsObject;
+    }
+
+    public static getFieldKeysByColumnOnly(fields: any) {
+        return fields.filter(it=> it.column == 'only').map(it => it.key || it.fieldKey)
     }
     public static getDefaultSchema(fields?: any) {
         return {

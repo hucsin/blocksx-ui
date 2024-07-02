@@ -10,7 +10,7 @@ import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExten
 import TablerUtils from '../utils/tool';
 import SmartRequest from '../utils/SmartRequest';
 
-import {  upperFirst } from 'lodash'
+import {  upperFirst, omit } from 'lodash'
 
 /*
  * @Author: your name
@@ -49,6 +49,7 @@ export interface SFormerType {
     visible: boolean;
     value?: any;
     schema?: any;
+    columnKeys?: any;
     dynamicSchema?: any;
     id?: any;
     action?: any;
@@ -66,12 +67,13 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     private nextDyamicRequest: any;
     public constructor(props: IFormerType) {
         super(props);
+        let columnKeys:any = TablerUtils.getFieldKeysByColumnOnly(props.fields);
         this.state = {
             visible: !!props.action,
             schema: this.getSchema(props.fields),
+            columnKeys: columnKeys ,
             action: props.action,
-            
-            value: props.value,
+            value: omit(props.value, columnKeys),
             fields: props.fields,
             viewer: props.viewer,
             isStepOne: props.value ? false: true,
@@ -80,7 +82,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             loading: false,
             id: 0
         }
-
+        
         if (this.isStepDynamicFormer()) {
             
             this.nextDyamicRequest = SmartRequest.createPOST(this.getStepDynamicFormer())
@@ -172,18 +174,21 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     public UNSAFE_componentWillReceiveProps(newProps: IFormerType) {
 
         if (newProps.action !== this.state.action) {
+            let columnKeys: any = TablerUtils.getFieldKeysByColumnOnly(newProps.fields || this.state.fields);
             
             this.setState({
                 action: newProps.action,
                 name: newProps.name,
                 schema: this.getSchema(newProps.fields || this.state.fields),
+                columnKeys: columnKeys,
                 visible: !!newProps.action,
-                value: newProps.value,
+                value: omit(newProps.value, columnKeys),
                 fields: newProps.fields,
                 isStepOne: newProps.value ? false : true,
                 isStepMode: this.isStepFormer(newProps.fields),
                 setpOneValue: utils.clone(newProps.value)
             })
+
             if (newProps.value && this.isStepDynamicFormer()) {
                 this.onDynamicStepChange(newProps.value)
             }
@@ -191,7 +196,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             
             
             if (!!newProps.action) {
-                this.resetValue()
+                //this.resetValue()
             }
         }
         
@@ -207,15 +212,16 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         let former: any = this.former;
 
         if (this.props.onView && this.state.value) {
-            former.setState({
+            former && former.setState({
                 fetching: true,
                 disabled: true
             })
             this.props.onView(this.state.value).then((result) => {
+                console.log(333322, result)
                 this.setState({
                     value: result
                 })
-                former.setState({disabled: false, fetching: false})
+                former && former.setState({disabled: false, fetching: false})
             })
         }
     }
@@ -483,7 +489,6 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         if (!visible) {
             return null;
         }
-        console.log(JSON.stringify(pageSchema), 2222)
         return (
             <Former
                 title={this.getDefaultTitle()}
