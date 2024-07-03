@@ -34,7 +34,9 @@
     }
 }
 .ui-mircotable {
-    
+    .ui-label-empty {
+        display:none;
+    }
     position: relative;
     height: 100%;
 
@@ -117,6 +119,9 @@
             opacity: .5;
         }
     }
+    .ant-list * {
+        font-size: inherit;
+    }
    &.ui-mircotable-mini {
     .ant-list-item{
         &::after {
@@ -126,6 +131,7 @@
     
     .ant-list-item-meta-avatar {
         background-color: transparent !important;
+       
     }
     .ant-list-item-meta-title {
         font-size: 14px;
@@ -260,6 +266,23 @@
             vertical-align: middle;
             margin-left: 8px;
         }
+        
+    }
+    &.ui-mircotable-card{
+        .ant-list-item-meta {
+            .ui-mircotable-avatar {
+                .ant-avatar{
+                    border-width: 1px;
+                    background-color: #fff;
+                }
+            }
+        }
+        .ant-list-item-meta-title {
+            margin-top:-3px !important;
+        }
+        .ui-mircotable-avatar{
+            padding-left: 0
+        }
     }
     .ui-mircotable-extra {
         cursor: default;
@@ -285,7 +308,7 @@
         >div{
             display: inline-block;
             width: auto;   
-            margin-left: 16px;
+            margin-left: 8px;
             vertical-align: middle;
         }
         .ant-space {
@@ -305,11 +328,14 @@
     }
     
     .ant-list-split .ant-list-item {
-        &:Hover {
-            .ui-mircotable-avatar {
-                opacity: 1;
-            }
+        .former-radio-button label.ui-selected.ui-viewer {
+            background:none;
+            border:none;
+            margin: 0;
+            padding: 0;
+            color:rgba(0, 0, 0, 0.45)
         }
+
         &.ui-tabler-item-selected {
             background: var(--main-active-background-color);
         }
@@ -370,7 +396,6 @@
     }
     .ui-mircotable-avatar {
         padding-left: 8px;
-        opacity: .7;
         > span {
             position: relative;
             margin-left: -16px;
@@ -450,6 +475,9 @@
     }
     &.ui-mircotable-card {
         .ui-mircotable-extra {
+            span.anticon {
+                margin-right: 2px;
+            }
             .ui-toolbar {
                 float: right;
                 .ant-space-item {
@@ -495,8 +523,11 @@
         .ant-list .ant-list-item {
 
             padding: 16px;
-            box-shadow: 0 6px 8px 0 rgba(28, 31, 35, .06);
+            
             cursor: pointer;
+            &:hover {
+                box-shadow: 0 6px 8px 0 rgba(28, 31, 35, .06);
+            }
         }
         .ant-list-vertical .ant-list-item .ant-list-item-meta .ant-list-item-meta-title {
             margin-block-end: 8px;

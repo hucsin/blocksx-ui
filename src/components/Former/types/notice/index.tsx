@@ -5,7 +5,7 @@ import Avatar from '../avatar';
 
 import './style.scss';
 
-export default class FormerNotice extends React.Component<{value?: any, icon?: any, props?: any, notice?: any}, {notice: any,color: any,icon:any,value: any}> {
+export default class FormerNotice extends React.Component<{value?: any, icon?: any, color?: any, props?: any, notice?: any}, {notice: any,color: any,icon:any,value: any}> {
 
     public static defaultProps ={
         icon: 'NotificationOutlined#ccc'
@@ -30,6 +30,12 @@ export default class FormerNotice extends React.Component<{value?: any, icon?: a
     }
     public  UNSAFE_componentWillReceiveProps(nextProps: any): void {
         if (nextProps.value != this.state.value) {
+            this.setState({
+                value: nextProps.value,
+                icon: this.getDefaultIcon(nextProps)
+            })
+        }
+        if (nextProps.icon != this.state.icon) {
             this.setState({
                 value: nextProps.value,
                 icon: this.getDefaultIcon(nextProps)

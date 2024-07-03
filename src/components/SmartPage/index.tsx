@@ -32,6 +32,10 @@ const svgbgstring = cloudTexture;
 
 
 export interface SmartPageProps {
+    params?: any;
+    id?: string;
+    isViewer?: boolean;
+    history?: any;
     router?: routerParams;
     children?: any;
     value?: any;
@@ -39,8 +43,10 @@ export interface SmartPageProps {
     open: boolean;
     onShow?: Function;
     onClose?: Function;
+    
     width?: number;
     type: 'default' | 'drawer' | 'popover';
+    popoverWrapper?: boolean;
     uiType: 'tree' | 'tabler' | 'former' | 'group' | '';
     title: string;
     name: string; // 页面的一个唯一ID
@@ -63,11 +69,13 @@ export interface SmartPageProps {
 
     pageURI: string;
     mode?: string;
+    pageMode?: string;
 
     // 是否是选择模式
     optional?: any;
     rowSelection?: boolean;
     onChangeValue?: Function;
+    onSelectedValue?: Function;
     onInitPage?: Function;
     operateContainerRef?: any;
     size?: any;
@@ -119,13 +127,16 @@ export interface SmartPageState {
     defaultClassify: string;
     defaultFolder?: string;
     layout?: string;
+    id?: string;
 }
+
 
 export default class SmartPage extends React.Component<SmartPageProps, SmartPageState> {
 
     public static defaultProps = {
         pageURI: '/eos/smartpage/find',
         type: 'default',
+        popoverWrapper: true,
         uiType: '',
         open: false,
         noClassify: false,
@@ -179,7 +190,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             defaultClassify: this.getDefaultClassify(),
             defaultFolder: this.getDefaultFolder(),
             folderReflush: +new Date,
-            layout: ''
+            layout: '',
+            id: props.id
         }
         
         this.requestHelper = SmartRequest.createPOST(props.pageURI);
@@ -242,9 +254,14 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     public fetch = ()=> {
 
         if (!this.hasLoading()) {
-            this.setLoading(true)
+            this.setLoading(true);
 
-            SmartUtil.fetchPageSchema(this.props.pageURI, this.state.name, this.props).then(async (data:any) => {
+            let { params } = this.props;
+            let paramsObject: any = utils.isFunction(params) ? params() : params;
+
+            
+
+            SmartUtil.fetchPageSchema(this.props.pageURI, this.state.name, this.props, paramsObject).then(async (data:any) => {
                 
                 if (!this.state.noClassify) {
 
@@ -326,8 +343,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             }
         }
         
-        if (newProps.name != this.state.name) {
+        if (newProps.name != this.state.name || newProps.id !== this.state.id) {
             this.setState({
+                id: newProps.id,
                 name: newProps.name,
                 title: newProps.title,
                 value: newProps.value,
@@ -430,15 +448,22 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             return this.props.onChangeValue(value)
         }
     }
+    private onSelectedValue =(value: any) => {
+        if (this.props.onSelectedValue) {
+            return this.props.onSelectedValue(value)
+        }
+    }
     public renderContentView() {
         let { pageMeta} = this.state;
         
         return SmartPageUtils.renderPageType(this.state.uiType, {
+            id: this.state.id,
             key: this.state.classifyQuery,
             schema: this.state.schema,
             pageMeta: this.state.pageMeta,
             autoInit: !this.state.folderField,
             router: this.props.router,
+            viewer: this.props.isViewer,
             title: this.state.title,
             path: this.state.path,
             reflush: this.state.reflush,
@@ -457,6 +482,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             optional:this.state.optional,
             size:this.props.size,
             onChangeValue:this.onChangeValue,
+            onSelectedValue: this.onSelectedValue,
             mode: this.state.mode,
             searchRef: this.searchRef,
             
@@ -717,12 +743,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         title={this.renderTitle()}
                         content={this.renderContent()}
                     >
-                        <div
+                        {this.props.popoverWrapper ? <div
                             onMouseUp={this.onPopoverMouseUp}
                             className='ui-smartpage-popover-wrapper'
                         >
                             {this.props.children}
-                        </div>
+                        </div>: this.props.children}
                     </Popover>
                 )
                 break;

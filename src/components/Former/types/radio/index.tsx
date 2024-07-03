@@ -19,6 +19,7 @@
     onChangeValue: Function;
     value: any;
     disabled?: boolean;
+    onDescriptionSwitch?: Function;
  }
 
  export default class FormerRadio extends React.Component<IFormerRadio, {dataSource: any, props:any,disabled?: boolean, value: any }>{
@@ -128,7 +129,7 @@
                         }} className={classnames({
                             'ui-viewer': this.props.viewer,
                             'ui-selected': it.value == value
-                        })} key={it.value} >{VIcon ? <Tooltip title={it.description || it.label}><VIcon/></Tooltip> :it.label}</label>
+                        })} key={it.value} >{VIcon ? <Tooltip title={it.description || it.label}><VIcon/>{this.props.viewer && it.label}</Tooltip> :it.label}</label>
                     )
                 })}
             </div>
@@ -159,6 +160,12 @@
                                         value: it.value
                                     }
                                 })}
+                                onMouseEnter={()=> {
+                                    this.props.onDescriptionSwitch && this.props.onDescriptionSwitch(it.description)
+                                }}
+                                onMouseLeave={()=> {
+                                    this.props.onDescriptionSwitch && this.props.onDescriptionSwitch('')
+                                }}
                                 title={it.label}
                             >
                                 {it.value === value ? <span className="former-radio-block-right"><FormerIcon.CheckOutlined/></span> : null}

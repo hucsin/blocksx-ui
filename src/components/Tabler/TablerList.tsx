@@ -50,9 +50,11 @@ export interface TablerState {
 
     selectedKey?: any;
     scrollTop?: boolean;
+    mode?: string;
 }
 
 interface TablerListProps extends TablerProps {
+    mode?: string;
     autoColor?: boolean;
     avatar?: string;
     notice?: any;
@@ -92,6 +94,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         pageNumber: 1,
         type: 'table',
         layout: 'avatar',
+        mode: 'default', //default, pick/small/sample
         formerAction: '',
         classify: 'default',
         quickValue: '',
@@ -129,6 +132,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             loading: false,
             scrollTop: true,
             reflush: props.reflush,
+            mode: props.mode,
             optional: props.optional
         };
         
@@ -275,6 +279,12 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 selectedKey: newProps.selectedRowKeys ? newProps.selectedRowKeys[0] || newProps.selectedRowKeys : null
             })
         }
+
+        if (newProps.mode != this.state.mode) {
+            this.setState({
+                mode: newProps.mode
+            })
+        }
     }
 
     private getTrueSize() {
@@ -295,7 +305,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 
                 <Space className='ui-toolbar'>
                     {this.props.layout === 'card' && this.renderDataExtra(rowItem, index, 'itemExtra', 'renderRowItemExtra')}
-                    {this.props.renderRowOperater && this.props.renderRowOperater(rowItem, index, (operate: any, rowData: any, rowIndex: number) => {
+                    {this.state.mode !=='pick' && this.props.renderRowOperater && this.props.renderRowOperater(rowItem, index, (operate: any, rowData: any, rowIndex: number) => {
                         // TODO
                         if (this.props.optional && ['view','edit', 'delete'].indexOf(operate.type) == -1 ) {
                             //this.setState({
@@ -343,11 +353,14 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     }
     private layoutAvatarSizeMap: any = {
         info: 24,
-        card: 64
+        card: 88
     }
     private getAvatarSize() {
         let { layout } = this.props;
         
+        if (this.state.mode == 'pick') {
+            return 64;
+        }
         return this.props.avatarSize || (this.layoutAvatarSizeMap[layout as string] || 40)
     }
     private getMinMaxAvatar() {
@@ -433,11 +446,11 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         
         if (findIcon && findIcon.icon) {
             return (<span className='ui-mircotable-avatar'>
-                <FormerTypes.avatar type={this.getAvatarShape()} autoColor={!!this.props.autoColor} color={findIcon.color} icon={findIcon.icon}  size={this.getAvatarSize()}  />
+                <FormerTypes.avatar reverseColor={this.props.layout=='card'} key={1} type={this.getAvatarShape()} autoColor={!!this.props.autoColor} color={findIcon.color} icon={findIcon.icon}  size={this.getAvatarSize()}  />
             </span>)
         } else {
             return (<span className='ui-mircotable-avatar'>
-                <FormerTypes.avatar type={this.getAvatarShape()} autoColor={false} icon={data}  size={this.getAvatarSize()}  />
+                <FormerTypes.avatar reverseColor={this.props.layout=='card'} key={2} type={this.getAvatarShape()} autoColor={false} icon={data}  size={this.getAvatarSize()}  />
             </span>)
         }
     }
@@ -469,7 +482,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                     <span className='ui-mircotable-avatar'>
                         {!this.props.avatarMerge ? avatars.map((avatar, index) => {
                             return <FormerTypes.avatar shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} key={index} {...avatar} size={this.getAvatarSize()} style={{ zIndex: avatars.length - index }} />
-                        }) : <FormerTypes.avatar shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} key ='at' size={this.getActionSize()} icon={avatars}  />}
+                        }) : <FormerTypes.avatar key={2} shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} size={this.getActionSize()} icon={avatars}  />}
                     </span>
                 )
             }
@@ -495,7 +508,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             return extraList.map((field, index) => {
                 return TableUtils.renderComponentByField(field, {
                     value: rowData[field.key],
-                    key: field.key,
+                    key: field.key + index,
                     displayValue: rowData['DisplayValue_' + field.key],
                     size: this.getActionSize(),
                     recordValue: rowData,
@@ -519,15 +532,17 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         
         let { pageMeta = {} } = this.props;
         let { props = {}} = pageMeta;
-
-        if (props.rowClickOperate) {
-            if (Array.isArray(pageMeta.rowoperate)) {
-                let find: any = pageMeta.rowoperate.find(it => it.name == props.rowClickOperate);
-                if (find) {
-                    operate = find;
+        
+        if (this.state.mode !== 'pick') {
+            if (props.rowClickOperate) {
+                if (Array.isArray(pageMeta.rowoperate)) {
+                    let find: any = pageMeta.rowoperate.find(it => it.name == props.rowClickOperate);
+                    if (find) {
+                        operate = find;
+                    }
                 }
+                
             }
-            
         }
         
         if (this.props.onRowClick) {
@@ -606,7 +621,8 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         )
     }
     private renderCreateAt(rowData: any) {
-        if (rowData.createdAt) {
+        
+        if (rowData.createdAt && this.state.mode =='default') {
             return (<Tooltip placement="top" title={"Created: " + BaseUtil.formatDate(rowData.createdAt, 'YYYY/MM/DD HH:mm:ss ddd')}>
                 <span className='ui-createdat-wrapper'>
                     {BaseUtil.formatSampleDate(rowData.createdAt, 'YYYY/MM/DD')}
@@ -697,12 +713,13 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
     public render() {
         let layout: string = this.getLayout();
-       
+        
         return (
             <div
                 className={
                     classnames({
                         'ui-mircotable-wrapper': true,
+                        [`ui-mircotable-mode-${this.state.mode}`]: this.state.mode,
                         [`ui-mircatable-type-${this.props.layout}`]: this.props.layout,
                         'ui-mircotable-scrollTop': !this.state.scrollTop
                     })

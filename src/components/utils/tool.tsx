@@ -3,6 +3,7 @@ import { utils } from '@blocksx/core';
 import { Tag, Space, Tooltip } from 'antd'
 import * as FormerTypes from '../Former/types';
 import * as Icons from '../Icons';
+import CombineIcon from '../Icons/CombineIcon';
 
 
 export default class TablerUtils {
@@ -34,6 +35,16 @@ export default class TablerUtils {
                 let UIView: any = Icons[iconstring];
 
                 return <UIView style={{color:field.color}} key={iconstring || icon || 'j'} />
+            }
+        } else {
+            if (Array.isArray(icon) ) {
+                if (icon.length == 2) {
+                    return <CombineIcon key={icon} subscript={this.renderIconComponent({icon:icon[1]})} main={this.renderIconComponent({icon:icon[0]})}/>
+                } else {
+                    return this.renderIconComponent({
+                        icon: icon[0]
+                    })
+                }
             }
         }
         return field.icon;
@@ -185,7 +196,7 @@ export default class TablerUtils {
 
     public static getDefaultFieldSchema(it:any, index) {
         //console.log(it.type, it, it.column, 111)
-        let { column } = it;
+       
         
         return {
             ...it,
@@ -217,7 +228,7 @@ export default class TablerUtils {
         fields.forEach((it: any, index: number) => {
             let fieldKey: string = it.key || it.fieldKey;
 
-            if (it.column !== 'only') {
+            if (!this.isColumnOnly(it)) {
                 fieldsObject[fieldKey] = this.getDefaultFieldSchema(it, index)
             }
         });
@@ -225,9 +236,18 @@ export default class TablerUtils {
 
         return fieldsObject;
     }
+    public static isColumnOnly(field: any) {
+        let {column} = field;
+        
+        if (utils.isPlainObject(column)) {
+            return column.only;
+        }
+
+        return column == 'only';
+    }
 
     public static getFieldKeysByColumnOnly(fields: any) {
-        return fields.filter(it=> it.column == 'only').map(it => it.key || it.fieldKey)
+        return fields.filter(it=> this.isColumnOnly(it)).map(it => it.key || it.fieldKey)
     }
     public static getDefaultSchema(fields?: any) {
         return {

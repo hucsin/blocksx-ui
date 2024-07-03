@@ -41,6 +41,7 @@ interface TablerState {
     selected?: number;
 
     formerAction?: any;
+    batchAction?: any;
     formerName?: string;
     currentRowData?: any;
     currentRowOperate?: any;
@@ -264,7 +265,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
         return false;
     }
-    private resetDataSource(dataSource?: any, isAppend?: any) {
+    private resetDataSource(dataSource?: any, isAppend?: any, params?: any) {
         let props = this.props;
         let state = this.state;
 
@@ -313,7 +314,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                         pageNumber: state.pageNumber,
                         pageSize: state.pageSize,
                         ...state.searcher,
-
+                        ...params,
                         ...(this.props.onGetRequestParams && this.props.onGetRequestParams())
                     });
 
@@ -431,16 +432,22 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
 
         if ((!batchOpertateMap['record.create'] || (batchOpertateMap['record.create'].disabled !== true))) {
-
-            batchAddList.unshift({
+            let createOpertate: any = {
+                ...batchOpertateMap['record.create'],
                 type: 'record.create',
                 icon: this.props.okIcon || this.renderDefaultIcon(),//'PlusCircleOutlined',
                 name: batchOpertateMap['record.create']
                     ? batchOpertateMap['record.create'].name || this.getCreateText()
                     : this.getCreateText()
-            })
+                
+            };
+            if (batchOpertateMap['record.create']) {
+                Object.assign(batchOpertateMap['record.create'], createOpertate)
+            } else {
+                batchAddList.unshift(createOpertate)
+            }
         }
-
+        
         return batchAddList;
     }
 
@@ -557,7 +564,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 case 'create':
                 case 'add':
                     if (this.props.onAdd) {
-                        return this.resetcheck(this.props.onAdd(safeValue))
+                        return this.resetcheck(this.props.onAdd(safeValue), { pageNumber: 1})
                     }
                     break;
                 // 编辑
@@ -572,27 +579,37 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
     private onRemove = (coloum: any) => {
         // 删除
         if (this.props.onRemove) {
+            this.setState({
+                pageNumber:1
+            })
             return this.resetcheck(this.props.onRemove(coloum))
         }
     }
-    private resetcheck(mise: any) {
+    private resetcheck(mise: any,params?: any) {
 
         if (utils.isPromise(mise)) {
             return mise.then((val: any) => {
-                this.resetDataSource()
+                let { batchAction }  = this.state;
+                // 跳转到router
+                if (batchAction && batchAction.router && this.props.router) {
+                     this.props.router.utils.goPath(batchAction.router, val);
+                } else {
+                    this.resetDataSource(null, null,params)
+                }
             })
         } else {
-            return this.resetDataSource()
+            return this.resetDataSource(null, null,params)
         }
     }
     private onBatchAddClick = (action: any, params?: any) => {
-
+        
         if (utils.isPlainObject(action)) {
             // 添加
             if (action.type == 'record.create') {
                 this.setState({
                     formerAction: 'create',
                     formerName: 'Create',
+                    batchAction: action,
                     currentRowData: params || null
                 })
             }
@@ -828,6 +845,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
         let View: any = this.props.type == 'table' ? TablerTable : TablerList;
         let props: any = this.props;
+        
         return (
             <React.Fragment>
                 <SmartDrawer

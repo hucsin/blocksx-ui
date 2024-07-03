@@ -17,6 +17,7 @@ export default class Chinampa {
     private timer: any;
     private hitStep: number;
     private inLeftPanel: any;
+    private canUnlink:boolean;
 
     public constructor(miniFlow: any, panel: any, destoryPanel: any, unlinkPanel: any) {
         this.panel = panel;
@@ -59,7 +60,7 @@ export default class Chinampa {
 
         // 鼠标在容器内
         if (centerPos.left > this.hitRect.left && centerPos.left < (this.hitRect.left + this.hitRect.width)) {
-
+            /*
             if (centerPos.left < this.hitRect.left + 38) {
                 this.unlinkPosition = 'left';
             } else {
@@ -68,7 +69,8 @@ export default class Chinampa {
                 } else {
                     this.unlinkPosition = 'right'
                 }
-            }
+            }*/
+            this.unlinkPosition = 'middle';
         } else {
             this.unlinkPosition = ''
         }
@@ -99,6 +101,7 @@ export default class Chinampa {
         this.timer = setTimeout(() => {
             // 第一次命中,添加闪烁动画
             this.timer = null;
+            
             if (++this.hitStep < 2) {
                 this.removePanelFlicker(true);
                 this.addPanelFlicker();
@@ -112,55 +115,68 @@ export default class Chinampa {
         }, this.hitStep < 1 ? 1000 : 1000)
     }
     private addPanelFlicker() {
-        //  if (this.inLeftPanel != -1) {
         if (this.unlinkPosition) {
             DomUtils.addClass(this.unlinkPanel, 'chinampa-actived-animation')
         }
-        //}
     }
     private removePanelFlicker(depend?: boolean) {
         DomUtils.removeClass(this.unlinkPanel, 'chinampa-actived-animation');
-        //(!depend || this.inLeftPanel !== true) && removeClass(this.destoryPanel, 'chinampa-actived-animation');
     }
     private hideDestoryOrUnlink() {
         DomUtils.removeClass(this.unlinkPanel, 'chinampa-actived');
-        //removeClass(this.destoryPanel, 'chinampa-actived')
+        this.unlinkPosition = '';
+    }
+    private isCanUnlink() {
+        return this.miniFlow.isSampleNode(this.miniFlow.dragNodeName)
     }
     private bindEvent() {
 
         this.miniFlow.on('onDragStart', () => {
-            this.showPanel();
-            this.calculatedSize();
-            this.inPanel = false;
+            if (this.canUnlink = this.isCanUnlink()) {
+                this.showPanel();
+                this.calculatedSize();
+                this.inPanel = false;
+                
+            }
         });
 
         this.miniFlow.on('onDragging', (pos) => {
+            if (this.canUnlink) {
+                let centerPos: any = {
+                    left: pos.event.pageX,//+ this.miniFlow.getSize(true),
+                    top: pos.event.pageY //+ this.miniFlow.getSize(true)
+                };
+                // 如果 是一个有多个节点的节点，无论前后都不能删除
 
-            let centerPos: any = {
-                left: pos.event.pageX,//+ this.miniFlow.getSize(true),
-                top: pos.event.pageY //+ this.miniFlow.getSize(true)
-            };
-            this.resetHitRect()
-            if (this.isInRect(centerPos, this.panelRect)) {
-                if (!this.inPanel) {
-                    DomUtils.addClass(this.panel, 'dragging-active');
+                this.resetHitRect()
+                if (this.isInRect(centerPos, this.panelRect)) {
+                    if (!this.inPanel) {
+                        DomUtils.addClass(this.panel, 'dragging-active');
 
-                    this.inPanel = true;
+                        this.inPanel = true;
+                    }
+                    this.hitDestoryOrUnlink(centerPos);
+                } else {
+                    DomUtils.removeClass(this.panel, 'dragging-active');
+                    this.hideDestoryOrUnlink();
+                    this.removePanelFlicker();
+                    this.inLeftPanel = -1;
+                    this.inPanel = false;
                 }
-                this.hitDestoryOrUnlink(centerPos);
-            } else {
-                DomUtils.removeClass(this.panel, 'dragging-active');
-                this.hideDestoryOrUnlink();
-                this.removePanelFlicker();
-                this.inLeftPanel = -1;
-                this.inPanel = false;
             }
         })
 
         this.miniFlow.on('onDragEnd', () => {
-            this.removePanelFlicker();
-            this.hidePanel();
-            this.distoryPanel();
+            if (this.canUnlink) {
+                this.removePanelFlicker();
+                this.hidePanel();
+                this.distoryPanel();
+                
+                if (this.miniFlow.isAloneNode(this.miniFlow.dragNodeName)) {
+                    // 删除 落单的元素    
+                    this.miniFlow.deleteNodeByName(this.miniFlow.dragNodeName)
+                }
+            }
         })
 
     }

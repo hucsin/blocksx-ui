@@ -19,7 +19,7 @@ import { text } from 'stream/consumers';
 
 export interface MiniFlowMap {
     canvas: HTMLElement | string; // 画布节点
-
+    isViewer?: boolean;
     destoryChinampaPanel: HTMLElement;
     unlinkChinampaPanel: HTMLElement;
     chinampaPanel: HTMLElement;
@@ -45,6 +45,7 @@ export default class MiniFlow extends EventEmitter {
     };
     private temporaryRouterOffset: number;
     private canvas: any;
+    private isViewer: boolean;
     private cavnasWrapper: any;
     private canvasPosition: any;
     private canvasZoom: number;
@@ -54,6 +55,7 @@ export default class MiniFlow extends EventEmitter {
 
     private nodes: FlowNode[];
     private connector: FlowConnector[];
+    private connectorInstanceMap: any;
     private connectorMap: any;
     private nodeMap: any;
     private dragFreeNode?: boolean;
@@ -73,6 +75,9 @@ export default class MiniFlow extends EventEmitter {
     public cavnasDraggable: any;
     private canvasPositioning: PositioningCanvas;
 
+
+    private highlightConnectInfo: any;
+
     public constructor(props: MiniFlowMap) {
         super();
 
@@ -86,9 +91,11 @@ export default class MiniFlow extends EventEmitter {
 
         this.nodes = props.nodes;
         this.connector = props.connector;
+        this.connectorInstanceMap = {};
         this.templateMap = props.templateMap || {};
 
         this.canvasZoom = 1;
+        this.isViewer = !!props.isViewer;
         this.canvasPosition = { left: 0, top: 0 };
         this.connectorMap = {};
         this.nodeMap = {};
@@ -126,6 +133,7 @@ export default class MiniFlow extends EventEmitter {
     public destory() {
         this.instance.deleteEveryConnection();
         this.instance.deleteEveryEndpoint();
+        this.unBindEvent();
     }
 
     public freeze() {
@@ -174,6 +182,25 @@ export default class MiniFlow extends EventEmitter {
         })
     }
 
+    /**
+     * 简单节点，只有一个以下来路或则一个以下去路
+     */
+    public isSampleNode(name: string) {
+        
+        let sourceNode: any = this.connector.filter(it => (it.target === name) && !it.isTemporary);
+        let targetNode: any = this.connector.filter(it => (it.source ===name) && !it.isTemporary);
+        
+        if ((!sourceNode || sourceNode.length <=1) && (!targetNode || targetNode.length <=1) ) {
+            
+            return this.nodes.length > 1;
+        }
+        return false;
+    }
+
+    public isAloneNode(name:string) {
+        return !this.connector.find(it=> ((it.target ==name || it.source == name)));
+    }
+
     private isFreeNode(name: string) {
 
         return !this.connector.find(it => (it.target == name))
@@ -208,6 +235,18 @@ export default class MiniFlow extends EventEmitter {
             let node: any = this.getNodeByName(conn.target);
             return conn.source == nodeName && (node.type == 'router' && !conn.isTemporary)
         })
+    }
+
+    public setConnectorInstance(source: string, target: string, instance: any) {
+
+        let key: string = [source, target].join('_');
+
+        this.connectorInstanceMap[key] = instance;
+    }
+    public getConnectorInstance(source:string, target: string) {
+        let key: string = [source, target].join('_');
+        
+        return this.connectorInstanceMap[key] ;
     }
 
     private reflushConnectorByName(name: string) {
@@ -665,14 +704,28 @@ export default class MiniFlow extends EventEmitter {
         this.instance.bind('connection', (e) => {
             this.connectorMap[this.getConnectorName(e.sourceId, e.targetId)] = e.connection;
         })
-        // 绑定事件
-        DomUtils.addEvent(this.canvas.parentNode, 'dblclick', (e) => {
-            if (!this.freezeState) {
-                if (this.nodes.length > 0) {
-                    this.addNewNodeByPosition({}, e.pageX, e.pageY)
+        if (!this.isViewer) {
+            // 绑定事件
+            DomUtils.addEvent(this.canvas.parentNode, 'dblclick', (e) => {
+                if (!this.freezeState) {
+                    if (this.nodes.length > 0) {
+                        this.addNewNodeByPosition({}, e.pageX, e.pageY)
+                    }
                 }
-            }
-        })
+            })
+        }
+            // 绑定其他地方点击的时候隐藏高亮
+            DomUtils.addEvent(this.canvas.parentNode, 'click', (e) => {
+                
+                if (this.highlightConnectInfo) {
+                    this.unHighlightConnector(e);
+                }
+            })
+        
+    }
+    private unBindEvent() {
+        DomUtils.removeEvent(this.canvas.parentNode, 'dblclick');
+        DomUtils.removeEvent(this.canvas.parentNode, 'click');
     }
     public resetConnectorNodeBySourceTarget(source: string, target: string) {
         this.removeConnectorNodeBySourceTarget(source, target);
@@ -695,7 +748,7 @@ export default class MiniFlow extends EventEmitter {
     private getSafeOpacityColor(color:string) {
         if (color) {
             if (color.length > 5) {
-                return color + '66'
+                return color + '44'
             } else if (color.length ==4) {
                 return color.split('').map(it=> {
                     if (it !=='#') {
@@ -705,6 +758,13 @@ export default class MiniFlow extends EventEmitter {
                 }).join('') + '66'
             }
             return color;
+        }
+    }
+
+    private mergePaintStyle(paintSytle: any, mergedata: any) {
+        return {
+            ...paintSytle,
+            ...mergedata
         }
     }
     /**
@@ -722,19 +782,51 @@ export default class MiniFlow extends EventEmitter {
         let sourceColor: string = isTemporary ? '#e2e2e2' : sourceNode.color;
         let targetColor: string = isTemporary ? '#e2e2e2' : targetNode.color;
 
+        let defultPaintStyle: any = {
+            gradient: {
+                stops: [
+                    [0, connectorProps ? sourceColor : this.getSafeOpacityColor(sourceColor)],
+                    [0.8, connectorProps ? targetColor : this.getSafeOpacityColor(targetColor)]
+                ]
+            },
+            "dashstyle": "1.4 .2",
+            fillStyle: targetColor,
+            stroke: targetColor,
+            strokeWidth: 10
+        };
+        let hoverPaintStyle: any = this.mergePaintStyle(defultPaintStyle, {
+            gradient: {
+                stops: [
+                    [0, sourceColor],
+                    [0.8, targetColor]
+                ]
+            }
+        });
+
         
         //this.instance.setCursor('pointer');
         if (connector && !this.connectorMap[this.getConnectorName(source, target)]) {
             
-            this.instance.connect({
+            this.setConnectorInstance(source, target, this.instance.connect({
                 source: source,
                 target: target,
                 events:{
-                    click:(target,event) => {
-                        this.emit('connectClick', {
-                            event,
-                            target
-                        })
+                    click:(_,event) => {
+                        // 高亮连线标识
+                        this.unHighlightConnector();
+                        this.highlightConnectInfo = {
+                            instance: this.getConnectorInstance(source, target),
+                            paintStyle: defultPaintStyle,
+                            hoverPaintStyle,
+                            target,
+                            source,
+                            targetColor,
+                            sourceColor,
+                            connect: connector
+                        }
+                        
+                        this.highlightConnector(event);
+                        event.stopPropagation();
                     }
                 },
                 //endpoints:["Rectangle", 'Rectangle'],
@@ -742,28 +834,8 @@ export default class MiniFlow extends EventEmitter {
                 deleteEndpointsOnDetach: false,
                 connectionsDetachable: false,
                 connector: ['Straight'],
-                cssClass: 'link-hand',
-                paintStyle: {
-                    gradient: {
-                        stops: [
-                            [0, connectorProps ? sourceColor : this.getSafeOpacityColor(sourceColor)],
-                            [0.8, connectorProps ? targetColor : this.getSafeOpacityColor(targetColor)]
-                        ]
-                    },
-                    "dashstyle": "1.4 .2",
-                    fillStyle: targetColor,
-                    stroke: targetColor,
-                    strokeWidth: 10,
-                    curror: 'pointer'
-                },
-                hoverPaintStyle: {
-                    gradient: {
-                        stops: [
-                            [0, sourceColor],
-                            [0.8, targetColor]
-                        ]
-                    },
-                },
+                paintStyle: defultPaintStyle,
+                hoverPaintStyle: hoverPaintStyle,
                 overlays: [
                     ["Custom", {
                         create: function (component) {
@@ -775,9 +847,83 @@ export default class MiniFlow extends EventEmitter {
                         id: "customOverlay"
                     }]
                 ]
-            })
+            }))
         }
     }
+
+    public updateHighlightConnectProps(props: any) {
+        if (this.highlightConnectInfo) {
+            let { target, source } = this.highlightConnectInfo;
+            
+            let node: any = this.getConnectorBySourceTarget(source,target);
+
+            if (node) {
+                node.props = Object.assign({}, node.props || {}, props)
+            }
+
+            this.resetConnectorNodeBySourceTarget(source,target);
+            this.doChangeSave()
+        }
+    }
+    public getHighlightInfo() {
+        return this.highlightConnectInfo;
+    }
+    public getHighlightConnectProps () {
+        if (this.highlightConnectInfo) {
+            let { connect } = this.highlightConnectInfo;
+            return connect.props || {};
+        }
+    }
+    /**
+     * 连线高亮
+     */
+    public highlightConnector(event?: any) {
+        if (this.highlightConnectInfo) {
+            let { instance, paintStyle, sourceColor, targetColor, target, source } = this.highlightConnectInfo;
+            let lightlightStyle: any = this.mergePaintStyle(paintStyle, {
+                strokeWidth: 14,
+                gradient: {
+                    stops: [
+                        [0, sourceColor],
+                        [0.8, targetColor]
+                    ]
+                }
+            });
+            
+            instance.setPaintStyle(lightlightStyle);
+            instance.setHoverPaintStyle(lightlightStyle);
+
+
+            this.emit('highlightConnect', {
+                event,
+                target,
+                source,
+                connector: instance
+            })
+            
+        }
+    }
+
+    public unHighlightConnector(event?: any) {
+        if (this.highlightConnectInfo) {
+            let { instance, paintStyle,hoverPaintStyle, target, source } = this.highlightConnectInfo;
+            
+            try {
+                instance.setPaintStyle(paintStyle);
+                instance.setHoverPaintStyle(hoverPaintStyle)
+            } catch(e) {}
+
+            this.emit('unHighlightConnect', {
+                event,
+                target,
+                source,
+                connector: instance
+            })
+
+            this.highlightConnectInfo =  null;
+        }
+    }
+
     /**
      * 建立绑定关系
      */
@@ -1085,6 +1231,10 @@ export default class MiniFlow extends EventEmitter {
                             event: e.e
                         })
 
+                        if (!this.draggingFlag ) {
+                            this.unHighlightConnector()
+                        }
+
                         if (this.dragFreeNode) {
                             this.dragging(e.pos);
                         }
@@ -1106,13 +1256,18 @@ export default class MiniFlow extends EventEmitter {
                                 //this.removeLockConnector();
                                 this.linkPlaceholder(this.dragTarget, false, () => {
                                     this.doChangeSave()
+                                    console.log(this.dragTarget,33333322)
                                 });
+
+
                                 return this.dragTarget = null;
-                            }
+                            } 
                             this.dragFreeNode = false;
                             this.dragNodeName = '';
                             this.dragNode = null;
 
+                        } else {
+                            console.log(this.dragFreeNode, 3333)
                         }
                         this.doChangeSave();
 

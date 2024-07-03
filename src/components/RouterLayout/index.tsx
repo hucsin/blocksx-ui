@@ -110,26 +110,26 @@ export default class RouterLayout extends React.Component<RouterLayoutProps, Rou
     }
 
     private renderRouterItem = (router: any, index: number)=> {
-        let pageComponentMap: any = this.props.pageComponentMap;
-        let RouterComponent: any = pageComponentMap[router.componentName];
-    
+        let PageComponentMap: any = this.props.pageComponentMap;
+        let RouterComponent: any = PageComponentMap[router.componentName];
+
         switch (router.pageType) {
             case 'SmartPage':
                 return (
-                    <Route key={index} path={router.pagePath} element={<WithRouterSmartPage key={index} name={router.componentName} />} />
+                    <Route key={index} path={router.pagePath} element={<WithRouterSmartPage {...router.pageParams} key={index} name={router.componentName} />} />
                 )
             case 'SmartPageGroup':
                 return (
-                    <Route key={index} path={router.pagePath} element={<WithRouterSmartPageGroup key={index} name={router.componentName} />} />
+                    <Route key={index} path={router.pagePath} element={<WithRouterSmartPageGroup {...router.pageParams} key={index} name={router.componentName} />} />
                 )
             default:
 
                 let ViewUI: any = RouterComponent 
-                    ? <RouterComponent key={index}/> 
-                    : <pageComponentMap.PageNotFound key={index}/>
+                    ? <RouterComponent {...router.pageParams} key={index}/> 
+                    : <PageComponentMap.PageNotFound key={index}/>
 
 
-                return <Route path={router.pagePath}  key={index}  element ={ViewUI}/>
+                return <Route  path={router.pagePath}   key={index}  element ={ViewUI}/>
         }
 
     }

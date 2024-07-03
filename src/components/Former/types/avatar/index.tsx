@@ -13,6 +13,7 @@ export interface IMircoAvatar extends IFormerBase {
     icon?: string;
     url?: string;
     value?: string;
+    reverseColor?: boolean;
     text?: string;
     
     color?: string;
@@ -28,7 +29,8 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
     static Viewer: any = MircoAvatar;
     static defaultProps = {
         autoColor: true,
-        shape: 'circle'
+        shape: 'circle',
+        reverseColor: false
     }
     private defaultColor: any = [
         '#2ECC71',
@@ -48,29 +50,32 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
 
         
         if (props.text) {
-            return (<Tooltip title={tips}>
-                <Avatar size={props.size} shape={props.shape}  style={{background:color, ...props.style}}>{props.text}</Avatar>
+            return (<Tooltip key={icon} title={tips}>
+                <Avatar size={props.size} shape={props.shape} key={icon}  style={{background:color, ...props.style}}>{props.text}</Avatar>
             </Tooltip>)
         }
         
         if (icon) { 
             if (icon.match(/[\/\.]/)) {
-                return (<Tooltip title={tips}><Avatar size={props.size} shape={props.shape} style={{backgroundColor:color, ...props.style}}  src={icon} /></Tooltip>)
+                return (<Tooltip  key={icon} title={tips}><Avatar size={props.size} key={icon} shape={props.shape} style={{backgroundColor:color, ...props.style}}  src={icon} /></Tooltip>)
             }
             // 如果icon是 xxx#ffff模式
             
             let iconreg: any = this.getColorByIcon(icon);
             let IconView: any = Icons[iconreg.icon];
-            
+            let trueFontColor: any = fontColor || (props.autoColor ? '#fff' : '');
+            let trueBackgroundColor: any = iconreg.color || color;
+
             if (IconView) {
-                return (<Tooltip title={tips}><Avatar 
+                return (<Tooltip  key={icon} title={tips}><Avatar 
                  shape = {props.shape}
+                 key={icon}
                  size = {props.size} style={{
-                    background:iconreg.color || color, 
+                    background: this.props.reverseColor ? trueFontColor :trueBackgroundColor, 
                     
                     fontSize: props.size  * 2/3 ,
-                    
-                    color: fontColor || (props.autoColor ? '#fff' : ''),
+                    borderColor: this.props.reverseColor ? trueBackgroundColor : undefined,
+                    color: this.props.reverseColor ? trueBackgroundColor: trueFontColor,
                     ...props.style,
                 }} icon={<IconView/>} /></Tooltip>)
             }
@@ -97,11 +102,10 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
     }
     private getProps() {
         let props: any = {...this.props, ...this.props['x-type-props']};
-
+        
         if (typeof props.size !='number') {
-            props.size=  32
+            props.size=  props.size == 'small' ? 24:  32
         }
-
         return  props;
     }
     public render() {
@@ -115,8 +119,11 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
             if (utils.isArrayObject(icon)) {
        
                 return (
-                    <Avatar.Group className='ui-avatar-group'>
-                        {icon.map(ic => this.renderItem(props,ic.icon, ic.color, ic.name))}
+                    <Avatar.Group max={{
+                        count: 3,
+                        style: { color: '#fff',width: props.size,height: props.size, backgroundColor: '#ccc' },
+                      }} className='ui-avatar-group'>
+                        {icon.map(ic => this.renderItem(props,ic.icon, ic.color, ic.componentName || ic.description || ic.name))}
                     </Avatar.Group>
                 )
             } else {

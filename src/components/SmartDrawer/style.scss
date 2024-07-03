@@ -1,0 +1,99 @@
+.ant-dropdown {
+    .ant-dropdown-menu-item {
+        .icons-combine-bottomRight {
+            margin-right: 8px
+        }
+    }
+}
+.ui-smart-drawer {
+    .ant-drawer-body {
+        overflow: hidden;
+    }
+
+    .ant-spin-nested-loading {
+        height: 100%;
+        .ant-spin-container {
+            height: 100%;
+        }
+    }
+
+    .ui-toolbar {
+        opacity: .5;
+    }
+    .ant-list-item-meta .ant-list-item-meta-title {
+        font-size:14px !important;
+        opacity: .8;
+        margin-block-end: 0px !important;
+        .ui-subtitle {
+            font-size:12px;
+        }
+
+    }
+    .ui-classify-panel .ant-tabs-tab {
+        padding:2px 8px;
+        font-size: 14px;;
+    }
+    .ui-classify-panel .ant-tabs-tab + .ant-tabs-tab {
+        margin-left: 4px;
+    }
+    .ui-former-notice {
+        padding: 8px;
+        margin-bottom: 16px;
+    }
+    .ui-mircotable.ui-mircotable-card .ant-list .ant-list-item {
+        padding: 12px;
+        padding-bottom: 8px;
+        cursor: pointer;
+        .ant-list-item-meta-avatar {
+            margin-inline-end: 8px
+        }
+        .ant-list-item-meta {
+            margin-block-end: 8px;
+        }
+    }
+    .ui-mircotable-mode-pick {
+        .ui-mircotable .ui-mircotable-avatar {
+            padding-left: 0;
+        }
+        .ui-mircotable.ui-mircotable-card .ant-list-item-meta-description .ui-meta-description-wrapper {
+            -webkit-line-clamp: 2;
+            height: 32px;
+            line-height: 16px;
+        }
+        .ui-mircotable.ui-mircotable-card .ant-list-item-action {
+            padding-top:8px;
+        }
+    }
+    
+    .ui-smartpage-wrapper .ui-classify-wrapper {
+        margin-top:0;
+    }
+    .ui-classify-panel {
+        padding-left: 4px;
+    }
+    .ui-smartpage-wrapper {
+        //padding: 8px;
+        height: calc(100% - 54px);
+        overflow: hidden;
+        min-height: 200px;
+
+        .ui-mircotable {
+            padding: 4px 19px;
+        }
+    }
+    .ui-smartpage-wrapper .ui-classify-content-wrapper {
+        height: calc(100% - 32px);
+        margin-top: 8px;
+    }
+    .ui-mircotable .ui-block-item-type-outline {
+        height: calc(100% - 150px);
+    }
+    .ui-classify-panel {
+        .ant-tabs-top {
+            padding-top: 0;
+        }
+        > .ui-header {
+            display:none;
+        }
+    }
+}

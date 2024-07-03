@@ -41,6 +41,13 @@
     text-align: center;
     border: 9px solid #fff;
     z-index: 20;
+    &.jtk-drag {
+        > span:not(.ui-recofilter-wrapper) ,
+        .ui-title,
+        .ui-adder {
+            display: none;;
+        }
+    }
     //transition: all .2s;
     > span:not(.ui-recofilter-wrapper) {
         position: absolute;

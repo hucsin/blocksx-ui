@@ -13,6 +13,8 @@ import { omit } from 'lodash';
 
 interface IMircoFlowNode {
     name: string;
+    id?: number;
+    bytethinkingId?: number;
     type: string;
     left: number;
     top: number;
@@ -22,6 +24,7 @@ interface IMircoFlowNode {
     isNew?: boolean;
     fetchMap: FetchMap;
     mircoFlow:any;
+    isViewer?: boolean;
 
     onUpdateNode?: Function;
     onAddNodeChildren?: Function;
@@ -42,6 +45,7 @@ interface SMircoFlowNode {
     cacheProps: any;
     openSetting: boolean;
     hasChanged: boolean;
+    settingMode?: string
 }
 
 export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMircoFlowNode> {
@@ -52,9 +56,14 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     private getContextMenuMap: any = (type: string, state: any) => {
         let noDelete: boolean = type == 'router';
         let isTrigger: boolean = type == 'go';
-
+        
         return [
             {
+                name: i18n.t('Configuration'),
+                type: 'configuration',
+                icon: 'ConfigurationUtilityOutlined'
+            },
+            'empty'!=type && {
                 name: i18n.t('Setting'),
                 type: 'setting',
                 icon: 'SettingUtilityOutlined'
@@ -211,8 +220,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         return (
             <>
                 <FormerTypes.avatar size={100}  icon={icon} color={color}/>
-                <div className='ui-adder'  onClick={this.addRouterChildren}><PlusOutlined/></div>
-                {this.state.type == 'go' && <div className='ui-adder-router' onClick={this.addTiggerNode}><PlusOutlined/></div>}
+                {!this.props.isViewer &&<div className='ui-adder'  onClick={this.addRouterChildren}><PlusOutlined/></div>}
+                {!this.props.isViewer && this.state.type == 'go' && <div className='ui-adder-router' onClick={this.addTiggerNode}><PlusOutlined/></div>}
                 {props.description &&<div className='ui-title'>{props.description }</div>}
             </>
         )
@@ -248,9 +257,19 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 return (
                     <SmartPage
                         pageURI='/api/thinking/findPage'
+                        id={[this.state.settingMode, defaultProps.componentName || 'router'].join('__')}
                         name={defaultProps.componentName || 'router'}
                         type="popover"
+                        isViewer={this.props.isViewer}
                         simplicity
+                        params={()=> {
+                            return {
+                                id: this.props.bytethinkingId,
+                                nodeId: this.props.id,
+                                mode: this.state.settingMode,
+                                type: defaultProps.componentName ? 'module' : 'router'
+                            }
+                        }}
                         icon="SettingOutlined"
                         value={this.state.props || {}}
                         onChangeValue={(props)=> {
@@ -274,11 +293,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         
     }
     private onCloseLayer() {
-        this.setState({openSetting: false})
-
         if (this.state.hasChanged) {
             this.props.onUpdateNode && this.props.onUpdateNode(this.props.name, this.state.props, this)
         }
+
+        this.setState({openSetting: false,hasChanged: false})
     }
     public getContextMenu(): any {
 
@@ -292,7 +311,10 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     public onMenuClick =(item: any)=> {
         switch(item.type) {
             case 'setting':
-                this.setState({openSetting: true})
+                this.setState({openSetting: true, settingMode: 'setting'})
+                break;
+            case 'configuration':
+                this.setState({openSetting: true, settingMode: 'configuration'})
                 break;
             case 'add':
                 this.addRouterChildren()
@@ -324,12 +346,12 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 } as any}
                 onContextMenu={this.onContextMenu}
             >
-                <ContextMenu 
+                {!this.props.isViewer &&<ContextMenu 
                     namespace={this.props.name} 
                     onMenuClick={this.onMenuClick} 
                    // type ={this.state.type} 
                     menu={this.getContextMenu()}
-                />
+                />}
                 {this.renderNodeContent(icon[0], color)} 
                 {icon[1] && this.renderNodeSubIcon(icon[1])}
             </div>

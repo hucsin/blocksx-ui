@@ -18,6 +18,7 @@ export interface SmartPageTablerProps {
     reflush: any,
     onGetRequestParams?: Function;
     onChangeValue?: Function;
+    onSelectedValue?: Function;
     searchRef?: any;
     toolbarRef?: any;
     operateContainerRef?: any;
@@ -105,7 +106,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
     private initRequset() {
         this.ListRequest = SmartRequst.createPOST(this.props.path + '/list');
         this.UpdateRequest = SmartRequst.createPOST(this.props.path + '/update', true);
-        this.DeleteRequest = SmartRequst.createPOST(this.props.path + '/delete', true);
+        this.DeleteRequest = SmartRequst.createPOST(this.props.path + '/delete', ['id'], true);
         this.CreateRequest = SmartRequst.createPOST(this.props.path + '/create', true);
         this.ViewRequest = SmartRequst.createPOST(this.props.path + '/view', ['id'], true)
     }
@@ -133,7 +134,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
         return Object.assign({}, params, pageMeta.params|| {});
     }
     private onChangeValue = (value)=> {
-        
+            
         if (this.props.onChangeValue) {
             this.props.onChangeValue(value)
         }
@@ -221,9 +222,16 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                     onChangeDatasource = {this.hideOptionalWrapper}
                     
                     onRowAction={(operate:any, rowData: any, _)=>{
-                        
+
+                        //return ;
                         if (operate.type == 'rowclick') {
-                            this.props.onOptionalOpen && this.props.onOptionalOpen();
+                            if (this.state.mode == 'pick') {
+                                this.props.onSelectedValue && this.props.onSelectedValue(rowData);
+                            } else {
+                                if (this.props.optional) {
+                                this.props.onOptionalOpen && this.props.onOptionalOpen();
+                                }
+                            }
                         }
 
                         this.setState({

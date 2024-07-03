@@ -35,6 +35,7 @@ export { default as StopCircleUtilityFilled } from './StopCircleUtilityFilled';
 export { default as StripeBrandFilled } from './StripeBrandFilled';
 export { default as TableAddDataFilled } from './TableAddDataFilled';
 export { default as ThinkingUtilityFilled } from './ThinkingUtilityFilled';
+export { default as TriggerUtilityFilled } from './TriggerUtilityFilled';
 export { default as ValidationUtilityFilled } from './ValidationUtilityFilled';
 export { default as ViewOffUtilityFilled } from './ViewOffUtilityFilled';
 export { default as ViewUtilityFilled } from './ViewUtilityFilled';

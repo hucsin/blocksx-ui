@@ -2,16 +2,26 @@ import React from 'react';
 import i18n from '@blocksx/i18n';
 import { utils } from '@blocksx/core';
 
-import { Drawer, Alert, Button, Space, Popover, Spin } from 'antd';
+import { Drawer, Button, Space, Popover, Spin } from 'antd';
+import * as FormerTypes from '../Former/types';
 import SmartPage from '../SmartPage';
-import SmartRequest from '../utils/SmartRequest'
+import SmartRequest from '../utils/SmartRequest';
+import TablerUtils from '../utils/tool';
+import { pick } from 'lodash';
+
+import withRouter, { routerParams } from '../utils/withRouter';
+
+import './style.scss'
 
 interface SmartDrawerProps {
+    router: routerParams;
     open?: boolean;
     type: string;
     value?: any;
     smartpage: string;
+    motion?: string;
     icon?: string;
+    
     name?: string;
     path?: string;
     pageURI?: string;
@@ -40,8 +50,9 @@ interface SmartDrawerState {
     errorMessage?: string;
     errorIndex?: number;
     value?: any;
+    loading?: boolean;
 }
-export default class SmartDrawer extends React.Component<SmartDrawerProps, SmartDrawerState> {
+class SmartDrawer extends React.Component<SmartDrawerProps, SmartDrawerState> {
     private defaultErrorTips: string = 'At least one item needs to be selected';
     private defaultNoticeModeMap: any ={
         pickone: 'Select a record from the data in the table below, and the system will automatically establish a binding relationship!',
@@ -58,8 +69,12 @@ export default class SmartDrawer extends React.Component<SmartDrawerProps, Smart
             icon: props.icon,
             mode: props.mode,
             notice: props.notice,
-            width: props.width || document.body.offsetWidth * 2 / 3
+            loading: false,
+            width: props.width || this.getDefaultWidth()
         }
+    }
+    private getDefaultWidth() {
+        return Math.min(1200,Math.max(700,document.body.offsetWidth * 3 / 4))
     }
     public UNSAFE_componentWillReceiveProps(newProps: SmartDrawerProps) {
         if (newProps.open != this.state.open) {
@@ -67,6 +82,7 @@ export default class SmartDrawer extends React.Component<SmartDrawerProps, Smart
                 open: newProps.open
             })
         }
+        
         if (newProps.smartpage != this.state.smartpage) {
             this.setState({
                 smartpage: newProps.smartpage,
@@ -74,7 +90,7 @@ export default class SmartDrawer extends React.Component<SmartDrawerProps, Smart
                 type: newProps.type,
                 draweroperate: newProps.draweroperate,
                 mode: newProps.mode,
-                width: newProps.width || document.body.offsetWidth * 2 / 3,
+                width: newProps.width || this.getDefaultWidth(),
                 notice: newProps.notice,
             })
         }
@@ -83,12 +99,39 @@ export default class SmartDrawer extends React.Component<SmartDrawerProps, Smart
         if (this.props.onClose) {
             this.props.onClose(reflush)
         }
+        this.setState({
+            loading: false
+        })
     }
     private onChangeValue=(value)=> {
         this.setState({
             value,
             errorIndex: undefined
         })
+    }
+    private doSmartAction(action: any) {
+        if (action) {
+            switch(action.type) {
+                case 'router':
+                    if (this.props.router) {
+                        this.props.router.utils.goPath(action.router, action);
+                    }
+                    break;
+            }
+        }
+    }
+    private onSelectedValue =(value)=> {
+        let { mode, motion } = this.props;
+        if (mode == 'pick' && motion) {
+            let requestHelper: any = SmartRequest.createPOST(motion);
+            this.setState({loading:true})
+            requestHelper(pick(value, ['id'])).then((result) => {
+                
+                if (result.smartaction) {
+                    this.doSmartAction(result)
+                }
+            })
+        }
     }
     private showErrorMessage(message: string, index: number) {
         this.setState({
@@ -154,7 +197,12 @@ export default class SmartDrawer extends React.Component<SmartDrawerProps, Smart
                 rowSelection: true,
                 mode: this.state.mode
             })
+
         }
+
+        this.setState({
+            icon: pageInit.icon
+        })
     }
     private getNoticeMessage() {
 
@@ -187,27 +235,41 @@ export default class SmartDrawer extends React.Component<SmartDrawerProps, Smart
             </Space>
         )
     }
+    private renderTitle() {
+        return (
+            <>
+                {TablerUtils.renderIconComponent(this.state)}
+                {this.state.name}
+            </>
+        )
+    }
     public render() {
         let message: string = this.getNoticeMessage();
         return (
             <Drawer
                 open={this.state.open}
-                title={this.state.name}
+                title={this.renderTitle()}
                 width={this.state.width}
                 onClose={()=>this.onClose()}
-                className='ui-former fromer-pick-wrapper'
+                className='ui-former fromer-pick-wrapper ui-smart-drawer'
                 footer={this.renderFooter()}
             >
-                {message && <Alert key={2} showIcon message={message} type='warning' />}
-                <SmartPage 
-                    key={21}
-                    pageURI={this.props.pageURI}
-                    pageMeta={{title: this.state.name}} 
-                    name={this.state.smartpage}
-                    onInitPage ={this.onInitPage}
-                    onChangeValue={this.onChangeValue}
-                ></SmartPage>
+                <Spin spinning={this.state.loading}>
+                    {message && <FormerTypes.notice icon={this.state.icon} color={'#ccc'} key={2}  value={message} />}
+                    <SmartPage 
+                        key={21}
+                        pageURI={this.props.pageURI}
+                        mode={this.state.mode}
+                        //pageMeta={{title: this.state.name}} 
+                        name={this.state.smartpage}
+                        onInitPage ={this.onInitPage}
+                        onChangeValue={this.onChangeValue}
+                        onSelectedValue={this.onSelectedValue}
+                    ></SmartPage>
+                </Spin>
             </Drawer>
         )
     }
 }
+
+export default withRouter(SmartDrawer)

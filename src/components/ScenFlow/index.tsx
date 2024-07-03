@@ -159,7 +159,7 @@ export default class ScenFlow extends React.Component<{}, {
                 }}>显示区</button>
                 
             </div>
-            <div style={{position:"absolute",padding: 10,zIndex:111,textAlign:'center',lineHeight:120,color:'#fff', width: 120,height: 120,background: '#ccc',left: 0,top:0}}>t</div>
+            
             <div className={classnames({
                 'scenflow-response-wrapper': true
             })}

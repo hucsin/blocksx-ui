@@ -225,27 +225,7 @@ svg.link-hand {
             width: 120px;
             height: 80px;
             line-height: 80px;
-            &:last-child {
-                &::before ,
-                &::after {
-                    content: "Left";
-                    position: absolute;
-                    font-size: 12px;
-                    height: 100%;
-                    width: 30px;
-                    left: 0;
-                    top: 0;
-                    background-color: rgba(255, 255, 255, .4);
-                    border-right: 3px dashed rgba(204, 204, 204, 0.3);
-                }
-                &::before {
-                    content: "Right";
-                    left: auto;
-                    right: 0;
-                    border-right: none;
-                    border-left:  3px dashed rgba(204, 204, 204, 0.3);
-                }
-            }
+            
             span {
                 font-size: 28px;
                 

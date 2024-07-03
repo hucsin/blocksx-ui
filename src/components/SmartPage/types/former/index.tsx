@@ -19,6 +19,7 @@
  import SchemaUtils from '../../../utils/tool';
 
  export interface SmartPageFormerProps {
+    id?: string;
     schema: any,
     viewer: boolean;
     pageMeta: any,
@@ -59,6 +60,7 @@ interface SmartPageFormerState {
     setpOneValue: any
     viewer: boolean;
     loading: boolean;
+    id?: string;
 }
 
 export default class SmartPageFormer extends React.Component<SmartPageFormerProps, SmartPageFormerState> {
@@ -83,7 +85,8 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                 isStepMode: this.isStepFormer(props.schema),
                 setpOneValue: props.value,
                 pageMeta: props.pageMeta,
-                loading: props.valueMode == 'remote'
+                loading: props.valueMode == 'remote',
+                id: props.id
             }
 
 
@@ -117,9 +120,10 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
     
         public UNSAFE_componentWillReceiveProps(newProps: SmartPageFormerProps) {
             
-            if (newProps.title !== this.state.title && newProps.schema) {
+            if ((newProps.title !== this.state.title || newProps.id != this.state.id) && newProps.schema) {
                 
                 this.setState({
+                    id: newProps.id,
                     schema: this.getSchema(newProps.schema),
                     fields: newProps.schema.fields,
                    // value: newProps.value,
@@ -132,7 +136,9 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                 })
             }
 
-            if (this.props.valueMode!== 'remote' && newProps.value !== this.state.value) {
+            
+            if (/*this.props.valueMode!== 'remote' && */newProps.value !== this.state.value) {
+                
                 this.setState({
                     value: newProps.value
                 })

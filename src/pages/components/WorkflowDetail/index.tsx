@@ -55,7 +55,11 @@ export interface MircoFLowConnector extends FlowConnector{
 
 export interface MircoFlowProps {
     router: any;
+    history: any
     pageType: string;
+
+    isTemplate?: boolean;
+    isViewer?: boolean;
 
     getFormerSchema(formerType: string): any;
    // onToggleFavorites(state: any) :Promise<FetchResult>;
@@ -102,6 +106,11 @@ interface MircoFlowState {
 
     titleIsInput: boolean;
     titleOffsetWidth: number;
+    // todo
+    openhelper: boolean;
+    connectProps: any;
+    connectPropsHasChanged?: boolean;
+    connectId?: string;
 }
 
 class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState> {
@@ -110,7 +119,8 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     private destoryPanel: any;
     private unlinkPanel: any;
     private canvasPanel: any;
-    
+    private canvasRef: any;
+    private connectHelperRef: any;
     private router: any;
     private miniFlow:MiniFlow;
     public constructor(props: MircoFlowProps) {
@@ -138,11 +148,17 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             openVersion: false,
             publishing: false,
             openPublish: false,
-            reflush: 0
+            reflush: 0,
+            openhelper: false,
+            connectProps: {}
+
         }
 
         this.cavnasId = utils.uniq('MircoFlow');
-        
+        this.connectHelperRef = React.createRef();
+        this.canvasRef = React.createRef();
+
+        console.log(this.props)
     }
     
     public componentDidMount() {
@@ -200,7 +216,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
 
         this.miniFlow = new MiniFlow({
             canvas: this.cavnasId,
-            
+            isViewer: this.props.isViewer,
             unlinkChinampaPanel: this.unlinkPanel,
             destoryChinampaPanel: this.destoryPanel,
             chinampaPanel: this.responsePanel,
@@ -228,19 +244,57 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         }
     }
     public bindEvent() {
-        this.miniFlow.on('onChange', (data:FlowDetailData) => {
-            
-            this.setState({
-                nodes: data.nodes,
-                isPublish: false,
-                connectors: data.connector
-            }, () => {
-                this.saveFlowList(this.state.value, data.nodes, data.connector)
+        if (!this.props.isViewer) {
+            this.miniFlow.on('onChange', (data:FlowDetailData) => {
+                
+                this.setState({
+                    nodes: data.nodes,
+                    isPublish: false,
+                    connectors: data.connector
+                }, () => {
+                    this.saveFlowList(this.state.value, data.nodes, data.connector)
+                })
             })
+        }
+
+        this.miniFlow.on('highlightConnect', ({target,source,event})=> {
+            let { current } = this.connectHelperRef;
+            if (current) {
+                let parentNode: any = this.canvasRef.current;
+                
+                let parentRect: any = parentNode.getBoundingClientRect();
+
+                current.style.left =(event.pageX-parentRect.left -4) +'px';
+                current.style.top = (event.pageY-parentRect.top-4) +'px';
+                current.style.display ='block';
+
+                setTimeout(()=> {
+                    this.setState({
+                        openhelper: true,
+                        connectId: [target,source].join('_'),
+                        connectProps: this.miniFlow.getHighlightConnectProps()
+                    })
+                }, 0) 
+            }
+            
+        })
+        this.miniFlow.on('unHighlightConnect', () => {
+            let { current } = this.connectHelperRef;
+            if (current) {
+                current.style.display ='none';
+                this.setState({
+                    openhelper: false
+                })
+            }
         })
     }
     public saveFlowList(value: any, nodes: any, connector: any) {
-        this.props.onSaveFlowList && this.props.onSaveFlowList(value, nodes, connector)
+        if (!!this.props.onSaveFlowList) {
+            this.props.onSaveFlowList(value, nodes, connector).then(node => {
+                //console.log(node,88898989)
+                // TODO 更新节点，动态更新，不做全亮替换
+            })
+        }
     }
     private getQueryValue(queryKey: string) {
         let { query = {} } = this.router;
@@ -249,6 +303,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
 
     public goBack() {
         this.router.naviagte(-1);
+        //this.router.getHistory();
     }
     public doAction = (e: any)=> {
         this.setState({
@@ -288,14 +343,14 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         let { value = {} } = this.state;
         return (
             <div className='ui-mircoflow-header'>
-                <Icons.LeftCircleDirectivityOutlined onClick={()=>{this.props.router.utils.goPath('/thinking')}} /> 
+                <Icons.LeftCircleDirectivityOutlined onClick={()=>{this.goBack()}} /> 
                 <span className='ui-title'>
-                    <span className='ui-node'><MagicFavorites loading={true} onChangeValue={(state) => {
+                    {!this.props.isTemplate && <span className='ui-node'><MagicFavorites loading={true} onChangeValue={(state) => {
                         this.setState({
                             favorites: state
                         })
                         return this.props.onEditorValue({id: this.state.value.id,  favorites: state})
-                    }} value={this.state.favorites} /></span>
+                    }} value={this.state.favorites} /></span>}
                     <span className='ui-text'>
                         {!this.state.titleIsInput 
                             ? <span onClick={this.onTitleClick}>{value.title}</span> 
@@ -386,17 +441,17 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         return (
             <div className='ui-mircoflow-action-toolbar'>
                 <Space>
-                    <MagicSwitch  size="default" loading={true}  value={this.state.status} onChangeValue={(state: boolean)=> {
+                    {!this.props.isTemplate && <MagicSwitch  size="default" loading={true}  value={this.state.status} onChangeValue={(state: boolean)=> {
                         this.setState({
                             status: state
                         })
                         return this.props.onEditorValue({id: this.state.value.id,  status: state}, 'status');
-                    }}/>
-                    <Tooltip placement="top" title={i18n.t('Publish')}>
+                    }}/>}
+                     {!this.props.isViewer && <Tooltip placement="top" title={i18n.t('Publish')}>
                         <Popover open={this.state.openPublish} content={this.renderPublishContent()} onOpenChange={(v)=>this.setState({openPublish: v})} trigger={'click'}  >
                             <Button loading={this.state.publishing} icon={<Icons.PublishUtilityFilled/>}><span className='ui-empty'>{!this.state.isPublish && '(Unpublished)'}</span>{this.state.version}</Button> 
                         </Popover>
-                    </Tooltip>
+                    </Tooltip>}
                     <Tooltip placement="top" title={i18n.t('Auto align the {pageType}', {pageType: this.props.pageType})}>
                         <Button onClick={()=> {
                             this.miniFlow.doFormatNodeCanvas()
@@ -477,7 +532,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     }
     public renderFlowList() {
         if (this.state.loading) {
-            return <Spin/>
+            return <Spin spinning/>
         }
         return (
             <div 
@@ -492,7 +547,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         onAddTriggerNode={this.addTriggerNodeById}
                         mircoFlow={this}
                         getFormerSchema={this.props.getFormerSchema}
-                        
+                        isViewer={this.props.isViewer}
                         onChangeProps={(v)=>{
                             this.updateNodeByName(node.name,{
                                 props: Object.assign({}, node.props, v)
@@ -569,10 +624,65 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         }
         return value;
     }
+    private onCloseLayer = ()=> {
+
+        if (this.state.connectPropsHasChanged ) {
+
+            // save
+            this.miniFlow.updateHighlightConnectProps(this.state.connectProps || {})
+            
+        }
+
+        this.setState({
+            openhelper: true,
+            connectPropsHasChanged: false
+        })
+    }
+    private renderConnectSetting() {
+        
+        return (
+            <SmartPage
+                id={this.state.connectId}
+                pageURI='/api/thinking/findPage'
+                name={'connector'}
+                type="popover"
+                popoverWrapper={false}
+                simplicity
+                isViewer={this.props.isViewer}
+                icon="SettingOutlined"
+                params={()=> {
+                    let connector:any = this.miniFlow.getHighlightInfo();
+                    return {
+                        type: 'connector',
+                        id: this.state.value.id,
+                        target: connector.target,
+                        source: connector.source
+                    }
+                }}
+                value={this.state.connectProps}
+                onChangeValue={(props)=> {
+                    
+                // let pickvalue: any = pick(this.state.props, ['icon', 'color'])
+                    //console.log(pickvalue, props, 222, this.state.props)
+                    this.setState({
+                        //  props: props,
+                        connectProps: props,
+                        connectPropsHasChanged: true
+                    })
+                }} 
+                noToolbar
+                open={this.state.openhelper}
+                onShow={()=>this.setState({openhelper: true})}
+                onClose={()=>this.onCloseLayer()}
+            >
+                    <div className='ui-connector-helper' ref={this.connectHelperRef}></div>
+        </SmartPage>
+)
+    }
     public render () {
         let formerSchema: any  = this.getFormerSchema();
         return (
-            <div className={classnames({
+            <div ref={this.canvasRef} className={classnames({
                 'ui-mircoflow': true,
                 'ui-runtest-show': !!this.state.openType,
                 'ui-runlog-show': !!this.state.openLog
@@ -595,7 +705,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                 <div draggable className='ui-mircoflow-body'>
                     {this.renderFlowList()}
                 </div>
-                <MircoRunTest 
+                {!this.props.isViewer && <MircoRunTest 
                     fetchMap={this.props.fetchMap} 
                     router={this.router} 
                     openType={this.state.openType}
@@ -603,11 +713,14 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                     historyStartDate={this.state.historyStartDate}
                     historyEndDate={this.state.historyEndDate}
                     runId={this.state.openLog}
-                />
+                />}
                 {this.state.openLog && <MircoRunLog  router={this.router} fetchMap={this.props.fetchMap} logId={this.state.openLog} logType={this.state.logType} />}
                 {this.renderNewNodeToolbar()}
                 {this.state.value.id && <MirceVersionHistory onReflush={()=>{ this.reloadData() }} onClose={()=>{this.setState({openVersion:false})}} fetchMap={this.props.fetchMap}  open={this.state.openVersion} id={this.state.value.id}/>}
                 <div className='ui-background-dwbg' dangerouslySetInnerHTML={{ __html: mainTexture }}></div>
+
+                {this.renderConnectSetting()}
+                
             </div>
         )
     }

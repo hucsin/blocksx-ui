@@ -22,6 +22,7 @@ interface TFormerObjectItem {
     collapse: boolean;
     value:any;
     colspan: any;
+    description?: string;
 }
 interface IFormerObjectItemS extends IFormerObjectItem {
     value: any;
@@ -96,6 +97,10 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
         let { dict, description } = this.props;
         let { value } = this.state;
 
+        if (this.state.description) {
+            return this.state.description
+        }
+
         if (dict) {
             let matchDescription: any = dict.find(it => it.value == value);
 
@@ -142,7 +147,14 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
                     {utils.isValidValue(descriptionText) && <span className='former-object-label-description'>{descriptionText}</span>}
                     
                 </div> : null }
-                {this.state.switch && <div className="former-object-item-content">{this.props.children}</div>}
+                {this.state.switch && <div className="former-object-item-content">{React.cloneElement(this.props.children, {
+                    onDescriptionSwitch: (description:any) =>{
+                        
+                        this.setState({
+                            description
+                        })
+                    }
+                })}</div>}
             </div>
         )
     }

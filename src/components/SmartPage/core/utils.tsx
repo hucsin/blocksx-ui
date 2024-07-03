@@ -16,10 +16,10 @@ export default class SmartPageUtils {
         return this.requestHelperMap[url] = SmartRequest.createPOST(url);
     }
 
-    public static fetchPageSchema (url:string, name: string, props: any = {}) {
+    public static fetchPageSchema (url:string, name: string, props: any = {}, params: any ={}) {
 
         return new Promise ((resolve, reject)=> {
-            this.getRequestHelper(url)({ page: name}).then((data:any) => {
+            this.getRequestHelper(url)({ page: name,...params}).then((data:any) => {
                 let { schema = {}, uiType, path } = data;
                     let trueUiType: string = props.uiType || uiType;
                     let classifyField: any

@@ -8,6 +8,7 @@ export interface routerParams {
     utils: RouterUtils,
     naviagte: NavigateFunction,
     params: any;
+    history?: any;
     query: any;
     location: Location,
     routerKey: string
@@ -18,6 +19,7 @@ let routerData: routerParams = {} as routerParams;
 
 class RouterUtils {
     private router: any;
+    private history: any;
     public constructor(router: any) {
         this.router = router;
     }
@@ -52,6 +54,9 @@ class RouterUtils {
         this.router.naviagte(this.createPath(path, params))
     
     }
+    public getHistory() {
+        console.log(this.history)
+    }
     public goQuery(query?: any) {
         Object.assign(this.router.query, query);
         this.go(this.router.location.pathname, {
@@ -78,19 +83,22 @@ export default function withRouter(WrapperComponent: any) {
     let defaultProps: any = WrapperComponent.defaultProps;
     const AcB: any = function (props = {}) {
         
-        const naviagte = useNavigate()
+        const naviagte = useNavigate();
+
         const params = useParams();
         let trueProps: any = Object.assign({}, props);
 
         
         const location = useLocation();
         routerData.utils = new RouterUtils(routerData);
+        
         routerData.naviagte = naviagte;
         routerData.params = params || {};
         routerData.location = location;
         routerData.query = routerData.utils.getQueryMap(location.search)
         routerData.routerKey = location.pathname + location.search;
         
+
 
         for (let pr in defaultProps) {
             if (typeof trueProps[pr] == 'undefined') {

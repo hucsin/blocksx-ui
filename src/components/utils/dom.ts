@@ -3,9 +3,26 @@
  * @Version: 1.0.0
  * @Author: uoeye
  * @Date: 2020-10-09 21:13:21
+ * 
  */
+const eventMap: any = {};
+let uuiq: number = +new Date;
+let eventUUID: string = 'data-eid'
 export const addEvent = (dom: any, event: string, listener: Function, iscap?:boolean) => {
+    
     if ( dom && listener ) {
+        let domuuiq:number = uuiq++;
+        if (!(domuuiq =dom[eventUUID])) {
+            dom[eventUUID]= domuuiq;
+        }
+        if (!eventMap[domuuiq]) {
+            eventMap[domuuiq] = {}
+        }
+        if (!eventMap[domuuiq][event]) {
+            eventMap[domuuiq][event] = []
+        }
+        eventMap[domuuiq][event].push(listener);
+
         dom.addEventListener(event, listener, iscap ? true : false);
     }
 }
@@ -22,9 +39,20 @@ export const resizeObserver = (dom: any, listener: any) => {
     observer.observe(dom)
 }
 
-export const removeEvent = ( dom: any, event: string, listener: Function ) => {
+export const removeEvent = ( dom: any, event: string, listener?: Function ) => {
     if ( dom && listener) {
-        dom.removeEventListener(event,listener);
+        // 删除全部
+        if (!listener) {
+            let domuuiq: number = dom[eventUUID];
+            if (domuuiq) {
+                let eventList: any =eventMap[domuuiq];
+                if (eventList && eventList[event]) {
+                    eventList[event].forEach(it => removeEvent(dom,event, it))
+                }
+            }
+        } else {
+            dom.removeEventListener(event,listener);
+        }
     }
 }
 export const consume = function(e) {

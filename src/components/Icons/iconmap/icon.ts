@@ -38,6 +38,7 @@ export const map:any = {
         "StartCircleUtilityFilled",
         "StopCircleUtilityFilled",
         "ThinkingUtilityFilled",
+        "TriggerUtilityFilled",
         "ValidationUtilityFilled",
         "ViewOffUtilityFilled",
         "ViewUtilityFilled",

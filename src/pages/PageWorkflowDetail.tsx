@@ -7,22 +7,32 @@ import WorkflowDetail  from './components/WorkflowDetail';
 import { omit } from 'lodash';
 
 interface IFlowEdit {
+    isTemplate?: boolean;
+    isViewer?: boolean;
     router: routerParams;
-    
+}
+interface FlowEditState {
+
 }
 
 
-class PageWorkflowDetail extends React.Component<IFlowEdit> {
-    private fetchViewRequest: any = SmartRequest.createPOST('/api/thinking/view', true);
-    private fetchUpdateRequest: any = SmartRequest.createPOST('/api/thinking/update', true);
-    private fetchToggleStatusRequest: any = SmartRequest.createPOST('/api/thinking/toggleStatus', true);
-    private fetchToggleFavoritesRequest: any = SmartRequest.createPOST('/api/thinking/toggleFavorites', true);
-    private fetchPublishRequest: any = SmartRequest.createPOST('/api/thinking/publish', true);
+class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
+
+    public static defaultProps = {
+        isTemplate: false,
+        isViewer: false
+    }
+
+    private fetchViewRequest: any ;
+    private fetchUpdateRequest: any;
+    private fetchToggleStatusRequest: any;
+    private fetchToggleFavoritesRequest: any ;
+    private fetchPublishRequest: any;
 
     private fetchPragramsRequest: any =  SmartRequest.createPOST('/eos/programs/list');
-    private fetchVersionHistoryRequest: any = SmartRequest.createPOST('/api/thinking/history');
-    private fetchRestoreRequest: any = SmartRequest.createPOST('/api/thinking/restoreHistory', true)
-    private fetchCloneRequest: any = SmartRequest.createPOST('/api/thinking/clone', true);
+    private fetchVersionHistoryRequest: any;
+    private fetchRestoreRequest: any
+    private fetchCloneRequest: any;
 
 
     private router: routerParams;
@@ -30,13 +40,28 @@ class PageWorkflowDetail extends React.Component<IFlowEdit> {
         super(props);
 
         this.router = props.router;
+        this.initRequestHelper();
     }
+    public initRequestHelper() {
+        let path: string = this.props.isTemplate ? '/eos/templates': '/api/thinking';
 
+        this.fetchViewRequest = SmartRequest.createPOST(`${path}/view`);
+        this.fetchUpdateRequest = SmartRequest.createPOST(`${path}/update`);
+        this.fetchToggleStatusRequest = SmartRequest.createPOST(`${path}/toggleStatus`);
+        this.fetchToggleFavoritesRequest = SmartRequest.createPOST(`${path}/toggleFavorites`);
+        this.fetchPublishRequest = SmartRequest.createPOST(`${path}/publish`);
+
+        this.fetchVersionHistoryRequest = SmartRequest.createPOST(`${path}/history`);
+        this.fetchRestoreRequest = SmartRequest.createPOST(`${path}/restoreHistory`)
+        this.fetchCloneRequest = SmartRequest.createPOST(`${path}/clone`);
+    }
     public render() {
 
         return (
             
             <WorkflowDetail 
+                isViewer={this.props.isViewer}
+                isTemplate={this.props.isTemplate}
                 pageType="thinking"
                 onToggleFavorites={()=>{
                     return new Promise((resolve,reject) => {
@@ -87,7 +112,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit> {
                         'versionHistory': this.fetchVersionHistoryRequest,
                         'restoreHistory': this.fetchRestoreRequest,
                         'logs': (pageNumber: number, pageSize: number, params: any) => {
-                            console.log('logs', pageNumber, pageSize, params, 90)
+                            
                             return new Promise((resolve, reject)=> {
                                 resolve({
                                     title: 'Nov 20, 2023, 4:51:28 AM',
@@ -113,7 +138,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit> {
                             })
                         },
                         'history': (pageNumber: number, pageSize: number, params: any)=>{
-                            console.log('history', pageNumber, pageSize, params, 90)
+                            
                             return new Promise((resolve, reject)=> {
                                 resolve({
                                     pageNumber,
