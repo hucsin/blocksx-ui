@@ -197,7 +197,6 @@ export default class TablerUtils {
     public static getDefaultFieldSchema(it:any, index) {
         //console.log(it.type, it, it.column, 111)
        
-        
         return {
             ...it,
             type: it.type || 'string', // 统一当string处理
@@ -210,10 +209,13 @@ export default class TablerUtils {
             'x-group': it.group,
             'x-classify': it.group,
             'x-half-width': false,
+            'x-portal': it.portal,
 
             'x-type-props': Object.assign({}, it.props, it.meta && it.meta.props),
             'x-type': it.uiType || 'input',
             'x-colspan': it.colspan,
+            //'x-model-switch': true,
+            
 
             'x-index': utils.isNullValue(it.index) ? index : it.index,
             'x-control': it.control,

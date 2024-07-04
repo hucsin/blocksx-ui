@@ -416,7 +416,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     private getDefaultCancelText() {
         if (this.state.isStepMode) {
             if ( this.cancelDoback()) {
-                return 'Go back'
+                return 'Previous'
             }
         }
         return 'Cancel'

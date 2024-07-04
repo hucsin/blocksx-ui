@@ -36,10 +36,10 @@ export default class FormerGroupItem extends React.Component<{title:string,
               })
             }>
                 
-                {this.props.title ? <div className="former-group-item-title">
+                {this.props.title ? <div className="former-group-item-title" onClick={this.onCollapse}>
                     {this.props.title}
                     {showMore ? <DownOutlined/> : ''}
-                    <div className="former-group-collapse"  onClick={this.onCollapse} >{this.state.collapse ? <RightOutlined/> : <DownOutlined/> }</div>
+                    <div className="former-group-collapse"   >{this.state.collapse ? <RightOutlined/> : <DownOutlined/> }</div>
                 </div> : null}
 
                 <div className={classnames('former-group-item-content', {

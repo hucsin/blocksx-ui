@@ -2,7 +2,7 @@
 import React from 'react';
 import { clone } from 'lodash';
 import classnames from 'classnames';
-import { Popover } from 'antd';
+import { Popover, Space,Tooltip } from 'antd';
 
 import OneOf from './oneOf';
 import * as FormerTypes from './types';
@@ -16,6 +16,7 @@ import * as Icons from '../Icons'
 
 export interface ILeaf {
     path: string;
+    portalMap?: any;
     parentPath?: string;
     value: string;
     runtimeValue?: any;
@@ -99,6 +100,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
         // case object,map,
         this.properties = props.properties;
+
         // case array
         this.items = props.items;
 
@@ -601,15 +603,42 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
     }
 
-    private getGroupList() {
+    private traversalProperties() {
         let propertiesKey = Object.keys(this.properties);
         let defaultGroup: any = [];
+        let portalMap: any = {};
+        let portalField:any  = {};
         let group: any = {};
         let groupList: any[] = [];
 
         propertiesKey.forEach((it: string) => {
             let props = this.properties[it];
             let groupName = props['x-group'];
+            let portal: any = props['x-portal'];
+
+            if (portal) {
+                let portalSplit: any = portal.split('.');
+                let portalTarget: string = portalSplit[0];
+
+                if (!portalMap[portalTarget]) {
+                    portalMap[portalTarget] = {
+                        cache: {},
+                        map: []
+                    }
+                }
+                let portalValue: any = {
+                    slot:  portalSplit[1] || 'content'
+                }
+                
+                portalMap[portalTarget].cache[props.key] = portalValue;
+                portalMap[portalTarget].map.push(portalValue);
+
+
+                portalField[props.key] = {
+                    target: portalTarget,
+                    slot: portalValue.slot
+                }
+            }
 
             if (groupName) {
                 if (!group[groupName]) {
@@ -634,7 +663,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             })
         })
 
-        return groupList;
+        return { groupList, portalMap, portalField };
     }
 
     private getObjectItemProperties(prop: string) {
@@ -686,12 +715,13 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     }
     private isShowObjectKeyByProp(prop: string) {
         let { controlHide } = this.state;
+        
 
         return controlHide.indexOf(prop) == -1;
     }
     private renderObjectNode(children: any[], Child: any) {
         let { value } = this.state;
-        let groupList = this.getGroupList();
+        let { groupList, portalMap, portalField } = this.traversalProperties();
         let Group = this.getNodeByType('group');
         let GroupItem = this.getSubNodeByType('group');
         
@@ -716,6 +746,36 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             let hidden: boolean = props['x-type'] == 'hidden';
                             let itemvalue: any = this.getValueByProps(value[prop], properties, value, prop);
                             
+                            let leftProps: any = {...properties,
+                                path:prop,
+                                parentPath:this.path,
+                                runtimeValue:this.state.runtimeValue,
+                                value:itemvalue,
+                                onDealControl:(control: IControl) => {
+                                    this.onDealControl(control)
+                                },
+                                key:[this.path, prop, index, 'leaf'].join('.'),
+                                viewer:this.state.viewer,
+                                canmodify:this.state.canmodify,
+
+                                size:this.props.size,
+                                rootEmitter:this.props.rootEmitter,
+                                childrenControl:childrenControl,
+                                onGetDependentParameters:this.props.onGetDependentParameters,
+                                onChangeValue:(val: any, type?: string) => {
+                                    value[prop] = val;
+                                    this.onChangeValue(value, type);
+                                    //
+                                }
+                            };
+
+                            if (portalField[prop]) {
+                                portalMap[portalField[prop].target].cache[prop].leftProps = leftProps;
+                                return false;
+                            }
+                            let propsPortalMap = portalMap[prop] && portalMap[prop].map;
+                            let titlePortal: any = this.getPortalBySlot(propsPortalMap,'title')
+                            
                             return (
                                 <Child
                                     hidden={hidden}
@@ -725,7 +785,19 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                         value[prop] = val;
                                         this.onChangeValue(value, type);
                                     }}
-
+                                    renderTitlePortal={titlePortal.length ? ()=> {
+                                        
+                                        return titlePortal.map(it=> {
+                                            let { description} = it.leftProps;
+                                            return <Leaf
+                                                {...it.leftProps}
+                                                //portalMap={propsPortalMap}
+                                                size={'small'}
+                                                tooltip={description}
+                                                popupMatchSelectWidth={false}
+                                            />
+                                        })
+                                    }: null}
                                     size={this.props.size}
                                     value={itemvalue}
                                     defaultValue={this.getDefaultValue({
@@ -735,30 +807,10 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                     key={[this.path,prop, index].join('.')}
                                     //需要
                                     onGetDependentParameters={this.props.onGetDependentParameters}
-                                >
-                                    <Leaf
-                                        {...properties}
-                                        path={prop}
-                                        parentPath={this.path}
-                                        runtimeValue={this.state.runtimeValue}
-                                        value={itemvalue}
-                                        onDealControl={(control: IControl) => {
-                                            this.onDealControl(control)
-                                        }}
-                                        key={[this.path, prop, index, 'leaf'].join('.')}
-                                        viewer={this.state.viewer}
-                                        canmodify={this.state.canmodify}
-
-                                        size={this.props.size}
-                                        rootEmitter={this.props.rootEmitter}
-                                        childrenControl={childrenControl}
-                                        onGetDependentParameters={this.props.onGetDependentParameters}
-                                        onChangeValue={(val: any, type?: string) => {
-                                            value[prop] = val;
-                                            this.onChangeValue(value, type);
-                                            //
-                                        }}
-                                    />
+                                ><Leaf
+                                    {...leftProps}
+                                    portalMap={propsPortalMap}
+                                />
                                 </Child>
                             );
                         }
@@ -779,6 +831,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             </Group>
         )
     }
+    
     private renderMapNode(children: any[], Child: any) {
         let { value, originValue = [] } = this.state;
         // case\3 map
@@ -919,8 +972,20 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
     private renderFeaturesNode(children: any = null, type?: string) {
         let View = this.getNodeByType();
+        let ContentPortal: any = this.getPortalBySlot(this.props.portalMap,'content')
+
         if (View) {
-            
+            let viewProps: any = {
+                key:this.leafProps.path || this.leafProps.index || this.leafProps['x-index'],
+                ...this.leafProps,
+                children:children,
+                size:this.props.size,
+                value:this.getValueByProps(this.state.value, { value: this.getDefaultValue() }),
+                originValue:this.state.originValue,
+                runtimeValue:this.state.runtimeValue,
+                disabled:!this.isAllowModify(),
+                onChangeValue:(val: any, type?: string, originValue?: any) => this.onChangeValue(val, type, originValue)
+            }
             return (
                 <Popover
                     placement="topLeft"
@@ -931,17 +996,13 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         ref={this.wrapperRef}
                         className={classnames({ 'former-open-error': this.state.validationMessage })}
                     >
-                        <View
-                            key={ this.leafProps.path || this.leafProps.index || this.leafProps['x-index']}
-                            {...this.leafProps}
-                            children={children}
-                            size={this.props.size}
-                            value={this.getValueByProps(this.state.value, { value: this.getDefaultValue() })}
-                            originValue={this.state.originValue}
-                            runtimeValue={this.state.runtimeValue}
-                            disabled={!this.isAllowModify()}
-                            onChangeValue={(val: any, type?: string, originValue?: any) => this.onChangeValue(val, type, originValue)}
-                        />
+                        {ContentPortal.length>0 ? <Space.Compact>
+                            <View
+                            {...viewProps}
+                            />
+                            {this.renderPortal(ContentPortal)}
+                        </Space.Compact> : <View {...viewProps}/>}
+                        
                         {this.state.validationMessage &&  <span className='former-error-message'><Icons.InfoCircleOutlined/> {this.state.validationMessage}</span>}
                     </span>
                 </Popover>
@@ -949,7 +1010,21 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
         return null;
     }
-
+    private getPortalBySlot(portalMap:any,slot:string) {
+        let _portalMap: any = portalMap || this.props.portalMap;
+        if (_portalMap) {
+            return _portalMap.filter(it=> it.slot == slot)
+        }
+        return []
+    }
+    private renderPortal(portalMap) {
+        if (portalMap) {
+            return portalMap.map(it => {
+                let { description} = it.leftProps;
+                return <Leaf {...it.leftProps} tooltip ={description} popupMatchSelectWidth={false}/>
+            })
+        }
+    }
     public render() {
         if (this.isFeaturesNode()) {
             //if (this.isType('oneOf')) {

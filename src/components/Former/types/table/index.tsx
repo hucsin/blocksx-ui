@@ -602,7 +602,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
                         }
                     }}
                     okText ="Save"
-                    size='small'
+                    size='default'
                     
                     autoclose={false}
                     cancelText='Cancel'

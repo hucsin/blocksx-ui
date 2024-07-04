@@ -30,6 +30,8 @@ interface IFormerObjectItemS extends IFormerObjectItem {
     dict?:any[];
     defaultValue?: any;
     onChangeValue: Function;
+
+    renderTitlePortal?: any;
     'x-model-switch'?: boolean;
 
     hidden?:boolean;
@@ -139,6 +141,7 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
                     <span className="former-object-label-title">
                         {this.props.title}
                     </span>
+                    {this.props.renderTitlePortal && this.props.renderTitlePortal()}
                     {utils.isValidValue(this.props['tooltip']) && <Tooltip arrowPointAtCenter={true} placement="topLeft" title={this.props['tooltip']}><ExclamationCircleOutlined/></Tooltip> }
                     {utils.isValidValue(this.props['x-model-switch']) && <Checkbox className="model-switch" checked={this.state.switch} onChange={this.onSwitch}/>}
                     {this.props.oneOf ? <span className="former-object-label-menu">

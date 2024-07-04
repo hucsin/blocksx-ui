@@ -7,7 +7,7 @@
  * @FilePath: /designer/Users/iceet/work/hucsin/blocksx/packages/design-components/src/former/types/switch/index.tsx
  */
 import React from 'react';
-import { Switch } from 'antd';
+import { Switch, Tooltip } from 'antd';
 
 import * as Icons from '../../../Icons';
 import { IFormerBase } from '../../typings';
@@ -82,16 +82,18 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
 
         return (
             <div className="former-switch">
-                <Switch
-                    {...this.props['x-type-props']} 
-                    unCheckedChildren= {UncheckedIconView && <UncheckedIconView/>}
-                    checkedChildren={CheckedIconView && <CheckedIconView/>}
-                    loading  = {loading}
-                    size     = {size}
-                    disabled = {this.props.disabled}  
-                    checked  = {this.state.value} 
-                    onChange = {this.onChange} 
-                />
+                <Tooltip title={this.props.tooltip}>
+                    <Switch
+                        {...this.props['x-type-props']} 
+                        unCheckedChildren= {UncheckedIconView && <UncheckedIconView/>}
+                        checkedChildren={CheckedIconView && <CheckedIconView/>}
+                        loading  = {loading}
+                        size     = {size}
+                        disabled = {this.props.disabled}  
+                        checked  = {this.state.value} 
+                        onChange = {this.onChange} 
+                    />
+                </Tooltip>
             </div>
         )
     }

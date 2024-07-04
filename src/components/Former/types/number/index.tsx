@@ -13,6 +13,7 @@ import { InputNumber } from 'antd';
 
 interface IFormerInput extends IFormerBase {
     value: any,
+    size?: any;
     onChangeValue: Function
 }
 export default class FormerInput extends React.Component<IFormerInput, { value: any }> {
@@ -41,7 +42,7 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
 
     public render() {
         return (
-            <InputNumber size="small" {...this.props['x-type-props']} disabled={this.props.disabled}  value={this.state.value} onChange={this.onChange} />
+            <InputNumber size={this.props.size} {...this.props['x-type-props']} disabled={this.props.disabled}  value={this.state.value} onChange={this.onChange} />
         )
     }
 }

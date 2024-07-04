@@ -305,7 +305,7 @@ export default class FormerPickMore extends React.Component<FormerPickProps, For
                     column={'two'}
                     width={600}
                     okText ="Save"
-                    size='small'
+                    //size='small'
                     
                     autoclose={false}
                     cancelText='Cancel'

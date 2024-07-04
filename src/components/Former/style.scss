@@ -68,10 +68,11 @@
     .former-object {
         .former-object-item {
             width: 50%;
-
-            .ant-select {
-                min-width: 100%;
-                max-width: 100%;
+            .former-object-item-content{
+                .ant-select {
+                    min-width: 100%;
+                    max-width: 100%;
+                }
             }
 
             &.former-object-colspan-two {

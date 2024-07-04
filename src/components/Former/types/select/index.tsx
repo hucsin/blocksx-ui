@@ -13,7 +13,7 @@ import { IFormerBase } from '../../typings';
 
 import UtilsDatasource from '../../../utils/datasource';
 import { utils } from '@blocksx/core';
-import { Select } from 'antd';
+import { Select,Tooltip } from 'antd';
 
 import './style.scss';
 
@@ -31,6 +31,7 @@ export interface FormerSelectProps extends IFormerBase {
     popupClassName?: string;
     dataSource?: any;
     autoClear?: any;
+    popupMatchSelectWidth?: boolean;
 }
 
 
@@ -51,7 +52,8 @@ export interface FormerSelectState {
 export default class FormerSelect extends React.Component<FormerSelectProps, FormerSelectState> {
     
     public static defaultProps = {
-        'x-mode': 'lazy'
+        'x-mode': 'lazy',
+        popupMatchSelectWidth: true
     }
     public constructor(props: FormerSelectProps) {
         super(props);
@@ -189,28 +191,30 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
     public render() {
        
         return (
-            <Select
-                allowClear={this.props.autoClear}    
-                placeholder={this.props.placeholder}
-                {...this.props['x-type-props']}
-                onFocus={() => {
-                    if (this.isLazyLoader()) {
-                        this.fetchData();
-                    }
-                }}
-                
-                mode={this.props.mode}
-                showSearch={true}
-                popupClassName={this.props.popupClassName}
-                disabled={this.props.disabled}
-                loading={this.state.loading}
-                onSearch={this.onSearch}
-                onChange={this.onChange}
-                size={this.props.size}
-                value={this.state.value}
-            >
-                {this.renderChildren()}
-            </Select>
+            <Tooltip title={this.props.tooltip}>
+                <Select
+                    allowClear={this.props.autoClear}    
+                    placeholder={this.props.placeholder}
+                    {...this.props['x-type-props']}
+                    onFocus={() => {
+                        if (this.isLazyLoader()) {
+                            this.fetchData();
+                        }
+                    }}
+                    popupMatchSelectWidth={this.props.popupMatchSelectWidth}
+                    mode={this.props.mode}
+                    showSearch={true}
+                    popupClassName={this.props.popupClassName}
+                    disabled={this.props.disabled}
+                    loading={this.state.loading}
+                    onSearch={this.onSearch}
+                    onChange={this.onChange}
+                    size={this.props.size}
+                    value={this.state.value}
+                >
+                    {this.renderChildren()}
+                </Select>
+            </Tooltip>
         )
     }
 }

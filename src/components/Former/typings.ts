@@ -144,6 +144,7 @@ export interface IFormerObjectItem extends IFormerBase {
     value?: any[],
     "x-index"?: number, // 排序
     "x-group"?: string, // 分组
+    "x-portal"?: string; // 组件插槽PORTAL
     "x-classify"?: string, // 分类信息
     //"x-half-width"?: boolean, // 是否半宽
     "x-colspan"?: string;

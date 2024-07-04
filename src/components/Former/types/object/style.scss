@@ -43,7 +43,7 @@
         &.former-object-default {
             .former-object-label-title {
                 font-size: 16px;
-                padding-bottom: 8px;
+                line-height: 24px;
             }
         }
 
@@ -67,6 +67,7 @@
             padding-bottom: 0px;
             padding-top: 2px;
             color: rgba(0, 0, 0, .25);
+            line-height: 24px;
         }
 
         .former-object-item-label {
@@ -74,7 +75,20 @@
             color: rgba(0, 0, 0, .55);
             font-size: 14px;
             padding-bottom: 8px;
-
+            .former-switch,
+            > span {
+                display: inline-block;
+                vertical-align: middle;
+                margin-right: 4px;
+            }
+            .ant-select-outlined:not(.ant-select-customize-input) .ant-select-selector {
+                border-color:#fff;
+                background-color: transparent;
+                cursor: pointer;
+                &:Hover {
+                    border-color:var(--main-bg-color)
+                }
+            }
             .ant-checkbox-inner {
                 width: 12px;
                 height: 12px;
@@ -140,7 +154,13 @@
                 margin-top: -3px;
             }
         }
-
+        .former-object-item-content {
+            .ant-space-compact {
+                .ant-select-selector {
+                    cursor: pointer;
+                }
+            }
+        }
         .model-switch {
             opacity: .6;
         }

@@ -201,10 +201,10 @@
                                     }
                                 })}
                                 onMouseEnter={()=> {
-                                    this.props.onDescriptionSwitch && this.props.onDescriptionSwitch(it.description)
+                                   // this.props.onDescriptionSwitch && this.props.onDescriptionSwitch(it.description)
                                 }}
                                 onMouseLeave={()=> {
-                                    this.props.onDescriptionSwitch && this.props.onDescriptionSwitch('')
+                                  //  this.props.onDescriptionSwitch && this.props.onDescriptionSwitch('')
                                 }}
                                 title={it.label}
                             >
