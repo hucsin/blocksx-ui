@@ -1069,7 +1069,7 @@ var PLUMB_JS =  {};
             tally += _dist(cur, prev);
             prev = cur;
         }
-        console.log("length", new Date().getTime() - d);
+        
 
         return tally;
     };
@@ -2666,7 +2666,7 @@ var PLUMB_JS =  {};
             var isNotRightClick = this.rightButtonCanDrag || (e.which !== 3 && e.button !== 2);
             
             if (isNotRightClick && this.isEnabled() && this.canDrag(e)) {
-
+                
                 var _f =  _testFilter(e) && _inputFilter(e, this.el, this.k);
                 if (_f) {
 
@@ -2743,17 +2743,21 @@ var PLUMB_JS =  {};
 
         this.moveListener = function(e) {
             if (downAt) {
+                
                 if (!moving) {
                     
-                    var _continue = _dispatch("start", {el:this.el, pos:posAtDown, e:e, drag:this});
-                    if (_continue !== false) {
-                        if (!downAt) {
+                    var _continue = _dispatch("start", {el:this.el, pos:posAtDown,downAt, e:e, drag:this});
+                    var _canmove = downAt && ((Math.abs(downAt[0] - e.pageX) > 10 ) || (Math.abs(downAt[1] - e.pageY) > 10));
+                    
+                    if (downAt && _continue !== false) {
+                        
+                        if (!_canmove) {
                             return;
                         }
                         this.mark(true);
                         moving = true;
                     } else {
-                        this.abort();
+                       return this.abort();
                     }
                 }
 
@@ -2779,7 +2783,6 @@ var PLUMB_JS =  {};
 
         this.upListener = function(e) {
             if (downAt) {
-                
                 downAt = null;
                 this.params.unbind(document, "mousemove", this.moveListener);
                 this.params.unbind(document, "mouseup", this.upListener);
@@ -14732,8 +14735,9 @@ var PLUMB_JS =  {};
                 
             }
             // by wangjian
-            node.setAttribute('style', 'cursor: pointer;')
-
+            if (style.cursor) {
+                node.setAttribute('style', 'cursor: '+style.cursor+';')
+            }
             // extra attributes such as join type, dash offset.
             for (var i in svgAttributeMap) {
                 if (style[i]) {

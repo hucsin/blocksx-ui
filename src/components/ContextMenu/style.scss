@@ -66,4 +66,43 @@
             width: 12px;
         }
     }
+    
+}
+.contexify_item {
+    .icons-combine.icons-combine-bottomRight {
+        > span:last-child {
+        bottom: -6px;
+        right: -12px;
+        padding:2px;
+        opacity: 1;
+        }
+        span {
+            margin-right: 0;
+        }
+        margin-right: 10px;
+    }
+    &.ui-menu-group {
+        padding: 0 8px;
+        padding-top: 4px;
+        &:first-child {
+            .contexify_itemContent{
+                padding-top: 0
+            }
+        }
+        .contexify_itemContent {
+            padding-left: 0;
+            opacity: .4;
+            font-size:12px;
+            padding-top: 8px;
+
+            border-bottom: .5px solid var(--main-border-color);
+            opacity: .4;
+            cursor: default;
+            &:hover {
+                background-color: transparent;
+            }
+            margin-bottom: 4px;
+            
+        }
+    }
 }

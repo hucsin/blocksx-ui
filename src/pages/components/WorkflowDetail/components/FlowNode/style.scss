@@ -41,9 +41,14 @@
     text-align: center;
     border: 9px solid #fff;
     z-index: 20;
+    &.ui-mircoflow-node-floating {
+        border: 9px dashed #ccc;
+        opacity: .55;
+    }
     &.jtk-drag {
         > span:not(.ui-recofilter-wrapper) ,
         .ui-title,
+        .ui-adder-router,
         .ui-adder {
             display: none;;
         }

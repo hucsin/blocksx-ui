@@ -85,9 +85,10 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                         let props: any = it.props || {};
                         return {
                             ...it,
-                            componentName: props.componentName
+                            componentName: props.componentName || it.componentName
                         }
                     })
+                    
                     return this.fetchUpdateRequest({id: value.id, nodes, isPublish: false, connectors})
                 }}
 

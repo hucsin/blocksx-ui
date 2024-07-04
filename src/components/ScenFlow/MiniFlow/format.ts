@@ -138,15 +138,15 @@ export default class CanvasFormat {
         let maxPadding: number = Math.max(nickNode.paddingNumber, startNodes.length)
         let maxSize: number = maxPadding * paddingSize;
         
-        
-        // 填写当前节点
-        this.repaintNodeSizeByNodeName([nickNode], nickNode, maxSize, paddingSize, true);
         // 先计算start节点
         
         this.repaintNodeSizeGroup(startNodes,  paddingSize, {
             ...nickNode,
-            //paddingNumber: startNodes.length +1
+            paddingNumber: startNodes.length 
         });
+        // 填写当前节点
+        this.repaintNodeSizeByNodeName([nickNode], nickNode, maxSize, paddingSize, true);
+        
 
     }
     private repaint(flowMaps:any, paddingSize: number) {

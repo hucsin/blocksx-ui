@@ -1,20 +1,27 @@
 import React from 'react';
 import classnames from 'classnames';
+import { utils } from '@blocksx/core';
 import './style.scss';
-import { FetchMap } from '../typing';
+import { FetchMap } from '../../typing';
 import NodeConfigure from '../NodeConfigure';
-import { DomUtils, FormerTypes, ContextMenu, Icons, SmartPage, PluginManager } from '@blocksx/ui';
+import { DomUtils, FormerTypes, ContextMenu, Icons, SmartPage, MiniFlow } from '@blocksx/ui';
 
 import i18n from '@blocksx/i18n';
 import { PlusOutlined } from '@ant-design/icons';
-import { omit } from 'lodash';
+
+import DefaultNodeList from '../../config/DefaultNodeList';
 
 
 
 interface IMircoFlowNode {
     name: string;
     id?: number;
+    classify: any;
+    mircoFlow: any;
+    floating?: boolean;
+    locked?: boolean;
     bytethinkingId?: number;
+    componentName?: string;
     type: string;
     left: number;
     top: number;
@@ -23,7 +30,6 @@ interface IMircoFlowNode {
     props: any;
     isNew?: boolean;
     fetchMap: FetchMap;
-    mircoFlow:any;
     isViewer?: boolean;
 
     onUpdateNode?: Function;
@@ -52,52 +58,139 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     
     private defaultColor: string = '#cccccc';
     private mircoFlow: any;
-    
+    private componentNameTriggerMap:any = {
+        'Thinking.Pages': 'Pages',
+        'Thinking.OpenAPI': 'OpenAPI'
+    }
+    private getTriggerName() {
+        let { componentName } = this.props;
+        return this.componentNameTriggerMap[componentName as any] 
+            || (this.props.classify =='thinking' ? 'Thinking' : 'Trigger')
+    }
     private getContextMenuMap: any = (type: string, state: any) => {
-        let noDelete: boolean = type == 'router';
-        let isTrigger: boolean = type == 'go';
-        
+        let triggerName: string = this.getTriggerName();
+        let disabledRemove: any = !this.props.locked;
+
         return [
+            
+            {
+                type: 'group',
+                name: 'ADD'
+            },
+            this.canShowChildrenAdd() && {
+                name: i18n.t('  Action'),
+                type: 'add',
+                icon: ['NodeExpandOutlined','PlusOutlined']
+            },
+            
+            this.canShowTrigerAdd() ? {
+                name: i18n.t(' '+ (this.props.classify =='thinking' ? 'Thinking' : 'Trigger')),
+                type: 'addTrigger',
+                control: {
+                    nodeType: [
+                        'gos',
+                        'go'
+                    ],
+                    nodeLength: 'more'
+                },
+                icon: ['NodeCollapseOutlined','PlusOutlined']
+            }: false,
+            {
+                type: 'group',
+                name: 'BINDING',
+                control: (c) => {
+                    
+                    if (['gos','go'].indexOf(c.nodeType)>-1) {
+                        let hasTimer: boolean = (this.props.classify == 'trigger' && this.canShowTrigerAdd()) && !c.hasTimer;
+                        let notThinking: boolean = this.props.classify !=='thinking';
+                        let hasPages: boolean = notThinking && !c.hasPages;
+                        let hasOpenAPI:boolean = notThinking && !c.hasOpenAPI;
+                        console.log(hasOpenAPI, hasPages, hasTimer,c)
+                        return true;
+                    }
+                    
+                },
+            },
+            this.props.classify !=='thinking' && {
+                name: i18n.t('Pages'),
+                type: 'addPages',
+                control: {
+                    nodeType: [
+                        'gos',
+                        'go'
+                    ],
+                    nodeLength: 'more',
+                    hasPages: false
+                },
+                icon: ['PageCommonOutlined','PlusOutlined']
+            },
+            this.props.classify !=='thinking' && {
+                name: i18n.t('OpenAPI'),
+                type: 'addAPI',
+                control: {
+                    nodeType: [
+                        'gos',
+                        'go'
+                    ],
+                    nodeLength: 'more',
+                    hasOpenAPI: false
+                },
+                icon: ['ApiOutlined','PlusOutlined']
+            },
+
+            this.props.classify == 'trigger' && this.canShowTrigerAdd() && {
+                name: i18n.t('Timer'),
+                type: 'addTimer',
+                
+                control: {
+                    hasTimer: false,
+                },
+                icon: ['FieldTimeOutlined','PlusOutlined']
+            },
+            {
+                type: 'group',
+                name: 'SETTING'
+            },
             {
                 name: i18n.t('Configuration'),
                 type: 'configuration',
                 icon: 'ConfigurationUtilityOutlined'
             },
-            'empty'!=type && {
-                name: i18n.t('Setting'),
+            {
+                name: i18n.t('Notes'),
                 type: 'setting',
-                icon: 'SettingUtilityOutlined'
+                control: {
+                    nodeType: [
+                        'gos',
+                        'go',
+                        'router',
+                        'module'
+                    ]
+                },
+                icon: 'FormOutlined'
             },
-            {
-                type: 'divider'
+
+            disabledRemove && {
+                type: 'divider',
+                control: {
+                    nodeType: [
+                        'gos',
+                        'module',
+                        'empty'
+                    ]
+                }
             },
-            {
-                name: i18n.t('Add a module'),
-                type: 'add',
-                icon: 'PlusOutlined'
-            },
-            /*{
-                name: i18n.t('Clone the {name}', { name: type =='go' ? 'trigger' : 'module' }),
-                type: 'clone',
-                icon: 'CopyOutlined'
-            },*/
-            !isTrigger ? false : {
-                type: 'divider'
-            },
-            
-            !isTrigger ? false : {
-                name: i18n.t('Add a trigger'),
-                type: 'addTrigger',
-                icon: 'PlusOutlined'
-            },
-            /*
-            noDelete ? false : {
-                type: 'divider'
-            },*/
-            noDelete ? false : {
-                name: i18n.t('Delete {name}', { name: type == 'go' ? 'trigger' : 'module'}),
+            disabledRemove && {
+                name: i18n.t('Delete {name}', { name: type == 'go' ? triggerName : 'Module'}),
                 type: 'delete',
                 icon: 'DeleteOutlined',
+                control: {
+                    nodeType: [
+                        'gos',
+                        'module',
+                        'empty'
+                    ]
+                },
                 danger: {
                     errTips: i18n.t('Quietly delete the last start node, keep at least one start node'),
                     condition:(_, nodeName: string) => {
@@ -179,14 +272,18 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
 
     }
     private getIcon() {
-        let { props ={} } = this.state;
+        let { props ={}} = this.state;
+        let { icon } = this.props;
+
         let subicon: string ;
 
         if (this.state.type == 'empty') {
             return ['PlusOutlined']
         } 
-        if (this.state.type =='router') {
-            return ['RouterUtilityOutlined'];
+
+        if (this.state.type =='router') {  
+
+            return icon && (icon !== 'RouterUtilityOutlined' || props.icon) ? [icon, props.icon || 'RouterUtilityOutlined'] : ['RouterUtilityOutlined'];
         }
 
         if (props.icon) {
@@ -206,31 +303,45 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
 
         this.consume(event)
     }
-    private addTiggerNode = (event?: any)=> {
+    private addTiggerNode = (type?: any)=> {
+
+        let defaultProps: any = DefaultNodeList.getDefaultTriggerClassifyConfig(
+                utils.isString(type) ? type :  this.props.classify, this.mircoFlow.state.id);
+        
         this.props.onAddTriggerNode 
-            && this.props.onAddTriggerNode(this.props.name);
+            && this.props.onAddTriggerNode(this.props.name, defaultProps);
             
-        this.consume(event)
+        !utils.isString(type) && this.consume(type)
     }
     private consume(event?: any) {
         event && DomUtils.consume(event);
     }
     public renderDefaultNodeContent(icon: any, color: string) {
         let { props = {}} = this.state;
+        
+        //let startNodes: any = this.mircoFlow.miniFlow.getNodes();
         return (
             <>
                 <FormerTypes.avatar size={100}  icon={icon} color={color}/>
-                {!this.props.isViewer &&<div className='ui-adder'  onClick={this.addRouterChildren}><PlusOutlined/></div>}
-                {!this.props.isViewer && this.state.type == 'go' && <div className='ui-adder-router' onClick={this.addTiggerNode}><PlusOutlined/></div>}
+                {this.canShowChildrenAdd()&&<div className='ui-adder'  onClick={this.addRouterChildren}><PlusOutlined/></div>}
+                {this.canShowTrigerAdd()  && <div className='ui-adder-router' onClick={this.addTiggerNode}><PlusOutlined/></div>}
                 {props.description &&<div className='ui-title'>{props.description }</div>}
             </>
         )
     }
+    private canShowChildrenAdd() {
+        return !this.props.isViewer && !this.props.floating
+    }
+    private canShowTrigerAdd() {
+        return !this.props.isViewer && this.state.type == 'go' && (this.props.classify!='function')
+    }
     public renderNodeContent(icon: string, color: string) {
+        let { props ={}} = this.props;
+        let type: string  = this.state.type;        
+        let componentName: any = this.props.componentName || props && props.componentName;
+        let nodeType: string = type == 'go' ? componentName ? type :'empty' : type;
         
-        let defaultProps: any = this.props.props || {};
-        
-        switch (this.state.type) {
+        switch (nodeType) {
             case 'empty':
                 return (
                     
@@ -243,7 +354,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                             return this.props.fetchMap['programs']({...parmas}, 'notrigger')
                         }}
                         onClassifyClick={(row) => {
-                            this.props.onUpdateNode && this.props.onUpdateNode(this.props.name, row);
+                            
+                            this.props.onUpdateNode && this.props.onUpdateNode(this.props.name, {
+                                ...row,
+                                type: type == 'go' ? type : row.type
+                            });
                             //this.props.onAddNewNode(row, this.newRef.getBoundingClientRect())
                         }}
                     >
@@ -253,12 +368,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             case 'router':
             case 'go':
             default:
-
                 return (
                     <SmartPage
                         pageURI='/api/thinking/findPage'
-                        id={[this.state.settingMode, defaultProps.componentName || 'router'].join('__')}
-                        name={defaultProps.componentName || 'router'}
+                        id={[this.state.settingMode, componentName || 'router'].join('__')}
+                        name={componentName || 'router'}
                         type="popover"
                         isViewer={this.props.isViewer}
                         simplicity
@@ -267,7 +381,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                                 id: this.props.bytethinkingId,
                                 nodeId: this.props.id,
                                 mode: this.state.settingMode,
-                                type: defaultProps.componentName ? 'module' : 'router'
+                                type: componentName ? 'module' : 'router'
                             }
                         }}
                         icon="SettingOutlined"
@@ -297,7 +411,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             this.props.onUpdateNode && this.props.onUpdateNode(this.props.name, this.state.props, this)
         }
 
-        this.setState({openSetting: false,hasChanged: false})
+        this.setState({openSetting: false,hasChanged: false, settingMode: ''})
     }
     public getContextMenu(): any {
 
@@ -305,23 +419,38 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     }
 
     public onContextMenu = (event)=> {
+        let { type } = this.props;
+        let startNodes: any = this.mircoFlow.miniFlow.getStartNodes();
+        let allNodes: any = this.mircoFlow.miniFlow.getNodes();
         
-        ContextMenu.showContextMenu(this.props.name, event, {})
+        ContextMenu.showContextMenu(this.props.name, event, {
+            nodeType: type =='go' 
+                        ? startNodes.length>1 || allNodes.length == 1 ? 'gos' : 'go'  
+                        : ['router','empty'].indexOf(type)>-1 ? type : 'module',
+            nodeLength: allNodes.length > 1 ? 'more' : 'one',
+            hasPages: !!startNodes.find(it=> it.componentName =='Thinking.Pages'),
+            hasOpenAPI: !!startNodes.find(it=> it.componentName =='Thinking.OpenAPI'),
+            hasTimer: !!startNodes.find(it=> it.componentName =='Thinking.Timer')
+        })
     }
     public onMenuClick =(item: any)=> {
         switch(item.type) {
+            case 'addTimer':
+                return this.addTiggerNode('timer')
+            case 'addPages':
+                return this.addTiggerNode('pages');
+            case 'addAPI':
+                return this.addTiggerNode('apis');
+            case 'addTrigger':
+                return this.addTiggerNode();
             case 'setting':
-                this.setState({openSetting: true, settingMode: 'setting'})
-                break;
+                return this.setState({openSetting: true, settingMode: 'setting'})
             case 'configuration':
-                this.setState({openSetting: true, settingMode: 'configuration'})
-                break;
+                return this.setState({openSetting: true, settingMode: 'configuration'})
             case 'add':
-                this.addRouterChildren()
-                break;
+                return this.addRouterChildren()
             case 'delete':
-                this.mircoFlow.miniFlow.deleteNodeByName(this.props.name)
-                break;
+                return this.mircoFlow.miniFlow.deleteNodeByName(this.props.name)
         }
     }
     public render () {
@@ -335,6 +464,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 className={classnames({
                     'node-new': this.state.isNew,
                     'ui-mircoflow-node': true,
+                    'ui-mircoflow-node-floating': this.props.floating,
                     [`ui-mircoflow-type-${this.state.type}`] : this.state.type
                 })} 
                 id={this.props.name}
@@ -344,10 +474,14 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                     left: this.state.left,
                     top: this.state.top
                 } as any}
-                onContextMenu={this.onContextMenu}
+
+                onContextMenu={(event) => {
+                    this.onContextMenu(event)
+                }}
             >
                 {!this.props.isViewer &&<ContextMenu 
                     namespace={this.props.name} 
+                    key={3}
                     onMenuClick={this.onMenuClick} 
                    // type ={this.state.type} 
                     menu={this.getContextMenu()}
@@ -364,7 +498,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         
         if (Iconview) {
             
-            return <Iconview style={{backgroundColor: props.color}}/>
+            return <Iconview style={{backgroundColor: props.color || this.props.color}}/>
         }
         return null;
     }

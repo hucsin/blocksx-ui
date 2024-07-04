@@ -6,7 +6,7 @@ import { Space, List, Avatar, Segmented, Button, Tooltip, Tag, Radio, DatePicker
 import { Icons, Tabler } from '@blocksx/ui';
 import { CaretRightFilled, HistoryOutlined,LoadingOutlined } from '@ant-design/icons';
 
-import { FetchMap } from '../typing';
+import { FetchMap } from '../../typing';
 import './style.scss';
 
 

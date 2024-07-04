@@ -114,7 +114,7 @@ export default class ScenFlow extends React.Component<{}, {
 
         this.miniFlow = new MiniFlow({
             canvas: 'canvas',
-            
+            uniq: '',
             unlinkChinampaPanel: this.unlinkPanel,
             destoryChinampaPanel: this.destoryPanel,
             chinampaPanel: this.responsePanel,

@@ -76,20 +76,24 @@ export default class CanvasDraggle {
     public setZoom(zoom: number) {
 
         if (this.canZoom(zoom)) {
-            zoom = this.getSafeZoom(zoom)
+            zoom = this.getSafeZoom(zoom);
 
             let canvasPosition = Object.assign({}, this.diagram.getPosition());
             canvasPosition.transform = `scale(${zoom})`;
-
             
-            this.diagram.setZoom(this.zoom = zoom)
+            this.diagram.setZoom(this.zoom = zoom);
             this.diagram.setPosition(canvasPosition);
 
-            
-
             this.canvas.style.transform = canvasPosition.transform;
-            this.canvas.style.transformOrigin = 'center'
+            this.canvas.style.transformOrigin = 'center';
         }
+    }
+    public reset() {
+        this.diagram.setZoom(1);
+        this.setPosition({
+            left: 0,
+            top: 0
+        })
     }
     public canZoom(zoom: number) {
        return true;
@@ -132,7 +136,11 @@ export default class CanvasDraggle {
         this.diagram.setPosition(this.canvasPositionDraging)
     }
     private canvasDragStart = (event: any) => {
-
+        
+        if (this.diagram.nodes.length <=1) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
         event.dataTransfer.setDragImage(IMAGE_DRAG, 2, 2);
 
         this.dragPos = {

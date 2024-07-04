@@ -1,23 +1,23 @@
 import React from 'react';
 import { Button, Space, Dropdown, Tooltip, Popover, Menu, Spin, Input } from 'antd';
-
+import { omit } from 'lodash';
+import classnames from 'classnames';
 import { utils } from '@blocksx/core';
 import i18n from '@blocksx/i18n';
 
 //import  { FlowNodeType,FlowNode } from '../ScenFlow/MiniFlow/typing'
-import { FlowNodeType, FlowNode, FlowConnector, MiniFlow, Icons, SmartPage, FormerTypes, mainTexture} from '@blocksx/ui';
+import { FlowNodeType, FlowNode, FlowConnector, MiniFlow, Icons, SmartPage, FormerTypes, mainTexture, UtilsTool} from '@blocksx/ui';
 
 import { FormOutlined, CopyOutlined,HistoryOutlined } from '@ant-design/icons';
 import { FetchResult, withRouter } from '@blocksx/ui'
-import MircoFlowNode from './FlowNode';
-import MircoNewFlowNode from './FlowNode/NewNode';
-import MircoRunTest from './RunTest';
-import MircoRunLog from './RunLog';
-import MirceVersionHistory from './VersionHistory';
-
+import MircoFlowNode from './components/FlowNode';
+import MircoNewFlowNode from './components/FlowNode/NewNode';
+import MircoRunTest from './components/RunTest';
+import MircoRunLog from './components/RunLog';
+import MirceVersionHistory from './components/VersionHistory';
+import DefaultNodeList from './config/DefaultNodeList';
 import { FetchMap } from './typing';
-import { omit } from 'lodash';
-import classnames from 'classnames';
+
 
 import './style.scss'
 
@@ -111,6 +111,9 @@ interface MircoFlowState {
     connectProps: any;
     connectPropsHasChanged?: boolean;
     connectId?: string;
+    id?: any;
+    classify?: string;
+    classifyLabel?: any;
 }
 
 class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState> {
@@ -158,22 +161,31 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         this.connectHelperRef = React.createRef();
         this.canvasRef = React.createRef();
 
-        console.log(this.props)
     }
     
     public componentDidMount() {
        this.reloadData()
     }
-
+    
     public reloadData() {
         this.setState({loading: true})
         this.props.onFetchValue().then((data: FlowDetailData) => {
-            
+            // 设置默认数据，一句classify            
+            if (!data.nodes || data.nodes.length == 0) {
+                console.log(data.classify, data.id,333)
+                Object.assign(data, 
+                    DefaultNodeList.getDefaultValue(data.classify, data.id))
+            }
+
+
             this.setState({
                 loading: false,
                 value: data,
                 nodes: data.nodes || [],
                 isPublish: data.isPublish,
+                id: data.id,
+                classify: data.classify,
+                classifyLabel: data.classifyLabel,
                 connectors: data.connectors || [],
                 favorites: data.favorites || false,
                 status: data.status,
@@ -186,7 +198,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                     this.miniFlow.destory();
                 }
 
-                this.initMiniFlow();
+                this.initMiniFlow(data.id);
                 this.bindEvent();
             })
         }, ()=> {
@@ -212,9 +224,10 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         }
     }
 
-    public initMiniFlow() {
+    public initMiniFlow(id: any) {
 
         this.miniFlow = new MiniFlow({
+            uniq: utils.hashcode('Flow#' + id),
             canvas: this.cavnasId,
             isViewer: this.props.isViewer,
             unlinkChinampaPanel: this.unlinkPanel,
@@ -224,12 +237,12 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             templateMap: {
                 router: {
                     type: 'router',
-                    icon: '',
-                    color: '#87d068'
+                    color: '#4d53e8',
+                    icon: 'RouterUtilityOutlined'
                 },
                 new: {
                     type: 'empty',
-                    icon: '',
+                    icon: 'PlusOutlined',
                     color:'#ccc'
                 }
             },
@@ -351,18 +364,21 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         })
                         return this.props.onEditorValue({id: this.state.value.id,  favorites: state})
                     }} value={this.state.favorites} /></span>}
-                    <span className='ui-text'>
-                        {!this.state.titleIsInput 
-                            ? <span onClick={this.onTitleClick}>{value.title}</span> 
-                            : <Input 
-                                autoFocus
-                                value={value.title} 
-                                onBlur={this.onBlurTitle}
-                                style={{width: this.state.titleOffsetWidth}}
-                                onChange={this.onChangeTitle} 
-                            />
-                        }
-                    </span>
+                    <Space>
+                        <span className='ui-text'>
+                            {!this.state.titleIsInput 
+                                ? <span onClick={this.onTitleClick}>{value.title}</span> 
+                                : <Input 
+                                    autoFocus
+                                    value={value.title} 
+                                    onBlur={this.onBlurTitle}
+                                    style={{width: this.state.titleOffsetWidth}}
+                                    onChange={this.onChangeTitle} 
+                                />
+                            }
+                        </span>
+                        {this.state.classifyLabel && <span className='ui-tag'><Tooltip title={this.state.classifyLabel.label}>{UtilsTool.renderIconComponent(this.state.classifyLabel)}</Tooltip></span>}
+                    </Space>
                 </span>
                 
             </div>
@@ -490,7 +506,8 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         let type: string = nodeInfo.actionType =='trigger' ? 'go' : 'module';
         let icon: any = nodeInfo.icon; 
         let subicon: string = '';
-
+        
+        
         if (Array.isArray(icon)) {
             icon = icon[0].replace(/#[a-zA-Z0-9]+/, '')
             subicon = nodeInfo.icon[1] || icon;
@@ -527,8 +544,8 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     public addNodeChildrenByName =(id:string) => {
         this.miniFlow.addChildrenTemplateNodeByName(id)
     }
-    public addTriggerNodeById = (id: string) => {
-        this.miniFlow.addStartNodesByNodeName(id)
+    public addTriggerNodeById = (id: string, props?: any) => {
+        this.miniFlow.addStartNodesByNodeName(id, props)
     }
     public renderFlowList() {
         if (this.state.loading) {
@@ -537,12 +554,16 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         return (
             <div 
                 id={this.cavnasId}
-                className='ui-mircoflow-flowlist'
+                className={classnames({
+                    'ui-mircoflow-flowlist': true,
+                    'ui-mircoflow-onlyone-item': this.state.nodes.length == 1
+                })}
                 ref={ref => this.canvasPanel = ref}
             >
                 {this.state.nodes.length ? this.state.nodes.map(node => {
                     return <MircoFlowNode fetchMap={this.props.fetchMap} key={[this.state.reflush,node.name].join('')} {...node} 
                         onUpdateNode={this.updateNodeByName}
+                        classify={this.state.classify}
                         onAddNodeChildren={this.addNodeChildrenByName}
                         onAddTriggerNode={this.addTriggerNodeById}
                         mircoFlow={this}

@@ -92,17 +92,24 @@ class EditorContextMenuManger {
             return control(payload)
 
         } else {
-            for(let p in payload) {
-                if (utils.isArray(control[p])) {
-                    if (control[p].indexOf(payload[p]) > -1) {
-                        return true;
-                    }
-                } else {
-                    if (control[p] == payload[p]) {
-                        return true;
+            
+            if (payload) {
+                for (let con in control) {
+                    if (!utils.isUndefined(control[con])) {
+                        if (utils.isArray(control[con])) {
+                            if (control[con].indexOf(payload[con]) ==-1) {
+                                return false;
+                            }
+                        } else {
+                            if (control[con] !== payload[con]) {
+                                return false;
+                            }
+                        }
                     }
                 }
             }
+
+            return true;
         }
     }
 

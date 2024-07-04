@@ -17,6 +17,7 @@
 
  
  import SchemaUtils from '../../../utils/tool';
+import { notice } from '@blocksx/ui/Former/types';
 
  export interface SmartPageFormerProps {
     id?: string;
@@ -345,7 +346,8 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                     ?  schema.firstStep
                     :  schema.other
                 : schema;
-
+            let notice: any  = pageMeta.notice && { color: '#ccc', notice: pageMeta.notice,icon: pageMeta.noticeIcon};
+            
             return (
                 <>
                     {this.getDefaultTitle()}
@@ -354,6 +356,7 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
                             autoclose={false}
                             id={this.getDefaultId()}
                             schema={pageSchema}
+                            notice={notice}
                             okText={this.getDefaultOkText()}
                             okIcon={this.props.okIcon}
                             operateContainerRef={this.props.operateContainerRef}

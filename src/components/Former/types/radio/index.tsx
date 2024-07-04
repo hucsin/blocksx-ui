@@ -8,7 +8,8 @@
  import { IFormerBase } from '../../typings';
  import * as FormerIcon from '../../../Icons';
  import UtilsDatasource from '../../../utils/datasource';
- import { Tooltip } from 'antd';
+ import { Tooltip, List } from 'antd';
+ import Avatar from '../avatar'
  import './style.scss';
 
  interface IFormerRadio extends IFormerBase {
@@ -136,6 +137,45 @@
             
         )
     }
+    private renderCard() {
+
+        let value: any = this.getLabelValue(this.state.value);
+
+        return (
+            <List
+                className='former-radio-card'
+                dataSource={this.getDatasource()}
+                renderItem={(item:any) => {
+                    return (
+                        <List.Item 
+                            key={item.icon}
+                            onClick={()=> {
+                                this.onChangeValue({
+                                    target: {
+                                        value: item.value
+                                    }
+                                })
+                            }}
+                            className={
+                                classnames({
+                                    'ui-selected': value == item.value
+                                })
+                            }
+                        >   
+                            <List.Item.Meta
+                            avatar={<Avatar shape='square' reverseColor color={item.color} size={64} icon={item.icon} />}
+                            title={item.label}
+                            description={item.description}
+                            />
+                             {item.value === value ? <span className="former-radio-block-right"><FormerIcon.CheckOutlined/></span> : null}
+                        </List.Item>
+                    )
+                }}
+            >
+                
+            </List>
+        )
+    }
     private renderBlock() {
         let dataSource: any = this.getDatasource();
         let value: any = this.getLabelValue(this.state.value);
@@ -180,11 +220,14 @@
             </div>
         );
     }
+
     public render() {
         let { props } = this.state;
         
         // 按钮模式
         switch(props.type) {
+            case 'card':
+                return this.renderCard();
             case 'block':
                 return this.props.viewer ? this.renderButton() : this.renderBlock();
             default:

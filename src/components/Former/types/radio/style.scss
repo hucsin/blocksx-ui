@@ -114,3 +114,33 @@
         }
     }
 }
+.former-radio-card {
+    padding-top: 8px;
+    .ant-list-item {
+        .former-radio-block-right {
+            color: var(--main-bg-color);
+            font-size: 32px;
+            font-weight: bold;;
+        }
+        border: 1px solid var(--main-border-color);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 8px;
+        &.ui-selected {
+            border: 1px solid var(--main-bg-color);
+        }
+        cursor: pointer;
+        transition: all .2s;
+        &:hover {
+
+            transform: scale(1.01);
+            max-width: calc(100% + 10px);
+            z-index: 11;
+            box-shadow: 1px 1px 4px rgba(0,0,0,.036);
+        }
+    }
+    &.ant-list-split .ant-list-item:last-child {
+        border-block-end: 1px solid var(--main-border-color);
+        margin-bottom: 0;
+    }
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import NodeConfigure from '../NodeConfigure';
-import { FetchMap } from '../typing';
+import { FetchMap } from '../../typing';
 
 interface NewNodeProps {
     workflowType: string;
@@ -45,7 +45,7 @@ export default class NewNode extends React.Component<NewNodeProps, {open: any}> 
                         
                         //row.icon = row.icon.replace(/#[a-z0-9A-Z]+$/, '');
 
-                        
+                        row.type ='go';
                         this.props.onAddNewNode(row, this.newRef.getBoundingClientRect())
                     }}
                     onOpenChange={(v)=> {this.setState({open: v})}}

@@ -17,7 +17,7 @@
 .ui-mircoflow {
     height: 100%;
     position: relative;
-
+   
     .ui-mircoflow-body {
         position: relative;
         z-index: 10;
@@ -69,7 +69,7 @@
         .ui-title {
             padding-left: 16px;
         
-            padding-right: 32px;
+            padding-right: 24px;
             pointer-events: auto;
             .ui-text{
                 opacity: .6;
@@ -83,6 +83,14 @@
                         border-bottom: 1px solid var(--main-bg-color)
                     }
                 }
+            }
+            .ui-tag {
+                padding-left: 16px;
+                font-size:1em;
+                vertical-align: top;
+                
+                font-size:18px;
+                color: #ccc;
             }
             position: relative;
             display: inline-block;
@@ -121,6 +129,11 @@
         top:40px;
         left: 20px;
         height: calc(100% - 120px);
+        &.ui-mircoflow-onlyone-item {
+            .ui-adder-router {
+                display: none;;
+            }
+        }
     }
     &.ui-runlog-show {
         .ui-runtest-toolbar {

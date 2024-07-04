@@ -5,7 +5,7 @@ import { Icons, ErrorMessage, Tabler } from '@blocksx/ui';
 import { UserOutlined, CloseCircleFilled, TranslationOutlined } from '@ant-design/icons';
 
 
-import { FetchMap } from '../typing';
+import { FetchMap } from '../../typing';
 
 import './style.scss'
 

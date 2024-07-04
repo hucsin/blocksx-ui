@@ -17,6 +17,8 @@ import {
 } from "react-contexify";
 import { ContextMenuItem } from './typing';
 import UIUtils from '../utils/index';
+import TablerUtils from '../utils/tool';
+
 
 import "react-contexify/dist/ReactContexify.css";
 import "./style.scss";
@@ -207,7 +209,10 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
             } else {
                 if (it.type == 'divider') {
                     return <component.Separator key={i}/>
+                } else if (it.type =='group') {
+                    return <component.Item key={i} className="ui-menu-group">{it.name}</component.Item>
                 }
+
                 return (
                     <component.Item 
                         className={classnames({
@@ -234,23 +239,12 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
     public renderTitle(it) {
         return (
             <>
-                {this.renderIcon(it)}
+                {TablerUtils.renderIconComponent(it)}
                 {it.label || it.name}
             </>
         )
     }
-    public renderIcon(it: any) {
-        
-        if (it.icon) {
-            if (utils.isString(it.icon)) {
-                if (Icons[it.icon]) {
-                    let ViewIcon: any = Icons[it.icon];
-                    return ViewIcon ? <ViewIcon /> : null;
-                }
-            } 
-            return it.icon;
-        }
-    }
+    
 
     public render() {
         return (
@@ -267,7 +261,7 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
                         onHidden={()=>{this.setState({dangerMessage: '', payload: null, open:false})}}
                     />}
                 {
-                    ReactDOM.createPortal(<ContexifyMenu id={this.state.namespace}>
+                    ReactDOM.createPortal(<ContexifyMenu key={1} id={this.state.namespace}>
                         {this.renderChildrenMenu(null, {
                             Submenu: ContexifySubmenu,
                             Item: ContexifyItem,
