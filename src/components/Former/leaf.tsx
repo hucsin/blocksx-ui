@@ -23,6 +23,7 @@ export interface ILeaf {
     
     defaultValue: any;
     groupType?: string;
+    groupMeta?: any;
     rootEmitter?: EventEmitter;
     onChangeValue?: Function;
     onDealControl?: Function;
@@ -823,6 +824,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             size={this.props.size}
                             index={index}
                             groupType={this.props.groupType}
+                            groupMeta={this.props.groupMeta}
                         >
                             {GroupChildren}
                         </GroupItem>

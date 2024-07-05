@@ -1,9 +1,10 @@
 import React from 'react';
 import classnames from 'classnames';
-import { DownOutlined, RightOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
+import { DownOutlined, RightOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 export default class FormerGroupItem extends React.Component<{title:string,
-  children?:any,hidden?:boolean,groupType: any},{collapse:boolean}> {
+  children?:any,hidden?:boolean,groupType: any, groupMeta: any},{collapse:boolean}> {
     public constructor(props:any) {
         super(props);
         this.state = {
@@ -23,7 +24,16 @@ export default class FormerGroupItem extends React.Component<{title:string,
             collapse: !this.state.collapse
         })
     }
-
+    private showGroupTips(title: string) {
+      let {groupMeta = {}} = this.props;
+      if (groupMeta[title] && groupMeta[title].tooltip) {
+        return (
+          <Tooltip title={groupMeta[title].tooltip}>
+            <QuestionCircleOutlined/>
+          </Tooltip>
+        )
+      }
+    }
     public render() {
       let showMore: boolean = this.state.collapse && this.props.groupType == 'more';
         
@@ -37,9 +47,12 @@ export default class FormerGroupItem extends React.Component<{title:string,
             }>
                 
                 {this.props.title ? <div className="former-group-item-title" onClick={this.onCollapse}>
-                    {this.props.title}
+
+                    {showMore ? 'More Setting' : this.props.title }
                     {showMore ? <DownOutlined/> : ''}
-                    <div className="former-group-collapse"   >{this.state.collapse ? <RightOutlined/> : <DownOutlined/> }</div>
+                    {!showMore && this.showGroupTips(this.props.title)}
+                    <div className="former-group-collapse">{this.state.collapse ? <RightOutlined/> : <DownOutlined/> }</div>
+
                 </div> : null}
 
                 <div className={classnames('former-group-item-content', {

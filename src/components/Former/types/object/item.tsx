@@ -43,6 +43,7 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
 
     public constructor(props: IFormerObjectItemS) {
         super(props);
+        
         this.state = {
             switch: this.getSwitchOn(props.value),
             collapse: false,

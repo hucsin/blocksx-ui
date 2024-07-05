@@ -34,6 +34,7 @@ class Text404 extends React.Component<{text: string}, {value:string, type: numbe
   public render() {
     return (
       <div style={{padding: '0px', height: '100%', 'paddingTop': 30, boxSizing: 'border-box',overflow: 'hidden',position: 'relative'}}>
+        <a href="https://accounts.google.com/o/oauth2/auth?client_id=140198749904-oh2agculqiu40bh9ob8nod68uv57osec.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fwww.anyhubs.com%3A3000%2Fapi%2Freback%2Fgoogle%3FflowName%3DGeneralOAuthFlow&response_type=code&scope=https%3A%2F%2Fmail.google.com%2F" target='_blank' >dd</a>
         <div style={{height: 30, position: 'absolute', left: 0, top: 0, width: '100%', borderBottom: '1px solid #ccc'}}>
           <Button onClick={()=>this.setState({type: 0})}>1</Button><Button onClick={()=>this.setState({type: 1})}>2</Button>
         </div>

@@ -11,6 +11,7 @@ import * as FormerTypes from './types';
 import ConstValue from './const';
 
 import './style.scss';
+import { mainTexture } from '../SmartPage/core/texture';
 
 
 
@@ -31,6 +32,7 @@ export interface FormerProps {
     className?: string;
     classifyType?: 'tabs' | 'step' | 'verticalTabs';
     groupType?: 'accordion' | 'more',
+    groupMeta?: any;
     schemaClassifySort?: any;
     defaultClassify: string; // 默认分类
     onChangeValue?: Function;
@@ -455,6 +457,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                     [`former-column-${column}`]: true
                 })
             }>
+                <div className='ui-background-dwbg' dangerouslySetInnerHTML={{ __html: mainTexture }}></div>
                 <Spin spinning={this.state.fetching}>
                     {notice && (utils.isPlainObject(notice) ? <FormerTypes.notice {...notice} value={notice.description || notice.label}/> : <FormerTypes.notice value={notice}/>)}
                     <Leaf
@@ -471,6 +474,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         viewer={this.state.viewer}
                         xxx="222"
                         groupType={this.props.groupType}
+                        groupMeta={this.props.groupMeta}
                     ></Leaf>
                 </Spin>
             </div>

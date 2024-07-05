@@ -132,6 +132,7 @@
         }
         &.ui-selected {
             border: 1px solid var(--main-bg-border-color);
+            border-block-end:1px solid var(--main-bg-border-color) !important;
             background-color: var(--main-background-color);
         }
         cursor: pointer;
@@ -146,6 +147,7 @@
         }
     }
     &.ant-list-split .ant-list-item:last-child {
+        
         border-block-end: 1px solid var(--main-border-color);
         margin-bottom: 0;
     }

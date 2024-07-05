@@ -15,6 +15,7 @@ import Former from '../../index';
 import { utils } from '@blocksx/core';
 
 import './style.scss';
+import { extend } from 'dayjs';
 
 interface IFormerTable extends IFormerBase {
 
@@ -24,7 +25,7 @@ interface IFormerTable extends IFormerBase {
     viewer?: boolean;
     onGetDependentParameters?: Function;
     destoryKey: string;
-
+    extendsFor?: any;
     fields?: any[];
     // props['x-type-props']
     /*
@@ -550,7 +551,9 @@ export default class FormerTable extends React.Component<IFormerTable, {
         return key; 
     }
     public render() {
-        
+        let { extendsFor = {} } = this.props;
+        let pageMeta = extendsFor.meta || {};
+
         return (
             <div className="former-table" >
 
@@ -583,6 +586,8 @@ export default class FormerTable extends React.Component<IFormerTable, {
                     column={'two'}
                     key={this.getFormerKey()}
                     width={700}
+                    groupType={pageMeta.props && pageMeta.props.groupType}
+                    groupMeta={pageMeta.props && pageMeta.props.groupMeta}
                     canmodify={this.state.record && !!this.state.record['id']}
                     onSave={(value, former, message) => {
                         

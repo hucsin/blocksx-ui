@@ -477,6 +477,8 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     public render() {
         
         let { schema, dynamicSchema, visible, isStepMode, isStepOne, viewer } = this.state;
+        let { pageMeta = {}} = this.props;
+        let groupType: any = pageMeta.groupType || pageMeta.props && pageMeta.props.groupType;
         let notice: any = this.getDefaultNotice();
         
         let pageSchema: any = isStepMode 
@@ -489,8 +491,10 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         if (!visible) {
             return null;
         }
+        
         return (
             <Former
+                groupType ={groupType}
                 title={this.getDefaultTitle()}
                 icon={this.getDefaultIcon()}
                 size={'default'}

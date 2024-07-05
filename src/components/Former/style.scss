@@ -63,8 +63,15 @@
         }
     }
 }
-
+.former-column-two,
+.former-column-one,
+.former-column-three {
+    .ui-background-dwbg {
+        z-index: 0;
+    }
+}  
 .former-column-two {
+
     .former-object {
         .former-object-item {
             width: 50%;

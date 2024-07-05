@@ -10,7 +10,20 @@
       background-color: #fff;
    }
 }
-
+.ui-smartpage-article-toolbar  {
+   .tabler-batch-add {
+      .icons-combine-bottomRight > span:last-child {
+         background-color: #fff;
+         
+      }
+      &:Hover {
+         .icons-combine-bottomRight > span:last-child {
+            background-color: #fff;
+            opacity: 1;
+         } 
+      }
+   }
+}
 .ui-smartpage-popover {
    min-width: 450px;
    max-width: 450px;
@@ -266,12 +279,12 @@
    padding: 0px 8px;
    padding-right: 0;
    padding-left: 16px;
-   height: calc(100% - 12px);
+   height: calc(100% - 5px);
    display: none;
 
    >div {
       border: 1px solid #eee;
-      border-radius: 7px;
+      border-radius: 12px;
       padding: 16px;
       box-sizing: border-box;
       height: 100%;

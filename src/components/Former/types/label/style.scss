@@ -1,7 +1,10 @@
 .former-label {
-  padding-top: 4px;
+  line-height: 24px;
   .ant-tag {
     line-height: 16px;
+  }
+  + span .former-label {
+    padding-left: 8px;
   }
   
 }
