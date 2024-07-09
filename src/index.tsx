@@ -31,10 +31,28 @@ class Text404 extends React.Component<{text: string}, {value:string, type: numbe
       type: 0
     }
   }
+  public doClick = ()=> {
+    let screenWidth = window.screen.width;
+    let screenHeight = window.screen.height;
+    let windowWidth = Math.min(1000, screenWidth -  300);
+    let windowHeight = Math.min(700, screenHeight - 200);
+    let windowhelper: any = null;
+    
+  windowhelper =  window.open("api/connections/auth?id=4", "newWindow", `width=${windowWidth},height=${windowHeight},top=${(screenHeight-windowHeight)/2},left=${(screenWidth-windowWidth)/2},menubar=no,toolbar=no,resizable=no,focus=1`);
+  windowhelper.addEventListener('message', function(event) {
+    // event.data 包含发送过来的消息内容
+    console.log('Message from child window:', event.data);
+
+    if (windowhelper) {
+      //windowhelper.close();
+      //windowhelper = null;
+    }
+});
+  }
   public render() {
     return (
       <div style={{padding: '0px', height: '100%', 'paddingTop': 30, boxSizing: 'border-box',overflow: 'hidden',position: 'relative'}}>
-        <a href="https://accounts.google.com/o/oauth2/auth?client_id=140198749904-oh2agculqiu40bh9ob8nod68uv57osec.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fwww.anyhubs.com%3A3000%2Fapi%2Freback%2Fgoogle%3FflowName%3DGeneralOAuthFlow&response_type=code&scope=https%3A%2F%2Fmail.google.com%2F&access_type=offline" target='_blank' >dd</a>
+        <a  onClick={this.doClick} >dd</a>
         <div style={{height: 30, position: 'absolute', left: 0, top: 0, width: '100%', borderBottom: '1px solid #ccc'}}>
           <Button onClick={()=>this.setState({type: 0})}>1</Button><Button onClick={()=>this.setState({type: 1})}>2</Button>
         </div>
