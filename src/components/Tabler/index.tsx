@@ -76,6 +76,7 @@ interface TablerValueProps extends TablerProps {
     router?: routerParams;
 
     okText?: string;
+    formerOkText?: string;
     okIcon?: string;
 }
 
@@ -596,6 +597,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 } else {
                     this.resetDataSource(null, null,params)
                 }
+                return val;
             })
         } else {
             return this.resetDataSource(null, null,params)
@@ -863,6 +865,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                     action={this.state.formerAction}
                     pageType={this.props.pageType}
                     fields={props.fields}
+                    okText={this.props.formerOkText}
                     
                     value={this.state.currentRowData}
                     viewer={this.state.formerAction == 'view'}

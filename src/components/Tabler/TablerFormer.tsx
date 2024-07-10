@@ -10,7 +10,8 @@ import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExten
 import TablerUtils from '../utils/tool';
 import SmartRequest from '../utils/SmartRequest';
 
-import {  upperFirst, omit } from 'lodash'
+import {  upperFirst, omit } from 'lodash';
+import SmartAction from '../utils/SmartAction'
 
 /*
  * @Author: your name
@@ -42,7 +43,7 @@ export interface IFormerType {
     onChangeValue: Function;
     onClose: Function;
     onView?: Function;
-
+    okText?: string;
     viewer?: boolean;
 }
 export interface SFormerType {
@@ -117,24 +118,25 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         // 在原来的schema上加上新的
         if (schema) {
             let trueSchema:any = utils.clone(schema.other ? schema.other : schema);
-            
+            let hasdyschema: any =  dyschema.properties && Object.keys(dyschema.properties).length > 0;
             if (trueSchema) {
                 if (nextKey) {
-                    
-                    trueSchema.properties[nextKey] = Object.assign({}, dyschema, {
-                        uiType: 'object',
-                        'x-colspan': 2,
-                        'x-index': 10,
-                        'x-group': nextKey,
-                        fieldKey: nextKey,
-                        title: ''
-                    })
-                    trueSchema.title = nextKey;
+                    if (hasdyschema) {
+                        trueSchema.properties[nextKey] = Object.assign({}, dyschema, {
+                            uiType: 'object',
+                            'x-colspan': 2,
+                            'x-index': 10,
+                            'x-group': nextKey,
+                            fieldKey: nextKey,
+                            title: ''
+                        })
+                        trueSchema.title = nextKey;
+                    }
                    
                 } else {    
                     // 把dyschema的属性复制到原来的schema
 
-                    if (dyschema && dyschema.properties) {
+                    if (dyschema && dyschema.properties && hasdyschema) {
                         Object.assign(trueSchema.properties, dyschema.properties)
                     }
                 }
@@ -217,7 +219,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 disabled: true
             })
             this.props.onView(this.state.value).then((result) => {
-                console.log(333322, result)
+                
                 this.setState({
                     value: result
                 })
@@ -400,6 +402,9 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         if (this.state.isStepMode && this.state.isStepOne) {
             return 'Next';
         }
+        if (this.props.okText) {
+            return this.props.okText;
+        }
         switch (this.state.action) {
             case 'add':
                 return 'Create';
@@ -464,16 +469,26 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
 
         return new Promise((resolve, reject)=> {
 
-            this.props.onChangeValue(this.cleanLabelValueToValue(value)).then(() => {
-                this.setState({visible: false});
-                this.props.onClose();
-                resolve(true)
+            this.props.onChangeValue(this.cleanLabelValueToValue(value)).then((result) => {
+                
+                let callback = () => {
+
+                    this.setState({visible: false});
+                    this.props.onClose();
+                    resolve(true)
+                }
+                if (result.smartaction) {
+                    SmartAction.doAction(result, callback)
+                } else {
+                    callback();
+                }
             }).catch(e => {
                 reject(e)
                 //former.setState({loading: false})
             });
         })
     }
+    
     public render() {
         
         let { schema, dynamicSchema, visible, isStepMode, isStepOne, viewer } = this.state;

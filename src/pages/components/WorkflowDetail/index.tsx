@@ -365,7 +365,9 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         return this.props.onEditorValue({id: this.state.value.id,  favorites: state})
                     }} value={this.state.favorites} /></span>}
                     <Space>
+                    
                         <span className='ui-text'>
+                        {this.state.classifyLabel && <span className='ui-tag'><Tooltip title={this.state.classifyLabel.label}>{UtilsTool.renderIconComponent(this.state.classifyLabel)}</Tooltip></span>}
                             {!this.state.titleIsInput 
                                 ? <span onClick={this.onTitleClick}>{value.title}</span> 
                                 : <Input 
@@ -377,7 +379,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                                 />
                             }
                         </span>
-                        {this.state.classifyLabel && <span className='ui-tag'><Tooltip title={this.state.classifyLabel.label}>{UtilsTool.renderIconComponent(this.state.classifyLabel)}</Tooltip></span>}
+                        
                     </Space>
                 </span>
                 

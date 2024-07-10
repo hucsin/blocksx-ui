@@ -9,7 +9,7 @@ import PositioningCanvas from './positioning';
 import FormatCanvas from './format';
 
 import { IRect, IPointCoord, FlowNode, FlowConnector } from './typing';
-import { text } from 'stream/consumers';
+
 /**
  * 一个极简交互的流程图绘制工具
  */
@@ -21,9 +21,12 @@ export interface MiniFlowMap {
     uniq: string;
     canvas: HTMLElement | string; // 画布节点
     isViewer?: boolean;
+    
     destoryChinampaPanel: HTMLElement;
     unlinkChinampaPanel: HTMLElement;
     chinampaPanel: HTMLElement;
+
+
 
     templateMap: any;
 
@@ -79,6 +82,7 @@ export default class MiniFlow extends EventEmitter {
 
     private highlightConnectInfo: any;
     private uniq: any;
+    private childrenGroupMap: any;
     public constructor(props: MiniFlowMap) {
         super();
 
@@ -102,7 +106,9 @@ export default class MiniFlow extends EventEmitter {
         this.connectorMap = {};
         this.nodeMap = {};
         this.size = (props.size || 138);
-        this.temporaryRouterOffset = 40;
+        this.temporaryRouterOffset = 50;
+
+        this.childrenGroupMap = {};
 
         this.freezeState = false;
 
@@ -130,7 +136,59 @@ export default class MiniFlow extends EventEmitter {
             this.resetConnector();
         })
     }
+    public removeGroupChildren(nodeName: string) {
+        if (this.childrenGroupMap[nodeName]) {
+            this.childrenGroupMap[nodeName].parentNode.removeChildren(this.childrenGroupMap[nodeName]);
+            this.childrenGroupMap[nodeName] = null;
+        }
+    }
+    public getFlowGroupChildren(nodeName) {
 
+        let children: any = this.getDescendantNode(nodeName);
+        let rect: any = {
+            top: 1e12,
+            left:1e12,
+            bottom: 0,
+            right: 0
+        }
+        children.forEach(it => {
+            let { left, top} = it;
+            if (left < rect.left) {
+                rect.left = left;
+            }
+            if (left > rect.right) {
+                rect.right = left
+            }
+
+            if (top < rect.top) {
+                rect.top = top
+            }
+            if (top > rect.bottom) {
+                rect.bottom = top
+            }
+        })
+        
+        return rect;
+    }
+    public setGroupChildren(nodeName: string) {
+        if (!this.childrenGroupMap[nodeName]) {
+            let div:any = document.createElement('div');
+            div.className = 'ui-children-group';
+            this.childrenGroupMap[nodeName] = div;
+
+            this.canvas.appendChild(div);
+            
+        }
+        let rect: any = this.getFlowGroupChildren(nodeName);
+
+        let group: any = this.childrenGroupMap[nodeName];
+        console.log(rect)
+        group.style.left = (rect.left - 16) + 'px';
+        group.style.top = (rect.top -16) + 'px';
+        group.style.width = (rect.right - rect.left + 160) + 'px';
+        group.style.height = (rect.bottom -rect.top + 160) + 'px'
+    }
+    
     // 清楚
     public destory() {
         this.instance.deleteEveryConnection();
@@ -1254,6 +1312,8 @@ export default class MiniFlow extends EventEmitter {
                             event: e.e
                         })
 
+
+
                         if (!this.draggingFlag ) {
                             this.unHighlightConnector()
                         }
@@ -1267,6 +1327,8 @@ export default class MiniFlow extends EventEmitter {
                         this.dragNodeName = nodeName;
                        
                         this.reflushDragNode();
+
+                        this.setGroupChildren(nodeName)
                     },
                     stop: (event: any) => {
 

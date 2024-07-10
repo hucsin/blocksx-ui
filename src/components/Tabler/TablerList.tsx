@@ -504,21 +504,25 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
             let extraList: any [] = this.getFieldsByPlace(place);
             let smartRequestMap: any = this.props.smartRequestMap || {};
-
+            
             return extraList.map((field, index) => {
+                
                 return TableUtils.renderComponentByField(field, {
                     value: rowData[field.key],
                     key: field.key + index,
                     displayValue: rowData['DisplayValue_' + field.key],
                     size: this.getActionSize(),
+                    ...(field.meta ? field.meta.props : {}),
                     recordValue: rowData,
                     onChangeValue: (value) => {
+                        
                         if (smartRequestMap[field.action]) {
                             let requestData: any = {
                                 ...rowData,
                                 [`${field.key}`]: value
                             };
-                            smartRequestMap[field.action](requestData).then(() => {
+                            return smartRequestMap[field.action](requestData).then((ret) => {
+                                
                                 this.updateRowData(requestData)
                             })
                         }

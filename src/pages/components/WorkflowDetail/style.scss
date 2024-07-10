@@ -8,6 +8,11 @@
         padding: 0 4px;
     }
 }
+.ui-children-group {
+    position: absolute;
+    border: 6px dashed #ccc;
+    border-radius: 86px;;
+}
 .ui-connector-helper {
     position: absolute;
     width: 8px;
@@ -78,16 +83,14 @@
                     border-bottom: 1px solid transparent
                 }
                 &:hover {
-                    span {
+                    >span:not(.ui-tag) {
 
                         border-bottom: 1px solid var(--main-bg-color)
                     }
                 }
             }
             .ui-tag {
-                padding-left: 16px;
                 font-size:1em;
-                vertical-align: top;
                 
                 font-size:18px;
                 color: #ccc;

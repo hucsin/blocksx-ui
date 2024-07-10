@@ -121,7 +121,6 @@
                     
                     return (
                         <label onClick={()=>{
-                            
                             this.onChangeValue({
                                 target: {
                                     value: it.value
@@ -129,7 +128,7 @@
                             })
                         }} className={classnames({
                             'ui-viewer': this.props.viewer,
-                            'ui-selected': it.value == value
+                            'ui-selected': !this.props.viewer && it.value == value
                         })} key={it.value} >{VIcon ? <Tooltip title={it.description || it.label}><VIcon/>{this.props.viewer && it.label}</Tooltip> :it.label}</label>
                     )
                 })}

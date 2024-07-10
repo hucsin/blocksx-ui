@@ -81,6 +81,7 @@ export default class TablerUtils {
 
                 return (
                     <UiView key={field.key} size="default"  {...props} loading={true} onChangeValue={(v) => {
+                        console.log(v, 3333)
                         return field.motion({
                             ...props.recordValue,
                             [field.key]: v

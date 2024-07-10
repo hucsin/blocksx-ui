@@ -8,6 +8,7 @@
  */
 import React from 'react';
 import { Switch, Tooltip } from 'antd';
+import classnames from 'classnames';
 
 import * as Icons from '../../../Icons';
 import { IFormerBase } from '../../typings';
@@ -17,6 +18,9 @@ import './style.scss';
 
 interface IFormerSwitch extends IFormerBase {
     checkedIcon?: string;
+    unCheckedText?: string;
+    checkedText?: string;
+
     unCheckedIcon?: string;
     value: any;
     size?: any;
@@ -73,6 +77,7 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
         let loading: boolean = this.state.loading && this.props.loading;
         let size: any = props.size || this.props.size || 'small';
         
+        console.log(props, this.props, size)
 
         let unCheckedIcon: string = props.unCheckedIcon || this.props.unCheckedIcon;
         let checkedIcon: string = props.checkedIcon || this.props.checkedIcon;
@@ -81,12 +86,15 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
         let CheckedIconView: any = Icons[checkedIcon];
 
         return (
-            <div className="former-switch">
+            <div className={classnames({
+                "former-switch":true,
+                [`former-size-${size}`]: size
+            })}>
                 <Tooltip title={this.props.tooltip}>
                     <Switch
                         {...this.props['x-type-props']} 
-                        unCheckedChildren= {UncheckedIconView && <UncheckedIconView/>}
-                        checkedChildren={CheckedIconView && <CheckedIconView/>}
+                        unCheckedChildren= {UncheckedIconView ? <UncheckedIconView/> : this.props.unCheckedText}
+                        checkedChildren={CheckedIconView ? <CheckedIconView/> : this.props.checkedText}
                         loading  = {loading}
                         size     = {size}
                         disabled = {this.props.disabled}  

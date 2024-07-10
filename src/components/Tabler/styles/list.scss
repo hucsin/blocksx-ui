@@ -285,6 +285,30 @@
         }
     }
     .ui-mircotable-extra {
+        .former-size-default {
+            button {
+                height: 26px;
+                line-height: 26px;
+            }
+            .ant-switch-handle {
+                height: 22px;
+                width: 22px;
+                
+                &::before {
+                    border-radius: 100%;
+                }
+            }
+            .ant-switch-checked .ant-switch-handle  {
+                inset-inline-start: calc(100% - 24px);
+            }
+            .ant-switch-inner {
+                
+                .ant-switch-inner-unchecked{
+                    text-indent: 2px;
+                    line-height: 18px;;
+                }
+            }
+        }
         cursor: default;
         >:first-child {
             margin-left: 0;

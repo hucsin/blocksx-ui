@@ -179,7 +179,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                                             ...ac,
                                             color: it.color,
                                             icon: [it.icon, ac.icon],
-                                            componentName: [it.name, ac.name].join('.')
+                                            componentName: [it.id, ac.id].join('.')
                                         };
                                     }) : []
                                     return it;
