@@ -27,6 +27,7 @@ interface TFormerObjectItem {
 interface IFormerObjectItemS extends IFormerObjectItem {
     value: any;
     size: any;
+    notice: any;
     dict?:any[];
     defaultValue?: any;
     onChangeValue: Function;
@@ -117,7 +118,8 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
     public render() {
         
         let descriptionText: any = this.getDescriptionText();
-
+        let tooltip: string = this.props.tooltip || this.props.notice;
+        
         return (
             <div 
                 className={classnames('former-object-item', {
@@ -143,7 +145,7 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
                         {this.props.title}
                     </span>
                     {this.props.renderTitlePortal && this.props.renderTitlePortal()}
-                    {utils.isValidValue(this.props['tooltip']) && <Tooltip arrowPointAtCenter={true} placement="topLeft" title={this.props['tooltip']}><ExclamationCircleOutlined/></Tooltip> }
+                    {utils.isValidValue(tooltip) && <Tooltip arrowPointAtCenter={true} placement="topLeft" title={tooltip}><ExclamationCircleOutlined/></Tooltip> }
                     {utils.isValidValue(this.props['x-model-switch']) && <Checkbox className="model-switch" checked={this.state.switch} onChange={this.onSwitch}/>}
                     {this.props.oneOf ? <span className="former-object-label-menu">
                         {this.props.oneOf}

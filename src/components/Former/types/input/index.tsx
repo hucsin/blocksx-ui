@@ -52,7 +52,7 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
             )
         } else {
             return (
-                <Input size={this.props.size} {...props} disabled={this.props.disabled} value={this.state.value} onChange={this.onChange} />
+                <Input size={this.props.size}  {...props} style={{width: props.width}} disabled={this.props.disabled} value={this.state.value} onChange={this.onChange} />
             )
         }
     }

@@ -317,6 +317,7 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
                 content={this.renderContent()}
                 rootClassName="ui-reco-filter"
                 autoAdjustOverflow={true}
+                
                 open={this.state.open}
                 onOpenChange={(v)=> {
                     let openState: boolean = this.canShow ? v : false;

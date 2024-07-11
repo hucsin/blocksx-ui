@@ -26,7 +26,7 @@
 }
 .ui-smartpage-popover {
    min-width: 450px;
-   max-width: 450px;
+   max-width: 520px;
    padding-top: 10px;
    padding-bottom: 10px;
    max-height: calc(100vh - 20px);
@@ -54,10 +54,16 @@
            font-size:18px;
            bottom: -1px;
            position: relative;
-
-           opacity: .6;
-           
+           color: #bbb
        }
+       .icons-combine {
+         > span:last-child {
+            position: absolute;
+            background-color: #fff;
+            right: -8px;
+         }
+       }
+
    }
    .ui-former-buttons {
        margin-top: 32px;

@@ -7,7 +7,7 @@ export default class SmartAction {
         this.actionMap[name] = action;
     }
     public static find(params: any) {
-        let type: string = typeof params == 'string' ? params :  params.type;
+        let type: string = typeof params == 'string' ? params :  params.smartaction;
         return this.actionMap[type];
     }
     public static doAction(params: any, callback: Function) {

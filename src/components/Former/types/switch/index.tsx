@@ -20,7 +20,7 @@ interface IFormerSwitch extends IFormerBase {
     checkedIcon?: string;
     unCheckedText?: string;
     checkedText?: string;
-
+    canOff?: boolean;
     unCheckedIcon?: string;
     value: any;
     size?: any;
@@ -77,14 +77,11 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
         let loading: boolean = this.state.loading && this.props.loading;
         let size: any = props.size || this.props.size || 'small';
         
-        console.log(props, this.props, size)
-
         let unCheckedIcon: string = props.unCheckedIcon || this.props.unCheckedIcon;
         let checkedIcon: string = props.checkedIcon || this.props.checkedIcon;
 
         let UncheckedIconView: any = Icons[unCheckedIcon];
         let CheckedIconView: any = Icons[checkedIcon];
-
         return (
             <div className={classnames({
                 "former-switch":true,
@@ -97,7 +94,7 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
                         checkedChildren={CheckedIconView ? <CheckedIconView/> : this.props.checkedText}
                         loading  = {loading}
                         size     = {size}
-                        disabled = {this.props.disabled}  
+                        disabled = {(!this.props.canOff && this.state.value) || this.props.disabled}  
                         checked  = {this.state.value} 
                         onChange = {this.onChange} 
                     />

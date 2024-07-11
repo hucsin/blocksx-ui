@@ -11,7 +11,7 @@ import TablerUtils from '../utils/tool';
 import SmartRequest from '../utils/SmartRequest';
 
 import {  upperFirst, omit } from 'lodash';
-import SmartAction from '../utils/SmartAction'
+
 
 /*
  * @Author: your name
@@ -471,17 +471,10 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
 
             this.props.onChangeValue(this.cleanLabelValueToValue(value)).then((result) => {
                 
-                let callback = () => {
-
-                    this.setState({visible: false});
-                    this.props.onClose();
-                    resolve(true)
-                }
-                if (result.smartaction) {
-                    SmartAction.doAction(result, callback)
-                } else {
-                    callback();
-                }
+                this.setState({visible: false});
+                this.props.onClose();
+                resolve(true)
+               
             }).catch(e => {
                 reject(e)
                 //former.setState({loading: false})

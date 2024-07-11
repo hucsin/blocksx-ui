@@ -18,7 +18,7 @@ import TablerList from './TablerList';
 import AuthFilter from './AuthFilter';
 import TablerUtils from '../utils/tool';
 import { routerParams } from '../utils/withRouter';
-
+import SmartAction from '../utils/SmartAction'
 
 
 
@@ -589,15 +589,27 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
     private resetcheck(mise: any,params?: any) {
 
         if (utils.isPromise(mise)) {
-            return mise.then((val: any) => {
-                let { batchAction }  = this.state;
-                // 跳转到router
-                if (batchAction && batchAction.router && this.props.router) {
-                     this.props.router.utils.goPath(batchAction.router, val);
-                } else {
-                    this.resetDataSource(null, null,params)
-                }
-                return val;
+            return new Promise((resolve, reject) => {
+                mise.then((val: any) => {
+                    let { batchAction }  = this.state;
+    
+                    let callback: any = () => {
+                        // 跳转到router
+                        if (batchAction && batchAction.router && this.props.router) {
+                                this.props.router.utils.goPath(batchAction.router, val);
+                        } else {
+                            this.resetDataSource(null, null,params)
+                        }
+                        resolve(val);
+                    }
+    
+                    if (val.smartaction) {
+                        SmartAction.doAction(val, callback)
+                    } else {
+                        callback();
+                    }
+                
+                }).catch(reject)
             })
         } else {
             return this.resetDataSource(null, null,params)

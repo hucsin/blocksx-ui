@@ -147,7 +147,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     private defaultWidthMap: any = {
         tree: 600,
-        popover: 400
+        popover: 500
     }
     private canShow:boolean;
     public static manger: any = PageManger;

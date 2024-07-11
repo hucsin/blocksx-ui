@@ -38,7 +38,7 @@ class Text404 extends React.Component<{text: string}, {value:string, type: numbe
     let windowHeight = Math.min(700, screenHeight - 200);
     let windowhelper: any = null;
     
-  windowhelper =  window.open("api/connections/auth?id=4", "newWindow", `width=${windowWidth},height=${windowHeight},top=${(screenHeight-windowHeight)/2},left=${(screenWidth-windowWidth)/2},menubar=no,toolbar=no,resizable=no,focus=1`);
+  windowhelper =  window.open("api/connections/auth?id=4", "newWindow", );
   windowhelper.addEventListener('message', function(event) {
     // event.data 包含发送过来的消息内容
     console.log('Message from child window:', event.data);

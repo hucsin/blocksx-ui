@@ -4,6 +4,7 @@ import { Tag, Space, Tooltip } from 'antd'
 import * as FormerTypes from '../Former/types';
 import * as Icons from '../Icons';
 import CombineIcon from '../Icons/CombineIcon';
+import SmartAction from './SmartAction';
 
 
 export default class TablerUtils {
@@ -81,10 +82,22 @@ export default class TablerUtils {
 
                 return (
                     <UiView key={field.key} size="default"  {...props} loading={true} onChangeValue={(v) => {
-                        console.log(v, 3333)
-                        return field.motion({
-                            ...props.recordValue,
-                            [field.key]: v
+                        
+                        return new Promise((resolve, reject)=> {
+                            field.motion({
+                                ...props.recordValue,
+                                [field.key]: v
+                            }).then(data=> {
+                                if (data && data.smartaction) {
+                                    
+                                    return SmartAction.doAction(data, () => {
+                                        
+                                        resolve(data)
+                                    })
+                                }
+                                
+                                resolve(data)
+                            }).catch(reject)
                         })
                     }} />
                 )

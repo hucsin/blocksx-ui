@@ -27,6 +27,25 @@
             }
         }
     }
+    >.former-group-item {
+
+        &:last-child {
+            .former-group-item-content  {
+                padding-bottom: 0;
+            }
+        }
+        &.former-group-type-0 {
+            .former-object-item {
+                padding-right: 0px;
+                padding-left: 0px;
+            }
+            .former-group-item-content  {
+                padding: 0;
+                border:None;
+                background-color: transparent;
+            }
+        }
+    }
 
     .former-group-item-title {
         position: relative;
@@ -68,7 +87,7 @@
         height: auto;
 
         border: 1px dashed #f0f0f0;
-        border-radius: 5px;
+        border-radius: 12px;
         padding: 16px 0;
         padding-bottom: 16px;
 

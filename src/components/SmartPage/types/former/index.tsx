@@ -213,13 +213,13 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
             
             
         }
-        private getStepTitle(IconsView) {
+        private getStepTitle(pageMeta) {
             
             return (
                 <div className={classnames({
                     'ui-header': true
                 })}>
-                    {IconsView && <IconsView/>}
+                    {SchemaUtils.renderIconComponent(pageMeta)}
                     <span className='ui-stepone'>{this.getStepFistTitle()}</span>
                     <RightOutlined/>
                     <span className={
@@ -237,12 +237,12 @@ export default class SmartPageFormer extends React.Component<SmartPageFormerProp
             
             if (this.state.isStepMode && !this.state.viewer) {
                  
-                return this.getStepTitle(IconsView);
+                return this.getStepTitle(pageMeta);
     
             } else {
                 return (
                     <Space>
-                        {IconsView && <IconsView/>}
+                        {SchemaUtils.renderIconComponent(pageMeta)}
                         {this.state.title}
                     </Space>
                 )

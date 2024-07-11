@@ -3,55 +3,59 @@ import classnames from 'classnames';
 import { Tooltip } from 'antd';
 import { DownOutlined, RightOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
-export default class FormerGroupItem extends React.Component<{title:string,
-  children?:any,hidden?:boolean,groupType: any, groupMeta: any},{collapse:boolean}> {
-    public constructor(props:any) {
+export default class FormerGroupItem extends React.Component<{
+    title: string,
+    children?: any, hidden?: boolean, groupType: any, groupMeta: any
+}, { collapse: boolean }> {
+    public constructor(props: any) {
         super(props);
         this.state = {
             collapse: this.getDefaultCollapse(props)
         }
     }
-    private getDefaultCollapse(props:any) {
-      if (props.groupType == 'more') {
-        if (props.index >0) {
-          return true;
+    private getDefaultCollapse(props: any) {
+        if (props.groupType == 'more') {
+            if (props.index > 0) {
+                return true;
+            }
         }
-      }
-      return false;
+        return false;
     }
-    private onCollapse =()=> {
+    private onCollapse = () => {
         this.setState({
             collapse: !this.state.collapse
         })
     }
     private showGroupTips(title: string) {
-      let {groupMeta = {}} = this.props;
-      if (groupMeta[title] && groupMeta[title].tooltip) {
-        return (
-          <Tooltip title={groupMeta[title].tooltip}>
-            <QuestionCircleOutlined/>
-          </Tooltip>
-        )
-      }
+        let { groupMeta = {} } = this.props;
+        if (groupMeta[title] && groupMeta[title].tooltip) {
+            return (
+                <Tooltip title={groupMeta[title].tooltip}>
+                    <QuestionCircleOutlined />
+                </Tooltip>
+            )
+        }
     }
     public render() {
-      let showMore: boolean = this.state.collapse && this.props.groupType == 'more';
+        let showMore: boolean = this.state.collapse && this.props.groupType == 'more';
+        let showTitle: boolean = !!this.props.title && (this.props.title.length > 2);
         
         return (
             <div className={
-              classnames({
-                "former-group-item": true,
-                "former-group-typeMore": showMore,
-                'former-group-hidden': this.props.hidden
-              })
+                classnames({
+                    "former-group-item": true,
+                    [`former-group-type-${this.props.title}`]: this.props.title,
+                    "former-group-typeMore": showMore,
+                    'former-group-hidden': this.props.hidden,
+                })
             }>
-                
-                {this.props.title ? <div className="former-group-item-title" onClick={this.onCollapse}>
 
-                    {showMore ? 'More Setting' : this.props.title }
-                    {showMore ? <DownOutlined/> : ''}
+                {showTitle ? <div className="former-group-item-title" onClick={this.onCollapse}>
+
+                    {showMore ? 'More Setting' : this.props.title}
+                    {showMore ? <DownOutlined /> : ''}
                     {!showMore && this.showGroupTips(this.props.title)}
-                    <div className="former-group-collapse">{this.state.collapse ? <RightOutlined/> : <DownOutlined/> }</div>
+                    <div className="former-group-collapse">{this.state.collapse ? <RightOutlined /> : <DownOutlined />}</div>
 
                 </div> : null}
 
