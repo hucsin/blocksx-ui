@@ -56,6 +56,8 @@ export interface MircoFLowConnector extends FlowConnector{
 export interface MircoFlowProps {
     router: any;
     history: any
+    workflowId: any;
+
     pageType: string;
 
     isTemplate?: boolean;
@@ -569,6 +571,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         onAddNodeChildren={this.addNodeChildrenByName}
                         onAddTriggerNode={this.addTriggerNodeById}
                         mircoFlow={this}
+                        workflowId={this.props.workflowId}
                         getFormerSchema={this.props.getFormerSchema}
                         isViewer={this.props.isViewer}
                         onChangeProps={(v)=>{

@@ -7,10 +7,10 @@
  * @FilePath: /designer/Users/iceet/work/hucsin/blocksx/packages/design-components/src/former/types/input/index.tsx
  */
 import React from 'react';
-import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
-
+import * as Icons from '../../../Icons';
 import { Input } from 'antd';
+import Icon from '@ant-design/icons/lib/components/Icon';
 
 interface IFormerInput extends IFormerBase {
     value: any,
@@ -45,6 +45,15 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
 
     public render() {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
+
+        if (props.prefix) {
+            if (Icons[props.prefix]) {
+                let IconView: any = Icons[props.prefix];
+                props.prefix = <IconView/>
+            }
+
+        }
+
         
         if (props.type && props.type == 'password') {
             return (

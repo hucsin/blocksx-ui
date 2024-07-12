@@ -12,6 +12,7 @@ import ConstValue from './const';
 
 import './style.scss';
 import { mainTexture } from '../SmartPage/core/texture';
+import { pick } from 'lodash';
 
 
 
@@ -39,6 +40,7 @@ export interface FormerProps {
     autoclose?: boolean;
 
     operateContainerRef?: any;
+    titleContainerRef?: any;
     onlyButton?: boolean;// 只渲染button
     
     //onRelyParams: Function;
@@ -314,12 +316,12 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             this.props.onChangeValue(value);
         }
     }
-    public validationValue(cb: Function) {
+    public validationValue(cb: Function, parmas?: any) {
         let count: number = this.emitter.listenerCount('validation');
         let isBreak: boolean = false;
 
         ConstValue.isValidError = false;
-
+        
         if (count > 0) {
             if (this.helper) {
                 this.emitter.removeListener('checked', this.helper)
@@ -332,21 +334,38 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                     isBreak = true;
                 }
 
-
                 if (--count <= 0) {
                     if (!isBreak) {
-                        cb()
+                        cb(this.getSafeValue())
                     }
                     this.emitter.removeListener('checked', this.helper)
                     this.helper = null;
                 }
             });
-            this.emitter.emit('validation');
+            this.emitter.emit('validation', parmas);
 
         } else {
 
-            cb()
+            cb(this.getSafeValue())
         }
+    }
+    public resetSafeValue(data: any) {
+        let { value } = this.state;
+        let safeValue: any = this.getSafeValue(data);
+        
+        this.setState({
+            value: {
+                ...value,
+                ...safeValue
+            }
+        }, () => this.onChangeValue(this.state.value))
+        
+    }
+    private getSafeValue(_value?: any) {
+        let { schema = {}, value} = this.state;
+        let safeKeys: any = Object.keys(schema.properties)
+
+        return pick(_value || value, safeKeys)
     }
     private onSave = (e) => {
         
@@ -428,6 +447,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                                         runtimeValue={this.state.value}
                                         value={classifyValue[index] || {}}
                                         {...it}
+
+                                        former={this}
                                         canmodify={this.state.canmodify}
                                         rootEmitter={this.emitter}
                                         xxx="222"
@@ -466,7 +487,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         runtimeValue={this.state.value || {}}
                         value={this.state.value}
                         {...this.state.schema}
-
+                        former={this}
                         canmodify={this.state.canmodify}
                         rootEmitter={this.emitter}
                         onChangeValue={this.onChangeValue}
@@ -585,13 +606,17 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         )
     }
     public renderTitle() {
-        let TitleIcon: any = ICONS[this.props.icon];
-        return (
+        let RenderContent: any = (
             <>
-                {TitleIcon && <FormerTypes.avatar autoColor={false} icon={this.props.icon} size={24}/>}
+                {this.props.icon && <FormerTypes.avatar autoColor={false} icon={this.props.icon} size={24}/>}
                 {this.state.title || 'Edit record'}
             </>
-        )
+        );
+
+        if (this.props.titleContainerRef) {
+            return ReactDOM.createPortal(RenderContent, this.props.titleContainerRef.current);
+        }
+        return RenderContent;
     }
     public render() {
         switch (this.state.type) {
@@ -668,7 +693,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             default:
                 return (
                     <div className='ui-former-content'>
-                        
+                        {this.renderTitle()}
                         {this.renderLeaf()}
                         {!this.props.hideButtons && <div className='ui-former-buttons'>
                             {this.renderOperateButton()}

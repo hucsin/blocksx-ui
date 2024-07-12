@@ -132,11 +132,11 @@ export default class OneOf extends React.Component<IOneOf, {current: any; visibl
                 return (
                     <Popover 
                         overlayClassName="design-leaf-oneOf-popover" 
-                        visible={this.state.visible} arrowPointAtCenter 
+                        open={this.state.visible} arrow={{ pointAtCenter: true }} 
                         placement="bottomRight" 
                         content={this.getOneOfMenu()} 
                         trigger="hover"
-                        onVisibleChange={this.onVisibleChange}
+                        onOpenChange={this.onVisibleChange}
                     >
                         <span className="design-leaf-oneOf"></span>
                     </Popover>

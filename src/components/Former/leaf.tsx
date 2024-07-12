@@ -15,6 +15,8 @@ import * as Icons from '../Icons'
 
 
 export interface ILeaf {
+    fieldKey: string;
+    former: any;
     path: string;
     portalMap?: any;
     parentPath?: string;
@@ -140,15 +142,34 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             this.dealControl(this.state.value, this.props['x-control']);
         }
 
+        function thouth(isThouth) {
+            rootEmitter && rootEmitter.emit('checked', isThouth);
+        }
+
         // 设置验证事件
 
         if (rootEmitter) {
             if (this.props['x-validation']) {
                 // 启动校验
-                rootEmitter.on('validation', this.emitterHelper = () => {
+                rootEmitter.on('validation', this.emitterHelper = (data: any) => {
+                    
+                    if (data && data.noValidationField) {
+                        let { fieldKey } = this.props;
+                        if (utils.isArray(data.noValidationField)) {
+                            if (data.noValidationField.indexOf(fieldKey) > -1) {
+                                return thouth(true);
+                            }
+                        } else {
+                            if (fieldKey == data.noValidationField) {
+                                return thouth(true);
+                            }
+                        }
+                        
+                    }
                     // 开始值校验
                     this.verification((isThouth, message) => {
-                        rootEmitter && rootEmitter.emit('checked', isThouth);
+
+                        thouth(isThouth)
                     })
                 })
             }
@@ -749,6 +770,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             
                             let leftProps: any = {...properties,
                                 path:prop,
+
+                                former:this.props.former,
                                 parentPath:this.path,
                                 runtimeValue:this.state.runtimeValue,
                                 value:itemvalue,
@@ -781,6 +804,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                 <Child
                                     hidden={hidden}
                                     {...properties}
+
+                                    former={this.props.former}
                                     // object items 关闭的时候
                                     onChangeValue={(val: any, type?: string) => {
                                         value[prop] = val;
@@ -792,6 +817,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                             let { description} = it.leftProps;
                                             return <Leaf
                                                 {...it.leftProps}
+                                                former={this.props.former}
                                                 //portalMap={propsPortalMap}
                                                 size={'small'}
                                                 tooltip={description}
@@ -823,6 +849,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             title={it.title}
                             size={this.props.size}
                             index={index}
+
+                            former={this.props.former}
                             groupType={this.props.groupType}
                             groupMeta={this.props.groupMeta}
                         >
@@ -858,6 +886,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             runtimeValue={this.state.runtimeValue}
                             value={prop}
                             key="1"
+
+                            former={this.props.former}
                             viewer={this.state.viewer}
                             canmodify={this.state.canmodify}
                             size={this.props.size}
@@ -874,6 +904,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             key="2"
                             size={this.props.size}
 
+                            former={this.props.former}
                             viewer={this.state.viewer}
                             canmodify={this.state.canmodify}
                             parentPath={this.path}
@@ -932,6 +963,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                     parentPath={this.path}
                                     size={this.props.size}
 
+                                    former={this.props.former}
                                     viewer={this.state.viewer}
                                     canmodify={this.state.canmodify}
                                     value={it}
@@ -982,6 +1014,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                 ...this.leafProps,
                 children:children,
                 size:this.props.size,
+
+                former:this.props.former,
                 value:this.getValueByProps(this.state.value, { value: this.getDefaultValue() }),
                 originValue:this.state.originValue,
                 runtimeValue:this.state.runtimeValue,
@@ -1000,7 +1034,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                     >
                         {ContentPortal.length>0 ? <Space.Compact>
                             <View
-                            {...viewProps}
+                                {...viewProps}
                             />
                             {this.renderPortal(ContentPortal)}
                         </Space.Compact> : <View {...viewProps}/>}
@@ -1023,7 +1057,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         if (portalMap) {
             return portalMap.map(it => {
                 let { description} = it.leftProps;
-                return <Leaf {...it.leftProps} tooltip ={description} popupMatchSelectWidth={false}/>
+                return <Leaf {...it.leftProps} former={this.props.former} tooltip ={description} popupMatchSelectWidth={false}/>
             })
         }
     }

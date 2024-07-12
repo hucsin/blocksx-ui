@@ -145,7 +145,7 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
                         {this.props.title}
                     </span>
                     {this.props.renderTitlePortal && this.props.renderTitlePortal()}
-                    {utils.isValidValue(tooltip) && <Tooltip arrowPointAtCenter={true} placement="topLeft" title={tooltip}><ExclamationCircleOutlined/></Tooltip> }
+                    {utils.isValidValue(tooltip) && <Tooltip arrow={{ pointAtCenter: true }} placement="topLeft" title={tooltip}><ExclamationCircleOutlined/></Tooltip> }
                     {utils.isValidValue(this.props['x-model-switch']) && <Checkbox className="model-switch" checked={this.state.switch} onChange={this.onSwitch}/>}
                     {this.props.oneOf ? <span className="former-object-label-menu">
                         {this.props.oneOf}

@@ -97,7 +97,7 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
     }
     private getSubSize()  {
         let props: any = this.getProps();
-        let size: any = props.size * 2/3;
+        let size: any = props.size * 1/2;
         return parseInt(size, 10)
     }
     private getProps() {

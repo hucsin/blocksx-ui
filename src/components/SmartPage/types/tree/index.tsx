@@ -500,17 +500,17 @@ export default class SmartPageTree extends React.Component<SmartPageTreeProps, S
 
         return (
             <SmartPageFormer 
-                router={this.props.router}
+                //router={this.props.router}
                 schema={this.props.schema}
                 path={this.props.path}
                 pageMeta={this.props.pageMeta}
-                mode={''}
+                formerType={'default'}
                 value={this.state.value || this.state.payload}
                 viewer={this.state.formerType=='View'}
                 title={this.getDefaultTitle()}
                 okText={this.getDefaultOkText()}
-                onSave={this.onChangeValue}
-                onCancel={()=>{this.setState({formerType: 'View'})}}
+                onChangeValue={this.onChangeValue}
+                onClose={()=>{this.setState({formerType: 'View'})}}
             />
         )
     }

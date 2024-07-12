@@ -16,6 +16,7 @@ import DefaultNodeList from '../../config/DefaultNodeList';
 interface IMircoFlowNode {
     name: string;
     id?: number;
+    workflowId: any;
     classify: any;
     mircoFlow: any;
     floating?: boolean;
@@ -341,6 +342,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         let componentName: any = this.props.componentName || props && props.componentName;
         let nodeType: string = type == 'go' ? componentName ? type :'empty' : type;
         
+
         switch (nodeType) {
             case 'empty':
                 return (
@@ -368,14 +370,31 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             case 'router':
             case 'go':
             default:
+                let propsvalue = this.state.props || {}
+                let isInputValue: boolean = this.state.settingMode !== 'setting';
+                let value: any  = (isInputValue ? propsvalue.input : propsvalue) || {};
+                
                 return (
                     <SmartPage
-                        pageURI='/api/thinking/findPage'
+                        onGetDependentParameters ={()=> {
+                            
+                            return {
+                                workflowId: this.props.workflowId,
+                                nodeId: this.props.id
+                            }
+                        }}
+                        pageURI='/eos/programs/findPage'
                         id={[this.state.settingMode, componentName || 'router'].join('__')}
                         name={componentName || 'router'}
                         type="popover"
                         isViewer={this.props.isViewer}
                         simplicity
+                        props={
+                            {
+                                defaultFirstTitle: 'Connection',
+                                action: 'setting'
+                            }
+                        }
                         params={()=> {
                             return {
                                 id: this.props.bytethinkingId,
@@ -385,13 +404,23 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                             }
                         }}
                         icon="SettingOutlined"
-                        value={this.state.props || {}}
+                        value={value}
                         onChangeValue={(props)=> {
                             
+                            if (isInputValue) {
+                                
+                                propsvalue.input = {
+                                    ...propsvalue.input,
+                                    ...utils.getSafeObject(props)
+                                };
+                            } else {
+                                propsvalue = props;
+                            }
+                            console.log(propsvalue, 33333333)
                            // let pickvalue: any = pick(this.state.props, ['icon', 'color'])
                             //console.log(pickvalue, props, 222, this.state.props)
                             this.setState({
-                                props: props,
+                                props: propsvalue,
                                 hasChanged: true
                             })
                         }} 

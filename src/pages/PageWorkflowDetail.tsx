@@ -76,6 +76,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
 
                     }
                 }}
+                workflowId={this.props.router.params.id}
                 onFetchValue={()  => {
                     return this.fetchViewRequest({id: this.props.router.params.id})
                 }}

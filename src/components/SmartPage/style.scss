@@ -26,7 +26,6 @@
 }
 .ui-smartpage-popover {
    min-width: 450px;
-   max-width: 520px;
    padding-top: 10px;
    padding-bottom: 10px;
    max-height: calc(100vh - 20px);
@@ -49,18 +48,32 @@
        padding-bottom: 8px;
        font-size: 16px;
        text-transform: capitalize;
-       .anticon {
-           margin-right: 4px;
-           font-size:18px;
-           bottom: -1px;
-           position: relative;
-           color: #bbb
-       }
+      .ant-popover-title {
+         position: relative;
+      }
+      .ui-header {
+         padding-left: 4px;
+         display: inline-block;
+         .ui-choose {
+            cursor: pointer;
+         }
+      }
+      .ui-avatar-merge {
+         .ui-sub {
+            bottom: -5px;
+            right: -4px;
+            .ant-avatar {
+               color:#bbb;
+               font-size: 12px !important;
+            }
+         }
+      }
        .icons-combine {
          > span:last-child {
             position: absolute;
             background-color: #fff;
             right: -8px;
+            font-size:12px;
          }
        }
 

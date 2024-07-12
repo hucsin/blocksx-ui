@@ -40,9 +40,12 @@ export interface SmartPageProps {
     children?: any;
     value?: any;
     typeProps: any;
+    props: any;
     open: boolean;
     onShow?: Function;
     onClose?: Function;
+
+    
     
     width?: number;
     type: 'default' | 'drawer' | 'popover';
@@ -77,6 +80,9 @@ export interface SmartPageProps {
     onChangeValue?: Function;
     onSelectedValue?: Function;
     onInitPage?: Function;
+    onSchemaResponse?: Function;
+    onGetDependentParameters?: Function;
+
     operateContainerRef?: any;
     size?: any;
     triggerMap?: {
@@ -128,6 +134,8 @@ export interface SmartPageState {
     defaultFolder?: string;
     layout?: string;
     id?: string;
+
+    
 }
 
 
@@ -141,13 +149,14 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         open: false,
         noClassify: false,
         typeProps: {},
+        props: {},
         title: 'View the recrod',
         okText: 'Save',
         
     }
     private defaultWidthMap: any = {
         tree: 600,
-        popover: 500
+        popover: 600
     }
     private canShow:boolean;
     public static manger: any = PageManger;
@@ -261,8 +270,16 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
             
 
-            SmartUtil.fetchPageSchema(this.props.pageURI, this.state.name, this.props, paramsObject).then(async (data:any) => {
-                
+            SmartUtil.fetchPageSchema(this.props.pageURI, this.state.name, this.props, paramsObject, (schema) => {
+
+                if (this.props.onSchemaResponse) {
+                    this.props.onSchemaResponse(schema)
+                }
+
+            }).then(async (data:any) => {
+
+                // onSchemaResponse
+
                 if (!this.state.noClassify) {
 
                     if (data.schema.fields) {
@@ -419,7 +436,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             reflush: isint ? this.state.reflush : +new Date
         })
     }
-    private getQueryParams = ()=> {
+    private getQueryParams = (v?:any)=> {
         let { folderQuery, classifyQuery, defaultClassify, defaultFolder } = this.state;
         let classifyName: string = classifyQuery || defaultClassify;
         let folderName: any = folderQuery || defaultFolder;
@@ -435,6 +452,10 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             if (folderName !== 'all') {
                 params[this.state.folderField.key] = folderName;
             }
+        }
+
+        if (this.props.onGetDependentParameters) {
+            Object.assign(params, this.props.onGetDependentParameters(v))
         }
 
         return params;
@@ -480,7 +501,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             titleContainerRef:this.titleContainerRef,
             optionalContainerRef:this.optionalContainerRef,
             optional:this.state.optional,
+            
             size:this.props.size,
+            ...this.props.props,
             onChangeValue:this.onChangeValue,
             onSelectedValue: this.onSelectedValue,
             mode: this.state.mode,

@@ -78,6 +78,9 @@
             pointer-events: auto;
             .ui-text{
                 opacity: .6;
+                .ui-tag {
+                    margin-right: 4px;
+                }
                 span {
                     display:inline-block;
                     border-bottom: 1px solid transparent
