@@ -12,10 +12,10 @@ import { IFormerBase } from '../../typings';
 import TablerUtils from '../../../utils/tool';
 import SmartRequest from '../../../utils/SmartRequest';
 import Drawer from './drawer';
-import { Button, Popover, Space, List } from 'antd';
+import { Button, Popover, Space, List, Spin } from 'antd';
 import * as Icons from '../../../Icons';
 import Avatar from '../avatar';
-
+import SmartAction from '../../../utils/SmartAction';
 import { pick } from 'lodash';
 
 import './style.scss';
@@ -41,6 +41,8 @@ interface FormerInputState {
     icon: string;
     subtitle?: string;
     emptyNotice: string;
+    loading?: boolean;
+    
 }
 
 export default class FormerButton extends React.Component<IFormerInput,  FormerInputState> {
@@ -59,6 +61,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             color: typeProps.color,
             value: props.value,
             open: false,
+            loading: false,
             props: props['x-type-props']
         };
 
@@ -70,20 +73,52 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             this.viewRequestHelper = SmartRequest.createPOST(typeProps.viewURI)
         }
     }
-    public componentDidMount(): void {
+    private getCacheKey() {
+        return ['view', this.props.fieldName].join('.')
+    }
+    private refreshCache(value:any) {
+        
+        let former: any = this.props.former;
+        former.refreshCache(this.getCacheKey(), {
+            value: value,
+            ...value
+        });
+    }
 
+    public componentDidMount(): void {
         let { props } = this.state;
         let { rowKey = 'id' } = props;
+        let former: any = this.props.former;
 
+        let cache: any = former.getCache(this.getCacheKey());
+        
+        if (cache) {
+
+            //this.onSelectedItem(cache.value);
+            this.setState({
+                value: cache.value[rowKey],
+                ...cache.value,
+                values: cache.values
+            })
+
+        } else {
+
+            this.updateView(this.state.value)
+        }
+    }
+    private updateView(value: string) {
+        let former: any = this.props.former;
+
+        former.loading(true);
         this.viewRequestHelper(this.getDefaultParams({
             actionType: 'init',
-            value: this.state.value
-        })).then(({value, values = []}: any) => {
+            value: value
+        })).then(({current, values = []}: any) => {
 
             if (Array.isArray(values)) {
                 // 只有一条的时候绑定
-                if (!value && (values.length == 1)) {
-                    value = values[0]
+                if (!current && (values.length == 1)) {
+                    current = values[0]
                 } else {
                     this.setState({
                         values: values
@@ -91,19 +126,15 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                 }
             }
 
-            if (value && value[rowKey]) {    
-                this.setState({
-                    ...value,
-                    value: value[rowKey]
-                })
-                // TODO 
-                if (this.props.former) {
-                    this.props.former.resetSafeValue({
-                        ...value,
-                        //[`${this.props.fieldName}`]: value[rowKey]
-                    })
-                }
-            }
+            former.setCache(this.getCacheKey(), {
+                value: current,
+                values
+            })
+            former.loading(false);
+
+            this.onSelectedItem(current)
+        }).catch(()=> {
+            former.loading(false);
         })
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
@@ -154,7 +185,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             return (
                 <Space size="small">
                     <Avatar size={48} icon={props.connectAvatar} color={hasValue ?connectAvatarColor: '#ccc'}/>
-                    {hasValue ? <Icons.SwapOutlined/>:<Icons.UnlinkUtilityOutlined/> }
+                    {hasValue ? <Icons.ConnectionsDirectivityOutlined/>:<Icons.UnlinkUtilityOutlined/> }
                     <Avatar size={48} icon={this.state.icon} color={hasValue ? props.color : '#ccc'}/>
                 </Space>
             )
@@ -181,28 +212,73 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
         let params: any =  this.getDefaultParams(data)
 
         if (this.actionRequestHelper) {
+            this.loading(true)
             this.actionRequestHelper({
                 ...params,
-                actionType: 'bind'
+                actionType: 'new'
             }).then((data) => {
-                console.log(data)
+
+                if (data.smartaction) {
+                    SmartAction.doAction(data, (value: any)=> {
+                        //alert(333)
+                        console.log(value)
+                        if (value) {
+                            this.updateView(value)
+                            this.loading(false)
+                        }
+                    })
+                } else {
+                    this.loading(false)
+                    this.onSelectedItem(data)
+                }
+            }).catch(()=> {
+                this.loading(false)
             })
         }
     }
+    private onSelectedItem(value: any) {
+        let { props } = this.state;
+        let { rowKey = 'id' } = props;
+
+        if (value && value[rowKey]) {    
+            this.setState({
+                ...value,
+                value: value[rowKey]
+            })
+            // TODO 
+            if (this.props.former) {
+                this.props.former.resetSafeValue({
+                    ...value,
+                    [`${this.props.fieldName}`]: value[rowKey]
+                })
+            }
+        }
+    }
     private renderValuesButton() {
-        let { values,props } = this.state;
+        let { values,props, value } = this.state;
+        let rowKey: string = props.rowKey || 'id';
 
         return (
             <List
                 itemLayout="horizontal"
                 dataSource={values}
                 renderItem={(item:any, index) => (
-                    <List.Item>
+                    <List.Item
+                        onClick={()=> {
+                            this.onSelectedItem(item);
+                            this.refreshCache(item)
+                        }}
+                        className={classnames({
+                            'ui-selected': item[rowKey] === value
+                        })}
+                    >
                         <List.Item.Meta
                             avatar={<Avatar icon={props.icon} color = {props.color}/>}
                             title={<Space>{item.title}<span>{item.subtitle}</span></Space>}
                             description={item.description}
+                            
                         />
+                        {item[rowKey] === value && <Icons.CheckOutlined/>}
                     </List.Item>
                 )}
             />
@@ -210,19 +286,38 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
         )
       
     }
+    private loading(loading: boolean) {
+        
+        this.setState({
+            loading
+        })
+    }
+    private doAction() {
+        
+        this.props.former.validationValue((val) => {
+            this.doMetaAction(val);
+        }, {
+            noValidationField: this.props.fieldName
+        })
+    }
     public renderMetaButton() {
-        let {props} = this.state;
+        let { props, values } = this.state;
         let MetaButton: any = (
             <div className={classnames({
                     'ui-meta-button': true,
                     'ui-meta-empty': !this.state.value
                 })}
                 onClick={() => {
-                    this.props.former.validationValue((val) => {
-                        this.doMetaAction(val)
-                    }, {
-                        noValidationField: this.props.fieldName
-                    })
+                    if (!this.state.value) {
+                        this.doAction()
+                    }
+                }}
+                onMouseEnter={()=> {
+                    if (!this.state.value) {
+                        this.setState({
+                            open: true
+                        })
+                    }
                 }}
             >
                 <div className='ui-meta-button-meta'>
@@ -230,19 +325,39 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                         {this.renderAvatar()}
                     </div>
                     <div className='ui-meta-content'>
-                        <h3>{this.state.title}<span>{this.state.subtitle}</span></h3>
+                        <h3><Space>{this.state.title}<span>{this.state.subtitle}</span></Space></h3>
                         <p>{this.state.description} {!this.state.value && this.state.emptyNotice}</p>
                     </div>
+                    
                 </div>
+                <Button onMouseEnter={()=> {
+                    if (this.state.value) {
+                        this.setState({open: true})
+                    }
+                }} 
+                onClick={() => {
+                    if (this.state.value) {
+                        this.doAction()
+                    }
+                }}
+                icon={this.state.value ?<Icons.SwapOutlined/> : <Icons.PlusOutlined/>}>NEW</Button> 
             </div>
         );
 
             
-        return this.state.values ? (
-            <Popover title={props.valuesTitle || 'CHOOSE ITEM'} overlayClassName="ui-former-button-metapop" content={this.renderValuesButton()}>
-                {MetaButton}
+        return values && values.length > 0 ? (
+            <Popover 
+                open={this.state.open} 
+                title={props.valuesTitle || 'CHOOSE ITEM'} 
+                overlayClassName="ui-former-button-metapop" 
+                content={this.renderValuesButton()}
+                onOpenChange={(open: any)=>{
+                    this.setState({open: false})
+                }}
+            >
+                <Spin spinning={this.state.loading}>{MetaButton}</Spin>
             </Popover>
-        ) : MetaButton
+        ) : <Spin spinning={this.state.loading}>{MetaButton}</Spin>
         
     }
 

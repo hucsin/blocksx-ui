@@ -384,8 +384,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
             if (this.isType('object')) {
                 controlHide.forEach((it) => {
-
-                    delete value[it];
+                    // TODO 后续看下这里怎么处理
+                    //delete value[it];
                 })
             }
         }

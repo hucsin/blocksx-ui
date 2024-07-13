@@ -84,9 +84,15 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                 onSaveFlowList={(value: any, nodes: any, connectors: any)=>{
                     nodes = nodes.map(it => {
                         let props: any = it.props || {};
+                        let componentName: any = props.componentName || it.componentName;
+                        
+                        let splitName: any = componentName ? componentName.split('.') : ['']
+                        
                         return {
                             ...it,
-                            componentName: props.componentName || it.componentName
+                            componentName: componentName,
+                            connection: props.connection,
+                            appname: it.appname || splitName[0]
                         }
                     })
                     
@@ -106,7 +112,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                         case 'favorites':
                             return this.fetchToggleFavoritesRequest(value)
                         default:
-                            return this.fetchUpdateRequest(omit(value, ['nodes', 'connectors','folder', 'favorites', 'status' ]));
+                            return this.fetchUpdateRequest(omit(value, ['nodes', 'connectors','folder', 'favorites', 'status'  ]));
                     }
                 }}
                 fetchMap={

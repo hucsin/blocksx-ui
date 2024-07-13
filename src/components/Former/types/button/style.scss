@@ -50,32 +50,42 @@
         margin-bottom: 0 !important;
 
     }
-    .ant-list {
-        padding: 0px;
+    .ant-popover-title {
+        opacity: .5;
+    }
+    &.ant-popover .ant-popover-inner {
+        padding: 16px;
     }
     .ant-list-item {
-        padding: 4px;
-        padding-bottom: 4px;
-        padding-top:4px;
+        padding: 4px 8px;
+        border: 1px solid var(--main-border-color);
         cursor: pointer;
         border-radius: 8px;;
         transition: all .2s;
-        border-bottom: none;
+        margin-bottom: 6px;
         h4 {
             span {
                 font-weight: 300;
                 opacity: .4;
             }
         }
+
         &:Hover {
             background-color: var(--main-background-color);
+
+            transform: scale(1.01);
+            max-width: calc(100% + 10px);
+            z-index: 11;
+            box-shadow: 1px 1px 4px rgba(0,0,0,.026);
 
         }
         &:first-child {
             padding-top: 0;
         }
         &:last-child {
-            padding-bottom: 0
+            padding-bottom: 0;
+            margin-bottom: 0;
+            border-block-end: 1px solid var(--main-border-color);
         }
     }
     .ant-list-item-meta {
@@ -89,14 +99,17 @@
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 8px;
-    cursor: pointer;
     transition: all 0.2s;
     display: flex;
     align-items: center;
+
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
     
     justify-content: space-between;
     background-color: #fff;
+    cursor: default;
     &.ui-meta-empty {
+        cursor: pointer;
         .ui-meta-avatar {
             .ant-space-item:nth-child(2) {
                 opacity: .5;
@@ -106,7 +119,8 @@
             opacity: .7;
         }
     }
-    &:Hover {
+    &.ant-popover-open,
+    &.ui-meta-empty:Hover {
 
         transform: scale(1.01);
         max-width: calc(100% + 10px);
@@ -116,7 +130,10 @@
         color: var(--main-bg-color);
         background-color: var(--main-background-color);
     }
-
+    > button {
+        gap: 4px;
+        padding: 4px 8px;
+    }
     .ui-meta-button-meta {
         display: flex;
         flex: 1;
@@ -125,6 +142,14 @@
         align-items: center;
         .ui-meta-content {
             padding-left: 16px;
+           p {
+             opacity: .4;
+           }
+        }
+        .ui-meta-avatar {
+            .ant-space-gap-col-small {
+                column-gap:3px;
+            }
         }
         h3 {
             padding: 0;
@@ -132,6 +157,7 @@
             span {
                 font-weight: 200;
                 opacity: .5;
+                font-size:12px;
             }
         }
     }

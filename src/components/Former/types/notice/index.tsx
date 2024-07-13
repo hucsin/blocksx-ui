@@ -17,8 +17,13 @@ export default class FormerNotice extends React.Component<{value?: any, icon?: a
             icon: this.getDefaultIcon(props),
             value: props.value,
             color: this.getDefaultColor(props),
-            notice: props.notice
+            notice: this.getNotice(props)
         }
+    }
+    private getNotice(props: any) {
+        let trueProps: any = props['x-type-props'] || {};
+
+        return props.notice || trueProps.notice;
     }
     private getDefaultIcon(propsc: any) {
         let { props = { }, icon } = propsc;
@@ -44,7 +49,7 @@ export default class FormerNotice extends React.Component<{value?: any, icon?: a
 
         if (nextProps.notice != this.state.notice) {
             this.setState({
-                notice: nextProps.notice
+                notice: this.getNotice(nextProps)
             })
         }
     }
@@ -67,6 +72,7 @@ export default class FormerNotice extends React.Component<{value?: any, icon?: a
                 value = notice;
             }
         }
+        
         
         return value ? (
             <div className='ui-former-notice'>

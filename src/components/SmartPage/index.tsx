@@ -464,7 +464,6 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         this.setState({
             value
         })
-
         if (this.props.onChangeValue) {
             return this.props.onChangeValue(value)
         }
@@ -515,7 +514,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     optionalOpen: !close ? true : false
                 })
             },
-            onClose:()=>this.setState({open: false})
+            onClose:this.onClose
         })
     }
 
@@ -696,9 +695,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
         return defaultWidth || 600;
     }
-    private onClose() {
+    private onClose(value?: any) {
         if (this.props.onClose) {
-            this.props.onClose()
+            this.props.onClose(value)
         }
         this.setState({open:false})
     }
@@ -711,7 +710,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             this.canShow && this.onShow();
             
         } else {
-            this.onClose();
+            this.onClose(this.state.value);
         }
     }
     private onShow() {

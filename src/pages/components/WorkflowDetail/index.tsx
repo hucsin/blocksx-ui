@@ -20,6 +20,7 @@ import { FetchMap } from './typing';
 
 
 import './style.scss'
+import { connect } from 'http2';
 
 //import MagicFavorites from '../MagicFavorites';
 const MagicFavorites = FormerTypes.rate;
@@ -239,6 +240,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             templateMap: {
                 router: {
                     type: 'router',
+                    componentName: 'Thinking.Router',
                     color: '#4d53e8',
                     icon: 'RouterUtilityOutlined'
                 },
@@ -576,7 +578,9 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         isViewer={this.props.isViewer}
                         onChangeProps={(v)=>{
                             this.updateNodeByName(node.name,{
-                                props: Object.assign({}, node.props, v)
+                                props: Object.assign({}, node.props, v),
+                                // 特殊处理
+                                connection: node.props.connection,
                             })
                         }}
                     />

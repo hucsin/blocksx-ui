@@ -889,7 +889,9 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                             currentRowData: null
                         })
                     }}
-                    onChangeValue={(value: any) => {
+                    onChangeValue={()=>{}}
+                    onSave={(value: any) => {
+
                         return this.onFormerChange(value);
                     }}
                 />

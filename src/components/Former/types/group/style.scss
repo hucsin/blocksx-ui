@@ -29,15 +29,18 @@
     }
     >.former-group-item {
 
-        &:last-child {
+        
             .former-group-item-content  {
                 padding-bottom: 0;
             }
-        }
+        
         &.former-group-type-0 {
             .former-object-item {
                 padding-right: 0px;
                 padding-left: 0px;
+                &:last-child {
+                    padding-bottom: 0px;
+                }
             }
             .former-group-item-content  {
                 padding: 0;

@@ -356,12 +356,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                             return this.props.fetchMap['programs']({...parmas}, 'notrigger')
                         }}
                         onClassifyClick={(row) => {
-                            
                             this.props.onUpdateNode && this.props.onUpdateNode(this.props.name, {
                                 ...row,
                                 type: type == 'go' ? type : row.type
                             });
-                            //this.props.onAddNewNode(row, this.newRef.getBoundingClientRect())
+                            
                         }}
                     >
                        {this.renderDefaultNodeContent(icon, color)}
@@ -372,7 +371,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             default:
                 let propsvalue = this.state.props || {}
                 let isInputValue: boolean = this.state.settingMode !== 'setting';
-                let value: any  = (isInputValue ? propsvalue.input : propsvalue) || {};
+                let value: any  = (isInputValue ? { ...propsvalue.input, $connection: propsvalue.connection } : propsvalue) || {};
                 
                 return (
                     <SmartPage
@@ -392,7 +391,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         props={
                             {
                                 defaultFirstTitle: 'Connection',
-                                action: 'setting'
+                                action: 'setting',
+                                hideButtons: true
                             }
                         }
                         params={()=> {
@@ -405,7 +405,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         }}
                         icon="SettingOutlined"
                         value={value}
-                        onChangeValue={(props)=> {
+                        onClose={(props = {})=> {
                             
                             if (isInputValue) {
                                 
@@ -413,21 +413,23 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                                     ...propsvalue.input,
                                     ...utils.getSafeObject(props)
                                 };
+                                propsvalue.connection = props['$connection'];
                             } else {
                                 propsvalue = props;
                             }
-                            console.log(propsvalue, 33333333)
+                            
                            // let pickvalue: any = pick(this.state.props, ['icon', 'color'])
                             //console.log(pickvalue, props, 222, this.state.props)
                             this.setState({
                                 props: propsvalue,
                                 hasChanged: true
-                            })
+                            }, ()=> this.onCloseLayer())
+
                         }} 
                         noToolbar
                         open={this.state.openSetting}
                         onShow={()=>this.setState({openSetting: true})}
-                        onClose={()=> this.onCloseLayer()}
+                        
                     >
                         {this.renderDefaultNodeContent(icon, color)}
                     </SmartPage>

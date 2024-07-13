@@ -82,6 +82,7 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
 
         let UncheckedIconView: any = Icons[unCheckedIcon];
         let CheckedIconView: any = Icons[checkedIcon];
+        
         return (
             <div className={classnames({
                 "former-switch":true,
@@ -94,7 +95,7 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
                         checkedChildren={CheckedIconView ? <CheckedIconView/> : this.props.checkedText}
                         loading  = {loading}
                         size     = {size}
-                        disabled = {(!this.props.canOff && this.state.value) || this.props.disabled}  
+                        disabled = {(false === this.props.canOff ? this.state.value : false) || this.props.disabled}  
                         checked  = {this.state.value} 
                         onChange = {this.onChange} 
                     />

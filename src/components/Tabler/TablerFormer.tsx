@@ -11,7 +11,7 @@ import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExten
 import TablerUtils from '../utils/tool';
 import SmartRequest from '../utils/SmartRequest';
 
-import {  upperFirst, omit } from 'lodash';
+import {  upperFirst, omit, pick } from 'lodash';
 
 
 /*
@@ -47,11 +47,12 @@ export interface IFormerType {
     pageMeta?: any;
     onChangeValue: Function;
     onClose: Function;
+    onSave?: Function;
     onView?: Function;
     okText?: string;
     viewer?: boolean;
     titleContainerRef?: any;
-
+    hideButtons?:boolean;
     defaultFirstTitle?: string;
     onGetRequestParams?: Function;
 }
@@ -89,10 +90,10 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             schema: this.getSchema(fields),
             columnKeys: columnKeys ,
             action: props.action,
-            value: omit(props.value, columnKeys),
+            value: omit(props.value || {}, columnKeys),
             fields: fields,
             viewer: props.viewer,
-            isStepOne: !this.isFistMustValue(fields, props.value),//props.value ? false: true,
+            isStepOne: !this.isFistMustValue(this.splitStepField(fields, true), props.value),//props.value ? false: true,
             isStepMode: this.isStepFormer(fields),
             setpOneValue: props.value,
             loading: false,
@@ -108,10 +109,9 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     /**
      * 判断第一步是否有完整的值
      */
-    private isFistMustValue (_fields: any, _value: any) {
-        let fields: any = _fields ||  [];
+    private isFistMustValue (fistFields: any, _value: any) {
+
         let value: any = _value ||  {};
-        let fistFields: any = this.splitStepField(fields, true);
         
         for(let i=0, l=fistFields.length;i<l;i++) {
             let field: any = fistFields[i];
@@ -186,6 +186,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
     private onDynamicStepChange(value: any) {
         this.setState({loading: true})
+        
         this.nextDyamicRequest(value).then((result) => {
             
             let trueValue: any =  {
@@ -220,19 +221,18 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 schema: this.getSchema(fields || this.state.fields),
                 columnKeys: columnKeys,
                 visible: !!newProps.action,
-                value: omit(newProps.value, columnKeys),
+                value: omit(newProps.value || {}, columnKeys),
                 fields: fields,
                 isStepOne: newProps.value ? false : true,
                 isStepMode: this.isStepFormer(fields),
-                setpOneValue: utils.clone(newProps.value)
+                setpOneValue: utils.clone(newProps.value || {})
             })
 
             if (newProps.value && this.isStepDynamicFormer()) {
                 this.onDynamicStepChange(newProps.value)
             }
 
-            
-            
+
             if (!!newProps.action) {
                 //this.resetValue()
             }
@@ -360,33 +360,31 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
     private getStepFistTitle() {
         let firstField: any = this.state.schema.firstField;
-        let fistName: string = ['Choose the ', firstField.name.toLowerCase()].join('');
+        let fistName: string = upperFirst(firstField.name);
+        let defaultTitle: string = this.props.defaultFirstTitle || ('1. ' + fistName);
         
-        if (this.state.setpOneValue) {
-
+        if (this.state.setpOneValue && !this.state.isStepOne) {
+            
             let item: any = this.getFirstItem(firstField);
             let isDeny: any = this.isDenyBack();
             
-            if (item) {
-                return (
-                    <span className={classnames({
-                        'ui-choose': true,
-                        'ui-disabeld': isDeny
-                    })} onClick={()=> {
-                        if (!isDeny) {
-                            this.setState({
-                                isStepOne: true
-                            })
-                        }
-                    }}>
-                        {item.label}
-                        {item && TablerUtils.renderIconComponent(item)}
-                    </span>
-                )
-            }
-
+            return (
+                <span className={classnames({
+                    'ui-choose': true,
+                    'ui-disabeld': isDeny
+                })} onClick={()=> {
+                    if (!isDeny) {
+                        this.setState({
+                            isStepOne: true
+                        })
+                    }
+                }}>
+                    {item ? item.label : defaultTitle}
+                </span>
+            )
         } 
-        return  this.props.defaultFirstTitle || ('1. ' + fistName);
+
+        return defaultTitle;
         
         
     }
@@ -399,19 +397,26 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     private getStepTitle(type?: string) {
         
         let { pageMeta = {} } = this.props;
-        
-         
+        let { schema, value, isStepOne } = this.state;
+        let { firstFields } = schema;
+        let hasfirtready: boolean = !!isStepOne &&  this.isFistMustValue(firstFields, value);
+
         return (
             <div className='ui-header'>
                 <Space>
-                <span className='ui-stepone'>{this.getStepFistTitle()}</span>
-                <span style={{color:'#ccc'}}>/</span>
-                <span className={
-                    classnames({
-                        'ui-steptwo': true,
-                        'ui-disabeld': this.state.isStepOne
-                    })
-                }><span style={{color:'#ccc'}}>2. </span>{this.stepActionMap[type as any] ||  'Complete'} {(pageMeta.title ||'record').toLowerCase()} </span >
+                    <span className='ui-stepone'>{this.getStepFistTitle()}</span>
+                    <span style={{color:'#ccc',opacity: .3}}>/</span>
+                    <span className={classnames({
+                            'ui-steptwo': true,
+                            'ui-choose': hasfirtready,
+                            'ui-disabeld': this.state.isStepOne
+                        })}
+                        onClick={()=> {
+                            this.setState({
+                                isStepOne: false
+                            })
+                        }}
+                    ><span style={{color:'#ccc'}}>2. </span>{this.stepActionMap[type as any] ||  'Complete'} {(pageMeta.title ||'record').toLowerCase()} </span >
                 </Space>
             </div>
         )
@@ -438,7 +443,8 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     private getDefaultIcon() {
         let { pageMeta = {} } = this.props;
         
-        return pageMeta.icon 
+        return !this.state.isStepOne 
+            ? 'LeftCircleDirectivityOutlined': pageMeta.icon;
     }
     private getDefaultOkText() {
         if (this.state.isStepMode && this.state.isStepOne) {
@@ -497,8 +503,9 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         })
         return value;
     }
-    private onChangeValue(value: any, former: any) {
+    private onChangeValue(value: any) {
         // 清洗下labelvalue
+        //console.log(value, former, 3333)
         if (this.state.isStepMode && this.state.isStepOne) {
           //  return this.setState({
            //     setpOneValue: value,
@@ -509,21 +516,62 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
            // })
         }
 
-        return new Promise((resolve, reject)=> {
 
-            this.props.onChangeValue(this.cleanLabelValueToValue(value)).then((result) => {
-                
-                this.setState({visible: false});
-                this.props.onClose();
-                resolve(true)
-               
-            }).catch(e => {
-                reject(e)
-                //former.setState({loading: false})
-            });
+        this.setState({
+            value: value
         })
+        if (this.props.onChangeValue) {
+            this.props.onChangeValue(this.cleanLabelValueToValue(value));
+        }
     }
-    
+    private hide(value?: any) {
+
+        this.setState({visible: false});
+
+        if (this.props.onClose) {
+            this.props.onClose(value || this.cleanLabelValueToValue(this.state.value));
+        }
+    }
+    private onSave(value: any) {
+        let saveback: Function  = this.props.onSave || this.props.onChangeValue;
+        let truevalue: any = this.cleanLabelValueToValue(value);
+        if (saveback) {
+            let msg: any = saveback(truevalue);
+
+            if (utils.isPromise(msg)) {
+                return new Promise((resolve, reject)=> {
+                    msg.then(((result) => {
+                        this.hide(truevalue);
+                        resolve(true)
+                    })).catch(reject)
+                })
+            } else {
+                this.hide(truevalue);
+            }
+        }
+    }
+    private isFistValueHasChanged(newValue: any) {
+        let { schema, value } = this.state;
+        let { firstFields } = schema;
+        let majorFieldKeys: any = [];
+        let firstFieldKeys: any = firstFields.map(it=> {
+            if (it.major) {
+                majorFieldKeys.push(it.fieldKey)
+            }
+            return it.fieldKey;
+        });
+        
+
+        let pickKeys: any = majorFieldKeys.length > 0 ? majorFieldKeys : firstFieldKeys;
+        
+        let ofirstvalue: any = pick(value, pickKeys);
+        let nfirstvalue: any = pick(newValue, pickKeys);
+        let allkeys: any = [...Object.keys(ofirstvalue), ...Object.keys(nfirstvalue)]
+
+        return allkeys.some(it => {
+            return ofirstvalue[it] !== nfirstvalue[it]
+        })
+    } 
     public render() {
         
         let { schema, dynamicSchema, visible, isStepMode, isStepOne, viewer } = this.state;
@@ -536,13 +584,12 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 ?  schema.firstStep
                 : dynamicSchema ||  schema.other
             : dynamicSchema || schema;
-
+            
         
         if (!visible && this.props.formerType!=='default') {
             return null;
         }
 
-    
         
         return (
             <Former
@@ -550,6 +597,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 title={this.renderDefaultTitle()}
                 titleContainerRef={this.props.titleContainerRef}
                 icon={this.getDefaultIcon()}
+                iconType={this.state.isStepOne ? 'avatar' : 'icon'}
                 size={'default'}
                 notice={notice}
                 loading={this.state.loading}
@@ -558,12 +606,13 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 id={this.getDefaultId()}
                 type={this.props.formerType}
                 schema={pageSchema}
+                hideButtons={this.props.hideButtons}
                 visible={this.state.visible}
                 okText={this.getDefaultOkText()}
                 cancelText={this.getDefaultCancelText()}
                 onSave={(value: any, former: any) => {
                     
-                    return this.onChangeValue(value, former)
+                    return this.onSave(value)
                 }}
                 
                 onBeforeSave= {() => {
@@ -575,35 +624,49 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                         return false;
                     }
                 }}
-                onChangeValue={(value)=> {
-                    
+                onChangeValue={(value, type)=> {
+                   
                     if (this.state.isStepMode 
-                            && this.state.isStepOne
-                            && this.isFistMustValue(this.state.fields, value)) 
+                            && this.state.isStepOne) 
                     {
 
                         //let currentField: any = schema.firstField;
                         //let setpOneValue: any = this.state.setpOneValue || {};
                         //let newValue: any = value[currentField.key];
                         //if (newValue && ( newValue != setpOneValue[currentField.key])) {
-                        
-                        if (this.isStepDynamicFormer()) {
+                        // 检查
+                        //console.log('cahgnevalue,', value, this.state.value)
+                        //return;
+                        this.setState({
+                            setpOneValue: {
+                                ...this.state.setpOneValue,
+                                ...utils.clone(value)
+                            },
+                        })
 
-                            this.onDynamicStepChange(value);
-                        } else {
-                        
-                            this.setState({
-                                setpOneValue: utils.clone(value),
-                                value: value,
-                                isStepOne: false
-                            })
+                        if (this.isFistValueHasChanged(value)) {
+
+                            if (this.isStepDynamicFormer()) {
+
+                                this.onDynamicStepChange(value);
+                            } else {
+                            
+                                this.setState({
+                                    isStepOne: false
+                                })
+                            }
                         }
                        // }
                     }
+
+                    this.onChangeValue({
+                        ...this.state.value,
+                        ...value
+                    })
                 }}
                 
                 disabled = {this.state.isStepMode && !this.state.setpOneValue}
-                value = {this.state.value}
+                value = {{...this.state.value}}
                 viewer = {this.state.viewer}
                 canmodify = {this.state.value && this.state.value.id}
                 onGetDependentParameters = {(value: any)=> {
@@ -635,7 +698,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                     this.setState({
                         visible: false
                     })
-                    this.props.onClose();
+                    this.props.onClose(this.state.value);
                 
                 }}
             >{this.props.children}</Former>

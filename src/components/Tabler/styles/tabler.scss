@@ -20,6 +20,9 @@
             vertical-align: middle;
             font-size: 12px;;
         }
+        &:Hover {
+            color: var(--main-bg-color)
+        }
     }
     .ui-header {
        

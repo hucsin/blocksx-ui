@@ -6,11 +6,10 @@ export default class DefaultNodeList {
             isNew: false,
             icon: 'IdeaSuggestionOutlined',
             color: '#de8a00',
-            componentName: 'Thinking.Idea',
+            componentName: 'Thinking.idea',
             ...props,
             type: 'go',
             props: {
-                color: '#de8a00',
                 icon: 'IdeaCloudUtilityOutlined'
             },
             locked: true,
@@ -36,7 +35,7 @@ export default class DefaultNodeList {
                 isNew: false,
                 icon: 'PageCommonOutlined',
                 color: '#1EAEDB',
-                componentName: 'Thinking.Pages',
+                componentName: 'Thinking.pages',
                 ...props,
                 type: 'go',
                 props: {
@@ -52,7 +51,7 @@ export default class DefaultNodeList {
                 isNew: false,
                 icon: 'FieldTimeOutlined',
                 color: '#B400C9',
-                componentName: 'Thinking.Timer',
+                componentName: 'Thinking.timer',
                 ...props,
                 type: 'go',
                 props: {
@@ -68,7 +67,7 @@ export default class DefaultNodeList {
                 isNew: false,
                 icon: 'ApiOutlined',
                 color: '#6DB33F',
-                componentName: 'Thinking.OpenAPI',
+                componentName: 'Thinking.openapi',
                 ...props,
                 type: 'go',
                 props: {
@@ -98,13 +97,11 @@ export default class DefaultNodeList {
                     this.getIdeaNode(sourceNodeName, {left: 40, top: 162}),
                     {
                         name: targetNodeName,
-
-                        componentName: 'Thinking.Router',
+                        componentName: 'Thinking.router.think',
                         type: 'router',
                         isNew: false,
                         icon: 'ThinkingUtilityOutlined',
                         color: '#4d53e8',
-                        
                         left: 258,
                         top: 162,
                         props: {
@@ -135,7 +132,7 @@ export default class DefaultNodeList {
                         isNew: false,
                         icon: 'StartCircleUtilityFilled',
                         color: '#FF7B15',
-                        componentName: 'Thinking.Start',
+                        componentName: 'Thinking.start',
                         left: 40,
                         props: {
                             icon: 'ConfigurationUtilityOutlined'

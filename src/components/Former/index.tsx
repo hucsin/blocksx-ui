@@ -25,6 +25,7 @@ export interface FormerProps {
     type?: 'drawer' | 'modal' | 'popover';
     value?: any;
     icon?: any;
+    iconType?: string;
     loading?: boolean;
     rowKey?: string;
     schema: any;
@@ -121,6 +122,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     private timer: any;
     private emitter: EventEmitter;
     private helper: any;
+    private cache: any;
 
     public constructor(props: FormerProps) {
         super(props);
@@ -148,10 +150,26 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         };
         
         this.timer = null;
+        this.cache = {};
 
         this.emitter = new EventEmitter();
         this.emitter.setMaxListeners(1000);
-
+    }
+    public setCache(key: string, value: any) {
+        this.cache[key] = value;
+    }
+    public getCache(key: string) {
+        return this.cache[key];
+    }
+    public refreshCache(key: string, value:any) {
+        if (this.getCache(key)) {
+            Object.assign(this.cache[key], value)
+        }
+    }
+    public loading(loading: boolean) {
+        this.setState({
+            loading
+        })
     }
     public componentDidMount() {
 
@@ -203,7 +221,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
         if (newProps.value && newProps.value != this.state.value) {
             this.setState({
-                value: newProps.value
+                value: newProps.value || {}
             })
         }
 
@@ -291,7 +309,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         return false;
     }
     private onChangeValue = (value: any, type?: string) => {
-        
+        let trueValue: any = utils.clone(value);
         if (!type) {
             if (this.timer) {
                 clearInterval(this.timer);
@@ -299,10 +317,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             this.timer = setTimeout(() => {
 
                 this.setState({
-                    value,
+                    value: trueValue,
                     disabled: false,
                     globalMessage: '',
-                    runtimeValue: value
+                    runtimeValue: trueValue
                 });
 
                 this.emitter.emit('changeValue')
@@ -312,8 +330,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 //}
             }, 100);
         }
-        if (this.props.onChangeValue) {
-            this.props.onChangeValue(value);
+
+        if (this.props.onChangeValue && type !=='init') {
+            this.props.onChangeValue(trueValue);
         }
     }
     public validationValue(cb: Function, parmas?: any) {
@@ -478,7 +497,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                     [`former-column-${column}`]: true
                 })
             }>
-                <div className='ui-background-dwbg' dangerouslySetInnerHTML={{ __html: mainTexture }}></div>
+                
                 <Spin spinning={this.state.fetching}>
                     {notice && (utils.isPlainObject(notice) ? <FormerTypes.notice {...notice} value={notice.description || notice.label}/> : <FormerTypes.notice value={notice}/>)}
                     <Leaf
@@ -605,10 +624,17 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             </Space>
         )
     }
+    public renderIcon() {
+        if (this.props.iconType =='avatar') {
+            return  <FormerTypes.avatar autoColor={false} icon={this.props.icon} size={24}/>;
+        } 
+        let IconView: any = ICONS[this.props.icon];
+        return <IconView/>
+    }
     public renderTitle() {
         let RenderContent: any = (
             <>
-                {this.props.icon && <FormerTypes.avatar autoColor={false} icon={this.props.icon} size={24}/>}
+                {this.props.icon && this.renderIcon()}
                 {this.state.title || 'Edit record'}
             </>
         );
