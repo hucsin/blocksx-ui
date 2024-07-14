@@ -44,7 +44,7 @@ export default class NewNode extends React.Component<NewNodeProps, {open: any}> 
                         }
                         
                         //row.icon = row.icon.replace(/#[a-z0-9A-Z]+$/, '');
-
+                        
                         row.type ='go';
                         this.props.onAddNewNode(row, this.newRef.getBoundingClientRect())
                     }}

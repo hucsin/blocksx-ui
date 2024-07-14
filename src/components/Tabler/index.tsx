@@ -142,6 +142,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
     }
 
     public UNSAFE_componentWillReceiveProps(newProps: any) {
+
         
         if (newProps.reflush != this.state.reflush) {
             this.setState({
@@ -505,7 +506,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
         
         // 子组建回掉
         callback && callback(operate, rowData, rowIndex)
-
+        
         switch (operate.type) {
             case 'view':
             case 'edit':

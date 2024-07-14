@@ -165,7 +165,7 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
                     query: this.state.query,
                     category: this.state.category
                 },
-                reflush: +new Date,
+               // reflush: +new Date,
                 dataSource: rowItem.actions,
                 path: 'classify',
                 category: 'all',
@@ -173,11 +173,15 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
                 parent: rowItem.label || rowItem.name
             })
         } else {
-            //console.log(rowItem, 'rowitem,333')
-            this.props.onClassifyClick && this.props.onClassifyClick(rowItem);
+
+            this.props.onClassifyClick && this.props.onClassifyClick({
+                ...rowItem,
+                ...rowItem.props
+            });
             this.hidePopover();
         }
     }
+   
     private hidePopover =()=> {
         this.setState({
             open: false
@@ -229,6 +233,7 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
                         <Tabler.TablerList
                             maxIcon={1}
                             minIcon={1}
+                            key={1}
                             reflush = {this.state.reflush}
                             size='small'
                             fields={[

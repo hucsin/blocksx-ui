@@ -55,6 +55,7 @@ export interface IFormerType {
     hideButtons?:boolean;
     defaultFirstTitle?: string;
     onGetRequestParams?: Function;
+    iconType?: string;
 }
 export interface SFormerType {
     visible: boolean;
@@ -71,6 +72,7 @@ export interface SFormerType {
     isStepOne?: boolean;
     setpOneValue?: any;
     loading?: boolean;
+    iconType?: string;
 }
 
 export default class TablerFormer extends React.Component<IFormerType, SFormerType>  {
@@ -84,7 +86,8 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         super(props);
         let fields: any = props.fields || props.schema && props.schema.fields;
         let columnKeys:any = TablerUtils.getFieldKeysByColumnOnly(fields);
-
+        let isStepOne: boolean = !this.isFistMustValue(this.splitStepField(fields, true), props.value);
+        let isStepMode: boolean = this.isStepFormer(fields);
         this.state = {
             visible: !!props.action,
             schema: this.getSchema(fields),
@@ -93,11 +96,12 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             value: omit(props.value || {}, columnKeys),
             fields: fields,
             viewer: props.viewer,
-            isStepOne: !this.isFistMustValue(this.splitStepField(fields, true), props.value),//props.value ? false: true,
-            isStepMode: this.isStepFormer(fields),
+            isStepOne: isStepOne,//props.value ? false: true,
+            isStepMode:isStepMode ,
             setpOneValue: props.value,
             loading: false,
-            id: 0
+            id: 0,
+            iconType: isStepMode ?  isStepOne ? 'avatar' : 'icon' : 'avatar'
         }
         
         if (this.isStepDynamicFormer()) {
@@ -199,7 +203,8 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 setpOneValue: utils.clone(trueValue),
                 value: trueValue,
                 id: this.state.id + 1,
-                isStepOne: false
+                isStepOne: false,
+                iconType: 'icon'
             })
         })
     }
@@ -224,6 +229,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 value: omit(newProps.value || {}, columnKeys),
                 fields: fields,
                 isStepOne: newProps.value ? false : true,
+                iconType:  newProps.value? 'icon': 'avatar',
                 isStepMode: this.isStepFormer(fields),
                 setpOneValue: utils.clone(newProps.value || {})
             })
@@ -275,8 +281,6 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         }
         // 如果是step模型   
 
-
-       
         if ( this.isStepFormer(fields)) {
 
             let firstFields: any = this.splitStepField(fields, true)
@@ -374,9 +378,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                     'ui-disabeld': isDeny
                 })} onClick={()=> {
                     if (!isDeny) {
-                        this.setState({
-                            isStepOne: true
-                        })
+                        this.setStepOne(true)
                     }
                 }}>
                     {item ? item.label : defaultTitle}
@@ -387,6 +389,12 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         return defaultTitle;
         
         
+    }
+    private setStepOne(isStepOne: boolean) {
+        this.setState({
+            isStepOne: isStepOne,
+            iconType: !isStepOne ? 'icon' : 'avatar'
+        })
     }
     private stepActionMap: any = {
         'setting': 'Setting',
@@ -400,7 +408,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         let { schema, value, isStepOne } = this.state;
         let { firstFields } = schema;
         let hasfirtready: boolean = !!isStepOne &&  this.isFistMustValue(firstFields, value);
-
+        
         return (
             <div className='ui-header'>
                 <Space>
@@ -412,9 +420,8 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                             'ui-disabeld': this.state.isStepOne
                         })}
                         onClick={()=> {
-                            this.setState({
-                                isStepOne: false
-                            })
+                            
+                            this.setStepOne(false)
                         }}
                     ><span style={{color:'#ccc'}}>2. </span>{this.stepActionMap[type as any] ||  'Complete'} {(pageMeta.title ||'record').toLowerCase()} </span >
                 </Space>
@@ -428,14 +435,15 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             return this.getStepTitle(this.state.action);
 
         } else {
-
+            let { pageMeta = {} } = this.props;
+            
             switch (this.state.action) {
                 case 'add': 
                 case 'create':
-                    return i18n.t(['Create', 'new', this.props.pageType].join(' '));
+                    return i18n.t(['Create', 'new', this.props.pageType || pageMeta.title].join(' '));
                 default: 
                     let name: string = this.state.name || this.state.action ;
-                    return `${upperFirst(name)} ${this.props.pageType}`
+                    return `${upperFirst(name)} ${this.props.pageType || pageMeta.title}`
             }
         }
     }
@@ -443,7 +451,8 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     private getDefaultIcon() {
         let { pageMeta = {} } = this.props;
         
-        return !this.state.isStepOne 
+        
+        return !this.state.isStepOne && this.state.isStepMode 
             ? 'LeftCircleDirectivityOutlined': pageMeta.icon;
     }
     private getDefaultOkText() {
@@ -597,7 +606,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 title={this.renderDefaultTitle()}
                 titleContainerRef={this.props.titleContainerRef}
                 icon={this.getDefaultIcon()}
-                iconType={this.state.isStepOne ? 'avatar' : 'icon'}
+                iconType={this.state.iconType || (this.state.isStepOne ? 'avatar' : 'icon')}
                 size={'default'}
                 notice={notice}
                 loading={this.state.loading}
@@ -618,9 +627,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 onBeforeSave= {() => {
                     
                     if (this.state.isStepMode && this.state.isStepOne) {
-                        this.setState({
-                            isStepOne: false
-                        })
+                        this.setStepOne(false)
                         return false;
                     }
                 }}
@@ -651,9 +658,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                                 this.onDynamicStepChange(value);
                             } else {
                             
-                                this.setState({
-                                    isStepOne: false
-                                })
+                                this.setStepOne(false)
                             }
                         }
                        // }
@@ -688,9 +693,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                     
                     if (isInitiate) {
                         if (this.cancelDoback()) {
-                            return this.setState({
-                                isStepOne: true
-                            });
+                            return this.setStepOne(true)
                         }
                     } 
 

@@ -226,6 +226,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     }
 
     public UNSAFE_componentWillReceiveProps(newProps: any) {
+        
         if (newProps.reflush !== this.state.reflush) {
 
             if (this.props.onFetchList) {
@@ -254,17 +255,18 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
            })
         }
 
-        if (newProps.pageSize != this.state.pageSize) {
+        if (!utils.isUndefined(newProps.pageSize) && newProps.pageSize != this.state.pageSize) {
            this.setState({
                pageSize: newProps.pageSize
            })
         }
 
-        if (newProps.pageNumber != this.state.pageNumber) {
-           this.setState({
-               dataSource: this.getDataSource(),
-               pageNumber: newProps.pageNumber
-           })
+        //  HAVE Q
+        if (!utils.isValidValue(newProps.pageNumber) && (newProps.pageNumber != this.state.pageNumber)) {
+            this.setState({
+                dataSource: this.getDataSource(),
+                pageNumber: newProps.pageNumber
+            })
         }
 
         if (newProps.optional != this.state.optional) {

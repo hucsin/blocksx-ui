@@ -1,4 +1,5 @@
 export { default as AntdbBrandFilled } from './AntdbBrandFilled';
+export { default as AnyhubsBrandFilled } from './AnyhubsBrandFilled';
 export { default as ConnectUtilityFilled } from './ConnectUtilityFilled';
 export { default as DamengBrandFilled } from './DamengBrandFilled';
 export { default as DatasourceDataFilled } from './DatasourceDataFilled';

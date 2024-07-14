@@ -135,6 +135,7 @@ export interface SmartPageState {
     layout?: string;
     id?: string;
 
+    changed: boolean;
     
 }
 
@@ -178,6 +179,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             value: props.value,
             schema: null,
             pageMeta: {},
+            changed: false,
             okText: props.okText,
             
             title: props.title,
@@ -261,7 +263,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         this.setState({loading: this.isLoading})
     }
     public fetch = ()=> {
-
+        
         if (!this.hasLoading()) {
             this.setLoading(true);
 
@@ -359,8 +361,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 })
             }
         }
-        
-        if (newProps.name != this.state.name || newProps.id !== this.state.id) {
+
+        if (newProps.name != this.state.name || newProps.id != this.state.id) {
+
             this.setState({
                 id: newProps.id,
                 name: newProps.name,
@@ -461,8 +464,10 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         return params;
     }
     private onChangeValue =(value: any)=> {
+        
         this.setState({
-            value
+            value,
+            changed: true
         })
         if (this.props.onChangeValue) {
             return this.props.onChangeValue(value)
@@ -478,7 +483,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         
         return SmartPageUtils.renderPageType(this.state.uiType, {
             id: this.state.id,
-            key: this.state.classifyQuery,
+            key: this.state.id,
             schema: this.state.schema,
             pageMeta: this.state.pageMeta,
             autoInit: !this.state.folderField,
@@ -487,6 +492,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             title: this.state.title,
             path: this.state.path,
             reflush: this.state.reflush,
+            iconType: 'avatar',
             value: this.state.value,
             okText: this.state.okText,
             onIcon: this.state.okIcon,
@@ -697,7 +703,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     private onClose(value?: any) {
         if (this.props.onClose) {
-            this.props.onClose(value)
+            this.props.onClose(value, this.state.changed)
         }
         this.setState({open:false})
     }

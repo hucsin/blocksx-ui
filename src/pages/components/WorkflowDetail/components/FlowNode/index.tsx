@@ -15,6 +15,7 @@ import DefaultNodeList from '../../config/DefaultNodeList';
 
 interface IMircoFlowNode {
     name: string;
+    serial: number;
     id?: number;
     workflowId: any;
     classify: any;
@@ -326,7 +327,10 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 <FormerTypes.avatar size={100}  icon={icon} color={color}/>
                 {this.canShowChildrenAdd()&&<div className='ui-adder'  onClick={this.addRouterChildren}><PlusOutlined/></div>}
                 {this.canShowTrigerAdd()  && <div className='ui-adder-router' onClick={this.addTiggerNode}><PlusOutlined/></div>}
-                {props.description &&<div className='ui-title'>{props.description }</div>}
+                {props.method &&<div className='ui-title'>
+                    <h4>{props.program} <span>{this.props.serial}</span></h4>
+                    <span>{props.method }</span>
+                </div>}
             </>
         )
     }
@@ -372,6 +376,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 let propsvalue = this.state.props || {}
                 let isInputValue: boolean = this.state.settingMode !== 'setting';
                 let value: any  = (isInputValue ? { ...propsvalue.input, $connection: propsvalue.connection } : propsvalue) || {};
+                let name: string = 'setting' === this.state.settingMode ? 'ConnectorSetting' : componentName || 'router';
+                
                 
                 return (
                     <SmartPage
@@ -383,8 +389,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                             }
                         }}
                         pageURI='/eos/programs/findPage'
-                        id={[this.state.settingMode, componentName || 'router'].join('__')}
-                        name={componentName || 'router'}
+                        key={name}
+                        name={name}
                         type="popover"
                         isViewer={this.props.isViewer}
                         simplicity
@@ -397,34 +403,36 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         }
                         params={()=> {
                             return {
-                                id: this.props.bytethinkingId,
-                                nodeId: this.props.id,
-                                mode: this.state.settingMode,
+                              //  id: this.props.bytethinkingId,
+                              //  nodeId: this.props.id,
+                               // mode: this.state.settingMode,
                                 type: componentName ? 'module' : 'router'
                             }
                         }}
                         icon="SettingOutlined"
                         value={value}
-                        onClose={(props = {})=> {
-                            
-                            if (isInputValue) {
+                        onClose={(props = {}, changed?: boolean)=> {
+                            if (changed) {
+                                if (isInputValue) {
+                                    
+                                    propsvalue.input = {
+                                        ...propsvalue.input,
+                                        ...utils.getSafeObject(props)
+                                    };
+                                    propsvalue.connection = props['$connection'];
+                                } else {
+                                    propsvalue = props;
+                                }
                                 
-                                propsvalue.input = {
-                                    ...propsvalue.input,
-                                    ...utils.getSafeObject(props)
-                                };
-                                propsvalue.connection = props['$connection'];
+                            // let pickvalue: any = pick(this.state.props, ['icon', 'color'])
+                                //console.log(pickvalue, props, 222, this.state.props)
+                                this.setState({
+                                    props: propsvalue,
+                                    hasChanged: true
+                                }, ()=> this.onCloseLayer())
                             } else {
-                                propsvalue = props;
+                                this.onCloseLayer()
                             }
-                            
-                           // let pickvalue: any = pick(this.state.props, ['icon', 'color'])
-                            //console.log(pickvalue, props, 222, this.state.props)
-                            this.setState({
-                                props: propsvalue,
-                                hasChanged: true
-                            }, ()=> this.onCloseLayer())
-
                         }} 
                         noToolbar
                         open={this.state.openSetting}
@@ -459,9 +467,9 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         ? startNodes.length>1 || allNodes.length == 1 ? 'gos' : 'go'  
                         : ['router','empty'].indexOf(type)>-1 ? type : 'module',
             nodeLength: allNodes.length > 1 ? 'more' : 'one',
-            hasPages: !!startNodes.find(it=> it.componentName =='Thinking.Pages'),
-            hasOpenAPI: !!startNodes.find(it=> it.componentName =='Thinking.OpenAPI'),
-            hasTimer: !!startNodes.find(it=> it.componentName =='Thinking.Timer')
+            hasPages: !!startNodes.find(it=> it.componentName =='Thinking.pages'),
+            hasOpenAPI: !!startNodes.find(it=> it.componentName =='Thinking.openapi'),
+            hasTimer: !!startNodes.find(it=> it.componentName =='Thinking.timer')
         })
     }
     public onMenuClick =(item: any)=> {

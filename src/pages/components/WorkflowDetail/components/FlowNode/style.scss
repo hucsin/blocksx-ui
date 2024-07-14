@@ -85,6 +85,24 @@
         top: 130px;
         opacity: .6;
         pointer-events: none;
+        > span {
+            opacity: .5;
+        }
+        > h4 {
+            margin: 0;
+            padding-top: 4px;
+            span {
+                background-color: #fff;
+                font-weight: 400;
+                border: 1px solid var(--main-border-color);
+                display: inline-block;
+                line-height: 16px;
+                width: 16px;
+                font-size: 12px;
+                border-radius: 3px;
+                vertical-align: middle;
+            }
+        }
     }
     &:hover {
         z-index: 110;

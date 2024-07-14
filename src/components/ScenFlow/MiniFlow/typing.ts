@@ -24,6 +24,7 @@ export interface FlowNode {
     type: FlowNodeType;
     left: number,
     top: number,
+    serial: number;
     color: string;
     node?: HTMLElement;
     isTemporary?: boolean;

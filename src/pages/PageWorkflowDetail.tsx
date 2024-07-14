@@ -182,11 +182,15 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                                 return {...omit(result, ['']), data: result.data.map(it => {
                                     it.icon = it.icon + it.color;
                                     it.actions = it.actions ? it.actions.map(ac => {
+                                        let color = ac.color || it.color;
+                                        
                                         return {
                                             ...ac,
-                                            color: it.color,
-                                            icon: [it.icon, ac.icon],
-                                            componentName: [it.id, ac.id].join('.')
+                                            color: ac.color || it.color ,
+                                            icon: ac.subicon ? [ac.icon + color , ac.subicon] :[it.icon, ac.icon],
+                                            componentName: [it.id, ac.id].join('.'),
+                                            method: ac.name,
+                                            program: it.name
                                         };
                                     }) : []
                                     return it;

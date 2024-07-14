@@ -1,6 +1,7 @@
 export const map:any = {
     "brand": [
         "AntdbBrandFilled",
+        "AnyhubsBrandFilled",
         "DamengBrandFilled",
         "DbqueryMiniBrandFilled",
         "GoldendbBrandFilled",

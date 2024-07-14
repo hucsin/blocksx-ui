@@ -388,7 +388,19 @@ export default class MiniFlow extends EventEmitter {
         }
     }
     private addNode(node: any, nosave?: boolean) {
-        this.nodes.push(node);
+        let maxnumber: number = 0;
+
+        this.nodes.forEach(it => {
+            if (it.serial>= maxnumber) {
+                maxnumber = it.serial;
+            }
+        })
+
+        this.nodes.push({
+            ...node,
+            serial: maxnumber +1
+        });
+
         !nosave && this.doChangeSave();
     }
     private removeNodeByName(nodeName: string) {

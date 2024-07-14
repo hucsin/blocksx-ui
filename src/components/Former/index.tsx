@@ -8,11 +8,13 @@ import classnames from 'classnames';
 import { utils as BUtils } from '@blocksx/core';
 import * as ICONS from '../Icons';
 import * as FormerTypes from './types';
+
 import ConstValue from './const';
 
 import './style.scss';
 import { mainTexture } from '../SmartPage/core/texture';
 import { pick } from 'lodash';
+import TablerUtils from '../utils/tool';
 
 
 
@@ -628,8 +630,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         if (this.props.iconType =='avatar') {
             return  <FormerTypes.avatar autoColor={false} icon={this.props.icon} size={24}/>;
         } 
-        let IconView: any = ICONS[this.props.icon];
-        return <IconView/>
+        return TablerUtils.renderIconComponent(this.props)
+        
     }
     public renderTitle() {
         let RenderContent: any = (
