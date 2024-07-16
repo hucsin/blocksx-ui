@@ -27,6 +27,7 @@ export { default as tags } from './tags';
 export { default as rate } from './rate';
 
 export { default as label } from './label';
+export { default as link } from './link';
 export { default as icon } from './icon';
 export { default as more } from './more';
 export { default as code } from './code';

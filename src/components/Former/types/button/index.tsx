@@ -52,6 +52,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
     public constructor(props: IFormerInput) {
         super(props);
         let typeProps: any = props['x-type-props'];
+        
         this.state = {
             title: typeProps.title || typeProps.name,
             values: [],
@@ -87,23 +88,39 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
 
     public componentDidMount(): void {
         let { props } = this.state;
-        let { rowKey = 'id' } = props;
-        let former: any = this.props.former;
 
-        let cache: any = former.getCache(this.getCacheKey());
-        
-        if (cache) {
+        if (props.type == 'meta') {
+            if (this.viewRequestHelper) {
+                let { props } = this.state;
+                let { rowKey = 'id' } = props;
+                let former: any = this.props.former;
 
-            //this.onSelectedItem(cache.value);
-            this.setState({
-                value: cache.value[rowKey],
-                ...cache.value,
-                values: cache.values
-            })
+                let cache: any = former.getCache(this.getCacheKey());
+                
+                if (cache) {
 
-        } else {
+                    //this.onSelectedItem(cache.value);
+                    this.setState({
+                        value: cache.value[rowKey],
+                        ...cache.value,
+                        values: cache.values
+                    })
 
-            this.updateView(this.state.value)
+                } else {
+
+                    this.updateView(this.state.value)
+                }
+            } else {
+                // 从former 获取value
+                let { former } = this.props;
+
+                if (former && this.state.value) {
+                    this.setState({
+                        ...former.getValue(),
+                        value: this.state.value
+                    })
+                }
+            }
         }
     }
     private updateView(value: string) {
@@ -330,7 +347,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                     </div>
                     
                 </div>
-                <Button onMouseEnter={()=> {
+                { this.viewRequestHelper ? <Button onMouseEnter={()=> {
                     if (this.state.value) {
                         this.setState({open: true})
                     }
@@ -340,7 +357,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                         this.doAction()
                     }
                 }}
-                icon={this.state.value ?<Icons.SwapOutlined/> : <Icons.PlusOutlined/>}>NEW</Button> 
+                icon={this.state.value ?<Icons.SwapOutlined/> : <Icons.PlusOutlined/>}>NEW</Button> : null}
             </div>
         );
 

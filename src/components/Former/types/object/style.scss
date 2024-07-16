@@ -56,6 +56,9 @@
         padding-left: 24px;
 
         &.former-object-label-hidden {
+            .former-object-item-label {
+                padding-bottom: 0;
+            }
             .former-object-label-menu,
             .former-object-label-title {
                 display: none

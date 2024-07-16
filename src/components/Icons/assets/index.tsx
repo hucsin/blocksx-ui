@@ -24,6 +24,7 @@ export { default as MarkReadUtilityFilled } from './MarkReadUtilityFilled';
 export { default as MarkUnreadUtilityFilled } from './MarkUnreadUtilityFilled';
 export { default as NarrowUtilityFilled } from './NarrowUtilityFilled';
 export { default as OceanbaseBrandFilled } from './OceanbaseBrandFilled';
+export { default as PagesCommonFilled } from './PagesCommonFilled';
 export { default as PaypalBrandFilled } from './PaypalBrandFilled';
 export { default as PostgresqlBrandFilled } from './PostgresqlBrandFilled';
 export { default as ProductCommonFilled } from './ProductCommonFilled';

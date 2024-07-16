@@ -54,7 +54,7 @@ export default class DefaultNodeList {
         pages: (uniq: any, props?: any) => {
             return {
                 isNew: false,
-                icon: 'PageCommonOutlined',
+                icon: 'PagesCommonFilled',
                 color: '#1EAEDB',
                 componentName: 'Thinking.pages',
                 ...props,

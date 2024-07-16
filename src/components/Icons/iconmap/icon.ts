@@ -129,6 +129,7 @@ export const map:any = {
         "UpMiniDirectivityOutlined"
     ],
     "common": [
+        "PagesCommonFilled",
         "ProductCommonFilled",
         "FolderCommonOutlined",
         "PageCommonOutlined",

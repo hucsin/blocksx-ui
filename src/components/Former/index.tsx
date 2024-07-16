@@ -382,6 +382,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }, () => this.onChangeValue(this.state.value))
         
     }
+    public getValue() {
+        return this.state.value || {};
+    }
     private getSafeValue(_value?: any) {
         let { schema = {}, value} = this.state;
         let safeKeys: any = Object.keys(schema.properties)

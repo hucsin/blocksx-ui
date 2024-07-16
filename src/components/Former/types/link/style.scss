@@ -1,0 +1,11 @@
+.ui-link {
+    &:hover {
+        a {
+            text-decoration: underline;;
+        }
+
+    }
+    span {
+        margin-right: 4px;
+    }
+}
