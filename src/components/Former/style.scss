@@ -26,6 +26,45 @@
         display:inline-block
     }
 }
+.ui-popover-former {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    max-height: calc(100vh - 20px);
+    .ant-popover-title {
+        font-size: 16px;
+        opacity: .6;
+        > span {
+            margin-right: 4px;
+            font-size:20px;
+        }
+    }
+    .ant-popover-inner-content {
+        padding: 8px;
+        
+        position: relative;
+
+        padding-bottom: 0px;
+        .former-column-two {
+            
+            max-height: calc(100vh - 142px);
+            overflow-y: auto;
+        }
+    }
+}
+.ui-tabler-former {
+    .former-column-two {
+        .ui-former-notice {
+            margin-bottom: 16px;
+        }
+    }
+    .ant-drawer-title {
+        > span.anticon {
+            font-size:24px;
+            vertical-align: bottom;
+            margin-right: 4px;
+        }
+    }
+}
 .former-error-message {
     color: red;
     display: block;

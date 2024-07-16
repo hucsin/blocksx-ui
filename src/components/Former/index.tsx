@@ -648,21 +648,25 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     public render() {
         switch (this.state.type) {
+            
             case 'popover':
                 return (
                     <Popover
                         title={this.renderTitle()}
                         content={this.renderPopoverLeaf()}
-                        placement="bottomRight"
-
+                        placement="right"
+                        trigger={'click'}
                         open={this.state.visible}
                         autoAdjustOverflow={true}
-
+                        rootClassName='ui-popover-former'
                         onOpenChange={(visible: boolean) => {
                             if (!this.props.keep || visible) {
                                 this.setState({
                                     visible
                                 })
+                            }
+                            if (this.props.onVisible) {
+                                this.props.onVisible(visible)
                             }
                         }}
                         overlayStyle={{

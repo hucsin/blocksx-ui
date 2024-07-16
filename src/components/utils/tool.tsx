@@ -165,7 +165,32 @@ export default class TablerUtils {
         }
     }
 
-
+    public static makeField(field:any) {
+        let fieldMeta: any = field.meta || {
+            type: 'input'
+        }
+        return {
+            ...field,
+            key: field.fieldKey,
+            fieldKey: field.fieldKey,
+            ...fieldMeta,
+            control: field.fieldControl,
+            uiType: fieldMeta.type,
+            type: field.fieldType,
+            column: fieldMeta.column,
+            columnGroup: field.columnGroup,
+            tablerColumn: fieldMeta.column ? {
+                filter: field.isIndexed,
+            } : null,
+            colspan: fieldMeta.colspan || 1,
+            dict: field.fieldDict,
+            step: fieldMeta.step,
+            defaultValue: field.defaultValue,
+            name: field.fieldName || field.fieldKey,
+            validation: this.getFieldValidation(field),
+            'x-label-hidden': fieldMeta.label === false ? true : false
+        }
+    }
     public static getFieldValidation(field: any) {
         return {
             minLength: 1,
@@ -184,6 +209,18 @@ export default class TablerUtils {
 
         if (it.dataSource) {
             defaultProps.dataSource = it.dataSource;
+        }
+        // 特殊处理array
+        if (it.uiType == 'array') {
+            if (it.fields) {
+                let moreItems: any = it.fields.filter(it => it.major === false);
+                if (moreItems.length) {
+                    defaultProps.moreItems = {
+                        fields: moreItems
+                    }//this.getDefaultSchema(moreItems);
+                }
+                
+            }
         }
 
         return defaultProps;
@@ -210,7 +247,7 @@ export default class TablerUtils {
 
     public static getDefaultFieldSchema(it:any, index) {
         //console.log(it.type, it, it.column, 111)
-       
+        
         return {
             ...it,
             type: it.type || 'string', // 统一当string处理
@@ -234,9 +271,22 @@ export default class TablerUtils {
             'x-index': utils.isNullValue(it.index) ? index : it.index,
             'x-control': it.control,
             'x-validation': this.getValidationValue(it),
-            properties: it.fields ? this.getDefaultSchemaProperties(it.fields) : null,
+            [`${it.uiType =='array' ? 'items': 'properties'}`]: 
+                it.fields ? 
+                    it.uiType =='array' 
+                        ? this.getDefaultSchemaArrayItems(it.fields) 
+                        : this.getDefaultSchemaProperties(it.fields) 
+                : null,
+            
             ... this.getDefaultPropsByItem(it)
         }
+    }
+
+    public static getDefaultSchemaArrayItems(fields: any) {
+        // arary 过滤
+        
+        return this.getDefaultSchema(fields.filter(it=> it.major !== false))
+
     }
     public static getDefaultSchemaProperties(fields?: any) {
         let fieldsObject: any = {};

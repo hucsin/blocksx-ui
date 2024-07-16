@@ -124,6 +124,8 @@ export const map:any = {
         "ConnectionsDirectivityOutlined",
         "DownDirectivityOutlined",
         "LeftCircleDirectivityOutlined",
+        "MoveDownDirectivityOutlined",
+        "MoveUpDirectivityOutlined",
         "UpMiniDirectivityOutlined"
     ],
     "common": [

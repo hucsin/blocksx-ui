@@ -83,6 +83,8 @@ export { default as LeftCircleDirectivityOutlined } from './LeftCircleDirectivit
 export { default as MenuUtilityOutlined } from './MenuUtilityOutlined';
 export { default as ModelDataOutlined } from './ModelDataOutlined';
 export { default as MonitorUtilityOutlined } from './MonitorUtilityOutlined';
+export { default as MoveDownDirectivityOutlined } from './MoveDownDirectivityOutlined';
+export { default as MoveUpDirectivityOutlined } from './MoveUpDirectivityOutlined';
 export { default as MysqlBrandOutlined } from './MysqlBrandOutlined';
 export { default as OpenWindowUtilityOutlined } from './OpenWindowUtilityOutlined';
 export { default as OpengaussBrandOutlined } from './OpengaussBrandOutlined';

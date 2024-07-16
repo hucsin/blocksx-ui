@@ -327,7 +327,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 <FormerTypes.avatar size={100}  icon={icon} color={color}/>
                 {this.canShowChildrenAdd()&&<div className='ui-adder'  onClick={this.addRouterChildren}><PlusOutlined/></div>}
                 {this.canShowTrigerAdd()  && <div className='ui-adder-router' onClick={this.addTiggerNode}><PlusOutlined/></div>}
-                {props.method &&<div className='ui-title'>
+                {props.program &&<div className='ui-title'>
                     <h4>{props.program} <span>{this.props.serial}</span></h4>
                     <span>{props.method }</span>
                 </div>}

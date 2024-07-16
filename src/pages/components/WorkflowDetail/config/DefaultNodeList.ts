@@ -10,10 +10,31 @@ export default class DefaultNodeList {
             ...props,
             type: 'go',
             props: {
-                icon: 'IdeaCloudUtilityOutlined'
+                icon: 'IdeaCloudUtilityOutlined',
+
+                program: 'Thinking',
+                method: 'Decision rules'
             },
+            serial: 1,
             locked: true,
             name: name
+        }
+    }
+    public static getEmptyNode(name: string, props?:any) {
+        return {
+            name: name,
+            type: 'empty',
+            isNew: false,
+            color: '#ccc',
+            serial: 2,
+            left: 258,
+            top: 162,
+            icon: '',
+            ...props,
+            props: {
+                program: 'Empty',
+            }
+
         }
     }
     public static getUniqName(id: any) {
@@ -41,6 +62,8 @@ export default class DefaultNodeList {
                 props: {
                     icon: 'AutoCloudUtilityOutlined',
                     
+                    program: 'Pages',
+                    method: 'Linking Page'
                 },
                 floating: true,
                 name: uniq
@@ -56,6 +79,7 @@ export default class DefaultNodeList {
                 type: 'go',
                 props: {
                     icon: 'SyncOutlined',
+                    
                 },
 
                 floating: true,
@@ -72,6 +96,9 @@ export default class DefaultNodeList {
                 type: 'go',
                 props: {
                     icon: 'AutoCloudUtilityOutlined',
+
+                    program: 'OpenAPI',
+                    method: 'Linking OpenAPI'
                 },
 
                 floating: true,
@@ -91,6 +118,7 @@ export default class DefaultNodeList {
         thinking: (uniq: string) => {
             let sourceNodeName: string = uniq + '1';
             let targetNodeName: string = uniq + '2';
+            let emptyNodeName: string = uniq + '3';
 
             return {
                 nodes: [
@@ -104,11 +132,20 @@ export default class DefaultNodeList {
                         color: '#4d53e8',
                         left: 258,
                         top: 162,
+                        serial: 2,
                         props: {
-                            icon: 'AiUtilityOutlined'
+                            icon: 'AiUtilityOutlined',
+                            program: 'Thinking',
+                            method: 'Decision-based routing'
                         },
                         locked: true
-                    }
+                    },
+                    this.getEmptyNode(emptyNodeName, {
+                        left: 458,
+                        top: 162,
+                        
+                        serial: 3
+                    })
                 ],
                 connectors: [
                     {
@@ -116,6 +153,11 @@ export default class DefaultNodeList {
                         target: targetNodeName,
                         props: {}
 
+                    },
+                    {
+                        source: targetNodeName,
+                        target: emptyNodeName,
+                        props: {}
                     }
                 ]
             }
@@ -123,6 +165,7 @@ export default class DefaultNodeList {
         'function': (uniq: string) => {
             let sourceNodeName: string = uniq + '1';
             let targetNodeName: string = uniq + '2';
+            
 
             return {
                 nodes: [
@@ -135,20 +178,18 @@ export default class DefaultNodeList {
                         componentName: 'Thinking.start',
                         left: 40,
                         props: {
-                            icon: 'ConfigurationUtilityOutlined'
+                            icon: 'ConfigurationUtilityOutlined',
+                            program: 'Start',
+                            method: 'Input Parameters'
                         },
+                        serial: 1,
                         top: 162,
                         locked: true
                     },
-                    {
-                        name: targetNodeName,
-                        type: 'empty',
-                        isNew: false,
-                        color: '#ccc',
+                    this.getEmptyNode(targetNodeName, {
                         left: 258,
-                        top: 162,
-                        icon: ''
-                    }
+                        top: 162
+                    })
                 ],
                 connectors: [
                     {

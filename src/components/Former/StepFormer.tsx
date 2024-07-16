@@ -1,11 +1,11 @@
 import React from 'react';
 import classnames from 'classnames';
 import i18n from '@blocksx/i18n';
-import { Space} from 'antd';
-import { RightOutlined } from '@ant-design/icons'
-
-import Former from '../Former';
 import { utils } from '@blocksx/core';
+import { Space, Button } from 'antd';
+
+import Former from './index';
+
 
 import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExtendEnum';
 import TablerUtils from '../utils/tool';
@@ -39,6 +39,7 @@ export interface IFormerType {
     schema?: any;
     path?: any;
     mode?: any;
+    size?: string;
     title?: any;
     formerSchema?: any;
     action?: any;
@@ -46,7 +47,7 @@ export interface IFormerType {
     value: any;
     pageMeta?: any;
     onChangeValue: Function;
-    onClose: Function;
+    onClose?: Function;
     onSave?: Function;
     onView?: Function;
     okText?: string;
@@ -56,6 +57,7 @@ export interface IFormerType {
     defaultFirstTitle?: string;
     onGetRequestParams?: Function;
     iconType?: string;
+    width?: number;
 }
 export interface SFormerType {
     visible: boolean;
@@ -77,7 +79,8 @@ export interface SFormerType {
 
 export default class TablerFormer extends React.Component<IFormerType, SFormerType>  {
     public static defaultProps = {
-        formerType: 'default'
+        formerType: 'default',
+        size: 'default'
     }
     private former: any;
     private nextDyamicRequest: any;
@@ -101,8 +104,10 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             setpOneValue: props.value,
             loading: false,
             id: 0,
-            iconType: isStepMode ?  isStepOne ? 'avatar' : 'icon' : 'avatar'
+            iconType:  (isStepMode ?  isStepOne ? 'avatar' : 'icon' : props.iconType || 'avatar')
         }
+
+
         
         if (this.isStepDynamicFormer()) {
             
@@ -219,7 +224,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
 
         if (newProps.action !== this.state.action) {
             let columnKeys: any = TablerUtils.getFieldKeysByColumnOnly(newProps.fields || this.state.fields);
-            
+            console.log('action')
             this.setState({
                 action: newProps.action,
                 name: newProps.name,
@@ -421,9 +426,9 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                         })}
                         onClick={()=> {
                             
-                            this.setStepOne(false)
+                            hasfirtready && this.setStepOne(false)
                         }}
-                    ><span style={{color:'#ccc'}}>2. </span>{this.stepActionMap[type as any] ||  'Complete'} {(pageMeta.title ||'record').toLowerCase()} </span >
+                    ><span style={{color:'#ccc'}}>2. </span>{this.stepActionMap[type as any] ||  'Complete'} {(pageMeta.title ||'record').toLowerCase()} {hasfirtready && <Button  size='small'>Next</Button>}</span >
                 </Space>
             </div>
         )
@@ -443,7 +448,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                     return i18n.t(['Create', 'new', this.props.pageType || pageMeta.title].join(' '));
                 default: 
                     let name: string = this.state.name || this.state.action ;
-                    return `${upperFirst(name)} ${this.props.pageType || pageMeta.title}`
+                    return this.props.title || `${upperFirst(name)} ${this.props.pageType || pageMeta.title}`
             }
         }
     }
@@ -534,7 +539,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         }
     }
     private hide(value?: any) {
-
+        console.log('hide')
         this.setState({visible: false});
 
         if (this.props.onClose) {
@@ -596,22 +601,27 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             
         
         if (!visible && this.props.formerType!=='default') {
-            return null;
+            //return null;
         }
 
         
         return (
             <Former
                 groupType ={groupType}
-                title={this.renderDefaultTitle()}
+                title={ this.renderDefaultTitle()}
                 titleContainerRef={this.props.titleContainerRef}
                 icon={this.getDefaultIcon()}
                 iconType={this.state.iconType || (this.state.isStepOne ? 'avatar' : 'icon')}
-                size={'default'}
+                size={this.props.size}
                 notice={notice}
                 loading={this.state.loading}
                 className="ui-tabler-former"
                 rowKey={this.props.rowKey}
+                onVisible={(visible)=> {
+                    this.setState({
+                        visible
+                    })
+                }}
                 id={this.getDefaultId()}
                 type={this.props.formerType}
                 schema={pageSchema}
@@ -688,7 +698,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 }}
                 autoclose = {false}
                 column = {this.props.column ? this.props.column as any : 'two'}
-                width = {(this.props.column =='one' ? 500 : 700)}
+                width = {this.props.width || (this.props.column =='one' ? 500 : 700)}
                 onClose={(isInitiate?: any) => {
                     
                     if (isInitiate) {
@@ -696,12 +706,12 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                             return this.setStepOne(true)
                         }
                     } 
-
+                    console.log('close')
                     // 关闭
                     this.setState({
                         visible: false
                     })
-                    this.props.onClose(this.state.value);
+                    this.props.onClose && this.props.onClose(this.state.value);
                 
                 }}
             >{this.props.children}</Former>

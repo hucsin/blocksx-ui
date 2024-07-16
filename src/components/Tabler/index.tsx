@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { Space, Button, Modal, Dropdown, Divider, Popconfirm } from 'antd';
 import { utils } from '@blocksx/core';
 import SearchBar from '../SearchBar';
-import TablerFormer from './TablerFormer';
+import StepFormer from '../Former/StepFormer';
 import SmartDrawer from '../SmartDrawer';
 
 import { DownOutlined, CaretDownOutlined, CombineIcon } from '../Icons/index';
@@ -869,7 +869,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                     {...this.state.smartPageData}
                     onClose={() => this.setState({ smartPageOpen: false })}
                 />
-                <TablerFormer
+                <StepFormer
                     key={'2fomer'}
                     formerType={props.formerType}
                     name={this.state.formerName}

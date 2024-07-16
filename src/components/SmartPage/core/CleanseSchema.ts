@@ -2,6 +2,7 @@
  * 清洗数据
  */
 import SmartRequst from '../../utils/SmartRequest'
+import SmartUtils from '../../utils/tool';
 import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExtendEnum';
 
 import { utils } from '@blocksx/core';
@@ -11,30 +12,10 @@ export default class CleanseSchema {
         clone: 'edit'
     }
     public static makeField(field:any) {
-        let fieldMeta: any = field.meta || {
-            type: 'input'
-        }
-        return {
-            ...field,
-            key: field.fieldKey,
-            fieldKey: field.fieldKey,
-            ...fieldMeta,
-            control: field.fieldControl,
-            uiType: fieldMeta.type,
-            type: field.fieldType,
-            column: fieldMeta.column,
-            columnGroup: field.columnGroup,
-            tablerColumn: fieldMeta.column ? {
-                filter: field.isIndexed,
-            } : null,
-            colspan: fieldMeta.colspan || 1,
-            dict: field.fieldDict,
-            step: fieldMeta.step,
-            defaultValue: field.defaultValue,
-            name: field.fieldName || field.fieldKey,
-            validation: this.getFieldValidation(field),
-            'x-label-hidden': fieldMeta.label === false ? true : false
-        }
+        return SmartUtils.makeField(field)
+    }
+    public static getFieldValidation(field: any) {
+        return SmartUtils.getFieldValidation(field)
     }
     public static getFieldProps(path: string, fields: any) {
         let fieldsList: any = [];
@@ -113,6 +94,8 @@ export default class CleanseSchema {
                 if (!this.isOnemRelation(field)) {
                     this.bindingRelationshipFileds(fieldObject, fieldsList)
                 }
+            } else if (field.fields) {
+                fieldObject.fields = field.fields.map(it => this.makeField(it))
             }
 
             return fieldsList.push(fieldObject)
@@ -179,14 +162,7 @@ export default class CleanseSchema {
         }
     }
 
-    public static getFieldValidation(field: any) {
-        return {
-            minLength: 1,
-            maxLength: field.fieldLength,
-            ...field.validator,
-            required: field.isRequired
-        }
-    }
+   
 
     public static bindingRelationshipFileds(fieldObject: any, fieldsList: any[]) {
         // 如果是1v1这种场景, 把他下面的字段加入

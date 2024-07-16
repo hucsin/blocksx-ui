@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { PlusCircleOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 import FormerMapItem from './item';
 import { IFormerArray } from '../../typings';
@@ -108,7 +108,7 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
     
     private getEmptyChildren() {
         return (
-            <div  className="former-map-empty" onClick={this.onMapItemAdd}>Click to add a new item</div>
+            <div  className="former-map-empty" onClick={this.onMapItemAdd}><PlusOutlined/> Click to add a new item</div>
         )
     }
 

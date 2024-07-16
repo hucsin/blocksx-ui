@@ -240,14 +240,21 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             templateMap: {
                 router: {
                     type: 'router',
-                    componentName: 'Thinking.Router',
+                    componentName: 'Thinking.router',
                     color: '#4d53e8',
-                    icon: 'RouterUtilityOutlined'
+                    icon: 'RouterUtilityOutlined',
+                    props: {
+                        program: 'Router',
+                        method: 'Branch Routing'
+                    }
                 },
                 new: {
                     type: 'empty',
                     icon: 'PlusOutlined',
-                    color:'#ccc'
+                    color:'#ccc',
+                    props: {
+                        program: 'Empty'
+                    }
                 }
             },
             nodes: this.state.nodes as FlowNode[],

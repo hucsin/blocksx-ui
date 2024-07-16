@@ -1,8 +1,8 @@
 import Manger from '../../core/SmartPageManger';
 
-import { default as TablerFromer } from '../../../Tabler/TablerFormer';
+import { default as StepFormer } from '../../../Former/StepFormer';
 
 
-Manger.registoryComponent('former', TablerFromer);
+Manger.registoryComponent('former', StepFormer);
 
-export default TablerFromer
+export default StepFormer

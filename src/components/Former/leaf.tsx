@@ -36,6 +36,7 @@ export interface ILeaf {
 
     properties?: any;
     items?: any;
+    moreItems?: any;
     size?: string;
     dataSource?: any;
     canmodify?:boolean;
@@ -100,12 +101,13 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
         this.leafProps = props;
         this.type = props['x-type'] || props.type;
-
+        
         // case object,map,
         this.properties = props.properties;
 
         // case array
         this.items = props.items;
+
 
         let value = utils.isUndefined(props.value) ? this.getDefaultValue() : props.value;
         
@@ -302,6 +304,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                 case 'map':
                 case 'object':
                     return {};
+                case 'list':
                 case 'array':
                     return [];
             }
@@ -332,7 +335,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
             return View;
         }
-
+        console.log(this.props, this.state.type, type, 3333)
         throw new Error(`没有注册的组件类型 ${_type}`);
     }
 
@@ -768,7 +771,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             let hidden: boolean = props['x-type'] == 'hidden';
                             let itemvalue: any = this.getValueByProps(value[prop], properties, value, prop);
                             
-                            let leftProps: any = {...properties,
+                            let leftProps: any = {
+                                ...properties,
                                 path:prop,
 
                                 former:this.props.former,
@@ -947,10 +951,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             case 'array':
                 // case 2 array array
                 // case 4 group array
+                
                 if (utils.isArray(value)) {
                     value.forEach((it: any, index: number) => {
                         let items = this.clone(this.items);
-
+                        
                         children.push(
                             <Child
                                 key={index + '_child'}
@@ -959,9 +964,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                 <Leaf
                                     key={index}
                                     {...items}
-                                    path={index}
+                                    path={''+index}
                                     parentPath={this.path}
                                     size={this.props.size}
+
+                                    moreItems= {this.props.moreItems}
 
                                     former={this.props.former}
                                     viewer={this.state.viewer}

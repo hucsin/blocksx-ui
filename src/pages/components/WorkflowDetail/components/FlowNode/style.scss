@@ -87,6 +87,8 @@
         pointer-events: none;
         > span {
             opacity: .5;
+            top: -6px;
+            position: relative;
         }
         > h4 {
             margin: 0;
@@ -96,11 +98,14 @@
                 font-weight: 400;
                 border: 1px solid var(--main-border-color);
                 display: inline-block;
-                line-height: 16px;
-                width: 16px;
+                line-height: 12px;
+                width: 12px;
                 font-size: 12px;
                 border-radius: 3px;
-                vertical-align: middle;
+                margin-left: 4px;
+                margin-top: 5px;
+            
+                position: absolute;
             }
         }
     }

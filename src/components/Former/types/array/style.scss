@@ -1,9 +1,14 @@
 .former-array {
     position: relative;
-    border: 1px solid #d9d9d9;
+    border: 1px solid var(--main-border-color);
     
     min-height: 30px;
-    border-radius: 3px;
+    border-radius: 12px;
+    padding: 8px;
+    .former-array-content {
+        max-height: 314px;
+        overflow-y: auto;
+    }
     &:Hover {
 
         > .former-array-add {
@@ -12,15 +17,40 @@
             }
         }
     }
+    &.former-array-nochildren {
+        .former-array-empty {
+            margin-top: 0;
+            border:none;
+        }
+        &:Hover {
+            border-color:var(--main-bg-color);
+        }
+    }
+    .former-array-limit {
+        font-size:16px;
+        text-align: center;
+        color:#999;
+
+        line-height: 35px;
+        > span {
+            opacity: .3;
+        }
+    }
     .former-array-empty {
-        font-size: 12px;
+        font-size: 16px;
         text-align:center;
-        line-height: 30px;
-        color:#d9d9d9;
-        background:#fff;
+        line-height: 35px;
+        color:#999;
+        border-radius: 6px;;
+        border: 1px dashed var(--main-border-color);
+        margin-top: 8px;
+        > span {
+            opacity: .3;
+        }
         cursor: pointer;
         &:hover {
-            color:#888;
+            border-color: var(--main-bg-color);
+            color: var(--main-bg-color);
         }
     }
     .former-array-item {
@@ -30,34 +60,130 @@
         translate: all .4s;
         background:#fff;
         border-bottom: 1px dashed #eee;
+        border-radius: 12px;;
+        padding-left: 48px;
+        margin-bottom: 4px;
+        transition: all .2s;
+        font-size:14px;
+        .former-object .former-object-item.former-object-default .former-object-label-title  {
+            font-size:14px;
+        }
+        .former-array-advanced-wrapper {
+            text-align: right;
+            padding-right: 6px;
+            position: relative;
+            top: -18px;
+            margin-bottom: -22px;
+            font-size:12px;
+        }
+
+        .former-array-advanced {
+            display: inline-block;
+            cursor: pointer;
+            margin-left: -32px;
+            margin-top: -8px;
+            opacity: .4;
+
+            &.ant-popover-open,
+            &:hover {
+                color:var(--main-bg-color)
+            }
+        }
+
+        .former-object {
+            width: calc(100% + 12px);
+        }
+        .fomre-array-item-toolbar {
+            position: absolute;
+            width: 24px;
+            left: 11px;
+            top: 36px;
+            overflow: hidden;
+            z-index: 111;
+            transition: all .2s;
+            span {
+                position: relative;
+                display: block;
+                margin-bottom: 4px;
+                font-size:16px;
+                opacity: 0;
+                margin-top: -62px;
+                transition: all .4s;
+                
+                &:Hover {
+                    transform: scale(1.2);
+                    opacity: .9;
+                    color: var(--main-bg-color);
+                }
+            }
+        }
+        .former-object-item {
+            margin-bottom: 8px !important;
+            padding-bottom: 0px;
+        }
+        &::after {
+            content: '#'attr(data-index);
+            display:block;
+            position: absolute;
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            min-width: 18px;
+            font-size:14px;
+            text-align: center;
+            height: 18px;
+            line-height: 18px;
+            padding: 2px;
+            border-radius: 3px;
+            background-color: #999;
+            color:#fff;
+            opacity: .3;
+        }
         &:last-child {
             border-bottom: none;
         }
         &:hover {
             background: #f9f9f9;
             >.former-array-item-remove {
-                display:block;
                 opacity: 1;
+                span {
+                    transform: scale(1);
+                }
+            }
+            > .fomre-array-item-toolbar {
+                
+                span {
+                    margin-top: 0;
+                    opacity: .4;
+                    
+                }
+            }
+            &::after {
+                background-color: #000;
+            }
+            .former-array-advanced {
+                opacity: .9;
             }
         }
         .former-array-item-remove {
             position: absolute;
-            top: -10px;
-            right: -6px;
-            display:none;
+            top: 4px;
+            right: 6px;
             translate: all .6;
             opacity: 0;
             span {
-                font-size:12px;
+                font-size:14px;
                 transition: all .4s;
                 cursor: pointer;
                 color:red;
                 background:#fff;
                 border-radius: 6px;
                 opacity: 0.5;
+                transform: scale(.5);
+                transition: all .2s;
                 &:hover {
-                    transform:rotate(180deg);
                     opacity: 1;
+                    transform: scale(1.2);
                 }
             }
         }
