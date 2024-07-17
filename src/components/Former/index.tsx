@@ -311,7 +311,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         return false;
     }
     private onChangeValue = (value: any, type?: string) => {
-        let trueValue: any = utils.clone(value);
+        let trueValue: any = utils.copy(value);
         if (!type) {
             if (this.timer) {
                 clearInterval(this.timer);

@@ -161,7 +161,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
 
         // 在原来的schema上加上新的
         if (schema) {
-            let trueSchema:any = utils.clone(schema.other ? schema.other : schema);
+            let trueSchema:any = utils.copy(schema.other ? schema.other : schema);
             let hasdyschema: any =  dyschema.properties && Object.keys(dyschema.properties).length > 0;
             if (trueSchema) {
                 if (nextKey) {
@@ -205,7 +205,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             this.setState({
                 loading:false,
                 dynamicSchema: this.getDynamicSchema(result.schema),
-                setpOneValue: utils.clone(trueValue),
+                setpOneValue: utils.copy(trueValue),
                 value: trueValue,
                 id: this.state.id + 1,
                 isStepOne: false,
@@ -236,7 +236,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 isStepOne: newProps.value ? false : true,
                 iconType:  newProps.value? 'icon': 'avatar',
                 isStepMode: this.isStepFormer(fields),
-                setpOneValue: utils.clone(newProps.value || {})
+                setpOneValue: utils.copy(newProps.value || {})
             })
 
             if (newProps.value && this.isStepDynamicFormer()) {
@@ -657,7 +657,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                         this.setState({
                             setpOneValue: {
                                 ...this.state.setpOneValue,
-                                ...utils.clone(value)
+                                ...utils.copy(value)
                             },
                         })
 

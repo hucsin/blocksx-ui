@@ -385,7 +385,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                             
                             return {
                                 workflowId: this.props.workflowId,
-                                nodeId: this.props.id
+                                nodeName: this.props.name
                             }
                         }}
                         pageURI='/eos/programs/findPage'
@@ -447,7 +447,9 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     }
     private onCloseLayer() {
         if (this.state.hasChanged) {
-            this.props.onUpdateNode && this.props.onUpdateNode(this.props.name, this.state.props, this)
+            this.props.onUpdateNode && this.props.onUpdateNode(this.props.name, {
+                props: this.state.props.prpos
+            }, this)
         }
 
         this.setState({openSetting: false,hasChanged: false, settingMode: ''})
@@ -489,7 +491,9 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             case 'add':
                 return this.addRouterChildren()
             case 'delete':
-                return this.mircoFlow.miniFlow.deleteNodeByName(this.props.name)
+                return this.mircoFlow.miniFlow.deleteNodeByName(this.props.name, (nodeName: any) => {
+                    console.log(nodeName)
+                })
         }
     }
     public render () {
@@ -501,7 +505,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         return (
             <div 
                 className={classnames({
-                    'node-new': this.state.isNew,
+                    //'node-new': this.state.isNew,
                     'ui-mircoflow-node': true,
                     'ui-mircoflow-node-floating': this.props.floating,
                     [`ui-mircoflow-type-${this.state.type}`] : this.state.type

@@ -148,7 +148,7 @@
         margin-left: 0 !important;
         display:block !important;
         font-size:12px;
-        
+       
     }
     .ant-list .ant-list-item {
         display: block;
@@ -407,6 +407,12 @@
             margin: 0;
             display: inline;
             padding-right: 12px;
+        }
+        .former-radio-button {
+            .ui-viewer {
+                padding: 0 ;
+                border: none;
+            }
         }
         > span {
             > span {

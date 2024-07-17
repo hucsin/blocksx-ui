@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { utils } from '@blocksx/core';
-
+import { MiniFlow as MiniFlowStructural } from '@blocksx/structural'
 import * as DomUtils from '../../utils/dom';
 import JSPlumbTool from '../../utils/third-party/jsplumb'
 import Chinampa from './chinampa';
@@ -9,6 +9,8 @@ import PositioningCanvas from './positioning';
 import FormatCanvas from './format';
 
 import { IRect, IPointCoord, FlowNode, FlowConnector } from './typing';
+import { pick } from 'lodash';
+
 
 /**
  * 一个极简交互的流程图绘制工具
@@ -26,7 +28,7 @@ export interface MiniFlowMap {
     unlinkChinampaPanel: HTMLElement;
     chinampaPanel: HTMLElement;
 
-
+    onChangeValue?: Function;
 
     templateMap: any;
 
@@ -79,14 +81,15 @@ export default class MiniFlow extends EventEmitter {
     public cavnasDraggable: any;
     private canvasPositioning: PositioningCanvas;
 
-
+    private isAnimationing: boolean;
     private highlightConnectInfo: any;
     private uniq: any;
     private childrenGroupMap: any;
+    private doChangeValue: any;
     public constructor(props: MiniFlowMap) {
         super();
-
         this.uniq = props.uniq || 'default';
+        
         this.canvas = document.getElementById(props.canvas as string);
         this.cavnasWrapper = this.canvas.parentNode;
 
@@ -100,6 +103,7 @@ export default class MiniFlow extends EventEmitter {
         this.connectorInstanceMap = {};
         this.templateMap = props.templateMap || {};
 
+        this.doChangeValue = props.onChangeValue;
         this.canvasZoom = 1;
         this.isViewer = !!props.isViewer;
         this.canvasPosition = { left: 0, top: 0 };
@@ -142,6 +146,7 @@ export default class MiniFlow extends EventEmitter {
             this.childrenGroupMap[nodeName] = null;
         }
     }
+
     public getFlowGroupChildren(nodeName) {
 
         let children: any = this.getDescendantNode(nodeName);
@@ -182,7 +187,7 @@ export default class MiniFlow extends EventEmitter {
         let rect: any = this.getFlowGroupChildren(nodeName);
 
         let group: any = this.childrenGroupMap[nodeName];
-        console.log(rect)
+        
         group.style.left = (rect.left - 16) + 'px';
         group.style.top = (rect.top -16) + 'px';
         group.style.width = (rect.right - rect.left + 160) + 'px';
@@ -225,13 +230,20 @@ export default class MiniFlow extends EventEmitter {
         let size: number = this.size * this.getZoom();
         return half ? size / 2 : size;
     }
-    private doChangeSave() {
+    private doChangeSave(type: string, value?: any) {
         // 触发事件
+        const playload: any = {
+            type,
+            value,
+            nodes: utils.copy(this.nodes),
+            connector: utils.copy(this.connector)
+        };
         // this.flushNodes();
-        this.emit('onChange', {
-            nodes: this.nodes,
-            connector: this.connector
-        })
+        if (this.doChangeValue) {
+            return this.doChangeValue(playload, this.isAnimationing || this.draggingFlag)
+        }
+        
+        this.emit('onChange', playload)
     }
 
     private flushNodes() {
@@ -271,8 +283,7 @@ export default class MiniFlow extends EventEmitter {
     }
 
     private isFreeNode(name: string) {
-
-        return !this.connector.find(it => (it.target == name))
+        return !this.connector.find(it =>   (it.target == name || it.source == name)) && !MiniFlowStructural.isStartNode(this.getNodeByName(name) || {})
     }
     private getConnectorBySourceName(sourceName: string, ignore?: boolean) {
         return this.connector.filter(it => (it.source == sourceName) && (ignore || !it.isTemporary))
@@ -343,7 +354,7 @@ export default class MiniFlow extends EventEmitter {
             }
 
             if (forceUpdate) {
-                this.doChangeSave()
+                this.doChangeSave('updateNode', {...node, name})
             }
         }
     }
@@ -401,14 +412,21 @@ export default class MiniFlow extends EventEmitter {
             serial: maxnumber +1
         });
 
-        !nosave && this.doChangeSave();
+        !nosave && this.doChangeSave('addNode', node);
     }
     private removeNodeByName(nodeName: string) {
         this.nodes = this.nodes.filter(node => node.name != nodeName);
     }
+    private markNodeRemoveByName(nodeName: string) {
+        this.nodes.forEach(it => {
+            if (it.name == nodeName) {
+                it.isTemporary = true;
+            }
+        })
+    }
     private removeTemporaryRouterNodeByName(nodeName: string) {
         this.removeNodeByName(nodeName);
-        this.doChangeSave();
+        this.doChangeSave('template', {});
     }
     private getLinePointByTargetSource(sourceLeft: any, sourceTop: any, targetLeft: any, targetTop: any, limit?: number) {
 
@@ -452,7 +470,8 @@ export default class MiniFlow extends EventEmitter {
         let tempRouteNode = this.getRouterNodeConfig({
 
             left: linePoint.left,
-            top: linePoint.top
+            top: linePoint.top,
+            isTemporary: true
         })
 
         this.addNode(tempRouteNode);
@@ -798,7 +817,11 @@ export default class MiniFlow extends EventEmitter {
             DomUtils.addEvent(this.canvas.parentNode, 'dblclick', (e) => {
                 if (!this.freezeState) {
                     if (this.nodes.length > 0) {
-                        this.addNewNodeByPosition({}, e.pageX, e.pageY)
+                        this.stopAutoSave();
+                        this.addNewNodeByPosition({}, e.pageX, e.pageY, ()=> {
+                            this.startAutoSave();
+                            this.doChangeSave('update')
+                        })
                     }
                 }
             })
@@ -955,7 +978,7 @@ export default class MiniFlow extends EventEmitter {
             }
 
             this.resetConnectorNodeBySourceTarget(source,target);
-            this.doChangeSave()
+            this.doChangeSave('updateNode', node)
         }
     }
     public getHighlightInfo() {
@@ -1213,7 +1236,6 @@ export default class MiniFlow extends EventEmitter {
         let { holder } = dragTarget;
 
         if (holder) {
-
             switch (holder.type) {
                 // 在节点后面增加router节点
                 case 'append':
@@ -1351,23 +1373,31 @@ export default class MiniFlow extends EventEmitter {
                         if (this.dragFreeNode) {
                             if (this.dragTarget) {
                                 this.removeTemporaryConnector();
-                                //this.removeLockConnector();
+                                this.removeLockConnector();
                                 this.linkPlaceholder(this.dragTarget, false, () => {
-                                    this.doChangeSave()
+                                    
+                                    this.doChangeSave('relink', node)
                                 });
 
-
+                                
                                 return this.dragTarget = null;
                             } 
+
+                            console.log('removeNode', this.dragFreeNode)
+                            this.doChangeSave('removeNode', [node.name]);
+
+
                             this.dragFreeNode = false;
                             this.dragNodeName = '';
                             this.dragNode = null;
 
-                        } 
-
-                        this.doChangeSave();
+                        } else {
 
 
+                        // TODO update
+                            this.doChangeSave('updateNode', pick(node, ['name', 'id', 'left', 'top']));
+
+                        }
                     }
                 })
                 this.nodeMap[nodeName] = node;
@@ -1469,12 +1499,13 @@ export default class MiniFlow extends EventEmitter {
             // 建立链接
 
             this.resetFlowNode(nodeConfig);
-            cb && cb()
+            
             if (offsetNodes && offsetNodes.length) {
                 let sourceNode: any = offsetNodes[0];
                 //if (sourceNode.distance < this.size * 5) {
-                    this.addConnectorBySourceTarget(sourceNode.name, newNodeConfig.name)
+                this.addConnectorBySourceTarget(sourceNode.name, newNodeConfig.name)
                 //}
+                cb && cb()
             }
         });
     }
@@ -1490,6 +1521,8 @@ export default class MiniFlow extends EventEmitter {
         }), props || {});
 
         let newRouterNode;
+
+        this.stopAutoSave();
 
         if (currentNode && currentNode.type == 'go') {
 
@@ -1532,6 +1565,8 @@ export default class MiniFlow extends EventEmitter {
                         this.canvasFormat.format(false, false);
                         
                         setTimeout(() => {
+                            this.startAutoSave();
+
                             linkRef.forEach(link => {
                                 if (link.newNode) {
                                     
@@ -1571,6 +1606,7 @@ export default class MiniFlow extends EventEmitter {
         let newNode: any = this.getTemplateNodeConfig({});
         let newRouterNode: any;
         let linkRef: any = [];
+        this.stopAutoSave();
 
         if (sourceNode) {
 
@@ -1596,6 +1632,7 @@ export default class MiniFlow extends EventEmitter {
             this.canvasFormat.format(false, this.nodes.length > 7);
 
             setTimeout(() => {
+                this.startAutoSave();
                 linkRef.forEach(link => {
                     // 
                     if (link.newNode) {
@@ -1650,9 +1687,16 @@ export default class MiniFlow extends EventEmitter {
         this.addConnectorBySourceTarget(sourceNode.name, newNodeConfig.name, false, true)
         return newNodeConfig;
     }
-
+    public stopAutoSave() {
+        this.isAnimationing = true;
+    }
+    public startAutoSave() {
+        this.isAnimationing = false;
+    }
     public addNewNode(config: any, cb?: Function) {
+        
         this.addNode(config);
+        
         cb && setTimeout(() => {
             this.doNewAnimate(config, cb)
         }, 0)
@@ -1660,13 +1704,17 @@ export default class MiniFlow extends EventEmitter {
     private doNewAnimate(nodeConfig, cb?: Function) {
         let dom: any = document.getElementById(nodeConfig.name);
         DomUtils.addClass(dom, 'showed');
+        
         setTimeout(() => {
             DomUtils.removeClass(dom, 'showed');
             DomUtils.removeClass(dom, 'node-new');
             this.updateNodeByName(nodeConfig.name, { isNew: false });
+            
+            
+            this.doChangeSave('addNode', nodeConfig);
+
             // 建立连线
             cb && cb(nodeConfig);
-            this.doChangeSave();
         }, 700)
     }
     //通过dragnode删除连线
@@ -1706,7 +1754,8 @@ export default class MiniFlow extends EventEmitter {
             }
 
             this.reflushDragNode();
-            !nosave && this.doChangeSave();
+            // TODO 删除， 
+            // !nosave && this.doChangeSave('removeNode', {});
         }
     }
 
@@ -1734,15 +1783,18 @@ export default class MiniFlow extends EventEmitter {
         if (reconector.length) {
             reconector.forEach(it => this.addConnectorBySourceTarget(it.source, it.target, false))
         }
+        
+        this.markNodeRemoveByName(nodeName);
+
         this.dropNodeByName(nodeName, () => {
-            this.removeNodeByName(nodeName);
+            this.removeNodeByName(nodeName);    
+            
             if (this.nodes.length ==0) {
                 this.cavnasDraggable.reset()
             }
-            cb && cb();
+            cb && cb([nodeName, ...relatedNodeMap]);
 
-            
-            this.doChangeSave();
+            cb && this.doChangeSave('removeNode', [nodeName, ...relatedNodeMap]);
         });
 
     }

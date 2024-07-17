@@ -1,5 +1,7 @@
 import { utils } from '@blocksx/core';
 
+import Encode from '@blocksx/encrypt/lib/encode';
+
 export default class DefaultNodeList {
     public static getIdeaNode(name: string, props?: any) {
         return {
@@ -38,7 +40,7 @@ export default class DefaultNodeList {
         }
     }
     public static getUniqName(id: any) {
-        return utils.uniq(utils.hashcode('Flow#' + id));
+        return utils.uniq(Encode.encode('mini#' + id));
     }
 
     public static getDefaultTriggerClassifyConfig(classify: string, id: any) {

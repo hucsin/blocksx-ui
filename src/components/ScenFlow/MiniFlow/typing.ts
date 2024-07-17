@@ -28,6 +28,7 @@ export interface FlowNode {
     color: string;
     node?: HTMLElement;
     isTemporary?: boolean;
+    
     locked?: boolean;
     floating?: boolean;
 }

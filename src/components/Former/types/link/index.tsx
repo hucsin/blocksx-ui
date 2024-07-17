@@ -12,6 +12,7 @@ import React from 'react';
 import * as Icons from '../../../Icons';
 
 import { IFormerBase } from '../../typings';
+import { Tooltip } from 'antd';
 import './style.scss'
 
 
@@ -36,11 +37,11 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
         let props: any = this.props['props'] || this.props['x-type-props'];
         let { origin = defaultOrigin, path = '/', target='_blank'} = props;
 
-        let url: string = origin + path + this.state.value;
+        let url: string = origin + path + encodeURIComponent(this.state.value);
         
         return (<span className='ui-link'>
             <Icons.OpenWindowUtilityOutlined/>
-            <a href={url} target={target} >{url}</a>
+            <Tooltip title={url}><a href={url} target={target} >{url}</a></Tooltip>
         </span>)
     }
 }

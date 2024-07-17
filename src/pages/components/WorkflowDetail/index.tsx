@@ -3,6 +3,8 @@ import { Button, Space, Dropdown, Tooltip, Popover, Menu, Spin, Input } from 'an
 import { omit } from 'lodash';
 import classnames from 'classnames';
 import { utils } from '@blocksx/core';
+import { MiniFlow as StructuralMiniFlow } from '@blocksx/structural';
+import Encode from '@blocksx/encrypt/lib/encode';
 import i18n from '@blocksx/i18n';
 
 //import  { FlowNodeType,FlowNode } from '../ScenFlow/MiniFlow/typing'
@@ -20,7 +22,6 @@ import { FetchMap } from './typing';
 
 
 import './style.scss'
-import { connect } from 'http2';
 
 //import MagicFavorites from '../MagicFavorites';
 const MagicFavorites = FormerTypes.rate;
@@ -32,6 +33,8 @@ interface NodeProps {
 }
 
 export interface FlowDetailData extends FetchResult {
+    type?: string,
+    value?: any;
     title: string;
     description: string;
     nodes: MircoFLowNode[];
@@ -72,7 +75,8 @@ export interface MircoFlowProps {
     onPublishValue(/*id: string, version: string, nodes:MircoFLowNode[], connectors:MircoFLowConnector[]*/ value: any): Promise<FetchResult>,
     onEditorValue(value: any, type?: string): Promise<FetchResult>;
     onCloneValue(value: any): Promise<FetchResult>;
-    onSaveFlowList(value: any, nodes:MircoFLowNode[], connectors:MircoFLowConnector[]): Promise<FetchResult>;
+    onSaveFlowList(value: any): Promise<FetchResult>;
+    onEditorNode(type: string, value:any);
 
     fetchMap: FetchMap;
 }
@@ -129,6 +133,9 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     private connectHelperRef: any;
     private router: any;
     private miniFlow:MiniFlow;
+    private nodes: any;
+    private connectors: any;
+
     public constructor(props: MircoFlowProps) {
         super(props)
         this.router = props.router;
@@ -175,9 +182,8 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         this.props.onFetchValue().then((data: FlowDetailData) => {
             // 设置默认数据，一句classify            
             if (!data.nodes || data.nodes.length == 0) {
-                console.log(data.classify, data.id,333)
-                Object.assign(data, 
-                    DefaultNodeList.getDefaultValue(data.classify, data.id))
+                // 人工执行下
+                this.initDefaultvalue(data)
             }
 
 
@@ -189,7 +195,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                 id: data.id,
                 classify: data.classify,
                 classifyLabel: data.classifyLabel,
-                connectors: data.connectors || [],
+                connectors: this.coverConnectors(data.connectors || []),
                 favorites: data.favorites || false,
                 status: data.status,
                 version: data.version || '0.0.1',
@@ -208,7 +214,48 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             this.setState({loading: false})
         })
     }
-
+    private initDefaultvalue(data: any) {
+        Object.assign(data, 
+            DefaultNodeList.getDefaultValue(data.classify, data.id));
+        // 保存
+        this.saveFlowList(this.state.value, this.nodes, this.connectors, 'default', {
+            value: {}, 
+            diff:  {
+                nodes: StructuralMiniFlow.diffNodes([], data.nodes),
+                connectors: this.coverDiffConnectors(StructuralMiniFlow.diffConnectors([], data.connectors))
+            }
+        })
+    }
+    private coverConnectors(connectors: any) {
+        return connectors.map(conn => {
+            if (conn.name) {
+                
+                let sourcetarget: any = conn.name.split('#')
+                
+                return {
+                    id: conn.id,
+                    source: sourcetarget[0],
+                    target: sourcetarget[1],
+                    props: conn.props
+                }
+            } else {
+                return conn
+            }
+        })
+    }
+    private coverDiffConnectors(diffConnectors: any) {
+        return diffConnectors.map(it => {
+            let { value ={} } = it;
+            return {
+                type: it.type,
+                value: {
+                    id: it.id,
+                    props: it.props,
+                    name: [value.source, value.target].join('#')
+                }
+            }
+        })
+    }
     public componentWillUpdate(newProps: MircoFlowProps) {
         let { router = {} } = newProps;
         if (router.routerKey !== this.state.routerKey) {
@@ -226,16 +273,63 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             })
         }
     }
-
+    public saveFlowList(value: any, nodes: any, connector: any, type: any, cv: any) {
+        let { onSaveFlowList, onEditorNode} = this.props;
+        switch (type) {
+            //case 'addNode':
+            case 'updateNode':
+            case 'removeNode':
+                return onEditorNode(type, cv)
+            default:
+                onSaveFlowList && onSaveFlowList(cv)
+        }
+    }
+    private cleanNode(node): any {
+        return node.map(it => {
+            return it.id ? {name: it.name, left: it.left, top: it.top} : it;
+        })
+    }
     public initMiniFlow(id: any) {
-
+        
         this.miniFlow = new MiniFlow({
-            uniq: utils.hashcode('Flow#' + id),
+            uniq: Encode.encode('Mini#' + id),
             canvas: this.cavnasId,
             isViewer: this.props.isViewer,
             unlinkChinampaPanel: this.unlinkPanel,
             destoryChinampaPanel: this.destoryPanel,
             chinampaPanel: this.responsePanel,
+
+            onChangeValue: ({ type, value, nodes, connector }:FlowDetailData, isdraging: boolean, diffMap: any = {}) => {
+                if (!this.props.isViewer) {
+                    if (!isdraging) {
+                        
+                        if (type !== 'updateNode') {
+                            diffMap.connectors = this.coverDiffConnectors(StructuralMiniFlow.diffConnectors(this.connectors, connector));
+                        }
+
+                        if (!(['updateNode', 'removeNode'].indexOf(type as any ) > -1)) {
+                            // 删除或则移动位置
+                            diffMap.nodes = StructuralMiniFlow.diffNodes(this.cleanNode(this.nodes), this.cleanNode(nodes))
+                        }
+                        
+                        this.nodes = nodes;
+                        this.connectors = connector;
+                        
+                    }
+                    this.setState({
+                        nodes: nodes,
+                        isPublish: false,
+                        connectors: connector
+                    }, ()=> {
+                        if (!isdraging) {
+                            this.saveFlowList(this.state.value, this.nodes, this.connectors, type, {
+                                value: value, 
+                                diff: diffMap
+                            })
+                        }
+                    })
+                }
+            },
 
             templateMap: {
                 router: {
@@ -261,6 +355,9 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             connector: this.state.connectors
         });
 
+        this.nodes = utils.copy(this.state.nodes);
+        this.connectors = utils.copy(this.state.connectors);
+
         this.miniFlow.doZoomNodeCanvas();
         
         if  (this.state.nodes.length == 0) {
@@ -268,18 +365,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         }
     }
     public bindEvent() {
-        if (!this.props.isViewer) {
-            this.miniFlow.on('onChange', (data:FlowDetailData) => {
-                
-                this.setState({
-                    nodes: data.nodes,
-                    isPublish: false,
-                    connectors: data.connector
-                }, () => {
-                    this.saveFlowList(this.state.value, data.nodes, data.connector)
-                })
-            })
-        }
+       
 
         this.miniFlow.on('highlightConnect', ({target,source,event})=> {
             let { current } = this.connectHelperRef;
@@ -312,14 +398,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             }
         })
     }
-    public saveFlowList(value: any, nodes: any, connector: any) {
-        if (!!this.props.onSaveFlowList) {
-            this.props.onSaveFlowList(value, nodes, connector).then(node => {
-                //console.log(node,88898989)
-                // TODO 更新节点，动态更新，不做全亮替换
-            })
-        }
-    }
+   
     private getQueryValue(queryKey: string) {
         let { query = {} } = this.router;
         return query[queryKey] || ''
@@ -504,12 +583,15 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     public addNewNodeByPostion =(nodeInfo: any, postion: any) => {
         let width: number = postion.width;
         let height: number = postion.height;
-
+        this.miniFlow.stopAutoSave();
         this.miniFlow.addNewNodeByPosition(
             this.getFlowNodeByNodeInfo(nodeInfo)
             , postion.left  + width / 2, postion.top + height / 2,
             ()=> {
-                this.miniFlow.canvasFormat.format()
+
+                this.miniFlow.startAutoSave();
+                this.miniFlow.canvasFormat.format();
+
             }
         );
         
@@ -549,6 +631,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         this.miniFlow.updateNodeByName(id, nodeInfo, true)
     }
     public updateNodeByName =(id: string, nodeInfo: any, isPatch: boolean = false)=> {
+        
         if (isPatch) {
             return this.patchNodeByName(id, nodeInfo);
         }

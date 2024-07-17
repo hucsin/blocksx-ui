@@ -34,6 +34,11 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
     private fetchRestoreRequest: any
     private fetchCloneRequest: any;
 
+    private updateNodeRequest: any;
+    private freshNodeRequest: any;
+    private addNodeRequest: any;
+    private removeNodeRequest: any;
+
 
     private router: routerParams;
     public constructor(props: IFlowEdit) {
@@ -54,7 +59,13 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
         this.fetchVersionHistoryRequest = SmartRequest.createPOST(`${path}/history`);
         this.fetchRestoreRequest = SmartRequest.createPOST(`${path}/restoreHistory`)
         this.fetchCloneRequest = SmartRequest.createPOST(`${path}/clone`);
+
+        this.updateNodeRequest = SmartRequest.createPOST(`${path}/updateNode`)
+        this.removeNodeRequest = SmartRequest.createPOST(`${path}/removeNode`);
+        this.freshNodeRequest = SmartRequest.createPOST(`${path}/fresh`);
+
     }
+    
     public render() {
 
         return (
@@ -81,8 +92,22 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                     return this.fetchViewRequest({id: this.props.router.params.id})
                 }}
                 onPublishValue={this.fetchPublishRequest}
-                onSaveFlowList={(value: any, nodes: any, connectors: any)=>{
-                    nodes = nodes.map(it => {
+                onEditorNode= {(type: string, { value, diff} : any)=> {
+                    switch(type) {
+                        case 'removeNode':
+                            return this.removeNodeRequest({
+                                where: {
+                                    name: value,
+                                    workflowId: this.props.router.params.id
+                                },
+                                diffConnectors: diff.connectors || []
+                            })
+                        case 'updateNode':
+                            return this.updateNodeRequest(value)
+                    }
+                }}
+                onSaveFlowList={({ diff})=>{
+                    /**nodes = nodes.map(it => {
                         let props: any = it.props || {};
                         let componentName: any = props.componentName || it.componentName;
                         
@@ -94,9 +119,15 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                             connection: props.connection,
                             appname: it.appname || splitName[0]
                         }
-                    })
+                    })*/
+
+                    return this.freshNodeRequest({
+                        diffNodes: diff.nodes, 
+                        diffConnectors: diff.connectors,
+                        workflowId: this.props.router.params.id
+                    });
                     
-                    return this.fetchUpdateRequest({id: value.id, nodes, isPublish: false, connectors})
+                    //return this.fetchUpdateRequest({id: value.id, nodes, isPublish: false, connectors})
                 }}
 
                 onCloneValue={(v)=>{

@@ -261,6 +261,7 @@ export default class CanvasFormat {
             
             this.repaint(flowMaps, paddingSize);
             !noZoom && this.zoomFit();
+            console.log('dochangeinin')
             this.miniFlow.doChangeSave();
 
             setTimeout(()=> {

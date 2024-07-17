@@ -5,6 +5,14 @@
         }
 
     }
+    a {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: calc(100% - 20px);
+        display: inline-block;
+        vertical-align: bottom;
+    }
     span {
         margin-right: 4px;
     }
