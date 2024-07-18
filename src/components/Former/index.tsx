@@ -221,6 +221,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             })
         }
 
+
         if (newProps.value && newProps.value != this.state.value) {
             this.setState({
                 value: newProps.value || {}
@@ -330,10 +331,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 //if (this.state.type === 'default') {
                
                 //}
-            }, 100);
+            }, 200);
         }
-
-        if (this.props.onChangeValue && type !=='init') {
+        // man 是人工触发的
+        if (this.props.onChangeValue && type =='man') {
             this.props.onChangeValue(trueValue);
         }
     }
@@ -379,7 +380,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 ...value,
                 ...safeValue
             }
-        }, () => this.onChangeValue(this.state.value))
+        }, () => this.onChangeValue(this.state.value, 'man'))
         
     }
     public getValue() {

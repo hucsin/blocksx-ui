@@ -16,6 +16,7 @@ import { mainTexture} from './core/texture';
 
 interface SmartPageGroupProps {
     pageURI: string;
+    router: any;
     name: string;
     group?: any[],
     title?: string;
@@ -53,7 +54,16 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
         this.optionalContainerRef = React.createRef();
     }
 
+    private getQuery(groupList: any) {
+        if (this.props.router) {
+            
+            let query: any = this.props.router.query;
+            
+            let defclassify: string = query.classify || '';
 
+            return groupList.find(it => it.name == defclassify)
+        }
+    }
     public  componentDidMount(): void {
         SmartPageUtil.getRequestHelper(this.props.pageURI)({
             page: this.props.name
@@ -65,7 +75,7 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
                 title: data.title,
                 icon: data.icon,
                 description: data.description,
-                current: groupList[0]
+                current: this.getQuery(groupList) || groupList[0]
             })
         })
     }
@@ -103,6 +113,11 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
         
         this.setState({
             current: group.find(it => it.name == currentKey)
+        }, () => {
+            // do query
+            this.props.router.utils.goQuery({
+                classify: currentKey
+            })
         })
     }
     public render() {

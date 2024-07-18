@@ -169,6 +169,7 @@ export default class TablerUtils {
         let fieldMeta: any = field.meta || {
             type: 'input'
         }
+
         return {
             ...field,
             key: field.fieldKey,
@@ -247,7 +248,7 @@ export default class TablerUtils {
 
     public static getDefaultFieldSchema(it:any, index) {
         //console.log(it.type, it, it.column, 111)
-        
+        let props: any = Object.assign({}, it.props, it.meta && it.meta.props);
         return {
             ...it,
             type: it.type || 'string', // 统一当string处理
@@ -262,7 +263,7 @@ export default class TablerUtils {
             'x-half-width': false,
             'x-portal': it.portal,
 
-            'x-type-props': Object.assign({}, it.props, it.meta && it.meta.props),
+            'x-type-props': props,
             'x-type': it.uiType || 'input',
             'x-colspan': it.colspan,
             //'x-model-switch': true,
@@ -274,7 +275,7 @@ export default class TablerUtils {
             [`${it.uiType =='array' ? 'items': 'properties'}`]: 
                 it.fields ? 
                     it.uiType =='array' 
-                        ? this.getDefaultSchemaArrayItems(it.fields) 
+                        ? this.getDefaultSchemaArrayItems(it.fields, props) 
                         : this.getDefaultSchemaProperties(it.fields) 
                 : null,
             
@@ -282,10 +283,19 @@ export default class TablerUtils {
         }
     }
 
-    public static getDefaultSchemaArrayItems(fields: any) {
+    public static getDefaultSchemaArrayItems(fields: any, props) {
         // arary 过滤
         
-        return this.getDefaultSchema(fields.filter(it=> it.major !== false))
+        return this.getDefaultSchema(fields.filter(it=> it.major !== false).map(it => {
+            
+            if (props.disabled) {
+                it.props = Object.assign({}, it.props || {}, {
+                    disabled: true
+                })
+            }
+            
+            return it;
+        }))
 
     }
     public static getDefaultSchemaProperties(fields?: any) {

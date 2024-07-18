@@ -189,7 +189,9 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
 
    
     public render() {
-       
+        let props:any = this.props['props'] || this.props['x-type-props'] || {};
+        let disabled: boolean = props.disabled || this.props.disabled;
+
         return (
             <Tooltip title={this.props.tooltip}>
                 <Select
@@ -205,7 +207,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                     mode={this.props.mode}
                     showSearch={true}
                     popupClassName={this.props.popupClassName}
-                    disabled={this.props.disabled}
+                    disabled={disabled}
                     loading={this.state.loading}
                     onSearch={this.onSearch}
                     onChange={this.onChange}

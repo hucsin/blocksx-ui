@@ -410,6 +410,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         if (this.props.onChangeValue) {
             this.props.onChangeValue(value, type, originValue);
         }*/
+       
         this.onChange(value, type, originValue)
 
         if (this.props['x-control']) {
@@ -1016,6 +1017,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         let ContentPortal: any = this.getPortalBySlot(this.props.portalMap,'content')
 
         if (View) {
+            console.log(this.leafProps.path || this.leafProps.index || this.leafProps['x-index'], this,222)
             let viewProps: any = {
                 key:this.leafProps.path || this.leafProps.index || this.leafProps['x-index'],
                 ...this.leafProps,
@@ -1027,7 +1029,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                 originValue:this.state.originValue,
                 runtimeValue:this.state.runtimeValue,
                 disabled:!this.isAllowModify(),
-                onChangeValue:(val: any, type?: string, originValue?: any) => this.onChangeValue(val, type, originValue)
+                onChangeValue:(val: any, type?: string, originValue?: any) => this.onChangeValue(val, type || 'man', originValue)
             }
             return (
                 <Popover

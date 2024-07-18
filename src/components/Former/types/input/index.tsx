@@ -24,6 +24,7 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
         this.state = {
             value: props.value
         };
+        
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
         
@@ -45,6 +46,8 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
 
     public render() {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
+        let disabled: boolean = props.disabled || this.props.disabled;
+
 
         if (props.prefix) {
             if (Icons[props.prefix]) {
@@ -57,11 +60,11 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
         
         if (props.type && props.type == 'password') {
             return (
-                <Input.Password size={this.props.size} {...props} disabled={this.props.disabled} value={this.state.value} onChange={this.onChange} />
+                <Input.Password size={this.props.size} {...props} disabled={disabled} value={this.state.value} onChange={this.onChange} />
             )
         } else {
             return (
-                <Input size={this.props.size}  {...props} style={{width: props.width}} disabled={this.props.disabled} value={this.state.value} onChange={this.onChange} />
+                <Input size={this.props.size}  {...props} style={{width: props.width}} disabled={disabled} value={this.state.value} onChange={this.onChange} />
             )
         }
     }

@@ -1,6 +1,7 @@
 import { utils } from '@blocksx/core';
 
 import Encode from '@blocksx/encrypt/lib/encode';
+import { buffer } from 'stream/consumers';
 
 export default class DefaultNodeList {
     public static getIdeaNode(name: string, props?: any) {
@@ -56,7 +57,7 @@ export default class DefaultNodeList {
         pages: (uniq: any, props?: any) => {
             return {
                 isNew: false,
-                icon: 'PagesCommonFilled',
+                icon: 'PagesCommonOutlined',
                 color: '#1EAEDB',
                 componentName: 'Thinking.pages',
                 ...props,
@@ -165,14 +166,14 @@ export default class DefaultNodeList {
             }
         },
         'function': (uniq: string) => {
-            let sourceNodeName: string = uniq + '1';
-            let targetNodeName: string = uniq + '2';
-            
+            let startName: string = uniq + '1';
+            let bufferName: string = uniq + '2';
+            let emptyName: string = uniq + '3';
 
             return {
                 nodes: [
                     {
-                        name: sourceNodeName,
+                        name: startName,
                         type: 'go',
                         isNew: false,
                         icon: 'StartCircleUtilityFilled',
@@ -188,15 +189,37 @@ export default class DefaultNodeList {
                         top: 162,
                         locked: true
                     },
-                    this.getEmptyNode(targetNodeName, {
+                    {
+                        name: bufferName,
+                        type: 'router',
+                        icon: 'DatasourceMiniDataOutlined',
+                        componentName: 'Thinking.buffer',
+                        color: window['__main_bg_color'],
+                        props: {
+                            icon: '',
+                            program: 'Buffer',
+                            method: 'Conditional Buffer'
+                        },
+                        top: 162,
                         left: 258,
-                        top: 162
+                        serial:2,
+                        locked: true
+                    },
+                    this.getEmptyNode(emptyName, {
+                        left: 458,
+                        top: 162,
+                        serial: 3
                     })
                 ],
                 connectors: [
                     {
-                        source: sourceNodeName,
-                        target: targetNodeName,
+                        source: startName,
+                        target: bufferName,
+                        props: {}
+                    },
+                    {
+                        source: bufferName,
+                        target: emptyName,
                         props: {}
                     }
                 ]

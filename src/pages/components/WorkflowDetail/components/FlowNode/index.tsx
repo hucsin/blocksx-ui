@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { utils } from '@blocksx/core';
+import { utils, keypath } from '@blocksx/core';
 import './style.scss';
 import { FetchMap } from '../../typing';
 import NodeConfigure from '../NodeConfigure';
@@ -10,6 +10,7 @@ import i18n from '@blocksx/i18n';
 import { PlusOutlined } from '@ant-design/icons';
 
 import DefaultNodeList from '../../config/DefaultNodeList';
+import { get, set } from 'lodash';
 
 
 
@@ -54,6 +55,8 @@ interface SMircoFlowNode {
     openSetting: boolean;
     hasChanged: boolean;
     settingMode?: string
+    reflush: number;
+    value?: any;
 }
 
 export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMircoFlowNode> {
@@ -64,6 +67,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         'Thinking.Pages': 'Pages',
         'Thinking.OpenAPI': 'OpenAPI'
     }
+    private control: any ;
     private getTriggerName() {
         let { componentName } = this.props;
         return this.componentNameTriggerMap[componentName as any] 
@@ -107,7 +111,6 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         let notThinking: boolean = this.props.classify !=='thinking';
                         let hasPages: boolean = notThinking && !c.hasPages;
                         let hasOpenAPI:boolean = notThinking && !c.hasOpenAPI;
-                        console.log(hasOpenAPI, hasPages, hasTimer,c)
                         return true;
                     }
                     
@@ -214,6 +217,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
 
         this.state = {
             left: props.left,
+            reflush: 1,
             top: props.top,
             color: props.color,
             type: props.type,
@@ -375,7 +379,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             default:
                 let propsvalue = this.state.props || {}
                 let isInputValue: boolean = this.state.settingMode !== 'setting';
-                let value: any  = (isInputValue ? { ...propsvalue.input, $connection: propsvalue.connection } : propsvalue) || {};
+                let value: any  = this.state.value || (isInputValue ? { ...propsvalue.input, $connection: propsvalue.connection } : propsvalue) || {};
                 let name: string = 'setting' === this.state.settingMode ? 'ConnectorSetting' : componentName || 'router';
                 
                 
@@ -391,6 +395,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         pageURI='/eos/programs/findPage'
                         key={name}
                         name={name}
+                        reflush={this.state.reflush}
                         type="popover"
                         isViewer={this.props.isViewer}
                         simplicity
@@ -411,8 +416,17 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         }}
                         icon="SettingOutlined"
                         value={value}
-                        onClose={(props = {}, changed?: boolean)=> {
+                        onSchemaResponse={(schema)=> {
+                            if (schema.meta && schema.meta.control) {
+                                this.initControl(schema.meta.control)
+                            }
+                        }}
+                        onChangeValue={(val) => {
+                            this.setState({value: val});
+                        }}
+                        onClose={(props: any = {}, changed?: boolean)=> {
                             if (changed) {
+                                
                                 if (isInputValue) {
                                     
                                     propsvalue.input = {
@@ -424,10 +438,10 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                                     propsvalue = props;
                                 }
                                 
-                            // let pickvalue: any = pick(this.state.props, ['icon', 'color'])
-                                //console.log(pickvalue, props, 222, this.state.props)
+                                let cacheValue: any = this.clearPatchValue(propsvalue);
                                 this.setState({
-                                    props: propsvalue,
+                                    props: cacheValue,
+                                    value: isInputValue ? cacheValue.input : cacheValue,
                                     hasChanged: true
                                 }, ()=> this.onCloseLayer())
                             } else {
@@ -436,8 +450,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         }} 
                         noToolbar
                         open={this.state.openSetting}
-                        onShow={()=>this.setState({openSetting: true})}
-                        
+                        onShow={this.onShowLayer}
                     >
                         {this.renderDefaultNodeContent(icon, color)}
                     </SmartPage>
@@ -445,11 +458,58 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         }
         
     }
+    private initControl(control: any) {        
+        this.control = control;
+        //
+        this.patchValue();
+    }
+    private clearPatchValue(props:any) {
+        if (this.control) {
+            let { patch, type } = this.control;
+            if (type =='sync') {
+                for(let prop in patch) {
+
+                    set(props, prop.replace(/^props\./,''), undefined)
+                }
+            }
+        }
+
+        return props;
+    }
+    private patchValue() {
+        if (this.control && this.state.settingMode !== 'setting') {
+            let { patch, type, listen } = this.control;
+            // 如果是值同步，
+            if (type == 'sync') {
+                // 依据listen条件获取值
+                
+                let nodeinfo: any = this.mircoFlow.miniFlow.findNode(listen);
+                let state = this.state || {};
+
+                for (let prop in patch) {
+                    keypath.setData(state, prop, keypath.getData(nodeinfo, patch[prop]))
+                }
+                
+                this.setState({
+                    props: state.props,
+                    reflush: state.reflush + 1,
+                    value: state.props.input
+                })
+
+            }
+        }
+    }
+    private onShowLayer =()=> {
+    
+        this.patchValue();
+        this.setState({openSetting: true});
+    }
     private onCloseLayer() {
         if (this.state.hasChanged) {
+           
             this.props.onUpdateNode && this.props.onUpdateNode(this.props.name, {
-                props: this.state.props.prpos
-            }, this)
+                props: {...this.state.props}
+            }, true)
         }
 
         this.setState({openSetting: false,hasChanged: false, settingMode: ''})

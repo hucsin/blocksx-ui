@@ -8,6 +8,16 @@
     .former-array-content {
         max-height: 314px;
         overflow-y: auto;
+        .ant-select-disabled,
+        .ant-input-disabled {
+            opacity: .6;
+        }
+    }
+    &.former-array-disabled {
+        .fomre-array-item-toolbar,
+        .former-array-item-remove {
+            display:none;
+        }
     }
     &:Hover {
 
@@ -86,7 +96,8 @@
 
             &.ant-popover-open,
             &:hover {
-                color:var(--main-bg-color)
+                color:var(--main-bg-color);
+                opacity: 1;
             }
         }
 

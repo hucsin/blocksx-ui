@@ -24,7 +24,6 @@ export { default as MarkReadUtilityFilled } from './MarkReadUtilityFilled';
 export { default as MarkUnreadUtilityFilled } from './MarkUnreadUtilityFilled';
 export { default as NarrowUtilityFilled } from './NarrowUtilityFilled';
 export { default as OceanbaseBrandFilled } from './OceanbaseBrandFilled';
-export { default as PagesCommonFilled } from './PagesCommonFilled';
 export { default as PaypalBrandFilled } from './PaypalBrandFilled';
 export { default as PostgresqlBrandFilled } from './PostgresqlBrandFilled';
 export { default as ProductCommonFilled } from './ProductCommonFilled';
@@ -91,6 +90,7 @@ export { default as OpenWindowUtilityOutlined } from './OpenWindowUtilityOutline
 export { default as OpengaussBrandOutlined } from './OpengaussBrandOutlined';
 export { default as OracleBrandOutlined } from './OracleBrandOutlined';
 export { default as PageCommonOutlined } from './PageCommonOutlined';
+export { default as PagesCommonOutlined } from './PagesCommonOutlined';
 export { default as PaymentCommonOutlined } from './PaymentCommonOutlined';
 export { default as PaymentPlatformCommonOutlined } from './PaymentPlatformCommonOutlined';
 export { default as PickUtilityOutlined } from './PickUtilityOutlined';

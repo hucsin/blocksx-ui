@@ -218,13 +218,15 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         Object.assign(data, 
             DefaultNodeList.getDefaultValue(data.classify, data.id));
         // 保存
-        this.saveFlowList(this.state.value, this.nodes, this.connectors, 'default', {
-            value: {}, 
-            diff:  {
-                nodes: StructuralMiniFlow.diffNodes([], data.nodes),
-                connectors: this.coverDiffConnectors(StructuralMiniFlow.diffConnectors([], data.connectors))
-            }
-        })
+        if (data.nodes.length) {
+            this.saveFlowList(this.state.value, this.nodes, this.connectors, 'default', {
+                value: {}, 
+                diff:  {
+                    nodes: StructuralMiniFlow.diffNodes([], data.nodes),
+                    connectors: this.coverDiffConnectors(StructuralMiniFlow.diffConnectors([], data.connectors))
+                }
+            })
+        }
     }
     private coverConnectors(connectors: any) {
         return connectors.map(conn => {
@@ -584,6 +586,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         let width: number = postion.width;
         let height: number = postion.height;
         this.miniFlow.stopAutoSave();
+        
         this.miniFlow.addNewNodeByPosition(
             this.getFlowNodeByNodeInfo(nodeInfo)
             , postion.left  + width / 2, postion.top + height / 2,
@@ -614,14 +617,14 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             type: nodeInfo.type || type,
             props: {
                 type: type,
-                ...nodeInfo,
+                ...omit(nodeInfo, ['props']),
                 icon: subicon
             }
         }
     }
-    public patchNodeByName = (id: string, props: any) => {
+    public patchNodeByName = (id: string, {props}) => {
         let nodeInfo: any = this.miniFlow.getNodeByName(id);
-
+        
         if (nodeInfo.props) {
             Object.assign(nodeInfo.props, props)
         } else {

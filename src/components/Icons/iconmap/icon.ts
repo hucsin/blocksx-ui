@@ -129,10 +129,10 @@ export const map:any = {
         "UpMiniDirectivityOutlined"
     ],
     "common": [
-        "PagesCommonFilled",
         "ProductCommonFilled",
         "FolderCommonOutlined",
         "PageCommonOutlined",
+        "PagesCommonOutlined",
         "PaymentCommonOutlined",
         "PaymentPlatformCommonOutlined",
         "ProfessionalCommonOutlined"

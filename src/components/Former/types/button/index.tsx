@@ -66,6 +66,8 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             props: props['x-type-props']
         };
 
+        console.log(3333)
+
         if (typeProps.actionURI) {
             this.actionRequestHelper = SmartRequest.createPOST(typeProps.actionURI)
         }
@@ -88,7 +90,6 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
 
     public componentDidMount(): void {
         let { props } = this.state;
-
         if (props.type == 'meta') {
             if (this.viewRequestHelper) {
                 let { props } = this.state;

@@ -24,9 +24,10 @@ interface IFormerArrays extends IFormerArray {
     children?:any;
 
     moreItems?: any;
+    props?: any;
 }
 
-export default class FormerArray extends React.Component<IFormerArrays, { value: any }> {
+export default class FormerArray extends React.Component<IFormerArrays, { disabled: boolean, value: any }> {
 
     static Item = FormerArrayItem;
     private contextRef: any ;
@@ -34,10 +35,23 @@ export default class FormerArray extends React.Component<IFormerArrays, { value:
         super(props);
         
         this.state = {
-            value: props.value
+            value: props.value,
+            disabled: this.getDisabled()
         };
-
+        
         this.contextRef = React.createRef();
+    }
+    private getDisabled() {
+        let { props = {} } = this.props;
+
+        return typeof props.disabled !== 'undefined' ? props.disabled : this.props.disabled;
+    }
+    public UNSAFE_componentWillReceiveProps(nextProps: Readonly<IFormerArrays>): void {
+        if (nextProps.value !== this.state.value) {
+            this.setState({
+                value: nextProps.value
+            })
+        }
     }
     private onChangeValue(value) {
         this.setState({
@@ -111,6 +125,7 @@ export default class FormerArray extends React.Component<IFormerArrays, { value:
                 index: index,
                 moreItems: this.props.moreItems,
                 value: value[index],
+                disabled: this.state.disabled,
                 isLastItem: index === value.length -1,
                 onArrayItemRemove: (index: number) => {
                     this.onArrayItemRemove(index);
@@ -124,27 +139,42 @@ export default class FormerArray extends React.Component<IFormerArrays, { value:
             }))
         })
     }
-    
+    private renderFooter() {
+
+        let children: any = this.props.children;
+        let { validation = {}, props = {} } = this.props;
+        let maxItems: number = validation.maxItems || 20;
+        let limited: boolean = children.length >= maxItems;
+
+        if (this.state.disabled) {
+            return (
+                <div className='former-array-limit'>{props.notice}</div>
+            )
+        } else {
+            return limited ? <div className='former-array-limit'>
+                Exceeds the maximum allowed number of items {!!children.length && <span>(total: {children.length})</span>}
+            </div> :
+                <div className="former-array-empty" onClick={this.onArrayItemAdd}>
+                    <PlusOutlined/>Click to add array items {!!children.length && <span>(total: {children.length})</span>}
+                </div>
+        }
+        
+    }
     public render() {
         let children: any = this.props.children;
         let hasChildren = children && children.length > 0;
-        let { validation = {} } = this.props;
-        let maxItems: number = validation.maxItems || 20;
-        let limited: boolean = children.length >= maxItems;
         return (
             <div className={
                 classnames("former-array", {
-                    'former-array-nochildren': !hasChildren
+                    'former-array-nochildren': !hasChildren,
+                    'former-array-disabled': this.state.disabled
                 })
             }>
                 <div className='former-array-content'>
                     {this.getChildren()}
                     <span  ref={this.contextRef}></span>
                 </div>
-                {limited? <div className='former-array-limit'>
-                    Exceeds the maximum allowed number of items {!!children.length && <span>(total: {children.length})</span>}
-                </div> :
-                <div className="former-array-empty" onClick={this.onArrayItemAdd}><PlusOutlined/>Click to add array items {!!children.length && <span>(total: {children.length})</span>}</div>}
+                {this.renderFooter()}    
             </div>
         )
     }

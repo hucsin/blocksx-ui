@@ -39,6 +39,7 @@ export interface SmartPageProps {
     router?: routerParams;
     children?: any;
     value?: any;
+    reflush?: any;
     typeProps: any;
     props: any;
     open: boolean;
@@ -102,7 +103,7 @@ export interface SmartPageState {
 
     open: boolean;
 
-    reflush: number;
+    reflush?: number;
     path: string;
     name: string;
     title: string;
@@ -187,7 +188,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             uiType: props.uiType,
             path: '',
             name: props.name,
-            reflush: 0,
+            reflush: props.reflush || 0,
             optional: props.optional,
             noTitle: props.noTitle,
             optionalOpen: false,
@@ -325,10 +326,11 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     
                 }
                 let { meta = {} } = data.schema;
+                
                 Object.assign(data, {
                     title: meta.title || this.state.title,
                     metaKey: this.getMetaKey(data.pageMeta),
-                    reflush: +new Date,
+                    //reflush: this.props.reflush + 1,
                     noFolder: this.state.noFolder,
                     noHeader: this.state.noHeader,
                     noToolbar: this.state.noToolbar,
@@ -363,7 +365,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         }
 
         if (newProps.name != this.state.name || newProps.id != this.state.id) {
-
+            
             this.setState({
                 id: newProps.id,
                 name: newProps.name,
@@ -377,9 +379,21 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 classifyQuery: undefined
             }, this.fetch)
         }
-
-        if (newProps.value != this.state.value) {
+        
+        // TODO 检查什么时候需要设置这个值
+        if (this.props.onChangeValue) {
+            if (newProps.value != this.state.value) {
+            // console.log('resetvalue', newProps.value)
+              //  this.setState({
+              //      value: newProps.value
+              //  })
+            }
+        }
+        
+        if (!utils.isUndefined(newProps.reflush) && newProps.reflush !== this.state.reflush) {
+            
             this.setState({
+                reflush: newProps.reflush,
                 value: newProps.value
             })
         }
@@ -464,7 +478,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         return params;
     }
     private onChangeValue =(value: any)=> {
-        
+        //console.log('onchangevalue-smart', value)
         this.setState({
             value,
             changed: true
@@ -480,7 +494,6 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     public renderContentView() {
         let { pageMeta} = this.state;
-        
         return SmartPageUtils.renderPageType(this.state.uiType, {
             id: this.state.id,
             key: this.state.id,
@@ -705,6 +718,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         if (this.props.onClose) {
             this.props.onClose(value, this.state.changed)
         }
+        
         this.setState({open:false})
     }
     private toggleOpenStatus =(open: boolean)=> {
@@ -716,6 +730,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             this.canShow && this.onShow();
             
         } else {
+            
             this.onClose(this.state.value);
         }
     }

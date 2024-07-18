@@ -501,7 +501,9 @@
     }
 
     .ui-subtitle {
-        display: none;;
+        display: inline-block;
+        font-weight: 400;
+        opacity: .5;
     }
     &.ui-mircotable-card {
         .ui-mircotable-extra {

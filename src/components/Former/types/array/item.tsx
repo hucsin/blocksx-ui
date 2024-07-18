@@ -48,6 +48,7 @@ export default class FormerArrayItem extends React.Component<IFormerArrayItem, {
                     onChangeValue = {()=>{}}
                     formerType="popover"
                     value={this.state.value}
+                    viewer={this.props.disabled}
                     width={500}
                     pageMeta={{
                         icon: 'SettingUtilityOutlined'

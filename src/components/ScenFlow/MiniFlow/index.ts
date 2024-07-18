@@ -9,7 +9,7 @@ import PositioningCanvas from './positioning';
 import FormatCanvas from './format';
 
 import { IRect, IPointCoord, FlowNode, FlowConnector } from './typing';
-import { pick } from 'lodash';
+import { pick, get } from 'lodash';
 
 
 /**
@@ -1486,6 +1486,26 @@ export default class MiniFlow extends EventEmitter {
      * 
      ******************/
 
+
+    // 过滤节点
+    public findNode(where: any) {
+        return this.nodes.find(it=> {
+            let finded: boolean = true;
+            for (let prop in where) {
+                if (get(it, prop) !== where[prop]) {
+                    return false;
+                }
+            }
+            return finded
+        })
+    }
+
+    public findNodeProps(where: any) {
+        let find: any = this.findNode(where);
+
+        return find && find.props 
+    }
+
     public addNewNodeByPosition(nodeInfo: any, pageX: number, pageY: number, cb?: Function) {
         let shadowPoint: any = this.canvasPositioning.getOriginalShadowPointByPageXY(pageX, pageY);
         let offsetNodes: any = this.findOffsetNodes(shadowPoint.left - this.size / 2, shadowPoint.top - this.size / 2);
@@ -1505,8 +1525,9 @@ export default class MiniFlow extends EventEmitter {
                 //if (sourceNode.distance < this.size * 5) {
                 this.addConnectorBySourceTarget(sourceNode.name, newNodeConfig.name)
                 //}
-                cb && cb()
             }
+
+            cb && cb()
         });
     }
     // 新增一个当前开始节点的兄弟节点

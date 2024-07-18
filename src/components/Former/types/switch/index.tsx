@@ -74,6 +74,8 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
 
     public render() {
         let props: any = this.props['x-type-props'] || this.props['props'] || {};
+        let disabled: boolean = props.disabled || this.props.disabled;
+
         let loading: boolean = this.state.loading && this.props.loading;
         let size: any = props.size || this.props.size || 'small';
         
@@ -95,7 +97,7 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
                         checkedChildren={CheckedIconView ? <CheckedIconView/> : this.props.checkedText}
                         loading  = {loading}
                         size     = {size}
-                        disabled = {(false === this.props.canOff ? this.state.value : false) || this.props.disabled}  
+                        disabled = {(false === this.props.canOff ? this.state.value : false) || disabled}  
                         checked  = {this.state.value} 
                         onChange = {this.onChange} 
                     />

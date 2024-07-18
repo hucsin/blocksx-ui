@@ -4,7 +4,7 @@ import WorkflowDetail  from './components/WorkflowDetail';
 
 //import { getFormerSchema } from './former';
 
-import { omit } from 'lodash';
+import { omit,pick } from 'lodash';
 
 interface IFlowEdit {
     isTemplate?: boolean;
@@ -103,7 +103,8 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                                 diffConnectors: diff.connectors || []
                             })
                         case 'updateNode':
-                            return this.updateNodeRequest(value)
+                            
+                            return this.updateNodeRequest(pick(value,['id', 'serial', 'name','icon', 'color', 'type', 'left', 'top', 'connection', 'componentName', 'props']))
                     }
                 }}
                 onSaveFlowList={({ diff})=>{

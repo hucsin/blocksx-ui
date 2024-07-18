@@ -58,10 +58,12 @@ export interface IFormerType {
     onGetRequestParams?: Function;
     iconType?: string;
     width?: number;
+    reflush?: any;
 }
 export interface SFormerType {
     visible: boolean;
     value?: any;
+    originValue?: any;
     schema?: any;
     columnKeys?: any;
     dynamicSchema?: any;
@@ -75,6 +77,8 @@ export interface SFormerType {
     setpOneValue?: any;
     loading?: boolean;
     iconType?: string;
+
+    reflush?: any;
 }
 
 export default class TablerFormer extends React.Component<IFormerType, SFormerType>  {
@@ -97,6 +101,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             columnKeys: columnKeys ,
             action: props.action,
             value: omit(props.value || {}, columnKeys),
+            originValue: props.value,
             fields: fields,
             viewer: props.viewer,
             isStepOne: isStepOne,//props.value ? false: true,
@@ -104,6 +109,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             setpOneValue: props.value,
             loading: false,
             id: 0,
+            reflush: props.reflush || 'default' ,
             iconType:  (isStepMode ?  isStepOne ? 'avatar' : 'icon' : props.iconType || 'avatar')
         }
 
@@ -222,12 +228,13 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     public UNSAFE_componentWillReceiveProps(newProps: IFormerType) {
         let fields: any = newProps.fields ||  newProps.schema && newProps.schema.fields
 
-        if (newProps.action !== this.state.action) {
+        if (newProps.action !== this.state.action ) {
             let columnKeys: any = TablerUtils.getFieldKeysByColumnOnly(newProps.fields || this.state.fields);
-            console.log('action')
+            
             this.setState({
                 action: newProps.action,
                 name: newProps.name,
+                originValue: newProps.value,
                 schema: this.getSchema(fields || this.state.fields),
                 columnKeys: columnKeys,
                 visible: !!newProps.action,
@@ -247,6 +254,13 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             if (!!newProps.action) {
                 //this.resetValue()
             }
+        }
+
+        if (!utils.isUndefined(newProps.reflush) && newProps.reflush !== this.state.reflush) {
+            this.setState({
+                value: newProps.value,
+                reflush: newProps.reflush
+            })
         }
         
         if (newProps.viewer != this.state.viewer) {
@@ -529,7 +543,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
             //    }
            // })
         }
-
+        
 
         this.setState({
             value: value
@@ -539,9 +553,9 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         }
     }
     private hide(value?: any) {
-        console.log('hide')
+        
         this.setState({visible: false});
-
+        
         if (this.props.onClose) {
             this.props.onClose(value || this.cleanLabelValueToValue(this.state.value));
         }
@@ -623,6 +637,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                     })
                 }}
                 id={this.getDefaultId()}
+                key ={this.state.reflush}
                 type={this.props.formerType}
                 schema={pageSchema}
                 hideButtons={this.props.hideButtons}
@@ -700,13 +715,12 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                 column = {this.props.column ? this.props.column as any : 'two'}
                 width = {this.props.width || (this.props.column =='one' ? 500 : 700)}
                 onClose={(isInitiate?: any) => {
-                    
                     if (isInitiate) {
                         if (this.cancelDoback()) {
                             return this.setStepOne(true)
                         }
                     } 
-                    console.log('close')
+
                     // 关闭
                     this.setState({
                         visible: false
