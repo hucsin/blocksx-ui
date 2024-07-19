@@ -98,6 +98,7 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
                 schema,
                 //icon: meta.icon,
                 name: meta.title,
+                router: this.props.router,
                 //title: meta.title,
                 pageMeta: pageMeta,
                 toolbarContainerRef: React.createRef(),
@@ -116,7 +117,8 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
         }, () => {
             // do query
             this.props.router.utils.goQuery({
-                classify: currentKey
+                classify: currentKey,
+              //  query: undefined
             })
         })
     }

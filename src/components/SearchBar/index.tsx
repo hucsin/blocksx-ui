@@ -37,6 +37,7 @@ export interface SearchBarProps {
     },
     value?: string;
     query?: string;
+    defaultValue?: any;
 }
 
 interface SearchBarState {
@@ -52,10 +53,11 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
     }
     public constructor(props: SearchBarProps) {
         super(props);
-
+        console.log(props.defaultValue, 222)
         this.state = {
             disabled: props.disabled,
-            value: props.quick?.defaultValue
+            value: props.quick?.defaultValue,
+            ...props.defaultValue
         }
     }
     private onChangeValue =()=> {

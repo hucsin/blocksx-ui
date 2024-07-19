@@ -319,7 +319,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
     private splitStepField(fields: any ,isFirst?: boolean) {
         return fields.filter(field => {
-            return  isFirst ? field.step : !field.step
+            return  isFirst ? field.step : (!field.step || field.step == 'all')
         })
     }
     private getDefaultId() {
@@ -383,8 +383,11 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
     }
     private getStepFistTitle() {
         let firstField: any = this.state.schema.firstField;
+        let { pageMeta = {} } = this.props;
+        
         let fistName: string = upperFirst(firstField.name);
-        let defaultTitle: string = this.props.defaultFirstTitle || ('1. ' + fistName);
+        let pageinfo: any = pageMeta.page || {};
+        let defaultTitle: string = pageinfo.title || this.props.defaultFirstTitle || ('1. ' + fistName);
         
         if (this.state.setpOneValue && !this.state.isStepOne) {
             
@@ -416,7 +419,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         })
     }
     private stepActionMap: any = {
-        'setting': 'Setting',
+        'setting': 'Configure',
         'create': 'Complete',
         'edit': 'Edit',
         'view': 'View'
@@ -442,7 +445,7 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
                             
                             hasfirtready && this.setStepOne(false)
                         }}
-                    ><span style={{color:'#ccc'}}>2. </span>{this.stepActionMap[type as any] ||  'Complete'} {(pageMeta.title ||'record').toLowerCase()} {hasfirtready && <Button  size='small'>Next</Button>}</span >
+                    ><span style={{color:'#ccc'}}>2. </span>{this.stepActionMap[type as any] ||  'Complete'} the {(pageMeta.title ||'record')} {hasfirtready && <Button  size='small'>Next</Button>}</span >
                 </Space>
             </div>
         )

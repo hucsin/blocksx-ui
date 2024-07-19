@@ -58,7 +58,7 @@ export const removeEvent = ( dom: any, event: string, listener?: Function ) => {
 export const consume = function(e) {
     if (e.stopPropagation) {
         e.stopPropagation();
-        e.preventDefault();
+        //e.preventDefault();
     }
     else {
         e.returnValue = false;

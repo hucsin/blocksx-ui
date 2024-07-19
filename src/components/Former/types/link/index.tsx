@@ -9,9 +9,12 @@
 
 
 import React from 'react';
+import classnames from 'classnames';
+import { utils } from '@blocksx/core';
 import * as Icons from '../../../Icons';
 
 import { IFormerBase } from '../../typings';
+
 import { Tooltip } from 'antd';
 import './style.scss'
 
@@ -24,7 +27,8 @@ export interface SFormerLabel {
     value: any;
 }
 
-export default class FormerLabel extends React.Component<IFormerLabel, SFormerLabel> {
+export default class FormerLink extends React.Component<IFormerLabel, SFormerLabel> {
+    public static Viewer = FormerLink;
     public constructor(props: IFormerLabel) {
         super(props);
         this.state = {
@@ -35,13 +39,19 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
         // @ts-ignore
         let defaultOrigin: any = window.location.origin;
         let props: any = this.props['props'] || this.props['x-type-props'];
-        let { origin = defaultOrigin, path = '/', target='_blank'} = props;
+        let { icon, dir,  name, notice,  origin = defaultOrigin, path = '/', target='_blank'} = props;
 
         let url: string = origin + path + encodeURIComponent(this.state.value);
+        let tips: string = notice || url;
+        let display: string = name ? utils.template(name, this.state) : url;
+        let IconView: any = Icons[icon] || Icons['OpenWindowUtilityOutlined'];
         
-        return (<span className='ui-link'>
-            <Icons.OpenWindowUtilityOutlined/>
-            <Tooltip title={url}><a href={url} target={target} >{url}</a></Tooltip>
+        return (<span className={classnames({
+                    'ui-link': true,
+                    [`ui-link-dir-${dir}`]: dir
+                })}>    
+            <IconView/>
+            <Tooltip title={tips}><a href={url} target={target} >{display}</a></Tooltip>
         </span>)
     }
 }

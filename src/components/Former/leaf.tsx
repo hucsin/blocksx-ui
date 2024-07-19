@@ -374,9 +374,21 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
         
         if (utils.isUndefined(value) || utils.isNull(value)) {
+
+            // 处理两个特殊的情况，带$开头的数据，可以从不带$的符号前面去获取
+            // TODO 临时处理, 后面加入别名
+            if (prop) {
+                let hasdoner: boolean = prop .indexOf('$') > -1; 
+                if (hasdoner) {
+                    return allValue[prop.replace(/^\$/,'')];
+                } else {
+                    return allValue['$'+prop]
+                }
+            }
+
             return utils.isUndefined(props.defaultValue) ? props.value || this.getDefaultValue(props) : props.defaultValue;
         }
-
+        
         return value;
     }
     private onChangeValue(value: any, type?: string, originValue?: any[]) {
@@ -770,6 +782,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             // 计算oneOf
                             let props: any = this.properties[prop];
                             let hidden: boolean = props['x-type'] == 'hidden';
+                            console.log(value, value[prop],prop, 222)
                             let itemvalue: any = this.getValueByProps(value[prop], properties, value, prop);
                             
                             let leftProps: any = {
@@ -1017,7 +1030,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         let ContentPortal: any = this.getPortalBySlot(this.props.portalMap,'content')
 
         if (View) {
-            console.log(this.leafProps.path || this.leafProps.index || this.leafProps['x-index'], this,222)
+            
             let viewProps: any = {
                 key:this.leafProps.path || this.leafProps.index || this.leafProps['x-index'],
                 ...this.leafProps,

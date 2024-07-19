@@ -117,7 +117,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             pageNumber: 1,
             dataSource: [],
             originalDataSource: [],
-            searcher: {},
+            searcher: this.getDefaultSearcher(),
             loading: false,
             localData: false,
             rowSelection: props.mode == 'pickmore' ? true : props.rowSelection,
@@ -134,7 +134,18 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
         
         this.authFilter = new AuthFilter(this);
     }
+    private getDefaultSearcher() {
+        let searcher:any = {};
+        let router:any = this.props.router;
+        if (router) {
+            let { query = {} } = router;
+            if (query.query) {
+                searcher.query = query.query
+            }
+        }
 
+        return searcher;
+    }
     public componentDidMount() {
         if (this.props.autoInit !== false) {
             this.initDataSource(this.props)
@@ -359,6 +370,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
         
         return (
             <SearchBar
+                defaultValue={this.state.searcher}
                 onChange={(val) => {
                     this.setState({
                         searcher: val,
