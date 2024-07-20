@@ -26,8 +26,6 @@ export default class FormerMapItem extends React.Component<IMapItem, {}> {
         let  children: any = this.props.children;
         let { viewer, properties } = this.props;
 
-
-
         if (children && children.length == 2 ) {
             return (
                 <div className="former-map-item">

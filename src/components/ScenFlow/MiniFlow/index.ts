@@ -11,6 +11,8 @@ import FormatCanvas from './format';
 import { IRect, IPointCoord, FlowNode, FlowConnector } from './typing';
 import { pick, get } from 'lodash';
 
+import SvgText from './icons';
+
 
 /**
  * 一个极简交互的流程图绘制工具
@@ -830,6 +832,8 @@ export default class MiniFlow extends EventEmitter {
             ...mergedata
         }
     }
+
+
     /**
      * 添加节点
      * @param source 
@@ -840,7 +844,7 @@ export default class MiniFlow extends EventEmitter {
         let sourceNode: FlowNode = this.getNodeByName(source);
         let targetNode: FlowNode = this.getNodeByName(target);
         let connector: any = this.getConnectorBySourceTarget(source, target);
-        let connectorProps: any =  sourceNode.floating ? true : connector.props;
+        let connectorProps: any =  sourceNode.floating ? true : connector ? connector.props: {};
 
         let sourceColor: string = isTemporary || sourceNode.floating ? '#e2e2e2' : sourceNode.color;
         let targetColor: string = isTemporary|| sourceNode.floating ? '#e2e2e2' : targetNode.color;
@@ -911,7 +915,44 @@ export default class MiniFlow extends EventEmitter {
                             return custom;
                         },
                         location: 0,
-                        id: "customOverlay"
+                        //id: "customOverlay"
+                    }],
+                    ["Custom", {
+                        create: function (component) {
+                            let custom: any = document.createElement('div');
+                            custom.className = 'overlays-label';
+                            if (connector.props) {
+                                let html:any = [];
+                                if (connector.props.serial) {
+                                    html.push(`<span>${connector.serial}</span>`)
+                                }
+                                if (connector.props.label) {
+                                    html.push(connector.props.label)
+                                }
+                                if (html.length> 0) {
+                                    custom.innerHTML = "<div>" +html.join('')+ "</div>"
+                                }
+                            }
+                            return custom;
+                        },
+                        location: .5,
+                       // id: "customOverlay2"
+                    }],
+                    ["Custom", {
+                        create: function (svg) {
+                            
+                            let custom: any = document.createElement('div');
+                                custom.className = 'overlays-icons';
+                            if (connector.props) {
+                                svg = connector.props.condition ? SvgText.getFullFilter() : SvgText.getEmptyFilter()
+                            } else {
+                                svg = SvgText.getEmptyFilter();
+                            }
+                            custom.innerHTML = "<div>" +svg+ "</div>";
+                            return custom;
+                        },
+                        location: .5,
+                      //  id: "customOverlay3"
                     }]
                 ]
             }))
@@ -922,14 +963,15 @@ export default class MiniFlow extends EventEmitter {
         if (this.highlightConnectInfo) {
             let { target, source } = this.highlightConnectInfo;
             
-            let node: any = this.getConnectorBySourceTarget(source,target);
+            let connector: any = this.getConnectorBySourceTarget(source,target);
 
-            if (node) {
-                node.props = Object.assign({}, node.props || {}, props)
+            if (connector) {
+                connector.props = Object.assign({}, connector.props || {}, props)
             }
 
             this.resetConnectorNodeBySourceTarget(source,target);
-            this.doChangeSave('updateNode', node)
+            
+            this.doChangeSave('updateConnector', connector)
         }
     }
     public getHighlightInfo() {
@@ -1285,9 +1327,7 @@ export default class MiniFlow extends EventEmitter {
             if (!this.nodeMap[nodeName]) {
                 this.instance.draggable(nodeName, {
                     // filter: '.scenflow-node'
-                    mouseenter: ()=> {
-                        console.log('33333')
-                    },
+                    
                     drag: (e) => {
                         this.updateNodeByName(e.el.id, {
                             left: e.pos[0],
@@ -1336,7 +1376,7 @@ export default class MiniFlow extends EventEmitter {
                                 return this.dragTarget = null;
                             } 
 
-                            console.log('removeNode', this.dragFreeNode)
+                            
                             this.doChangeSave('removeNode', [node.name]);
 
 
@@ -1441,9 +1481,9 @@ export default class MiniFlow extends EventEmitter {
     public resetIterationRelevantMap() {
         let iterationRelevantMap: any = {};
         let iterationGroupMap: any = {};
-        console.log(this.nodes)
+        
         MiniFlowStructural.findIterationRelevantMap(this.nodes, this.connector).forEach((value: any, key: string) => {
-            console.log(key, value, 9999)
+            
             iterationGroupMap[key] = key;
             iterationRelevantMap[key] = [...value.map(it=> {
                 iterationGroupMap[it.name] = key;

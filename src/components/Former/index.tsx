@@ -12,7 +12,6 @@ import * as FormerTypes from './types';
 import ConstValue from './const';
 
 import './style.scss';
-import { mainTexture } from '../SmartPage/core/texture';
 import { pick } from 'lodash';
 import TablerUtils from '../utils/tool';
 

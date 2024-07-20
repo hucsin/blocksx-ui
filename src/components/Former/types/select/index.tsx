@@ -60,13 +60,34 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         let isMultiple: boolean = this.isMultiple();
         this.state = {
             value: isMultiple ? this.fixedMultipleValue(props.value) : props.value,
-            dataSource: this.getDefaultDatasource(props),
+            dataSource: this.makeGroupDataSource(this.getDefaultDatasource(props)),
             relyon: props.relyon || {},
             loading: false,
             multiple: isMultiple,
             runtimeValue: props.runtimeValue
         };
 
+    }
+    private makeGroupDataSource(datasource: any) {
+        let list: any = [];
+        let group : any = {};
+
+        datasource.forEach(it => {
+            if (it.group) {
+                if (!group[it.group]) {
+                    group[it.group] = [];
+                    list.push({
+                        title: it.group,
+                        label: it.group,
+                        options: group[it.group]
+                    })
+                }
+                group[it.group].push(it)
+            } else {
+                list.push(it)
+            }
+        })
+        return list;
     }
     private getDefaultDatasource(props: any) {
         let datasource: any = [];
@@ -149,7 +170,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                 }).then((data: any) => {
                     
                     this.setState({
-                        dataSource: isLabelValue ? this.markDataSource([this.state.value, ...data]) :data,
+                        dataSource: this.makeGroupDataSource(isLabelValue ? this.markDataSource([this.state.value, ...data]) :data),
                         loading: false,
                         query: this.state.search
                     })
@@ -218,8 +239,8 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                     onChange={this.onChange}
                     size={this.props.size}
                     value={this.state.value}
+                    options={this.state.dataSource}
                 >
-                    {this.renderChildren()}
                 </Select>
             </Tooltip>
         )

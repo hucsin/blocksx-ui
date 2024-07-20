@@ -53,7 +53,7 @@
     height: 120px;
     border-radius: 80px;
     text-align: center;
-    border: 9px solid #fff;
+    border: 9px solid  var(--main-background-color);
     z-index: 20;
     &.ui-mircoflow-activate {
         &::before {

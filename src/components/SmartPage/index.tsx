@@ -355,7 +355,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
         if (newProps.pageMeta) {
             let newMetaKey: string = this.getMetaKey(newProps.pageMeta || {});
-
+            
             if (this.state.metaKey != newMetaKey) {
                 this.setState({
                     metaKey: newMetaKey,

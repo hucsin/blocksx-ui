@@ -303,6 +303,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             switch (type) {
                 case 'map':
                 case 'object':
+                case 'condition':
                     return {};
                 case 'list':
                 case 'array':
@@ -312,7 +313,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         return defaultValue
     }
     private isFeaturesNode() {
-        return ['array', 'object', 'map'].indexOf(this.state.type) == -1;
+        return ['array', 'object', 'map', 'condition'].indexOf(this.state.type) == -1;
     }
     private isCanViewerType(type: string) {
         return ['array', 'group', 'map', 'object','pickmore', 'table'].indexOf(type) == -1;
@@ -879,7 +880,24 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             </Group>
         )
     }
-    
+    private renderLeaf(props: any) {
+        return (
+            <Leaf
+
+                key={props.path}
+                parentPath={this.path}
+                runtimeValue={this.state.runtimeValue}
+
+                former={this.props.former}
+                viewer={this.state.viewer}
+                canmodify={this.state.canmodify}
+                size={this.props.size}
+                rootEmitter={this.props.rootEmitter}
+                onGetDependentParameters={this.props.onGetDependentParameters}
+                {...props}
+            />
+        )
+    }
     private renderMapNode(children: any[], Child: any) {
         let { value, originValue = [] } = this.state;
         // case\3 map
@@ -897,44 +915,24 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         key={index}
                         size={this.props.size}
                     >
-                        <Leaf
-                            {...keyProperties}
-                            path="key"
-                            parentPath={this.path}
-                            runtimeValue={this.state.runtimeValue}
-                            value={prop}
-                            key="1"
-
-                            former={this.props.former}
-                            viewer={this.state.viewer}
-                            canmodify={this.state.canmodify}
-                            size={this.props.size}
-                            rootEmitter={this.props.rootEmitter}
-                            onGetDependentParameters={this.props.onGetDependentParameters}
-                            onChangeValue={(keyVal: any, type?: string) => {
+                        {this.renderLeaf({
+                            ...keyProperties,
+                            path: 'key',
+                            value: prop,
+                            onChangeValue:(keyVal: any, type?: string) => {
                                 origin.key = keyVal;
                                 this.onChangeValue(this.getObjectByKeyValue(originValue), type);
-                            }}
-                        />
-                        <Leaf
-                            {...valueProperties}
-                            path="value"
-                            key="2"
-                            size={this.props.size}
-
-                            former={this.props.former}
-                            viewer={this.state.viewer}
-                            canmodify={this.state.canmodify}
-                            parentPath={this.path}
-                            rootEmitter={this.props.rootEmitter}
-                            runtimeValue={this.state.runtimeValue}
-                            value={this.getValueByProps(value[prop], valueProperties, value, prop)}
-                            onGetDependentParameters={this.props.onGetDependentParameters}
-                            onChangeValue={(valVal: any, type?: string) => {
+                            }
+                        })}
+                        {this.renderLeaf({
+                            ...valueProperties,
+                            path: 'value',
+                            value: this.getValueByProps(value[prop], valueProperties, value, prop),
+                            onChangeValue: (valVal: any, type?: string) => {
                                 origin.value = valVal;
                                 this.onChangeValue(this.getObjectByKeyValue(originValue), type);
-                            }}
-                        />
+                            }
+                        })}
                     </Child>
                 )
             });
@@ -942,6 +940,19 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             console.log(this.properties);
             throw new Error('错误的map描述，必须要key，value')
         }
+    }
+    private renderAssembleDefaultNode(children: any[]) {
+        let propertiesKeys: any = Object.keys(this.properties);
+
+        propertiesKeys.forEach(key => {
+            let properties: any = this.properties[key];
+            children.push(
+                this.renderLeaf({
+                    ...properties,
+                    path: properties.key,
+                })
+            )
+        })
     }
     private renderAssembleNode() {
         let children: any[] = [];
@@ -1014,6 +1025,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                     }
                 }
                 break;
+            default: 
+                this.renderAssembleDefaultNode(children)
         }
 
         return this.renderFeaturesNode(children);

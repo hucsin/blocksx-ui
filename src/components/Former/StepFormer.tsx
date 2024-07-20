@@ -81,7 +81,7 @@ export interface SFormerType {
     reflush?: any;
 }
 
-export default class TablerFormer extends React.Component<IFormerType, SFormerType>  {
+export default class StepFormer extends React.Component<IFormerType, SFormerType>  {
     public static defaultProps = {
         formerType: 'default',
         size: 'default'
@@ -328,6 +328,21 @@ export default class TablerFormer extends React.Component<IFormerType, SFormerTy
         return value ? value.id || this.state.id : this.state.id;
     }
     private getDefaultNotice() {
+        let { pageMeta = {}} = this.props;
+        let { notice, noticeIcon } = pageMeta;
+        
+        if (notice ) {
+            if (utils.isString(notice)) {
+                notice = {
+                    notice
+                }
+            }
+            
+            return {
+                ...notice,
+                icon: noticeIcon
+            }
+        }
         let { schema={}} = this.state;
         if (schema.firstField && !this.state.isStepOne) {
             let firstItem: any = this.getFirstItem(schema.firstField);

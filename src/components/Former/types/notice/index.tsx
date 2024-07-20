@@ -53,6 +53,13 @@ export default class FormerNotice extends React.Component<{value?: any, icon?: a
             })
         }
     }
+    private getSize(value: string = '') {
+        if (value.length > 150) {
+            return 48;
+        }
+
+        return this.props.icon ? 36 :24
+    }
     public render() {
 
         let { icon, color, notice, value } = this.state;
@@ -76,7 +83,7 @@ export default class FormerNotice extends React.Component<{value?: any, icon?: a
         
         return value ? (
             <div className='ui-former-notice'>
-                {icon && <Avatar size={this.props.icon ? 36 :24} color={color} icon={icon}/>}
+                {icon && <Avatar size={this.getSize(value)} color={color} icon={icon}/>}
                 <Markdown>{value}</Markdown>
             </div>
         ) : null;

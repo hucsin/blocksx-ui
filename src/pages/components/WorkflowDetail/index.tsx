@@ -252,8 +252,8 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             return {
                 type: it.type,
                 value: {
-                    id: it.id,
-                    props: it.props,
+                    id: value.id,
+                    props: value.props,
                     name: [value.source, value.target].join('#')
                 }
             }
@@ -779,14 +779,22 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         
         return (
             <SmartPage
-                id={this.state.connectId}
+                id={'1'}
+                reflush={this.state.connectId}
                 pageURI='/api/thinking/findPage'
-                name={'connector'}
+                name={'FlowControl.connector'}
                 type="popover"
                 popoverWrapper={false}
                 simplicity
                 isViewer={this.props.isViewer}
                 icon="SettingOutlined"
+                props={
+                    {
+                        defaultFirstTitle: 'Connection',
+                        action: 'setting',
+                        hideButtons: true
+                    }
+                }
                 params={()=> {
                     let connector:any = this.miniFlow.getHighlightInfo();
                     return {
@@ -801,6 +809,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                     
                 // let pickvalue: any = pick(this.state.props, ['icon', 'color'])
                     //console.log(pickvalue, props, 222, this.state.props)
+                    
                     this.setState({
                         //  props: props,
                         connectProps: props,

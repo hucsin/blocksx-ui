@@ -259,6 +259,7 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
                             onRowClick={this.onItemClick}
                             renderItemClassName={it => `ui-runlog-${it.type}`}
                             onFetchList={(params: any) => {
+                                
                                 return this.props.onFetchRecoFilter({
                                     ...params,
                                     path: this.state.path,
@@ -279,7 +280,7 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
                             size='small'
 
                             actionSize='small'
-                            groupKey='type'
+                            groupKey='displayType'
                             avatarMerge={true}
                             avatarSize={40}
                             fields={[

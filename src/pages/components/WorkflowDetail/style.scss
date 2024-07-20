@@ -11,6 +11,36 @@
 .ant-tooltip {
     max-width: 300px;
 }
+.overlays-label {
+    position: relative;
+    opacity: .3;
+    cursor: pointer;
+    width: 3px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    > div {
+        position: absolute;
+        top: -24px;
+        margin-left: -5px;
+    }
+}
+.overlays-icons {
+    opacity: .3;
+    cursor: pointer;
+    font-size:14px;
+
+    width: 3px;
+    height: 20px;
+
+    display: flex;
+    justify-content: center;
+     > div {
+        position: absolute;
+        top: 24px;
+        margin-left: -5px;
+    }
+}
 .ui-children-group {
     position: absolute;
     border: 6px dashed #ccc;
