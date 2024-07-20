@@ -121,6 +121,7 @@ interface MircoFlowState {
     id?: any;
     classify?: string;
     classifyLabel?: any;
+    activateList: any;
 }
 
 class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState> {
@@ -163,8 +164,8 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             openPublish: false,
             reflush: 0,
             openhelper: false,
-            connectProps: {}
-
+            connectProps: {},
+            activateList: []
         }
 
         this.cavnasId = utils.uniq('MircoFlow');
@@ -336,7 +337,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             templateMap: {
                 router: {
                     type: 'router',
-                    componentName: 'Thinking.router',
+                    componentName: 'FlowControl.router',
                     color: '#4d53e8',
                     icon: 'RouterUtilityOutlined',
                     props: {
@@ -666,9 +667,22 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         onAddNodeChildren={this.addNodeChildrenByName}
                         onAddTriggerNode={this.addTriggerNodeById}
                         mircoFlow={this}
+                        activateList={this.state.activateList}
                         workflowId={this.props.workflowId}
                         getFormerSchema={this.props.getFormerSchema}
                         isViewer={this.props.isViewer}
+                        onMouseEnter={(name)=> {
+                            this.miniFlow.resetIterationRelevantMap();
+                    
+                                this.setState({
+                                    activateList: this.miniFlow.getCurrentIterationRelevantMap(name)
+                                })
+                        }}
+                        onMouseLeave={()=> {
+                            this.setState({
+                                activateList: []
+                            })
+                        }}
                         onChangeProps={(v)=>{
                             this.updateNodeByName(node.name,{
                                 props: Object.assign({}, node.props, v),

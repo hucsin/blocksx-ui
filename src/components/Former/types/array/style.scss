@@ -4,7 +4,7 @@
     
     min-height: 30px;
     border-radius: 12px;
-    padding: 8px;
+    padding:16px 8px ;
     .former-array-content {
         max-height: 314px;
         overflow-y: auto;
@@ -100,7 +100,7 @@
                 opacity: 1;
             }
         }
-
+        
         .former-object {
             width: calc(100% + 12px);
         }

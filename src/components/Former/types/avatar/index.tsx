@@ -128,17 +128,23 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
                 )
             } else {
                 
-                let iconreg: any = this.getColorByIcon(icon[0]);
                 // merge 模式
-                return (
-                    <div className='ui-avatar-merge'>
-                        {this.renderItem(props, icon[0], iconreg.color)}
-                        {icon[1] && <span className='ui-sub'>{this.renderItem({...props, shape: 'sh',style :{ width: subsize, height: subsize, fontSize: 14}, size: subsize}, icon[1], this.props.subcolor || '#ffffff', '', iconreg.color || this.props.color)}</span>}
-                    </div>
-                )
+                if(icon.length==2 && icon[0] &&  icon[0].indexOf(icon[1]) == -1) {
+                    let iconreg: any = this.getColorByIcon(icon[0]);
+
+                    return (
+                        <div className='ui-avatar-merge'>
+                            {this.renderItem(props, icon[0], iconreg.color)}
+                            {icon[1] && <span className='ui-sub'>{this.renderItem({...props, shape: 'sh',style :{ width: subsize, height: subsize, fontSize: 14}, size: subsize}, icon[1], this.props.subcolor || '#ffffff', '', iconreg.color || this.props.color)}</span>}
+                        </div>
+                    )
+                } else {
+                    icon = icon[0]
+                }
             }
-        } else {
-            return this.renderItem(props, icon, props.color || (props.autoColor && this.getColor(icon || props.text)) || '')
-        }
+        } 
+        
+        return this.renderItem(props, icon, props.color || (props.autoColor && this.getColor(icon || props.text)) || '')
+        
     }
 }

@@ -17,12 +17,14 @@ interface FormerDateProps extends IFormerBase {
 interface DateProps {
     range?: boolean,
     format?: string;
+    placeholder?: string;
 }
 
 interface FormerDateState {
     value: string | [string, string];
     range?: boolean;
     format?: string;
+    placeholder?: string;
 }
 export default class FormerDate extends React.Component<FormerDateProps, FormerDateState> {
     public static defaultProps  = {
@@ -35,7 +37,8 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
         this.state = {
             value: props.value,
             range: typeof typeProps.range == 'undefined' ? props.range : typeProps.range,
-            format: typeProps.format || props.format
+            format: typeProps.format || props.format,
+            placeholder: typeProps.placeholder
         };
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
@@ -74,6 +77,7 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
         return(<DatePicker 
             disabled={this.props.disabled}  
             size={this.props.size}
+            placeholder={this.state.placeholder}
             value={this.state.value && dayjs(this.state.value as any, this.state.format)} 
             format={this.state.format}
             onChange={this.onChangeValue}

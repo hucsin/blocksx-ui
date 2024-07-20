@@ -66,7 +66,6 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             props: props['x-type-props']
         };
 
-        console.log(3333)
 
         if (typeProps.actionURI) {
             this.actionRequestHelper = SmartRequest.createPOST(typeProps.actionURI)

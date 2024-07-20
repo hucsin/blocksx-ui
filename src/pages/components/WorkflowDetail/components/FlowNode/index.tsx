@@ -38,9 +38,12 @@ interface IMircoFlowNode {
     onUpdateNode?: Function;
     onAddNodeChildren?: Function;
     onAddTriggerNode?: Function;
+    onMouseLeave: Function;
+    onMouseEnter: Function;
     
     getFormerSchema(type: string):any;
     onChangeProps(value: any):any;
+    activateList: any;
 
 }
 
@@ -57,6 +60,7 @@ interface SMircoFlowNode {
     settingMode?: string
     reflush: number;
     value?: any;
+    activateList: any;
 }
 
 export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMircoFlowNode> {
@@ -101,7 +105,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 },
                 icon: ['NodeCollapseOutlined','PlusOutlined']
             }: false,
-            {
+            this.props.classify !=='thinking' && {
                 type: 'group',
                 name: 'BINDING',
                 control: (c) => {
@@ -111,7 +115,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         let notThinking: boolean = this.props.classify !=='thinking';
                         let hasPages: boolean = notThinking && !c.hasPages;
                         let hasOpenAPI:boolean = notThinking && !c.hasOpenAPI;
-                        return true;
+                        return hasOpenAPI || hasPages  || hasTimer;
                     }
                     
                 },
@@ -162,7 +166,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 icon: 'ConfigurationUtilityOutlined'
             },
             {
-                name: i18n.t('Notes'),
+                name: i18n.t('Edit Notes'),
                 type: 'setting',
                 control: {
                     nodeType: [
@@ -178,23 +182,15 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             disabledRemove && {
                 type: 'divider',
                 control: {
-                    nodeType: [
-                        'gos',
-                        'module',
-                        'empty'
-                    ]
+                    canRemove: [true]
                 }
             },
             disabledRemove && {
-                name: i18n.t('Delete {name}', { name: type == 'go' ? triggerName : 'Module'}),
+                name: i18n.t('Delete {name}', { name:/* type == 'go' ? triggerName :*/ 'Node'}),
                 type: 'delete',
                 icon: 'DeleteOutlined',
                 control: {
-                    nodeType: [
-                        'gos',
-                        'module',
-                        'empty'
-                    ]
+                    canRemove: [true]
                 },
                 danger: {
                     errTips: i18n.t('Quietly delete the last start node, keep at least one start node'),
@@ -225,14 +221,21 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             props: cprops,
             cacheProps: JSON.stringify(cprops),
             openSetting: false,
-            hasChanged: false
+            hasChanged: false,
+            activateList: props.activateList
         };
 
         this.mircoFlow = props.mircoFlow;
     }
 
-    public componentWillUpdate(newProps: IMircoFlowNode) {
-        
+    public UNSAFE_componentWillReceiveProps(newProps: IMircoFlowNode) {
+
+        if (newProps.activateList != this.state.activateList) {
+            this.setState({
+                activateList: newProps.activateList
+            })
+        }
+
         if (newProps.left != this.state.left) {
             this.setState({
                 left: newProps.left
@@ -523,11 +526,16 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         let { type } = this.props;
         let startNodes: any = this.mircoFlow.miniFlow.getStartNodes();
         let allNodes: any = this.mircoFlow.miniFlow.getNodes();
+        let sources: any = this.mircoFlow.miniFlow.getConnectorBySourceName(this.props.name);
+        let targets: any = this.mircoFlow.miniFlow.getConnectorByTargetName(this.props.name);
+
+
         
         ContextMenu.showContextMenu(this.props.name, event, {
             nodeType: type =='go' 
                         ? startNodes.length>1 || allNodes.length == 1 ? 'gos' : 'go'  
                         : ['router','empty'].indexOf(type)>-1 ? type : 'module',
+            canRemove: sources.length <=1 && targets.length <=1,
             nodeLength: allNodes.length > 1 ? 'more' : 'one',
             hasPages: !!startNodes.find(it=> it.componentName =='Thinking.pages'),
             hasOpenAPI: !!startNodes.find(it=> it.componentName =='Thinking.openapi'),
@@ -567,6 +575,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 className={classnames({
                     //'node-new': this.state.isNew,
                     'ui-mircoflow-node': true,
+                    'ui-mircoflow-activate': this.state.activateList && this.state.activateList.indexOf(this.props.name) > -1,
                     'ui-mircoflow-node-floating': this.props.floating,
                     [`ui-mircoflow-type-${this.state.type}`] : this.state.type
                 })} 
@@ -581,6 +590,12 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 onContextMenu={(event) => {
                     this.onContextMenu(event)
                 }}
+                onMouseEnter={()=> {
+                    this.props.onMouseEnter(this.props.name)
+                }}
+                onMouseLeave={()=> {
+                    this.props.onMouseLeave();
+                }}
             >
                 {!this.props.isViewer &&<ContextMenu 
                     namespace={this.props.name} 
@@ -590,7 +605,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                     menu={this.getContextMenu()}
                 />}
                 {this.renderNodeContent(icon[0], color)} 
-                {icon[1] && this.renderNodeSubIcon(icon[1])}
+                {icon[1] && (icon[0].indexOf(icon[1]) == -1) && this.renderNodeSubIcon(icon[1])}
             </div>
         )
     }

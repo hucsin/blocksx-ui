@@ -10,6 +10,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
 import { InputNumber } from 'antd';
+import './style.scss'
 
 interface IFormerInput extends IFormerBase {
     value: any,

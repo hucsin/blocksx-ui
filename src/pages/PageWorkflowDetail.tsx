@@ -215,14 +215,15 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                                     it.icon = it.icon + it.color;
                                     it.actions = it.actions ? it.actions.map(ac => {
                                         let color = ac.color || it.color;
-                                        
+                                        console.log(ac.subname, ac, 333)
                                         return {
                                             ...ac,
                                             color: ac.color || it.color ,
                                             icon: ac.subicon ? [ac.icon + color , ac.subicon] :[it.icon, ac.icon],
                                             componentName: [it.id, ac.id].join('.'),
-                                            method: ac.name,
-                                            program: it.name
+                                            type: ac.type =='control'? 'router': ac.type,
+                                            method: ac.subname || ac.name,
+                                            program: ac.subname ? ac.name :it.name
                                         };
                                     }) : []
                                     return it;

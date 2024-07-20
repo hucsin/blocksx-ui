@@ -53,6 +53,9 @@ export { default as ConnectUtilityOutlined } from './ConnectUtilityOutlined';
 export { default as ConnectionsDirectivityOutlined } from './ConnectionsDirectivityOutlined';
 export { default as ControlUtilityOutlined } from './ControlUtilityOutlined';
 export { default as CpuUtilityOutlined } from './CpuUtilityOutlined';
+export { default as CycleEndUtilityOutlined } from './CycleEndUtilityOutlined';
+export { default as CycleStartUtilityOutlined } from './CycleStartUtilityOutlined';
+export { default as CycleUtilityOutlined } from './CycleUtilityOutlined';
 export { default as DatasourceAddDataOutlined } from './DatasourceAddDataOutlined';
 export { default as DatasourceDefaultDataOutlined } from './DatasourceDefaultDataOutlined';
 export { default as DatasourceMiniDataOutlined } from './DatasourceMiniDataOutlined';
@@ -66,6 +69,7 @@ export { default as EfficiencyUtilityOutlined } from './EfficiencyUtilityOutline
 export { default as EllipsisSuggestionOutlined } from './EllipsisSuggestionOutlined';
 export { default as FlowUtilityOutlined } from './FlowUtilityOutlined';
 export { default as FolderCommonOutlined } from './FolderCommonOutlined';
+export { default as ForeachUtilityOutlined } from './ForeachUtilityOutlined';
 export { default as FunctionUtilityOutlined } from './FunctionUtilityOutlined';
 export { default as GbaseBrandOutlined } from './GbaseBrandOutlined';
 export { default as HelpSuggestionOutlined } from './HelpSuggestionOutlined';

@@ -782,10 +782,10 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             // 计算oneOf
                             let props: any = this.properties[prop];
                             let hidden: boolean = props['x-type'] == 'hidden';
-                            console.log(value, value[prop],prop, 222)
+                            
                             let itemvalue: any = this.getValueByProps(value[prop], properties, value, prop);
                             
-                            let leftProps: any = {
+                            let leafProps: any = {
                                 ...properties,
                                 path:prop,
 
@@ -812,7 +812,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             };
 
                             if (portalField[prop]) {
-                                portalMap[portalField[prop].target].cache[prop].leftProps = leftProps;
+                                portalMap[portalField[prop].target].cache[prop].leafProps = leafProps;
                                 return false;
                             }
                             let propsPortalMap = portalMap[prop] && portalMap[prop].map;
@@ -832,9 +832,9 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                     renderTitlePortal={titlePortal.length ? ()=> {
                                         
                                         return titlePortal.map(it=> {
-                                            let { description} = it.leftProps;
+                                            let { description} = it.leafProps;
                                             return <Leaf
-                                                {...it.leftProps}
+                                                {...it.leafProps}
                                                 former={this.props.former}
                                                 //portalMap={propsPortalMap}
                                                 size={'small'}
@@ -853,7 +853,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                     //需要
                                     onGetDependentParameters={this.props.onGetDependentParameters}
                                 ><Leaf
-                                    {...leftProps}
+                                    {...leafProps}
                                     portalMap={propsPortalMap}
                                 />
                                 </Child>
@@ -1054,12 +1054,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         ref={this.wrapperRef}
                         className={classnames({ 'former-open-error': this.state.validationMessage })}
                     >
-                        {ContentPortal.length>0 ? <Space.Compact>
-                            <View
-                                {...viewProps}
-                            />
-                            {this.renderPortal(ContentPortal)}
-                        </Space.Compact> : <View {...viewProps}/>}
+                        {this.renderCompactPortal(View, viewProps,ContentPortal)}
                         
                         {this.state.validationMessage &&  <span className='former-error-message'><Icons.InfoCircleOutlined/> {this.state.validationMessage}</span>}
                     </span>
@@ -1067,6 +1062,45 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             )
         }
         return null;
+    }
+    
+    private renderCompactPortal(View: any , viewProps: any, Portal: any) {
+        
+        if (Portal.length > 0) {
+            // 遍历找出input， select 这种可以组合在一起的
+           //let 
+            let Compactwrap: any = [];
+            let noCompact: any = [];
+            Portal.forEach((it)=> {
+                let {leafProps} = it;
+                if (['input','select'].indexOf(leafProps.uiType) > -1) {
+                    Compactwrap.push(it)
+                } else {
+                    noCompact.push(it)
+                }
+            })
+
+            if (Compactwrap.length) {
+                return (
+                    <>
+                        <Space.Compact>
+                        <View {...viewProps} />
+                            {this.renderPortal(Compactwrap)}
+                        </Space.Compact>
+                        {noCompact && this.renderPortal(noCompact)}
+                    </>
+                )
+            } else {
+
+                if (noCompact.length > 0) {
+                    return <Space><View {...viewProps}/>{this.renderPortal(noCompact)}</Space>
+                }
+            }
+
+        }
+        
+        return <View {...viewProps}/>
+
     }
     private getPortalBySlot(portalMap:any,slot:string) {
         let _portalMap: any = portalMap || this.props.portalMap;
@@ -1078,8 +1112,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     private renderPortal(portalMap) {
         if (portalMap) {
             return portalMap.map(it => {
-                let { description} = it.leftProps;
-                return <Leaf {...it.leftProps} former={this.props.former} tooltip ={description} popupMatchSelectWidth={false}/>
+                let { description} = it.leafProps;
+                return <Leaf {...it.leafProps} former={this.props.former} tooltip ={description} popupMatchSelectWidth={false}/>
             })
         }
     }

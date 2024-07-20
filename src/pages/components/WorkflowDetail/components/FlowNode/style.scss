@@ -33,6 +33,20 @@
     }
 }
 
+@keyframes loop {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(180deg);
+    }
+    100% {
+        transform: rotate(360deg);
+        // opacity: 0;
+    }
+}
+
 .ui-mircoflow-node {
     position: absolute;
     width: 120px;
@@ -41,6 +55,19 @@
     text-align: center;
     border: 9px solid #fff;
     z-index: 20;
+    &.ui-mircoflow-activate {
+        &::before {
+            width: calc(100% + 18px);
+            height: calc(100% + 18px);
+            left: -9px;
+            
+            top: -9px;
+            border:9px dashed var(--color);
+            background: transparent;
+            box-sizing: border-box;
+            animation: loop 24s linear infinite
+        }
+    }
     &.ui-mircoflow-node-floating {
         border: 9px dashed #ccc;
         opacity: .55;

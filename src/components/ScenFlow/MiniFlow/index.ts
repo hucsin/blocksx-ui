@@ -71,6 +71,9 @@ export default class MiniFlow extends EventEmitter {
     private dragTarget: any; // 拖动时候的目标
     private draggingFlag: any;
 
+    private iterationRelevantMap: any;
+    private iterationGroupMap: any;
+
     private size: number;
     private safeStartAngle: number;
     private safeEndAngle: number;
@@ -140,59 +143,7 @@ export default class MiniFlow extends EventEmitter {
             this.resetConnector();
         })
     }
-    public removeGroupChildren(nodeName: string) {
-        if (this.childrenGroupMap[nodeName]) {
-            this.childrenGroupMap[nodeName].parentNode.removeChildren(this.childrenGroupMap[nodeName]);
-            this.childrenGroupMap[nodeName] = null;
-        }
-    }
 
-    public getFlowGroupChildren(nodeName) {
-
-        let children: any = this.getDescendantNode(nodeName);
-        let rect: any = {
-            top: 1e12,
-            left:1e12,
-            bottom: 0,
-            right: 0
-        }
-        children.forEach(it => {
-            let { left, top} = it;
-            if (left < rect.left) {
-                rect.left = left;
-            }
-            if (left > rect.right) {
-                rect.right = left
-            }
-
-            if (top < rect.top) {
-                rect.top = top
-            }
-            if (top > rect.bottom) {
-                rect.bottom = top
-            }
-        })
-        
-        return rect;
-    }
-    public setGroupChildren(nodeName: string) {
-        if (!this.childrenGroupMap[nodeName]) {
-            let div:any = document.createElement('div');
-            div.className = 'ui-children-group';
-            this.childrenGroupMap[nodeName] = div;
-
-            this.canvas.appendChild(div);
-            
-        }
-        let rect: any = this.getFlowGroupChildren(nodeName);
-
-        let group: any = this.childrenGroupMap[nodeName];
-        
-        group.style.left = (rect.left - 16) + 'px';
-        group.style.top = (rect.top -16) + 'px';
-        group.style.width = (rect.right - rect.left + 160) + 'px';
-        group.style.height = (rect.bottom -rect.top + 160) + 'px'
-    }
     
     // 清楚
     public destory() {
@@ -1334,6 +1285,9 @@ export default class MiniFlow extends EventEmitter {
             if (!this.nodeMap[nodeName]) {
                 this.instance.draggable(nodeName, {
                     // filter: '.scenflow-node'
+                    mouseenter: ()=> {
+                        console.log('33333')
+                    },
                     drag: (e) => {
                         this.updateNodeByName(e.el.id, {
                             left: e.pos[0],
@@ -1361,8 +1315,7 @@ export default class MiniFlow extends EventEmitter {
                         this.dragNodeName = nodeName;
                        
                         this.reflushDragNode();
-
-                        this.setGroupChildren(nodeName)
+                        
                     },
                     stop: (event: any) => {
 
@@ -1485,6 +1438,29 @@ export default class MiniFlow extends EventEmitter {
      * 以下为公共接口区
      * 
      ******************/
+    public resetIterationRelevantMap() {
+        let iterationRelevantMap: any = {};
+        let iterationGroupMap: any = {};
+        console.log(this.nodes)
+        MiniFlowStructural.findIterationRelevantMap(this.nodes, this.connector).forEach((value: any, key: string) => {
+            console.log(key, value, 9999)
+            iterationGroupMap[key] = key;
+            iterationRelevantMap[key] = [...value.map(it=> {
+                iterationGroupMap[it.name] = key;
+                return it.name
+            }), key];
+        })
+        this.iterationRelevantMap = iterationRelevantMap;
+        this.iterationGroupMap = iterationGroupMap;
+
+    }
+    
+    public getCurrentIterationRelevantMap(currentNode:string) {
+        let relevantKey: string = this.iterationGroupMap[currentNode];
+
+        return this.iterationRelevantMap[relevantKey];
+    }
+
 
 
     // 过滤节点
@@ -1819,6 +1795,9 @@ export default class MiniFlow extends EventEmitter {
         });
 
     }
+    private isRouterNode(node: any) {
+        return node.type == 'router' && node.componentName == 'FlowControl.router'
+    }
     // 1\判断该节点关联的router节点,是否有后代节点,如果没有就删除该router节点
     // 2\如果前面有两个以上节点就不删除
     private relatedDeleteRouter(nodeName: any, relatedNodeMap: any, reconector: any) {
@@ -1828,7 +1807,7 @@ export default class MiniFlow extends EventEmitter {
             let relatedConnector: any = this.getConnectorBySourceName(nodeName);
             relatedConnector.forEach(conn => {
                 let targetNode: any = this.getNodeByName(conn.target);
-                if (targetNode.type == 'router' && !targetNode.locked) {
+                if (this.isRouterNode(targetNode) && !targetNode.locked ) {
                     // 如果前后只有一条线
                     let targetConnectors: any = this.getConnectorBySourceName(conn.target);
                     let sourceConnectors: any = this.getConnectorByTargetName(conn.target) || [];
@@ -1852,7 +1831,7 @@ export default class MiniFlow extends EventEmitter {
             relatedConnector.forEach(conn => {
                 let sourceNode: any = this.getNodeByName(conn.source);
                 
-                if (sourceNode.type == 'router' && !sourceNode.locked) {
+                if (this.isRouterNode(sourceNode) && !sourceNode.locked) {
                     let parentConnector: any =  this.getConnectorByTargetName(sourceNode.name);
 
                     if (parentConnector.length <= 1){

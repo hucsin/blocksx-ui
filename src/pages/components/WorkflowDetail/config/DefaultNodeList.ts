@@ -128,7 +128,7 @@ export default class DefaultNodeList {
                     this.getIdeaNode(sourceNodeName, {left: 40, top: 162}),
                     {
                         name: targetNodeName,
-                        componentName: 'Thinking.router.think',
+                        componentName: 'Thinking.think',
                         type: 'router',
                         isNew: false,
                         icon: 'ThinkingUtilityOutlined',
@@ -193,10 +193,10 @@ export default class DefaultNodeList {
                         name: bufferName,
                         type: 'router',
                         icon: 'DatasourceMiniDataOutlined',
-                        componentName: 'Thinking.buffer',
+                        componentName: 'FlowControl.buffer',
                         color: window['__main_bg_color'],
                         props: {
-                            icon: '',
+                            icon: 'DatasourceDefaultDataOutlined',
                             program: 'Buffer',
                             method: 'Conditional Buffer'
                         },

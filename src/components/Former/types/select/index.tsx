@@ -203,6 +203,11 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                             this.fetchData();
                         }
                     }}
+                    style={
+                        {
+                            width: props.width 
+                        }
+                    }
                     popupMatchSelectWidth={this.props.popupMatchSelectWidth}
                     mode={this.props.mode}
                     showSearch={true}

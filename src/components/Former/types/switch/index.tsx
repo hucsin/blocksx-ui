@@ -101,6 +101,7 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
                         checked  = {this.state.value} 
                         onChange = {this.onChange} 
                     />
+                    <span className='ui-placeholoder'>{props.placeholder}</span>
                 </Tooltip>
             </div>
         )

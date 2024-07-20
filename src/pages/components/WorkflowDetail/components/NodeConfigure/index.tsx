@@ -174,6 +174,7 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
             })
         } else {
 
+
             this.props.onClassifyClick && this.props.onClassifyClick({
                 ...rowItem,
                 ...rowItem.props
@@ -276,6 +277,8 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
                             minIcon={1}
                             reflush = {this.state.reflushDataSource}
                             size='small'
+
+                            actionSize='small'
                             groupKey='type'
                             avatarMerge={true}
                             avatarSize={40}
@@ -287,6 +290,10 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
                                 {
                                     key: 'name',
                                     place: 'title' 
+                                },
+                                {
+                                    key: 'subname',
+                                    place: 'subtitle' 
                                 },
                                 {
                                     key: 'description',
