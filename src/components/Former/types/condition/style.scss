@@ -4,14 +4,99 @@
     .ui-regular-tuple {
         margin-bottom: 8px;
         padding-bottom: 8px;
+        .ant-space-compact {
+            .ant-select {
+                max-width: none !important;
+                min-width: 0 !important;
+            }
+        }
     }
     .ui-regular-logic {
         margin-bottom: 8px;
         border: 1px solid var(--main-border-color);
         
-        padding: 8px;
+        padding: 16px;
         padding-left: 32px;
         border-radius: 12px;
-        border-left-color: #444
+        border-left-color: #aaa;
+        position: relative;
+        .ui-condition-remove {
+            width: 16px;
+            height: 16px;
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            margin-top: -10px;
+            transition: all .2s;
+            opacity: .5;
+            color:red;
+            cursor: pointer;
+            &:hover {
+                opacity: .9;
+                transform: scale(1.1);
+            }
+        }
+
+        .ui-condition-toolbar {
+            position: absolute;
+            left: 50%;
+            width: 120px;
+            margin-left: -60px;
+            bottom: -6px;
+            .ant-btn-sm {
+                width: 60px;
+                text-align: center;
+                font-size:12px;
+                height: 18px;
+                span:not(.ant-btn-icon) {
+                    margin-left: -6px;
+                }
+            }
+        }
+
+        &::after {
+            position: absolute;
+            content: " ";
+            border: 1px solid #aaa;
+            background-color: #fff;
+            transform: rotate(45deg);
+            width: 10px;
+            height: 10px;
+            left: -6px;
+            top: 50%;
+            margin-top: -5px;
+            border-right: none;
+            border-top: none;
+        }
+
+        >.ant-select-borderless {
+            position: absolute;
+            opacity: .5;
+            &:Hover {
+                opacity: .9;
+            }
+            left: -7px;
+            z-index: 11;
+            top: 50%;
+            margin-top: -11px;
+            min-width: 40px !important;
+            max-width: 45px !important;
+            .ant-select-selection-item {
+                padding-inline-end: 0px !important;
+                > span:not(.anticon) {
+                    display: none;;
+                }
+            }
+            .ant-select-selector {
+                padding: 0;
+                padding-left: 8px;
+            }
+            .ant-select-arrow {
+                transform: scale(.7);
+                left: -8px;
+                display: none;;
+            }
+        }
+
     }
 }

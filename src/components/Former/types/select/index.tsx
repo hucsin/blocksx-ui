@@ -211,6 +211,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
    
     public render() {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
+        let popupMatchSelectWidth = props.popupMatchSelectWidth !== undefined ? props.popupMatchSelectWidth : this.props.popupMatchSelectWidth;
         let disabled: boolean = props.disabled || this.props.disabled;
 
         return (
@@ -229,7 +230,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                             width: props.width 
                         }
                     }
-                    popupMatchSelectWidth={this.props.popupMatchSelectWidth}
+                    popupMatchSelectWidth={popupMatchSelectWidth}
                     mode={this.props.mode}
                     showSearch={true}
                     popupClassName={this.props.popupClassName}

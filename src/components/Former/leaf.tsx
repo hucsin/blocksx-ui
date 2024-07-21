@@ -1058,20 +1058,12 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                 onChangeValue:(val: any, type?: string, originValue?: any) => this.onChangeValue(val, type || 'man', originValue)
             }
             return (
-                <Popover
-                    placement="topLeft"
-                    content={this.state.validationMessage}
-                    open={false && !!this.state.validationState && this.state.validationMessage}
-                >
-                    <span
-                        ref={this.wrapperRef}
-                        className={classnames({ 'former-open-error': this.state.validationMessage })}
-                    >
+               <>
                         {this.renderCompactPortal(View, viewProps,ContentPortal)}
                         
                         {this.state.validationMessage &&  <span className='former-error-message'><Icons.InfoCircleOutlined/> {this.state.validationMessage}</span>}
-                    </span>
-                </Popover>
+                        </> 
+               
             )
         }
         return null;
@@ -1096,8 +1088,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             if (Compactwrap.length) {
                 return (
                     <>
-                        <Space.Compact>
-                        <View {...viewProps} />
+                        <Space.Compact block>
+                        <View {...viewProps} ref={this.wrapperRef} />
                             {this.renderPortal(Compactwrap)}
                         </Space.Compact>
                         {noCompact && this.renderPortal(noCompact)}
@@ -1106,13 +1098,13 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             } else {
 
                 if (noCompact.length > 0) {
-                    return <Space><View {...viewProps}/>{this.renderPortal(noCompact)}</Space>
+                    return <Space><View {...viewProps} ref={this.wrapperRef}/>{this.renderPortal(noCompact)}</Space>
                 }
             }
 
         }
         
-        return <View {...viewProps}/>
+        return <View {...viewProps} ref={this.wrapperRef}/>
 
     }
     private getPortalBySlot(portalMap:any,slot:string) {

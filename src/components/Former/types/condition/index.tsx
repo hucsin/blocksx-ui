@@ -1,6 +1,9 @@
 import React from 'react';
+import Regular from '@blocksx/regular';
 import './style.scss';
-import { Space, Button } from 'antd';
+import { Space, Button, Select, Tooltip } from 'antd';
+import * as Icons from '../../../Icons';
+
 
 interface FormerConditionProps {
     children: any;
@@ -11,7 +14,19 @@ interface FormerConditionState {
     value: any;
 }
 
+const LogicSymbol = Regular.Logic.symbol;
+
 export default class FormerCondition extends React.Component<FormerConditionProps, FormerConditionState> {
+
+    private logicMap: any =  [
+        ['allOf', 'AllOfUtilityOutlined'],
+        ['anyOf', 'AnyOfUtilityOutlined'],
+        ['oneOf', 'OneOfUtilityOutlined'],
+        ['allNotOf', 'AllNotOfUtilityOutlined'],
+        ['anyNotOf', 'AnyNotOfUtilityOutlined'],
+        ['oneNotOf', 'OneNotOfUtilityOutlined']
+    ];
+
     public constructor(props: FormerConditionProps) {
         super(props);
 
@@ -53,6 +68,11 @@ export default class FormerCondition extends React.Component<FormerConditionProp
             })
         }
     }
+    public doChangeValue() {
+        this.setState({
+            value: this.state.value
+        })
+    }
     public getSlotChild() {
         let slot: any = {};
         this.props.children.map(it => {
@@ -63,7 +83,7 @@ export default class FormerCondition extends React.Component<FormerConditionProp
     public renderTuple(tuple: any, slotMap: any) {
         return (
             <div className='ui-regular-tuple'>
-                <Space.Compact>
+                <Space.Compact block>
                     {React.cloneElement(slotMap.left, {})}
                     {React.cloneElement(slotMap.operator, {})}
                     {React.cloneElement(slotMap.right, {})}
@@ -71,6 +91,7 @@ export default class FormerCondition extends React.Component<FormerConditionProp
             </div>
         )
     }
+    
     public renderLogic(logic: any, slotMap: any) {
 
         return (
@@ -81,16 +102,49 @@ export default class FormerCondition extends React.Component<FormerConditionProp
                     }
                     return this.renderLogic(it, slotMap)
                 })}
-                <div>
-                    <Button>Add group</Button> <Button>Add rule</Button>
+
+                {this.renderLogicType(logic.logic, (value) => {
+                    logic.logic = value;
+                    this.doChangeValue();
+                })}
+                <div className='ui-condition-toolbar'>
+                    <Space.Compact block>
+                        <Button  size="small" icon={<Icons.FolderAddOutlined/>}>group</Button>
+                        <Button  size="small" icon={<Icons.PlusOutlined/>}>rule</Button>
+                    </Space.Compact>
                 </div>
+                <div className='ui-condition-remove'><Icons.DestroyUtilityOutlined /></div>
             </div>
+        )
+    }
+    private renderLogicType(value: string, changeValue: Function) {
+       
+        return (
+            <Tooltip title={LogicSymbol[value].label}>
+                <Select 
+                    variant="borderless" 
+                    size='small'
+                    value={value}
+                    popupMatchSelectWidth={false}
+                    onChange={(v)=> changeValue(v)}
+                    options={this.logicMap.map(it => {
+                        let IconView: any = Icons[it[1]];
+                        return {
+                            value: it[0],
+                            label: (<>
+                                <IconView/>
+                                <span style={{paddingLeft: 8}}>{LogicSymbol[it[0]].label}</span>
+                            </>)
+                        }
+                    })}
+                />
+            </Tooltip>
         )
     }
     public render() {
         let value: any = this.state.value || {};
         let slotMap: any = this.getSlotChild();
-        console.log(value,3)
+        
         return (
             <div className='ui-former-condition'>
                 {value.type == 'tuple' ? this.renderTuple(value, slotMap) : this.renderLogic(value, slotMap)}
