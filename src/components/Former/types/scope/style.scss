@@ -1,0 +1,110 @@
+.ui-function-info {
+    max-width: 350px;
+    dt {
+        font-weight: bold;;
+        padding-bottom: 8px;
+        opacity: .8;
+        font-size: 12px;;
+    }
+    p {
+        line-height: 1.25;
+        padding-left: 1.2em;
+    }
+
+    dd {
+        margin-inline-start: 1.2em;
+        line-height: 1.25;
+        padding-bottom: 8px;
+        &:last-child {
+            padding-bottom: 0;
+        }
+        span:last-child {
+            opacity: .5;
+        }
+    }
+}
+.ui-scope-panel {
+    padding: 0;
+    .ui-scope-panel-inner {
+        padding: 10px;
+        width: 100%;
+        margin-top: -10px;
+        margin-left: -10px;
+        margin-bottom: -10px;
+        margin-right: -10px;
+        border-radius: 10px;;
+    }
+}
+.ui-scope {
+    border: 1px solid #d9d9d9;
+    background-color: #fff;
+    border-radius: 6px;
+    line-height: 1.5714285714285714;
+    font-size:14px;
+    padding: 4px 11px;
+    transition: all .2s;
+    &.ui-scope-focus {
+        border-color:var(--main-bg-color);
+        box-shadow:0 0 0 2px rgba(5, 55, 255, 0.06);outline:0;
+    }
+    .ui-scope-function {
+        &.ui-scope-function-hight {
+            > .ui-scope-keyword {
+                background-color: var(--main-bg-color) !important;
+                color:#fff;
+            }
+        }
+        &:Hover {
+           > .ui-scope-keyword {
+                background-color: #d9d9d9;
+            }
+        }
+        &:first-child {
+            margin-left: 0
+        }
+        button {
+            height: 16px;
+            width: 16px;
+            margin-top: -3px;
+            font-size: 12px;
+            line-height: 1.5714285714285714;
+            vertical-align: middle;
+            padding: 0;
+        }
+    }
+
+    .ui-scope-input {
+        padding: 0;
+        border: none;
+        display: inline-block;
+
+        border-radius: 0;
+        outline: none;
+
+        min-width: 4px;
+        
+        width: auto;
+        height: 16px;
+        position: relative;
+        line-height: 16px;
+        border-bottom: 1px dashed var(--main-border-color);
+        &:focus{
+            outline: none;
+        }
+        &:empty {
+            content: "d"
+        }
+    }
+    .ui-scope-keyword-one {
+        padding: 0 4px; 
+        margin: 0 4px;
+    }
+    .ui-scope-keyword {
+        background:var(--main-background-color);
+        border-radius: 3px;
+        padding: 0 4px;
+        margin: 0 4px;
+        transition: all .3s;
+        cursor: default;
+    }
+}

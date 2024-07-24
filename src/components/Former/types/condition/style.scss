@@ -2,24 +2,106 @@
     border-radius: 12px;
     padding: 8px;
     .ui-regular-tuple {
-        margin-bottom: 8px;
-        padding-bottom: 8px;
+        margin-bottom: 16px;
+        position: relative;
+        &.ui-regular-hide-left {
+            .ant-input:first-child {
+                padding: 0;
+                border: none;
+            }
+            .ant-select .ant-select-selector{
+                border-radius: 6px 0 0 6px;
+            }
+        }
+        &.ui-regular-hide-right {
+            &:not(.ui-conditioin-hascase) {
+                .ant-select .ant-select-selector{
+                    border-radius: 0px 6px 6px 0;
+                }
+            }
+            &.ui-conditioin-hascase {
+                button {
+                    border-radius: 0px 6px 6px 0;
+                }
+            }
+            .ant-input:last-child {
+                padding: 0;
+                border: none;
+            }
+        }
+        > .anticon {
+            position: absolute;
+            right: 4px;
+            top: -16px;
+            color:red;
+            opacity: 0;
+            transition: all .2s;
+            &:hover {
+                opacity: .9 !important;
+                transform: scale(1.2);
+            }
+        }
+        &:hover {
+            > .anticon {
+                opacity: .3;
+            }
+        }
         .ant-space-compact {
             .ant-select {
                 max-width: none !important;
                 min-width: 0 !important;
             }
         }
+        &.ui-conditioin-hascase {
+            .ant-select {
+                width: 38px !important;
+                padding-right: 0px;
+            }
+        }
+        .ant-select-arrow {
+            display:none;
+        }
+        button {
+            border-left: none;
+            width: 10px;
+            font-size: 12px;
+            padding-left: 4px;;
+            &.case-insensitive {
+                span {
+                    opacity: 1;
+                }
+            }
+            span {
+                margin-top: -8px;
+                opacity: .3;
+            }
+        }
+        .ant-select-selection-item {
+
+            span {
+                font-size: 20px;
+                vertical-align: middle;
+            }
+            >span:last-child {
+                display: none;
+            }
+        }
     }
     .ui-regular-logic {
-        margin-bottom: 8px;
+        margin-bottom: 16px;
         border: 1px solid var(--main-border-color);
         
         padding: 16px;
-        padding-left: 32px;
+        padding-left: 24px;
         border-radius: 12px;
         border-left-color: #aaa;
+        border-right-color: #aaa;
         position: relative;
+        > div {
+            >div:last-child {
+                margin-bottom: 8px;
+            }
+        }
         .ui-condition-remove {
             width: 16px;
             height: 16px;
@@ -28,30 +110,61 @@
             top: 50%;
             margin-top: -10px;
             transition: all .2s;
-            opacity: .5;
+            opacity: .3;
             color:red;
+            opacity: 0;
             cursor: pointer;
             &:hover {
-                opacity: .9;
-                transform: scale(1.1);
+                opacity: .9 !important;
+                transform: scale(1.2);
             }
         }
-
+        
+        
         .ui-condition-toolbar {
+           
+            bottom: -20px;
+            height: 40px;
+            width: 100%;
             position: absolute;
-            left: 50%;
-            width: 120px;
-            margin-left: -60px;
-            bottom: -6px;
-            .ant-btn-sm {
+            left: 0;
+            &:hover {
+                .ant-space-compact {
+                    opacity: 1;
+                }
+            }
+            .ant-space-compact {
+                position: absolute;
+                left: 50%;
+                width: 120px;
+                bottom: 3px;
+                opacity: 0;
+                transition: all .2s;
+                margin-left: -60px;
+            }
+            .ant-btn {
                 width: 60px;
                 text-align: center;
                 font-size:12px;
-                height: 18px;
+                height: 24px;
+                padding: 4px;
                 span:not(.ant-btn-icon) {
                     margin-left: -6px;
                 }
             }
+        }
+        background-color: #fff;
+        transition: background-color .2s;
+        &.ui-regular-logic-hover{
+            background-color: #fafafa;
+            border-top-color: #ddd;
+            border-bottom-color: #ddd;
+           > .ui-condition-remove {
+                opacity: .3;
+            }
+          > .ui-condition-toolbar .ant-space-compact {
+            opacity: 1;
+          }
         }
 
         &::after {
@@ -75,7 +188,7 @@
             &:Hover {
                 opacity: .9;
             }
-            left: -7px;
+            left: -18px;
             z-index: 11;
             top: 50%;
             margin-top: -11px;
@@ -89,7 +202,7 @@
             }
             .ant-select-selector {
                 padding: 0;
-                padding-left: 8px;
+                padding-left: 20px;
             }
             .ant-select-arrow {
                 transform: scale(.7);

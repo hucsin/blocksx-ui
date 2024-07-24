@@ -51,6 +51,7 @@ export { default as AutoCloudUtilityOutlined } from './AutoCloudUtilityOutlined'
 export { default as AutoZoomUtilityOutlined } from './AutoZoomUtilityOutlined';
 export { default as BusinessUtilityOutlined } from './BusinessUtilityOutlined';
 export { default as BytehubsBrandOutlined } from './BytehubsBrandOutlined';
+export { default as CaseUtilityOutlined } from './CaseUtilityOutlined';
 export { default as ChargingHistoryUtilityOutlined } from './ChargingHistoryUtilityOutlined';
 export { default as ConfigurationUtilityOutlined } from './ConfigurationUtilityOutlined';
 export { default as ConnectUtilityOutlined } from './ConnectUtilityOutlined';

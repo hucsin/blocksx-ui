@@ -2,11 +2,20 @@
   .ant-select {
     min-width: 50%;
     max-width: 100%;
-  }
+  } 
  
 }
 .design-former-select-remarks {
   color:#ccc;
   padding-left: 8px;
   font-weight: 100;
+}
+.ant-tooltip-inner,
+.ant-select-item-option-content {
+  > span.anticon {
+    margin-right: 8px;
+    border: 1px solid var(--main-border-color);
+    border-radius: 3px;
+    background-color: var(--main-background-color);
+  }
 }

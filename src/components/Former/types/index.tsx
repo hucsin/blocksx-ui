@@ -42,5 +42,7 @@ export { default as pickmore } from './pickmore';
 
 export { default as notice } from './notice';
 export { default as button } from './button';
-export { default as badge} from './badge'
+export { default as badge} from './badge';
+
+export { default as scope } from './scope';
 

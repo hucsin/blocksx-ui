@@ -303,8 +303,21 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             switch (type) {
                 case 'map':
                 case 'object':
-                case 'condition':
+                
                     return {};
+                case 'condition':
+                    return {
+                        type: 'logic',
+                        logic: 'allOf',
+                        value: [
+                            {
+                                type: 'tuple',
+                                value: {
+                                    operator: '='
+                                } 
+                            }
+                        ]
+                    }
                 case 'list':
                 case 'array':
                     return [];

@@ -12,6 +12,7 @@ import React from 'react';
 import { IFormerBase } from '../../typings';
 
 import UtilsDatasource from '../../../utils/datasource';
+import * as Icons from '../../../Icons';
 import { utils } from '@blocksx/core';
 import { Select,Tooltip } from 'antd';
 
@@ -39,6 +40,7 @@ export interface FormerSelectProps extends IFormerBase {
 export interface FormerSelectState {
     value: any;
     dataSource: any[];
+    originSource: any[],
     relyon: any;
     loading: boolean;
     multiple: boolean;
@@ -58,10 +60,12 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
     public constructor(props: FormerSelectProps) {
         super(props);
         let isMultiple: boolean = this.isMultiple();
+        let datasource: any [] = this.getDefaultDatasource(props);
         this.state = {
             value: isMultiple ? this.fixedMultipleValue(props.value) : props.value,
-            dataSource: this.makeGroupDataSource(this.getDefaultDatasource(props)),
+            dataSource: this.makeGroupDataSource(datasource),
             relyon: props.relyon || {},
+            originSource: datasource,
             loading: false,
             multiple: isMultiple,
             runtimeValue: props.runtimeValue
@@ -73,6 +77,14 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         let group : any = {};
 
         datasource.forEach(it => {
+
+            if (it.icon && typeof it.label =='string') {
+                let IconView: any = Icons[it.icon];
+                if (IconView) {
+                    it.label = (<><IconView clasName="dd"/><span>{it.label}</span></>)
+                }
+            }
+
             if (it.group) {
                 if (!group[it.group]) {
                     group[it.group] = [];
@@ -168,10 +180,11 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                     //...this.state.runtimeValue, 
                     query: this.state.search
                 }).then((data: any) => {
-                    
+                    let datasource: any = isLabelValue ? this.markDataSource([this.state.value, ...data]) :data;
                     this.setState({
-                        dataSource: this.makeGroupDataSource(isLabelValue ? this.markDataSource([this.state.value, ...data]) :data),
+                        dataSource: this.makeGroupDataSource(datasource),
                         loading: false,
+                        originSource: datasource,
                         query: this.state.search
                     })
                 })
@@ -195,17 +208,10 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
             )
         }
     }
-    private renderChildren() {
-        let dataSource: any[] = this.state.dataSource;
+    
 
-        return dataSource.map((it => {
-            let value: any = it.value || it.key;
-            let label: any = it.label || it.name || it.value || it.key;
-
-            return (
-                <Select.Option key={value} value={value}>{label}{this.renderRemarks(it.remarks)}</Select.Option>
-            )
-        }))
+    private findCurrentLabel() {
+        return this.state.originSource.find(it=> it.value == this.state.value) || {}
     }
 
    
@@ -214,11 +220,14 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         let popupMatchSelectWidth = props.popupMatchSelectWidth !== undefined ? props.popupMatchSelectWidth : this.props.popupMatchSelectWidth;
         let disabled: boolean = props.disabled || this.props.disabled;
 
+        let tooltip: string = props.tooltip =='auto' ? this.findCurrentLabel().label  : props.tooltip || this.props.tooltip;
+
         return (
-            <Tooltip title={this.props.tooltip}>
+            <Tooltip title={tooltip}>
                 <Select
                     allowClear={this.props.autoClear}    
                     placeholder={this.props.placeholder}
+                    
                     {...this.props['x-type-props']}
                     onFocus={() => {
                         if (this.isLazyLoader()) {

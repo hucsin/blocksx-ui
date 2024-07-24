@@ -53,6 +53,7 @@ export const map:any = {
         "AutoCloudUtilityOutlined",
         "AutoZoomUtilityOutlined",
         "BusinessUtilityOutlined",
+        "CaseUtilityOutlined",
         "ChargingHistoryUtilityOutlined",
         "ConfigurationUtilityOutlined",
         "ConnectUtilityOutlined",

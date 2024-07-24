@@ -10,13 +10,15 @@ import React from 'react';
 import { IFormerBase } from '../../typings';
 import * as Icons from '../../../Icons';
 import { Input } from 'antd';
-import Icon from '@ant-design/icons/lib/components/Icon';
 
 interface IFormerInput extends IFormerBase {
     value: any,
     size: any,
     disabled?: boolean,
-    onChangeValue: Function
+
+    onChangeValue: Function;
+    onFocus?: Function;
+    onBlur?: Function;
 }
 export default class FormerInput extends React.Component<IFormerInput, { value: any }> {
     public constructor(props: IFormerInput) {
@@ -64,7 +66,7 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
             )
         } else {
             return (
-                <Input size={this.props.size}  {...props} style={{width: props.width}} disabled={disabled} value={this.state.value} onChange={this.onChange} />
+                <Input size={this.props.size}  {...props} onFocus={this.props.onFocus} onBlur={this.props.onBlur} style={{width: props.width}} disabled={disabled} value={this.state.value} onChange={this.onChange} />
             )
         }
     }
