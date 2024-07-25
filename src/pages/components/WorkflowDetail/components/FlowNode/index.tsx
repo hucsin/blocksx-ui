@@ -4,7 +4,7 @@ import { utils, keypath } from '@blocksx/core';
 import './style.scss';
 import { FetchMap } from '../../typing';
 import NodeConfigure from '../NodeConfigure';
-import { DomUtils, FormerTypes, ContextMenu, Icons, SmartPage, MiniFlow } from '@blocksx/ui';
+import { DomUtils, FormerTypes, ContextMenu, Icons, SmartPage, GlobalScope } from '@blocksx/ui';
 
 import i18n from '@blocksx/i18n';
 import { PlusOutlined } from '@ant-design/icons';
@@ -506,6 +506,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     
         this.patchValue();
         this.setState({openSetting: true});
+
+        GlobalScope.setScope(GlobalScope.TYPES.CURRENTFLOW_NODE, {
+            type: 'node',
+            value: this.props.name
+        });
     }
     private onCloseLayer() {
         if (this.state.hasChanged) {

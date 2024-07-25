@@ -45,14 +45,24 @@ class ScopeManger {
         let groupCache: any = {};
         for(let key in this.cache) {
             let item = this.cache[key];
-            let group = item.group;
+            let name = item.name;
+            let split =  name.split('.')
+            let objectKey: string = split[0];
+            let group = item.type;
 
-            if (!groupCache[group]) {
-                groupCache[group] = []
+            if (!groupCache[objectKey]) {
+                groupCache[objectKey] = {}
             }
 
-            groupCache[group].push(item)
+            if (!groupCache[objectKey][group]) {
+                groupCache[objectKey][group] = []
+            }
+            groupCache[objectKey][group].push({
+                ...item,
+                method: split[1]
+            })
         }
+        return group ? groupCache[group] : groupCache;
     }
 }
 

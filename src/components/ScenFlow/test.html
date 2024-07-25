@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draggable Example</title>
+    <style>
+        #draggable {
+            width: 100px;
+            height: 100px;
+            background-color: lightblue;
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            cursor: move;
+        }
+    </style>
+</head>
+<body >
+    <div id="draggable">Drag me</div>
+    <script>
+        const draggableElement = document.getElementById('draggable');
+
+        draggableElement.addEventListener('mousedown', function(event) {
+            draggableElement.setAttribute('draggable', 'true');
+            console.log(3333)
+        });
+        document.body.addEventListener('mousedown', (event) => {
+            event.preventDefault();
+        })
+
+        draggableElement.addEventListener('mouseup', function(event) {
+            draggableElement.removeAttribute('draggable');
+        });
+
+        draggableElement.addEventListener('dragstart', function(event) {
+            console.log('Drag started');
+        }, true);
+    </script>
+</body>
+</html>

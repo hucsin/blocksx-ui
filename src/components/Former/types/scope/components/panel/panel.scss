@@ -1,0 +1,101 @@
+.ui-scope-panel {
+    padding: 0;
+    .ui-scope-panel-inner {
+        padding: 16px;
+        margin-top: -10px;
+        margin-left: -10px;
+        margin-bottom: -10px;
+        margin-right: -10px;
+        border-radius: 10px;;
+    }
+}
+.ui-scope-panel-tooltip {
+    .ant-popover-title {
+        border-bottom: 1px solid var(--main-border-color);
+        padding-bottom: 8px;
+    }
+}
+.ui-scope-panel-inner {
+    width: 480px;
+    .ui-scope-panel-header {
+        border-bottom: 1px solid var(--main-inverse-border-color, rgba(5, 5, 5, 0.06));
+        padding-bottom: 8px;
+        .ui-scope-classify {
+            display: inline-block;
+            margin-left: 16px;
+            vertical-align: middle;
+            border-radius: 8px;;
+            span {
+                padding: 4px 8px;    
+                border: 1px solid var(--main-border-color);
+                margin-right: -1px;
+                cursor: pointer;
+                position: relative;
+                &.ui-selected {
+                    border-color: var(--main-bg-color) !important;
+                    color: var(--main-bg-color) !important;
+                    z-index: 2 !important;
+                }
+                &:hover {
+                    border-color: #ccc;
+                    z-index: 1;
+                }
+                &:first-child {
+                    border-radius: 4px 0 0 4px;
+                }
+                &:last-child {
+                    border-radius: 0 4px 4px 0;
+                }
+            }
+        }
+    }
+    .ui-scope-panel-body {
+        padding: 16px 2px;
+        padding-bottom: 0;
+        min-height: 350px;
+        .ui-former-notice  {
+            padding: 4px 8px;
+            line-height: 16px;;
+        }
+        .ui-scope-function-list {
+
+            dt {
+                opacity: .7;
+                padding-bottom: 8px;
+                text-transform: uppercase;
+            }
+            dd > span {
+                display: inline-block;
+                .anticon {
+                    opacity: .2;
+                }
+                background-color: var(--main-background-color);
+                cursor: pointer;
+                margin-right: 4px;
+                margin-bottom: 4px;
+                padding: 0 4px;
+                border-radius: 3px;
+                transition: all .2s;
+                &.ant-popover-open,
+                &:not(.o):hover {
+                    color:#fff;
+                    background-color: var(--main-bg-color);
+                }
+                &.o {
+                    background-color: #fff !important;
+                    cursor: default;
+                }
+            }
+            dd {
+                word-break: break-all;
+                margin-inline-start: 1em;
+            }
+        }
+        > div{
+            display: none;
+        }
+        .ui-selected {
+            display: block;
+        }
+    }
+}

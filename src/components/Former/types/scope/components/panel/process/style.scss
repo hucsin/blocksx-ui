@@ -1,0 +1,180 @@
+.ui-scope-process-wrapper {
+    border-radius: 12px;
+    padding: 8px 16px;
+
+    overflow: hidden;
+}
+.ui-scope-process-map {
+    padding: 20px;
+    
+    
+    position: relative;
+
+    .ui-scope-process-inner {
+        position:absolute;
+        height: calc(100% - 40px);
+        width: calc(100% - 40px);
+
+        transition: all .2s;
+        
+        .overlays-arrow {
+            &::before {
+                border-width: 2px;
+                left: 2px;
+                top:0px;
+            }
+            &::after {
+                height: 2px;
+                left: 4px;
+            }
+        }
+        .jtk-endpoint {
+            transform: scale(.6);
+        }
+    }
+    .ui-scope-process-node {
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        padding: 6px;
+        cursor: pointer;
+        &.ui-scope-process-disabled {
+            cursor: default;
+        }
+        &:not(.ui-scope-process-disabled):not(.ui-scope-process-selected):hover {
+            &:after {
+                border-color:var(--hover-color)
+            }
+        }
+        .ant-avatar {
+            position: relative;
+            z-index: 11;
+        }
+        .ui-scope-text {
+            width: 120px;
+            line-height: 1em;
+            position: absolute;
+            bottom: -16px;
+            left: 50%;
+            margin-left: -60px;
+            font-size:12px;
+            text-align: center;
+            padding-top: 8px;
+            z-index: 11;
+            opacity: .4;
+            span {
+                display: inline-block;
+                border: 1px solid var(--main-border-color);
+                padding: 0 2px;
+                border-radius: 3px;
+                line-height: 14px;
+                margin-left: 4px;
+                font-size:12px;
+                height: 14px;
+                text-align: center;
+                vertical-align: middle;
+            }
+        }
+        &::after {
+            content: " ";
+            position: absolute;
+            width: 74px;
+            height: 74px;
+            border: 6px solid #fff;
+            box-sizing: border-box;
+            top: 1px;
+            left: 1px;
+            border-radius: 100%;
+            z-index: 2;
+            transition: all .1s;
+        }
+        &.ui-scope-process-selected {
+            &::after {
+                border: 4px dashed var(--hover-color) !important;
+                background-color: #fff;
+//                animation: loop 124s linear infinite;
+                width: 80px;
+                height: 80px;
+                margin-left: -3px;
+                margin-top: -3px;
+            }
+        }
+    }
+}
+.ui-scope-process {
+    > h4 {
+        opacity: .7;
+        margin: 0;
+        padding: 0;
+        padding-bottom: 0px;
+        padding-top: 8px;
+        font-weight: 400;
+        text-transform: uppercase;
+    }
+    .ui-scope-tree {
+       padding-top: 8px;
+       margin-top: 12px;
+       border-top: .5px dashed var(--main-border-color);
+       border-radius: 16px;
+       position: relative;
+       &::after {
+        content: " ";
+        position: absolute;
+        border: .5px dashed var(--main-border-color);
+        border-bottom: none;
+        border-right: none;
+        width: 16px;
+        height: 16px;
+        background-color: #fff;
+        top: -9px;
+        left: 50%;
+        margin-left: -8px;
+
+        transform: rotate(45deg);
+        
+       }
+        h4 {
+            line-height: 1.5;
+            margin-top: 0;
+            font-weight: 400;
+            .ant-avatar {
+                vertical-align: bottom;
+            }
+            margin-bottom: 0px;
+            >span:last-child {
+                opacity: .3;
+                font-size: 12px;
+                margin-left: 8px;
+            }
+        }
+        p {
+            padding: 0;
+            margin: 0;
+            padding-left: 2em;
+            line-height: 16px;
+            opacity: .5;
+        }
+        .number {
+            border: 1px solid var(--main-border-color);
+            border-radius: 3px;
+            padding:0 2px;
+        }
+    }
+
+    .ant-tree {
+        border: 1px solid var(--main-border-color);
+        border-radius: 12px;
+        padding: 8px;
+        margin-top: 8px;
+        overflow: auto;
+    }
+    .ant-tree-title {
+        .u-type {
+            opacity: .7;
+            padding: 0 8px;
+        }  
+        .u-description {
+            opacity: .2;
+        }
+    } 
+}

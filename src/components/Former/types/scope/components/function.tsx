@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { Button, Popover, Tooltip } from 'antd';
 import * as Icons from '../../../../Icons';
 import FunctionManger from '../core/ScopeManger';
+import ScopeTooltip from './panel/tooltip'
 
 interface FormerScopeFunctionProps {
     children: any;
@@ -65,55 +66,6 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
             hight: false
         })
     }
-    private getFunctionPopTitle = ()=> {
-        let { parameters } = this.schema;
-
-        if (parameters.length==0) {
-            return this.state.name
-        }
-
-        return (<>
-            {this.state.name}
-            {'('}
-            {parameters.map(it=> {
-                if (it.type !=='rest') {
-                    return it.name;
-                } else {
-                    return '...'
-                }
-            }).join(',')}
-            {')'}
-        </>)
-    }
-    private renderFunctionBody = () => {
-        
-        let { description , parameters, returns } = this.schema;
-        return (
-            <div className='ui-function-info'>
-                <p>{description}</p>
-                <dl>
-                    <dt>Parameters</dt>
-                    {parameters.map((it, index)=> {
-                        if (it.type =='rest') {
-                            return (
-                                <dd>... {it.maxLength - index} rest parameters</dd>
-                            )
-                        } else {
-                            return (
-                                <dd>
-                                  {index+1}.  <span>{it.name}</span> <span>{"<"+it.dataType+">"}</span> <span>{it.description}</span>
-                                </dd>
-                            )
-                        }
-                    })}
-                </dl>
-                <dl>
-                    <dt>Returns {'<'+returns.dataType.join('|')+'>'}</dt>
-                    {returns.description  &&<dd>{returns.description}</dd>}
-                </dl>
-            </div>
-        );
-    } 
     public render() {
         let { children } = this.props;
         let { parameters, name} = this.state;
@@ -134,10 +86,8 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
                     'ui-scope-function-hight': this.state.open || this.state.hight
                 })}
             >   
-                <Popover 
-                    mouseEnterDelay={1}
-                    title={this.getFunctionPopTitle()} 
-                    content={this.renderFunctionBody}
+                <ScopeTooltip 
+                    {...this.schema}
                     onOpenChange={(open)=>this.setState({open})}
                 >
                     <span 
@@ -145,9 +95,10 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
                         onMouseEnter={this.highlight}
                         onMouseLeave={this.unhighlight}
                     >
+                        <Icons.FunctionOutlined/>
                         {displayName} {paramsmeta.length>0 &&'('}
                     </span>
-                </Popover>
+                </ScopeTooltip>
                 {React.Children.map(children, (children: any, index: number) => {
                     return (
                         <>

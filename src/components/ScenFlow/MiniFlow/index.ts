@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import { utils } from '@blocksx/core';
 import { MiniFlow as MiniFlowStructural } from '@blocksx/structural'
 import * as DomUtils from '../../utils/dom';
+import GlobalScope  from '../../utils/GlobalScope';
 import JSPlumbTool from '../../utils/third-party/jsplumb'
 import Chinampa from './chinampa';
 import DraggableCanvas from './draggable';
@@ -25,19 +26,21 @@ export interface MiniFlowMap {
     uniq: string;
     canvas: HTMLElement | string; // 画布节点
     isViewer?: boolean;
+    draggableMode?: boolean;// 标记传统模式，
     
-    destoryChinampaPanel: HTMLElement;
-    unlinkChinampaPanel: HTMLElement;
-    chinampaPanel: HTMLElement;
+    destoryChinampaPanel?: HTMLElement;
+    unlinkChinampaPanel?: HTMLElement;
+    chinampaPanel?: HTMLElement;
 
     onChangeValue?: Function;
 
-    templateMap: any;
+    templateMap?: any;
 
     nodes: FlowNode[];
     connector: FlowConnector[];
 
     size?: number;
+    small?: boolean;
 }
 
 export default class MiniFlow extends EventEmitter {
@@ -51,6 +54,7 @@ export default class MiniFlow extends EventEmitter {
         safeMinDiamond: 30,
         safeMaxDiamond: 200
     };
+    private small: boolean;
     private temporaryRouterOffset: number;
     private canvas: any;
     private isViewer: boolean;
@@ -91,6 +95,7 @@ export default class MiniFlow extends EventEmitter {
     private uniq: any;
     private childrenGroupMap: any;
     private doChangeValue: any;
+    private draggableMode?: boolean;
     public constructor(props: MiniFlowMap) {
         super();
         this.uniq = props.uniq || 'default';
@@ -98,11 +103,15 @@ export default class MiniFlow extends EventEmitter {
         this.canvas = document.getElementById(props.canvas as string);
         this.cavnasWrapper = this.canvas.parentNode;
 
-        new Chinampa(this, props.chinampaPanel,
-            props.destoryChinampaPanel,
-            props.unlinkChinampaPanel
-        );
+        if (props.chinampaPanel) {
+            new Chinampa(this, props.chinampaPanel,
+                props.destoryChinampaPanel,
+                props.unlinkChinampaPanel
+            );
+        }
 
+        this.draggableMode = utils.isUndefined(props.draggableMode) ? true : props.draggableMode;
+       
         this.nodes = props.nodes;
         this.connector = props.connector;
         this.connectorInstanceMap = {};
@@ -115,6 +124,7 @@ export default class MiniFlow extends EventEmitter {
         this.connectorMap = {};
         this.nodeMap = {};
         this.size = (props.size || 138);
+        this.small = props.small || false; 
         this.temporaryRouterOffset = 50;
 
         this.childrenGroupMap = {};
@@ -260,6 +270,7 @@ export default class MiniFlow extends EventEmitter {
         return !!this.getNodeByName(name);
     }
     public getNodeByName(name: string): any {
+        
         return this.nodes.find(it => it.name == name)
     }
     // 判断该节点是否有路由节点连线
@@ -859,10 +870,10 @@ export default class MiniFlow extends EventEmitter {
             "dashstyle": sourceNode.floating ? "1.4 1" : "1.4 .2",
             fillStyle: targetColor,
             stroke: targetColor,
-            strokeWidth: 10,
-            cursor: sourceNode.floating ? 'default' : 'pointer'
+            strokeWidth: this.small ? 5 :10,
+            cursor: sourceNode.floating || this.isViewer ? 'default' : 'pointer'
         };
-        let hoverPaintStyle: any = sourceNode.floating ? undefined : this.mergePaintStyle(defultPaintStyle, {
+        let hoverPaintStyle: any = this.isViewer || sourceNode.floating ? undefined : this.mergePaintStyle(defultPaintStyle, {
             gradient: {
                 stops: [
                     [0, sourceColor],
@@ -878,7 +889,7 @@ export default class MiniFlow extends EventEmitter {
                 target: target,
                 events:{
                     click:(_,event) => {
-                        if (sourceNode.floating) {
+                        if (sourceNode.floating || this.isViewer) {
                             return false;
                         }
                         // 高亮连线标识
@@ -917,7 +928,7 @@ export default class MiniFlow extends EventEmitter {
                         location: 0,
                         //id: "customOverlay"
                     }],
-                    ["Custom", {
+                    this.isViewer ? null : ["Custom", {
                         create: function (component) {
                             let custom: any = document.createElement('div');
                             custom.className = 'overlays-label';
@@ -938,7 +949,7 @@ export default class MiniFlow extends EventEmitter {
                         location: .5,
                        // id: "customOverlay2"
                     }],
-                    ["Custom", {
+                    this.isViewer ? null : ["Custom", {
                         create: function (svg) {
                             
                             let custom: any = document.createElement('div');
@@ -954,7 +965,7 @@ export default class MiniFlow extends EventEmitter {
                         location: .5,
                       //  id: "customOverlay3"
                     }]
-                ]
+                ].filter(Boolean)
             }))
         }
     }
@@ -1009,7 +1020,11 @@ export default class MiniFlow extends EventEmitter {
                 source,
                 connector: instance
             })
-            
+
+            GlobalScope.setScope(GlobalScope.TYPES.CURRENTFLOW_NODE, {
+                type: 'connector',
+                value: source
+            });
         }
     }
 
@@ -1414,7 +1429,7 @@ export default class MiniFlow extends EventEmitter {
                 allowLoopback: false,
                 isSource: false,
                 isTarget: false,
-                endpoint: ["Dot", { radius: 17, isSource: false,isTarget: false }]
+                endpoint: ["Dot", { radius: this.small ? 1: 17, isSource: false,isTarget: false }]
             })
 
         } else {
@@ -1893,5 +1908,11 @@ export default class MiniFlow extends EventEmitter {
     }
     public doZoomNodeCanvas() {
         this.canvasFormat.zoomFit();
+    }
+
+    //获取某个节点的祖辈有效
+    // 排除empty节点
+    public findAncestralFlowMap(nodeName: string) {
+        return MiniFlowStructural.findAncestralFlowMap(this.connector, this.nodes, nodeName)
     }
 }

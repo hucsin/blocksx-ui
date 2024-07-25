@@ -58,8 +58,8 @@ Object.keys(Scopeconfig).forEach(objectKey => {
         let split: string[] = fun.split(':');
         
         return {
-            type: 'scope',
-            group: split[2],
+            type: 'variable',
+            group: split[2] ||'Default',
             name: objectKey + '.'+split[0],
             description: objectKey + '.'+split[0] + objectKey + '.'+split[0] + 'const of its sign',
             value: window[objectKey] && window[objectKey][fun] && split[0]

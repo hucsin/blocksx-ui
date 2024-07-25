@@ -43,22 +43,33 @@ export default class CanvasDraggle {
 
         this.canvas = this.diagram.canvas;
         this.canvasWraper = this.canvas.parentNode;
-        this.bindEvent();
+        //if (!this.diagram.isViewer) {
+            this.bindEvent();
+        //}
     }
     private bindEvent() {
 
         DomUtils.addEvent(this.canvasWraper, 'mousewheel', this.mousewheel);
         DomUtils.addEvent(this.canvasWraper, 'DOMMouseScroll', this.mousewheel);
-        DomUtils.addEvent(this.canvasWraper, 'dragstart', this.canvasDragStart);
-        DomUtils.addEvent(this.canvasWraper, 'drag', this.canvasDrag);
-        DomUtils.addEvent(this.canvasWraper, 'dragend', this.canvasDragEnd);
+        
+        if(this.diagram.draggableMode !==false) {
+            DomUtils.addEvent(this.canvasWraper, 'dragstart', this.canvasDragStart);
+            DomUtils.addEvent(this.canvasWraper, 'drag', this.canvasDrag);
+            DomUtils.addEvent(this.canvasWraper, 'dragend', this.canvasDragEnd);
+        } else {
+
+            DomUtils.addEvent(this.canvasWraper, 'mousedown', this.canvasDragStart);
+        }
     }
     private unbindEvent() {
         DomUtils.removeEvent(this.canvasWraper, 'mousewheel', this.mousewheel);
         DomUtils.removeEvent(this.canvasWraper, 'DOMMouseScroll', this.mousewheel);
-        DomUtils.removeEvent(this.canvasWraper, 'dragstart', this.canvasDragStart);
-        DomUtils.removeEvent(this.canvasWraper, 'drag', this.canvasDrag);
-        DomUtils.removeEvent(this.canvasWraper, 'dragend', this.canvasDragEnd);
+
+        if (this.diagram.draggableMode !== false) {
+            DomUtils.removeEvent(this.canvasWraper, 'dragstart', this.canvasDragStart);
+            DomUtils.removeEvent(this.canvasWraper, 'drag', this.canvasDrag);
+            DomUtils.removeEvent(this.canvasWraper, 'dragend', this.canvasDragEnd);
+        }
     }
     private mousewheel = (event: any) => {
         // up
@@ -134,6 +145,11 @@ export default class CanvasDraggle {
     private canvasDragEnd = (event: any) => {
 
         this.diagram.setPosition(this.canvasPositionDraging)
+
+        if (this.diagram.draggableMode === false) {
+            DomUtils.removeEvent(this.canvasWraper, 'mousemove', this.canvasDrag);
+            DomUtils.removeEvent(this.canvasWraper, 'mouseup', this.canvasDragEnd);
+        }
     }
     private canvasDragStart = (event: any) => {
         
@@ -141,7 +157,10 @@ export default class CanvasDraggle {
             event.stopPropagation();
             event.preventDefault();
         }
-        event.dataTransfer.setDragImage(IMAGE_DRAG, 2, 2);
+        console.log(this.diagram.draggableMode,22)
+        if (this.diagram.draggableMode !== false) {
+            event.dataTransfer.setDragImage(IMAGE_DRAG, 2, 2);
+        }
 
         this.dragPos = {
             pageX: event.pageX,
@@ -149,6 +168,11 @@ export default class CanvasDraggle {
         };
 
         this.canvasPosition = this.diagram.getPosition();
+
+        if (this.diagram.draggableMode === false) {
+            DomUtils.addEvent(this.canvasWraper, 'mousemove', this.canvasDrag);
+            DomUtils.addEvent(this.canvasWraper, 'mouseup', this.canvasDragEnd);
+        }
     }
     public destroy() {
         this.unbindEvent()

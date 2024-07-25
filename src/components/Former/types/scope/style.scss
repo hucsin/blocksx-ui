@@ -1,14 +1,24 @@
+.ui-scope-panel-tooltip {
+    .ant-popover-title > span {
+        margin-right: 8px;
+    }
+}
 .ui-function-info {
     max-width: 350px;
+    
     dt {
         font-weight: bold;;
         padding-bottom: 8px;
         opacity: .8;
         font-size: 12px;;
+        span {
+            font-weight: 400;
+            margin-left: 8px;
+            opacity: .6;
+        }
     }
     p {
         line-height: 1.25;
-        padding-left: 1.2em;
     }
 
     dd {
@@ -23,29 +33,48 @@
         }
     }
 }
-.ui-scope-panel {
-    padding: 0;
-    .ui-scope-panel-inner {
-        padding: 10px;
-        width: 100%;
-        margin-top: -10px;
-        margin-left: -10px;
-        margin-bottom: -10px;
-        margin-right: -10px;
-        border-radius: 10px;;
-    }
-}
+
 .ui-scope {
-    border: 1px solid #d9d9d9;
-    background-color: #fff;
-    border-radius: 6px;
     line-height: 1.5714285714285714;
     font-size:14px;
-    padding: 4px 11px;
+    height: 32px;
     transition: all .2s;
+    position: relative;
+    cursor: text;
+    .ui-scope-inner  {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+
+        padding: 4px 8px;
+        width: 100%;
+        height: 22px;
+        overflow: hidden;
+
+        border: 1px solid #d9d9d9;
+        background-color: #fff;
+        border-radius: 6px;
+        z-index: 11;
+        transition: all .2s;
+    }
+    
     &.ui-scope-focus {
-        border-color:var(--main-bg-color);
-        box-shadow:0 0 0 2px rgba(5, 55, 255, 0.06);outline:0;
+        .ui-scope-inner {
+            height: auto;
+
+            border-color:var(--main-bg-color);
+            box-shadow:0 0 0 2px rgba(5, 55, 255, 0.06);outline:0;
+        }
+    }
+    .ui-scope-scope,
+    .ui-scope-vaiable {
+        display: inline-block;
+        &:hover,
+        &.ant-popover-open {
+            
+            color:#fff;
+            background-color: var(--main-bg-color);
+        }
     }
     .ui-scope-function {
         &.ui-scope-function-hight {
@@ -80,8 +109,8 @@
 
         border-radius: 0;
         outline: none;
-
-        min-width: 4px;
+        margin-bottom: 1px;
+        min-width: 2px;
         
         width: auto;
         height: 16px;
@@ -99,12 +128,20 @@
         padding: 0 4px; 
         margin: 0 4px;
     }
+    .ui-scope-scope,
+    .ui-scope-vaiable,
+    
     .ui-scope-keyword {
         background:var(--main-background-color);
         border-radius: 3px;
         padding: 0 4px;
-        margin: 0 4px;
+        margin-right: 4px;
         transition: all .3s;
+        display: inline-block;
+        margin-bottom: 1px;
         cursor: default;
+        span.anticon {
+            opacity: .2;
+        }
     }
 }

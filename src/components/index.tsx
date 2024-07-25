@@ -39,7 +39,7 @@ export * as FormerTypes from './Former/types';
 export * from './Sidebar/typing';
 
 export * as DomUtils from './utils/dom';
-
+export { default as GlobalScope } from './utils/GlobalScope';
 
 export { default as JSPlumbTool } from './utils/third-party/jsplumb'
 

@@ -154,7 +154,6 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 onFocus={()=> {
                     //this.setState({focus: true})
                     
-                    console.log('focus',this.lastPostion)
                     this.context.onFocus(this.ref.current, true)
                     this.resetLastPosition();
                 }}

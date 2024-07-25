@@ -53,74 +53,52 @@ import './style.scss';
 interface FormerScopeProps {
     onChangeValue: Function;
     value: any;
+    props: any;
+    onFocus?: Function;
+    onBlur?: Function;
 }
 interface FormerScopeState {
     value: ScopeType[],
     focusIndex: number;
     open: boolean;
+    width: any;
+    props: any;
 }
-const defaultValue: any = [
-    {
-        type: 'value',
-        value: 'ddd'
-    },
-    {
-        type: 'function',
-        name: "Math.abs",
-        parameters: [
-            {
-                type: 'value',
-                value: [
-                    {
-                        type: 'function',
-                        name: 'Math.abs',
-                        parameters: []
-                    }
-                ]
-            }
-
-        ]
-    },
-    {
-        type: 'function',
-        name: "Math.abs",
-        parameters: [
-            {
-                type: 'value',
-                value: [
-                    {
-                        type: 'function',
-                        name: 'Math.abs',
-                        parameters: []
-                    }
-                ]
-            }
-
-        ]
-    }
-];
 
 export default class FormerScope extends React.Component<FormerScopeProps, FormerScopeState> {
     private inputList: any;
     private inputScopeMap: any;
     private focusInput: any;
     private lastFocus: any;
+    private timer: any;
     public constructor(props: FormerScopeProps) {
         super(props);
         this.inputList = [];
         this.inputScopeMap = {}
+        let typeRrops: any = this.props.props || this.props['x-type-props'] || {}
         this.state = {
             focusIndex: -1,
-            value: props.value || defaultValue,
-            open: false
+            value: props.value,
+            open: false,
+            width: typeRrops.width,
+            props: props.props
         }
     }
     public  UNSAFE_componentWillReceiveProps(nextProps: Readonly<FormerScopeProps>, nextContext: any): void {
         if (nextProps.value !== this.state.value) {
             this.setState({
-                value: nextProps.value || defaultValue
+                value: nextProps.value
             })
         }
+        
+
+        if (nextProps.props !== this.state.props) {
+            this.setState({
+                props: nextProps.props,
+                ...nextProps.props
+            })
+        }  
+
     }
     public doChangeValue(val?: any) {
         this.setState({
@@ -173,8 +151,17 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
     }
     private onFoucs = (current?: any, isAct?: any)=> {
 
+        this.setState({open: true});
+
+        if (this.timer) {
+            clearTimeout(this.timer);
+        }
+
+        if (this.props.onFocus) {
+            this.props.onFocus();
+        }
+
         if (isAct === true) {
-            
             return this.lastFocus = this.focusInput = current;
         }
 
@@ -207,9 +194,6 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             
             this.focusInput = current;
             this.lastFocus = current;
-            this.setState({
-                open: true
-            })
         }
     }
     private onBlur = (current)=> {
@@ -217,10 +201,17 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         
         if (current == this.focusInput) {
             this.focusInput = null;
-            this.setState({
-                open:false
-            })
+            this.timer = setTimeout(()=> {
+                this.setState({
+                    open:false
+                })
+
+                if (this.props.onBlur) {
+                    this.props.onBlur();
+                }
+            }, 100)
         }
+
     }
     private getSortCursorList() {
         return this.inputList.sort((a,b) => {
@@ -265,37 +256,48 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
 
     public render() {
         let { value } = this.state;
+        let tyepProps: any = this.state.props || this.state.props || this.props['x-type-props'] || {};
+        let width: any = this.state.width || tyepProps.width;
+        
         // 第一个节点
         return (
             <Popover 
-                overlayClassName="ui-scope-panel"
-                title="" content={<ScopePanel scope={this}/>} open={this.state.open} placement={'left'}
+                overlayClassName="ui-scope-panel ui-input ant-input-outlined"
+                
+                content={<ScopePanel open={this.state.open} scope={this}/>} 
+                open={ this.state.open} 
+                placement={'left'}
             
             >
                 <div 
-                    className={classnames('ui-input ui-scope', {
+                    className={classnames(' ui-scope', {
                         'ui-scope-focus': this.state.open
                     })}
+                    style={{
+                        width: width
+                    }}
                     onMouseUp={()=>{
-                        //if (!this.focusInput) {
+                        if (!this.focusInput) {
                             this.onFoucs();
-                        //}
+                        }
                     }}
                 >
-                    <Context.Provider value={{
-                        findInputIndex: this.findInputIndex,
-                        registerInput: this.registerInput,
-                        removeInput: this.removeInput,
-                        onForwardCursor: this.onForwardCursor,
-                        onBackwardCursor: this.onBackwardCursor,
-                        onFocus: this.onFoucs,
-                        onBlur: this.onBlur,
-                        findInputRange: this.findInputRange
-                    }}>
-                        {<FormerScopeValue onRemoveValue={()=> {}}  onChangeValue={(val)=> {
-                            this.doChangeValue(val)
-                        }} value={value} />}
-                    </Context.Provider>
+                    <div className='ui-scope-inner'>
+                        <Context.Provider value={{
+                            findInputIndex: this.findInputIndex,
+                            registerInput: this.registerInput,
+                            removeInput: this.removeInput,
+                            onForwardCursor: this.onForwardCursor,
+                            onBackwardCursor: this.onBackwardCursor,
+                            onFocus: this.onFoucs,
+                            onBlur: this.onBlur,
+                            findInputRange: this.findInputRange
+                        }}>
+                            {<FormerScopeValue onRemoveValue={()=> {}}  onChangeValue={(val)=> {
+                                this.doChangeValue(val)
+                            }} value={value} />}
+                        </Context.Provider>
+                    </div>
                 </div>
             </Popover>
         )

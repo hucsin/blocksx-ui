@@ -11,7 +11,7 @@ import i18n from '@blocksx/i18n';
 import { FlowNodeType, FlowNode, FlowConnector, MiniFlow, Icons, SmartPage, FormerTypes, mainTexture, UtilsTool} from '@blocksx/ui';
 
 import { FormOutlined, CopyOutlined,HistoryOutlined } from '@ant-design/icons';
-import { FetchResult, withRouter } from '@blocksx/ui'
+import { FetchResult, withRouter, GlobalScope } from '@blocksx/ui'
 import MircoFlowNode from './components/FlowNode';
 import MircoNewFlowNode from './components/FlowNode/NewNode';
 import MircoRunTest from './components/RunTest';
@@ -358,6 +358,8 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             connector: this.state.connectors
         });
 
+        GlobalScope.setContext(GlobalScope.TYPES.CURRENTFLOW_CONTEXT, this.miniFlow);
+        
         this.nodes = utils.copy(this.state.nodes);
         this.connectors = utils.copy(this.state.connectors);
 

@@ -6,9 +6,10 @@ import FormerScopeFunction from './function';
 
 import FunctionManger from '../core/ScopeManger';
 import FormerScopeInput from './input';
+import FormerScopeLabel from './scope';
+import FormerVariable from './variable';
 //import FormerScope from '..';
 import { ScopeType } from '../types'
-import { scope } from '../..';
 
 interface FormerScopeProps {
     context?: any;
@@ -213,14 +214,26 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             </FormerScopeFunction>
         )
     }
-
+    private renderScope(item: any ,parentIndex:number ) {
+        
+        return (
+            <FormerScopeLabel {...item}/>
+        )
+    }
+    private renderVariable(item: any, parentIndex:number) {
+        return (
+            <FormerVariable {...item} />
+        )
+    }
     private renderContent =(item: any, index: number, remove: Function)=> {
         let parentIndex: number = (index+1) * this.getDefaultIndex() + this.state.index;
         switch (item.type) {
             case 'function':
                 return this.renderFunction(item, parentIndex);
+            case 'variable':
+                return this.renderVariable(item, parentIndex);
             case 'scope':
-                return <span>d</span>
+                return this.renderScope(item, parentIndex);
             default:
                 return (
                     <FormerScopeValue 
