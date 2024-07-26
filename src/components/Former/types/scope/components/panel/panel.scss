@@ -1,7 +1,18 @@
 .ui-scope-panel {
-    padding: 0;
+    padding: 16px;
+    margin-right: -40px;
+    .ant-popover-inner {
+        padding: 0;
+    }
+    .ant-tree .ant-tree-indent-unit,
+    .ant-tree .ant-tree-switcher {
+        width: 14px;
+    }
+    .ant-popover-arrow {
+        margin-right: 16px;;
+    }
     .ui-scope-panel-inner {
-        padding: 16px;
+        padding: 16px 32px;
         margin-top: -10px;
         margin-left: -10px;
         margin-bottom: -10px;
@@ -16,7 +27,7 @@
     }
 }
 .ui-scope-panel-inner {
-    width: 480px;
+    width: 420px;
     .ui-scope-panel-header {
         border-bottom: 1px solid var(--main-inverse-border-color, rgba(5, 5, 5, 0.06));
         padding-bottom: 8px;
@@ -26,7 +37,7 @@
             vertical-align: middle;
             border-radius: 8px;;
             span {
-                padding: 4px 8px;    
+                padding: 4px 4px;    
                 border: 1px solid var(--main-border-color);
                 margin-right: -1px;
                 cursor: pointer;
@@ -53,6 +64,8 @@
         padding: 16px 2px;
         padding-bottom: 0;
         min-height: 350px;
+        max-height: calc(100vh - 132px);
+        overflow: hidden;
         .ui-former-notice  {
             padding: 4px 8px;
             line-height: 16px;;

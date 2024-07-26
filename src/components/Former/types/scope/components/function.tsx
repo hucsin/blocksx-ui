@@ -74,9 +74,9 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
 
         let displayName: string = funcmeta.displayName || this.getDisplayName(name);
         let paramsmeta: any = funcmeta.parameters;
-        let restParams: any = paramsmeta[paramsmeta.length -1];
-        let maxParams: number = restParams.maxLength || paramsmeta.length;
-        let hasAdd: boolean = restParams.type =='rest' && maxParams > parameters.length
+        let restParams: any = paramsmeta && paramsmeta[paramsmeta.length -1];
+        let maxParams: number = restParams ? restParams.maxLength || paramsmeta.length : paramsmeta.length;
+        let hasAdd: boolean = restParams && restParams.type =='rest' && maxParams > parameters.length
         let number: number = children.length;
 
         return (

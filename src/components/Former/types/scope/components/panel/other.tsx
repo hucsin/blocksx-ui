@@ -17,6 +17,14 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
         this.scopeList = ScopeManger.findGroup(props.name)
     }
     private onSelectedItem(item: any) {
+        
+        item.parameters = item.parameters.map(it => {
+            it.type =  'value';
+            return {
+                type: 'value',
+                value: it.value || ''
+            };
+        })
         this.props.onClick(item)
     }
     public render () {

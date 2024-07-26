@@ -33,7 +33,7 @@ interface FormerScopeState {
 }
 
 export default class FormerScopeValue extends React.Component<FormerScopeProps, FormerScopeState> {
-    private index:number ;
+    private index: number;
     public static contextType = Context;
     public context: any;
     public static defaultProps = {
@@ -77,9 +77,9 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     public doChangeValue(value?: string, isRemove?: boolean) {
         let originValue: any = utils.copy(this.state.originValue);
         this.setState({
-            reflush: isRemove ? this.state.reflush +1 : this.state.reflush,
-            originValue: originValue ,
-            value: typeof value == 'string' ? value :  this.cleanOriginValue(originValue) 
+            reflush: isRemove ? this.state.reflush + 1 : this.state.reflush,
+            originValue: originValue,
+            value: typeof value == 'string' ? value : this.cleanOriginValue(originValue)
         }, () => {
             this.props.onChangeValue(this.state.value)
         })
@@ -105,15 +105,15 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         if (Array.isArray(value)) {
             // 遍历数据项，给添加空白
             let originValue: any = [];
-            
-            value.forEach((it: any ,index: number) => {
+
+            value.forEach((it: any, index: number) => {
                 if (it.type == 'value') {
                     originValue.push(it)
                 } else {
                     let preNode: any = originValue[originValue.length - 1];
                     let nextNode: any = value[index + 1];
                     // 检查前面是否有value
-                    if (!preNode || preNode.type !=='value') {
+                    if (!preNode || preNode.type !== 'value') {
                         originValue.push({
                             type: 'value',
                             padding: true,
@@ -122,14 +122,14 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                     }
 
                     // 调整function的arguments
-                    if (it.type =='function') {
-                        it.parameters = this.paddingParameters(it) 
+                    if (it.type == 'function') {
+                        it.parameters = this.paddingParameters(it)
                     }
-                    
+
                     originValue.push(it);
 
 
-                    if (!nextNode || nextNode.type !=='value') {
+                    if (!nextNode || nextNode.type !== 'value') {
                         originValue.push({
                             type: 'value',
                             padding: true,
@@ -150,16 +150,16 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     private paddingParameters(item: any) {
 
         let funcmeta: any = FunctionManger.get(item.name) || {};
-        let paramsmeta: any = funcmeta.parameters|| [];
-        let restParams: any = paramsmeta[paramsmeta.length -1];
+        let paramsmeta: any = funcmeta.parameters || [];
+        let restParams: any = paramsmeta[paramsmeta.length - 1];
 
-        let displayMaxLength: number = restParams.type == 'rest' ? paramsmeta.length -1 : paramsmeta.length ;
+        let displayMaxLength: number = restParams && restParams.type == 'rest' ? paramsmeta.length - 1 : paramsmeta.length;
 
 
         let parameters: any = [...(item.parameters || [])];
-        
+
         if (parameters.length < displayMaxLength) {
-            Array.from({length: displayMaxLength - parameters.length}).map(it => {
+            Array.from({ length: displayMaxLength - parameters.length }).map(it => {
                 parameters.push({
                     type: 'value',
                     padding: true,
@@ -170,63 +170,65 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
 
         return parameters;
     }
-    private renderFunction(item:any, index:number) {
-        
+    private renderFunction(item: any, index: number) {
+
         return (
-            <FormerScopeFunction 
-                name={item.name} 
+            <FormerScopeFunction
+                name={item.name}
                 key={[item.name, this.state.reflush, index].join('.')}
                 parameters={item.parameters}
-                onAddParam={()=> {
+                onAddParam={() => {
                     item.parameters.push({
                         type: 'value',
                         value: ''
                     })
 
-                    
+
                     this.doChangeValue();
                     this.doFocus()
                 }}
             >
-                {item.parameters.map((it, idx)=> {
-                    return (<FormerScopeValue 
-                                key={[item.name,this.state.reflush, idx].join('.')}
-                                level={this.state.level-2} 
-                                index={ index + this.getDefaultIndex(this.state.level -1) * (idx+1)} 
-                                context={this.context} 
-                                onRemoveValue={(currentIndex) => {
-                                    return this.doRemoveScopeValue(item.parameters, idx, currentIndex)
-                                    /*if (idx == 0) {
-                                        return false
-                                    }
-                                    item.parameters.splice(Math.max(0,idx-1), 1);
-                                    
-                                    this.doChangeValue(undefined, true);*/
-                                }}
-                                onChangeValue={(value: any)=> {
-                                    it.value = value;
-                                    this.doChangeValue();                        
-                                }} 
-                                value={it.value} 
-                                parentScope= {null}
-                            />)
+                {item.parameters.map((it, idx) => {
+                    return (<FormerScopeValue
+                        key={[item.name, this.state.reflush, idx].join('.')}
+                        level={this.state.level - 2}
+                        index={index + this.getDefaultIndex(this.state.level - 1) * (idx + 1)}
+                        context={this.context}
+                        onRemoveValue={(currentIndex) => {
+                            // 参数不能删除只能让光标往前
+                            console.log(currentIndex, 33)
+                            // return this.doRemoveScopeValue(item.parameters, idx, currentIndex)
+                            /*if (idx == 0) {
+                                return false
+                            }
+                            item.parameters.splice(Math.max(0,idx-1), 1);
+                            
+                            this.doChangeValue(undefined, true);*/
+                        }}
+                        onChangeValue={(value: any) => {
+                            it.value = value;
+                            this.doChangeValue();
+                        }}
+                        value={it.value}
+                        parentScope={null}
+                    />)
                 })}
             </FormerScopeFunction>
         )
     }
-    private renderScope(item: any ,parentIndex:number ) {
-        
+    private renderScope(item: any, parentIndex: number) {
+
         return (
-            <FormerScopeLabel {...item}/>
+            <FormerScopeLabel {...item} />
         )
     }
-    private renderVariable(item: any, parentIndex:number) {
+    private renderVariable(item: any, parentIndex: number) {
         return (
             <FormerVariable {...item} />
         )
     }
-    private renderContent =(item: any, index: number, remove: Function)=> {
-        let parentIndex: number = (index+1) * this.getDefaultIndex() + this.state.index;
+    private renderContent = (item: any, index: number, remove: Function) => {
+        let parentIndex: number = (index + 1) * this.getDefaultIndex() + this.state.index;
         switch (item.type) {
             case 'function':
                 return this.renderFunction(item, parentIndex);
@@ -236,25 +238,25 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 return this.renderScope(item, parentIndex);
             default:
                 return (
-                    <FormerScopeValue 
-                        key = {[item.type, this.state.reflush, index].join('.')}
-                        onRemoveValue={remove}  
-                        level={this.state.level-1} 
+                    <FormerScopeValue
+                        key={[item.type, this.state.reflush, index].join('.')}
+                        onRemoveValue={remove}
+                        level={this.state.level - 1}
                         index={parentIndex}
                         serial={index}
-                        context={this.context} 
-                        value={item.value} 
-                        parentScope= {this}
-                        onChangeValue={(val)=> {
+                        context={this.context}
+                        value={item.value}
+                        parentScope={this}
+                        onChangeValue={(val) => {
                             item.value = val;
                             this.doChangeValue();
-                        }}  
+                        }}
                     />
                 )
         }
     }
     private onRemoveValue(currentIndex?: number) {
-        if (this.props.onRemoveValue ) {
+        if (this.props.onRemoveValue) {
             return this.props.onRemoveValue(currentIndex)
         }
     }
@@ -267,14 +269,14 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         let range: any = this.context.findInputRange();
         let focusPosition: number = 0;
         // 有选取的时候
-        
-        if (range && range.length>0) {
+
+        if (range && range.length > 0) {
 
             // 需要替换掉 选取的文字
             if (range.start == 0) {
                 // 前面部分截取
                 if (range.end < inputValue.length) {
-                    originValue.splice(serial,1, scopeValue, {
+                    originValue.splice(serial, 1, scopeValue, {
                         type: 'value',
                         value: inputValue.substring(range.end, inputValue.length)
                     })
@@ -288,7 +290,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                     originValue.splice(serial, 1, {
                         type: 'value',
                         value: inputValue.substring(0, range.start)
-                    },scopeValue, {
+                    }, scopeValue, {
                         type: 'value',
                         value: inputValue.substring(range.end, inputValue.length)
                     });
@@ -301,21 +303,21 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 }
             }
 
-        }  else {
-            
+        } else {
+
 
             if (cursorPosition == 0) {
 
                 originValue.splice(serial, 0, scopeValue);
-                
+
             } else {
                 // 在后面加
                 if (cursorPosition == inputValue.length) {
                     originValue.splice(serial + 1, 0, scopeValue);
                 } else {
                     // 中间拆分
-                    let beforeText: string = inputValue.substring(0,cursorPosition);
-                    originValue.splice(serial, 1, 
+                    let beforeText: string = inputValue.substring(0, cursorPosition);
+                    originValue.splice(serial, 1,
                         {
                             type: 'value', value: beforeText
                         },
@@ -329,45 +331,75 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 }
             }
         }
-        
+
         this.doChangeValue();
         this.doFocus(currentIndex + 1, focusPosition)
     }
-
-    private doRemoveScopeValue(originValue: any, index: number, currentIndex: number) {
-        
-        if (index ==0) {
-            return false;
+    private calculateParametersLength(item: any) {
+        let length: number = 0;
+        if (Array.isArray(item.parameters)) {
+            if (item.parameters.length) {
+                item.parameters.forEach(item => {
+                    length += this.calculateParametersLength(item)
+                })
+            } else {
+                length += 1;
+            }
         }
-        
+        if (item.type == 'value') {
+            if (Array.isArray(item.value)) {
+                item.value.forEach(item => {
+                    length += this.calculateParametersLength(item)
+                })
+            } else {
+                length += 1;
+            }
+        }
+        return length;
+    }
+    private doRemoveScopeValue(originValue: any, index: number, currentIndex: number) {
+
+        if (index == 0) {
+            return this.doFocus(currentIndex - 1), false;
+        }
+
         // 需要判断上一个值是否是是value
         let prevScpoe: any = originValue[index - 1];
         let currentCusorposition: number = -1;
         if (prevScpoe.type == 'value') {
             if (this.isSampleScopeValue(prevScpoe) && prevScpoe.value.length > 0) {
-                
+
                 // 当值大于零的时候，焦点
                 prevScpoe.value = prevScpoe.value.substring(0, prevScpoe.value.length - 2)
                 currentIndex--;
             } else {
                 originValue.splice(index - 1, 1);
             }
-            
+
         } else {
             // 判断他前面一个是否是value节点，如果是就合并
             let prevnextscope: any = originValue[index - 2];
+            let prevScpoe: any = originValue[index - 1];
             let currentScope: any = originValue[index];
-            
+
             // 合并删除
             if (this.isSampleScopeValue(prevnextscope)) {
-                currentScope.value = prevnextscope.value + currentScope.value;
+                let prevnextvalue: string = prevnextscope.value || '';
+                currentScope.value = prevnextvalue + (currentScope.value || '');
                 delete currentScope.padding;
+
                 originValue.splice(index - 2, 3, currentScope);
-                currentIndex -=2;
-                currentCusorposition = prevnextscope.value.length;
+
+                currentIndex -= 1;
+                currentCusorposition = prevnextvalue.length;
             } else {
                 // 直接删除
                 originValue.splice(index - 1, 1);
+            }
+
+            if (prevScpoe) {
+               console.log(prevScpoe)
+                currentIndex -= this.calculateParametersLength(prevScpoe);
             }
 
         }
@@ -382,18 +414,18 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         }
     }
     private doFocus(currentIndex?: number, cursorPosition?: number) {
-        setTimeout(()=> {
+        setTimeout(() => {
             this.context.onFocus(currentIndex, cursorPosition)
         }, 0)
     }
     public render() {
         let { value, originValue } = this.state;
-        
+
         if (Array.isArray(value)) {
             return (
                 <>
-                    {originValue.map((it,index)=> {
-                        return this.renderContent(it,index, (currentIndex: any) => {
+                    {originValue.map((it, index) => {
+                        return this.renderContent(it, index, (currentIndex: any) => {
                             return this.doRemoveScopeValue(originValue, index, currentIndex)
                         })
                     })}
@@ -401,9 +433,9 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             )
         } else {
             return (
-                <FormerScopeInput serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any)=>{
-                   return this.onRemoveValue(current)
-                }} context={this.context} index={this.state.index} onChangeValue={(val)=> {
+                <FormerScopeInput serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any) => {
+                    return this.onRemoveValue(current)
+                }} context={this.context} index={this.state.index} onChangeValue={(val) => {
                     this.doChangeValue(val)
                 }} value={value as string} />
             )

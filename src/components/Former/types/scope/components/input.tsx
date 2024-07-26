@@ -173,7 +173,8 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                         //this.ref.current.innerHTML = '&#8203;';
                        // this.doFocus();
                     }
-                    this.doChangeValue(originValue)
+                    this.doChangeValue(originValue);
+                    this.resetLastPosition()
             }}>{this.state.defaultValue}</span>
         )
     }

@@ -248,8 +248,7 @@ export default class PanelProcess extends React.Component<{onClick: Function}, {
 
         return (
             <div className='ui-scope-process'>
-                <Notice value={'Output data of the preceding process node, select the data available in the context from the following process segment.'}/>
-                <h4>Process segment</h4>
+                <h4><span>Process segment</span><span>Select process node returns data</span></h4>
                 <div className='ui-scope-process-wrapper'>
                 <div 
                     className='ui-scope-process-map' data-draggable
@@ -290,7 +289,7 @@ export default class PanelProcess extends React.Component<{onClick: Function}, {
                         onExpand={(expandedKeys) => this.setState({expandedKeys})}
                         treeData={this.state.treeData}
                         style={{
-                            maxHeight: `calc( 100vh - ${mapheight + 310}px)`
+                            maxHeight: `calc( 100vh - ${mapheight + 360}px)`
                         }}
                         titleRender={(item: any)=> {
                             return (
