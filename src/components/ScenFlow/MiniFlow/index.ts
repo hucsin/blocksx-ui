@@ -96,6 +96,7 @@ export default class MiniFlow extends EventEmitter {
     private childrenGroupMap: any;
     private doChangeValue: any;
     private draggableMode?: boolean;
+    private zoomSize: number;
     public constructor(props: MiniFlowMap) {
         super();
         this.uniq = props.uniq || 'default';
@@ -125,7 +126,8 @@ export default class MiniFlow extends EventEmitter {
         this.nodeMap = {};
         this.size = (props.size || 138);
         this.small = props.small || false; 
-        this.temporaryRouterOffset = 50;
+        this.temporaryRouterOffset = this.small ? 10 :50;
+        this.zoomSize = this.small ? 4 : 2 ;
 
         this.childrenGroupMap = {};
 

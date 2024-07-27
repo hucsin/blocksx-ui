@@ -126,6 +126,7 @@
        border-top: .5px dashed var(--main-border-color);
        border-radius: 16px;
        position: relative;
+       
        &::after {
         content: " ";
         position: absolute;
@@ -177,6 +178,7 @@
         padding: 8px;
         margin-top: 8px;
         overflow: auto;
+        min-height: 310px;
     }
     .ant-tree-title {
         .u-type {

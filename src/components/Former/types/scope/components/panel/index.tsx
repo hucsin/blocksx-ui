@@ -80,19 +80,19 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                             return (
                                 <span 
                                     onMouseEnter={()=> {
-                                        if (this.timer ) {
+                                        /*if (this.timer ) {
                                             clearTimeout(this.timer);
                                         }
                                         this.timer = setTimeout(() => {
                                             this.setState({current: it})
                                             this.timer = null;
                                         }, 200)
-                                        
+                                        */
                                     }}
                                     onClick={()=> {
                                         this.setState({current: it})
                                     }}
-                                    onMouseLeave={()=> this.timer && clearTimeout(this.timer)}
+                                    //onMouseLeave={()=> this.timer && clearTimeout(this.timer)}
                                     className={classnames({
                                     "ui-selected": it == this.state.current
                                 })}>{it}</span>

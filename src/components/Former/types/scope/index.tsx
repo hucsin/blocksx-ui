@@ -211,7 +211,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         this.timer = setTimeout(() => {
             this.timer = null;
             this.setState({ open: true });
-        }, 100)
+        }, 200)
 
         if (isAct === true) {
             // cache 缓存的位置

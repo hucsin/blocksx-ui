@@ -257,7 +257,7 @@ export default class CanvasFormat {
             let paddingSize: number =  Math.max((this.miniFlow.canvas.offsetHeight ) / paddingNumber, this.miniFlow.size + this.miniFlow.temporaryRouterOffset )
             
             this.begingSize = 0;
-            this.levelSize =  Math.min(Math.max((this.miniFlow.canvas.offsetWidth - this.miniFlow.size / 2) / this.getMaxLevelNumber(), this.miniFlow.size * 2), this.miniFlow.size + 2 * this.miniFlow.temporaryRouterOffset);
+            this.levelSize =  Math.min(Math.max((this.miniFlow.canvas.offsetWidth - this.miniFlow.size / 2) / this.getMaxLevelNumber(), this.miniFlow.size * 2), this.miniFlow.size + this.miniFlow.zoomSize * this.miniFlow.temporaryRouterOffset);
             
             this.repaint(flowMaps, paddingSize);
             !noZoom && this.zoomFit();
@@ -266,6 +266,9 @@ export default class CanvasFormat {
 
             setTimeout(()=> {
                 !noRepatin && this.miniFlow.instance.repaintEverything();
+                this.miniFlow.instance.getAllConnections().forEach(connection => {
+                    connection.repaint();
+                  });
             }, 0)
         }
        

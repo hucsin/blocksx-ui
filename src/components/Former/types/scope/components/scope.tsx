@@ -36,6 +36,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                         scope: 'Thinking workflow',
                         icon: node.icon,
                         color: node.color,
+                        serial: node.serial,
                         name: node.props.method,
                         description: node.props.description
                     };
@@ -49,9 +50,14 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         let props: any = this.getDefaultProps();
         let keypath: any = this.state.keypath || [];
         let IconView: any = Icons[props.icon] || Icons.FlowUtilityOutlined; 
+        let displayvalue: string = (this.props.value ||'').replace(/^returns\./, '')
         
         return (
             <ScopeTooltip {...props} icon={<IconView/>} other={[
+                {
+                    name: 'SERIAL',
+                    description: props.serial
+                },
                 {
                     name: 'SCOPE',
                     subname: props.scope,
@@ -63,7 +69,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                     description: this.props.value
                 }
             ]} >
-                <span className='ui-scope-scope'><IconView />{this.props.value}</span>
+                <span className='ui-scope-scope'><IconView />{displayvalue}{props.serial && <span className='number'>{props.serial}</span>}</span>
             </ScopeTooltip>
         )
     }

@@ -1101,7 +1101,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             if (Compactwrap.length) {
                 return (
                     <>
-                        <Space.Compact block>
+                        <Space.Compact>
                         <View {...viewProps} ref={this.wrapperRef} />
                             {this.renderPortal(Compactwrap)}
                         </Space.Compact>

@@ -64,19 +64,19 @@ export default class ProcessNode extends React.Component<ProcessNodeProps, {sele
                 }}
                 onMouseEnter={() => {
                     if (!disabled) {
-                        if (this.timer) {
-                            clearTimeout(this.timer)
-                        }
-                        this.timer = setTimeout(()=> {
-                            this.props.onClick();
-                            this.timer = null;
-                        },200)
+                        //if (this.timer) {
+                        //    clearTimeout(this.timer)
+                        //}
+                        //this.timer = setTimeout(()=> {
+                        //    this.props.onClick();
+                       //     this.timer = null;
+                      //  },200)
                     }
                 }}
                 onMouseLeave={()=> {
-                    if (this.timer) {
-                        clearTimeout(this.timer);
-                    }
+                    //if (this.timer) {
+                     //   clearTimeout(this.timer);
+                    //}
                 }}
             >
                 <FormerTypes.avatar reverseColor={true} size={64}  icon={icon} color={color}/>
