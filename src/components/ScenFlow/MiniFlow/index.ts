@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { utils } from '@blocksx/core';
-import { MiniFlow as MiniFlowStructural } from '@blocksx/structural'
+import { StructuralMiniFlow } from '@blocksx/structural'
 import * as DomUtils from '../../utils/dom';
 import GlobalScope  from '../../core/GlobalScope';
 import JSPlumbTool from '../../utils/third-party/jsplumb'
@@ -248,7 +248,7 @@ export default class MiniFlow extends EventEmitter {
     }
 
     private isFreeNode(name: string) {
-        return !this.connector.find(it =>   (it.target == name || it.source == name)) && !MiniFlowStructural.isStartNode(this.getNodeByName(name) || {})
+        return !this.connector.find(it =>   (it.target == name || it.source == name)) && !StructuralMiniFlow.isStartNode(this.getNodeByName(name) || {})
     }
     private getConnectorBySourceName(sourceName: string, ignore?: boolean) {
         return this.connector.filter(it => (it.source == sourceName) && (ignore || !it.isTemporary))
@@ -857,7 +857,7 @@ export default class MiniFlow extends EventEmitter {
         let sourceNode: FlowNode = this.getNodeByName(source);
         let targetNode: FlowNode = this.getNodeByName(target);
         let connector: any = this.getConnectorBySourceTarget(source, target);
-        let connectorProps: any =  sourceNode.floating ? true : connector ? connector.props: {};
+        let connectorProps: any =  true ;// sourceNode.floating ? true : connector ? connector.props: {};
 
         let sourceColor: string = isTemporary || sourceNode.floating ? '#e2e2e2' : sourceNode.color;
         let targetColor: string = isTemporary|| sourceNode.floating ? '#e2e2e2' : targetNode.color;
@@ -930,7 +930,7 @@ export default class MiniFlow extends EventEmitter {
                         location: 0,
                         //id: "customOverlay"
                     }],
-                    this.isViewer ? null : ["Custom", {
+                    this.isViewer || sourceNode.floating ? null : ["Custom", {
                         create: function (component) {
                             let custom: any = document.createElement('div');
                             custom.className = 'overlays-label';
@@ -951,16 +951,15 @@ export default class MiniFlow extends EventEmitter {
                         location: .5,
                        // id: "customOverlay2"
                     }],
-                    this.isViewer ? null : ["Custom", {
+                    this.isViewer || sourceNode.floating ? null : ["Custom", {
                         create: function (svg) {
                             
                             let custom: any = document.createElement('div');
                                 custom.className = 'overlays-icons';
-                            if (connector.props) {
-                                svg = connector.props.condition ? SvgText.getFullFilter() : SvgText.getEmptyFilter()
-                            } else {
-                                svg = SvgText.getEmptyFilter();
-                            }
+                                
+                            
+                            svg = !StructuralMiniFlow.isEmptyCondition(connector) ?  SvgText.getFullFilter() :SvgText.getEmptyFilter();
+                            
                             custom.innerHTML = "<div>" +svg+ "</div>";
                             return custom;
                         },
@@ -1499,7 +1498,7 @@ export default class MiniFlow extends EventEmitter {
         let iterationRelevantMap: any = {};
         let iterationGroupMap: any = {};
         
-        MiniFlowStructural.findIterationRelevantMap(this.nodes, this.connector).forEach((value: any, key: string) => {
+        StructuralMiniFlow.findIterationRelevantMap(this.nodes, this.connector).forEach((value: any, key: string) => {
             
             iterationGroupMap[key] = key;
             iterationRelevantMap[key] = [...value.map(it=> {
@@ -1915,6 +1914,6 @@ export default class MiniFlow extends EventEmitter {
     //获取某个节点的祖辈有效
     // 排除empty节点
     public findAncestralFlowMap(nodeName: string) {
-        return MiniFlowStructural.findAncestralFlowMap(this.connector, this.nodes, nodeName)
+        return StructuralMiniFlow.findAncestralFlowMap(this.connector, this.nodes, nodeName)
     }
 }
