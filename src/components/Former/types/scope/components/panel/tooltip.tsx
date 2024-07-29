@@ -37,10 +37,11 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
     public renderBody() {
         let { description , parameters, returns = {}, other } = this.props;
 
-
-        if (!Array.isArray(returns.dataType)) {
+        
+        if (returns.dataType && !Array.isArray(returns.dataType)) {
             returns.dataType = [returns.dataType || returns.type]
         }
+        
         return (
             <div 
                 className='ui-function-tips-inner'
@@ -70,7 +71,7 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                             }
                         })}
                     </dl>}
-                    {returns &&<dl>
+                    {returns && returns.dataType &&<dl>
                         <dt>Returns {'<'+returns.dataType.join('|')+'>'}</dt>
                         {returns.description  &&<dd>{returns.description}</dd>}
                     </dl>}

@@ -314,12 +314,22 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         }
     }
 
+    private isEmptyValue(value: any) {
+        if (Array.isArray(value)) {
+            if (value.length == 1) {
+                return !value[0].value;
+            }
+            return false;
+        }
 
+        return !value;
+    }
 
     public render() {
         let { value } = this.state;
         let typeProps: any = this.state.props || this.state.props || this.props['x-type-props'] || {};
         let width: any = this.state.width || typeProps.width;
+        let isEmptyValue: boolean = this.isEmptyValue(value)
         // dataType
         // 
         // 第一个节点
@@ -334,7 +344,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             >
                 <div
                     className={classnames('ui-scope', {
-                        'ui-scope-focus': this.state.focusopen,
+                        'ui-scope-focus':this.state.focusopen,
                         'ui-scope-visibility': this.state.width === 0
                     })}
                     style={{
@@ -364,6 +374,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                     }}
                 >
                     <div className='ui-scope-inner' ref={this.innerRef}>
+                        {typeProps.placeholder && isEmptyValue && <div className='ui-scope-placeholder'>{typeProps.placeholder}</div>}
                         <Context.Provider value={{
                             findInputIndex: this.findInputIndex,
                             registerInput: this.registerInput,

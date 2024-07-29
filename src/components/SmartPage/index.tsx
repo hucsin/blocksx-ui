@@ -137,7 +137,7 @@ export interface SmartPageState {
     id?: string;
 
     changed: boolean;
-    
+    pageMete?: any;
 }
 
 
@@ -707,7 +707,13 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     private getDefaultWidth() {
         let defaultWidth: any = this.props.width || this.defaultWidthMap[this.props.type];
-        
+        let { pageMeta = {} } = this.state;
+
+
+        if (pageMeta.width) {
+            return pageMeta.width
+        }
+
         if (!defaultWidth && this.hasLeftNavContent()) {
             return DomUtils.getBoundingClientWidth() - 200;
         }

@@ -1,3 +1,4 @@
+import { utils }  from '@blocksx/core';
 
 class ScopeManger {
     private cache: Record<string, any>;
@@ -13,11 +14,11 @@ class ScopeManger {
     }
 
     public get(key: string) {
-        return this.cache[key];
+        return utils.copy(this.cache[key]);
     }
 
     public has(key: string) {
-        return !!this.get(key)
+        return !!this.cache[key]
     }
 
     public register(key: any, value?: any) {
@@ -62,7 +63,7 @@ class ScopeManger {
                 method: split[1]
             })
         }
-        return group ? groupCache[group] : groupCache;
+        return utils.copy(group ? groupCache[group] : groupCache);
     }
 }
 

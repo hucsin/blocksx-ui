@@ -91,6 +91,9 @@
     
     &.ui-scope-focus {
         z-index: 111;
+        .ui-scope-placeholder {
+            display: none;
+        }
         .ui-scope-inner {
             height: auto;
             z-index: 1111;
@@ -116,6 +119,14 @@
             color:#fff;
             background-color: var(--main-bg-color);
         }
+    }
+    .ui-scope-placeholder {
+        position: absolute;
+        height: 32px;
+        width: 100%;
+        overflow: hidden;
+        pointer-events: none;
+        opacity: .2;
     }
     .ui-scope-function {
         .ui-scope-keyword {
@@ -174,6 +185,17 @@
     .ui-scope-keyword-one {
         padding: 0 4px; 
         margin: 0 4px;
+    }
+
+    .ant-select {
+        min-width: auto !important;
+        &.ant-select-show-arrow
+        .ant-select-selection-item {
+            padding-inline-end: 14px !important;
+        }
+        .ant-select-arrow{ 
+            inset-inline-end: 7px;
+        }
     }
     .ui-scope-scope,
     .ui-scope-vaiable,

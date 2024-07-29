@@ -8,4 +8,5 @@ export interface PageMeta {
     description?: string;
     icon?: string;
     type?: string;
+    width?: any;
 }

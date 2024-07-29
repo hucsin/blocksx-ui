@@ -1,9 +1,11 @@
 import React from 'react';
+import { utils } from '@blocksx/core';
 import ScopeManger from '../../core/ScopeManger';
 import * as Icons from '../../../../../Icons';
 import Notice from '../../../notice';
 import Tooltip from './tooltip';
-import { upperFirst } from 'lodash';
+import { upperFirst, emit } from 'lodash';
+
 
 export default class PanelOther extends React.Component<{name: string, onClick: Function, dataType: any}, {dataType: any}>{
     private scopeList: any;
@@ -58,7 +60,7 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
     }
 
     public getmessage(type:any) {
-        return `Return type '${upperFirst(type)}' is not allowed at this position; types (${this.state.dataType}) are allowed at this position.` 
+        return `Returns dataType '${upperFirst(type)}' is not allowed at this position; types (${this.state.dataType}) are allowed at this position.` 
     }
     public render () {
         let groupKeys: any = Object.keys(this.scopeList);
@@ -75,7 +77,7 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
                                     
                                     let matchType:boolean = this.matchTypes(it.dataType);
                                     return (<dd>
-                                        <Tooltip {...it} message={!matchType ? this.getmessage(it.dataType): ''}><span className={!matchType ? 'ui-disabled': ''} onClick={()=> this.onSelectedItem(it)}><Icons.VariableUtilityOutlined/>{it.method}</span></Tooltip>
+                                        <Tooltip {...it} message={!matchType ? this.getmessage(it.dataType): ''}><span className={!matchType ? 'ui-disabled': ''} onClick={()=> this.onSelectedItem(utils.copy(it))}><Icons.VariableUtilityOutlined/>{it.method}</span></Tooltip>
                                         <span className='o'>{it.description}</span>
                                     </dd>)
                                 })}
@@ -90,7 +92,7 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
                                     let matchType: boolean = this.matchTypes(returnTypes);
                                     return (
                                         <Tooltip {...fun} message={!matchType ? this.getmessage(returnTypes): ''}>
-                                            <span className={!matchType ? 'ui-disabled': ''} onClick={()=> matchType && this.onSelectedItem(fun)}><Icons.FunctionOutlined/>{fun.method}</span>
+                                            <span className={!matchType ? 'ui-disabled': ''} onClick={()=> matchType && this.onSelectedItem(utils.copy(fun))}><Icons.FunctionOutlined/>{fun.method}</span>
                                         </Tooltip>
                                     )
                                 })}</dd>

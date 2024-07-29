@@ -1,6 +1,6 @@
 import React from 'react';
 import { utils } from '@blocksx/core';
-
+import { Select } from 'antd';
 import Context from '../contexts';
 import FormerScopeFunction from './function';
 
@@ -204,15 +204,32 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         type: 'value',
                         value: ''
                     })
-
-
                     this.doChangeValue();
                     this.doFocus()
                 }}
             >
                 {item.parameters.map((it, idx) => {
-                    let dataType: any = (parameters[idx] || {}).dataType;
+                    let parameterMeta : any = parameters[idx] || parameters[parameters.length - 1];
+                    let dataType: any = parameterMeta.dataType;
                     
+                    if (Array.isArray(parameterMeta.enum) && parameterMeta.enum.length) {
+                        
+                        return (
+                            <Select 
+                                popupMatchSelectWidth={false}
+                                defaultActiveFirstOption
+                                value={it.value || parameterMeta.enum[0].value}
+                                onChange={(v)=> {
+                                    it.value = v;
+                                    this.doChangeValue();
+                                }}
+                                variant="borderless"
+                                size="small"
+                                options={parameterMeta.enum}
+                            ></Select>
+                        )
+                    }
+
                     return (<FormerScopeValue
                         key={[item.name, this.state.reflush, idx].join('.')}
                         level={this.state.level - 2}
@@ -222,9 +239,9 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         context={this.context}
                         onRemoveValue={(currentIndex) => {
                             // 参数不能删除只能让光标往前
-                            console.log(currentIndex, 33)
+                            // console.log(currentIndex, 33)
                             // return this.doRemoveScopeValue(item.parameters, idx, currentIndex)
-                            /*if (idx == 0) {
+                            /*  if (idx == 0) {
                                 return false
                             }
                             item.parameters.splice(Math.max(0,idx-1), 1);
