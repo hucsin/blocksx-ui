@@ -1,10 +1,12 @@
 import React from 'react';
 import { GlobalScope, Icons} from '@blocksx/ui';
 import ScopeTooltip from './panel/tooltip';
+import { upperFirst } from 'lodash';
 
 interface FormerScopeProps {
     type: string;
     value: any;
+    dataType?: string;
     keypath: string;
 }
 
@@ -54,18 +56,15 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         
         return (
             <ScopeTooltip {...props} icon={<IconView/>} other={[
-                {
-                    name: 'SERIAL',
-                    description: props.serial
-                },
+                
                 {
                     name: 'SCOPE',
-                    subname: props.scope,
-                    description: keypath.slice(1, keypath.length).join('.')
+                    subname: props.scope + ` (serial:${props.serial})`,
+                    description: keypath.slice(1, keypath.length).join('.') 
                 },
                 {
                     name: 'KEYPATH',
-                    subname: 'Returns values',
+                    subname: 'Returns values ' +(this.props.dataType ? '<'+ upperFirst(this.props.dataType) + '>': '' ),
                     description: this.props.value
                 }
             ]} >

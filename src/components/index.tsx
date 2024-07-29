@@ -39,7 +39,9 @@ export * as FormerTypes from './Former/types';
 export * from './Sidebar/typing';
 
 export * as DomUtils from './utils/dom';
-export { default as GlobalScope } from './utils/GlobalScope';
+export { default as GlobalScope } from './core/GlobalScope';
+export { default as IThinkingNode } from './core/interface/IThinkingNode';
+export { default as ThinkingNodeManager } from './core/manager/ManagerThinkingNode'
 
 export { default as JSPlumbTool } from './utils/third-party/jsplumb'
 

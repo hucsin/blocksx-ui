@@ -1,5 +1,6 @@
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { clone } from 'lodash';
 import classnames from 'classnames';
 import { Popover, Space,Tooltip } from 'antd';
@@ -274,7 +275,9 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
             if (msg && this.wrapperRef.current && !ConstValue.isValidError ) {
                 ConstValue.isValidError  = true;
-                this.wrapperRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                let domwrapper: any = ReactDOM.findDOMNode(this.wrapperRef.current);
+                
+                domwrapper && domwrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
 
             cb(!msg, msg);
@@ -1102,7 +1105,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                 return (
                     <>
                         <Space.Compact>
-                        <View {...viewProps} ref={this.wrapperRef} />
+                            <View {...viewProps} ref={this.wrapperRef} />
                             {this.renderPortal(Compactwrap)}
                         </Space.Compact>
                         {noCompact && this.renderPortal(noCompact)}

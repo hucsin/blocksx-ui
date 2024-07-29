@@ -4,7 +4,7 @@ import { Tag, Space, Tooltip } from 'antd'
 import * as FormerTypes from '../Former/types';
 import * as Icons from '../Icons';
 import CombineIcon from '../Icons/CombineIcon';
-import SmartAction from './SmartAction';
+import SmartAction from '../core/SmartAction';
 
 
 export default class TablerUtils {

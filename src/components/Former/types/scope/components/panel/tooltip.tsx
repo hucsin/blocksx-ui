@@ -13,14 +13,34 @@ interface PanelTooltipProps {
     onOpenChange?: Function;
     icon?: any;
     subname?: string;
-    other?: any[]
-}
-interface PanelTooltipState {
+    other?: any[];
+    message?: any;
 
 }
+interface PanelTooltipState {
+    message?: any;
+}
 export default class PanelTooltip extends React.Component<PanelTooltipProps, PanelTooltipState> {
+    public constructor(props: any) {
+        super(props);
+        this.state = {
+            message: props.message
+        }
+    }
+    public UNSAFE_componentWillReceiveProps(nextProps: Readonly<PanelTooltipProps>, nextContext: any): void {
+        if (nextProps.message != this.state.message) {
+            this.setState({
+                message: nextProps.message
+            })
+        }
+    }
     public renderBody() {
-        let { description , parameters, returns, other } = this.props;
+        let { description , parameters, returns = {}, other } = this.props;
+
+
+        if (!Array.isArray(returns.dataType)) {
+            returns.dataType = [returns.dataType || returns.type]
+        }
         return (
             <div 
                 className='ui-function-tips-inner'
@@ -28,6 +48,7 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                     e.preventDefault();
                 }}
             >
+                {this.state.message ? this.state.message :<>
                 <div className='ant-popover-title'>
                     {this.getDefaultTitle()}
                 </div>
@@ -59,8 +80,9 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                             <dl><dt>{it.name}{it.subname&&<span>{it.subname}</span>}</dt><dd>{it.description}</dd></dl>
                         )
                     })}
-                </div>
 
+                </div>
+                </>}
             </div>
         );
     }

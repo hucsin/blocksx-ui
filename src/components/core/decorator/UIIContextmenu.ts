@@ -1,4 +1,4 @@
-import UIIManger from '../manager/MangerUII';
+import UIIManger from '../manager/ManagerUII';
 /**
  * 指定邮件菜单
  */

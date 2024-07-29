@@ -12,10 +12,14 @@ import './panel.scss';
 interface ScopePanelProps {
     scope: any;
     open: any;
+    total: number;
+    dataType: any;
 }
 interface ScopePanelState {
     current: string;
     open: any;
+    total: number;
+    dataType: any;
 }
 
 export default class ScopePanel extends React.Component<ScopePanelProps, ScopePanelState> {
@@ -25,22 +29,38 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
         super(props);
         this.state = {
             current: 'Thinking',
-            open : props.open
+            open : props.open,
+            total: props.total,
+            dataType: props.dataType
         }
     }
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<ScopePanelProps>, nextContext: any): void {
+        
         if (nextProps.open != this.state.open) {
             this.setState({
                 open: nextProps.open
             })
         }
+        if (nextProps.total != this.state.total) {
+            this.setState({
+                total: nextProps.total
+            })
+        }
+        if (nextProps.dataType != this.state.dataType) {
+            this.setState({
+                dataType: nextProps.dataType
+            })
+        }
     }
     private renderBody(name) {
+        
         switch(name) {
             case 'Thinking':
-                return <PanelProcess onClick={(value, keypath: string) => {
+                
+                return <PanelProcess dataType={this.state.dataType} total={this.state.total} onClick={(value, keypath: string, { node }) => {
                     this.props.scope.addValueIntoScope({
                         type: 'scope',
+                        dataType: node.type,
                         keypath: keypath,
                         value: value
                     })
@@ -48,7 +68,7 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
             case 'Data Stores':
                 return <PanelStorges/>
             default:
-                return <PanelOther name={name} onClick={(item: any)=> {
+                return <PanelOther dataType={this.state.dataType} name={name} onClick={(item: any)=> {
                     this.props.scope.addValueIntoScope(item)
                 }} />
 
@@ -57,13 +77,11 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
     public render() {
        let groupKeys: any = Object.keys(this.groupList);
        let titleKeys: any = [
-        'Thinking',
-        ...groupKeys,
-        'Data Stores'
+            'Thinking',
+            ...groupKeys,
+            'Data Stores'
        ]
-       if (!this.state.open) {
-         return null;
-       }
+       
         
        return  (
             <div className='ui-scope-panel-inner'

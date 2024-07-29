@@ -13,6 +13,8 @@ import { ScopeType } from '../types'
 
 interface FormerScopeProps {
     context?: any;
+    dataType?: any;
+    strict?: boolean;
     value: ScopeType[] | string;
     onChangeValue: Function;
     onRemoveValue: Function;
@@ -30,6 +32,8 @@ interface FormerScopeState {
     level: number;
 
     reflush: number;
+    dataType?: any;
+    strict?: boolean;
 }
 
 export default class FormerScopeValue extends React.Component<FormerScopeProps, FormerScopeState> {
@@ -50,7 +54,9 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
 
             index: props.index,
             level: props.level,
-            reflush: 1
+            reflush: 1,
+            dataType: props.dataType,
+            strict: props.strict
         }
     }
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<FormerScopeProps>, nextContext: any): void {
@@ -72,10 +78,23 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 level: nextProps.level
             })
         }
+
+        if (nextProps.strict != this.state.strict) {
+            this.setState({
+                strict: nextProps.strict
+            })
+        }
+        
+        if (nextProps.dataType != this.state.dataType ) {
+            this.setState({
+                dataType: nextProps.dataType
+            })
+        }
     }
 
     public doChangeValue(value?: string, isRemove?: boolean) {
         let originValue: any = utils.copy(this.state.originValue);
+        
         this.setState({
             reflush: isRemove ? this.state.reflush + 1 : this.state.reflush,
             originValue: originValue,
@@ -171,7 +190,10 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         return parameters;
     }
     private renderFunction(item: any, index: number) {
-
+        let schema: any = FunctionManger.get(item.name);
+        let parameters: any = schema.parameters || [];
+        
+        
         return (
             <FormerScopeFunction
                 name={item.name}
@@ -189,9 +211,13 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 }}
             >
                 {item.parameters.map((it, idx) => {
+                    let dataType: any = (parameters[idx] || {}).dataType;
+                    
                     return (<FormerScopeValue
                         key={[item.name, this.state.reflush, idx].join('.')}
                         level={this.state.level - 2}
+                        dataType={dataType}
+                        strict={this.state.strict}
                         index={index + this.getDefaultIndex(this.state.level - 1) * (idx + 1)}
                         context={this.context}
                         onRemoveValue={(currentIndex) => {
@@ -243,6 +269,8 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         onRemoveValue={remove}
                         level={this.state.level - 1}
                         index={parentIndex}
+                        strict={this.state.strict}
+                        dataType={this.state.dataType} 
                         serial={index}
                         context={this.context}
                         value={item.value}
@@ -337,6 +365,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     }
     private calculateParametersLength(item: any) {
         let length: number = 0;
+
         if (Array.isArray(item.parameters)) {
             if (item.parameters.length) {
                 item.parameters.forEach(item => {
@@ -366,6 +395,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         // 需要判断上一个值是否是是value
         let prevScpoe: any = originValue[index - 1];
         let currentCusorposition: number = -1;
+
         if (prevScpoe.type == 'value') {
             if (this.isSampleScopeValue(prevScpoe) && prevScpoe.value.length > 0) {
 
@@ -398,7 +428,6 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             }
 
             if (prevScpoe) {
-               console.log(prevScpoe)
                 currentIndex -= this.calculateParametersLength(prevScpoe);
             }
 
@@ -432,8 +461,9 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 </>
             )
         } else {
+            
             return (
-                <FormerScopeInput serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any) => {
+                <FormerScopeInput dataType={this.state.dataType} strict={this.state.strict} serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any) => {
                     return this.onRemoveValue(current)
                 }} context={this.context} index={this.state.index} onChangeValue={(val) => {
                     this.doChangeValue(val)

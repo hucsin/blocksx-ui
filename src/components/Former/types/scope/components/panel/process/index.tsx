@@ -1,8 +1,9 @@
 import React from 'react';
+import { StructuralMiniFlow } from '@blocksx/structural';
 import { utils } from '@blocksx/core';
 import { Tooltip, Tree, Spin } from 'antd'
 import { upperFirst } from 'lodash'
-import { GlobalScope, MiniFlow, SmartRequest } from '@blocksx/ui';
+import { GlobalScope, MiniFlow, SmartRequest, ThinkingNodeManager } from '@blocksx/ui';
 import ProcessNode from './node';
 
 import './style.scss'
@@ -18,10 +19,17 @@ interface PanelProcessState {
     starts:any, 
     currentType: string;
     nodes: any[],
-    connectors:any
+    connectors:any;
+    total: number;
+    dataType: any;
 }
 
-export default class PanelProcess extends React.Component<{onClick: Function}, PanelProcessState> {
+interface PanelProcessProps {
+    onClick: Function, total: number;
+    dataType: any;
+}
+
+export default class PanelProcess extends React.Component<PanelProcessProps, PanelProcessState> {
     private cavnasId: string;
     private miniFlow: any;
     private defaultExpandedKeys;
@@ -47,14 +55,17 @@ export default class PanelProcess extends React.Component<{onClick: Function}, P
             current: this.cavnasId + currentNode.value,
             selected: selected,
             expandedKeys: [],
-            page: this.getCurrentPage(selected),
+            page: StructuralMiniFlow.getComponentName(selected),
             schema: {},
             treeData: [],
-            loading: false
+            loading: false,
+            total: props.total,
+            dataType: props.dataType
         }
     }
-    private getCurrentPage({componentName , props ={}}: any):any {
-        return componentName || props.componentName;
+    private getCurrentPage(node: any):any {
+        
+        return StructuralMiniFlow.getComponentName(node)
     }
     private resetTreeData() {
         this.setState({
@@ -91,7 +102,24 @@ export default class PanelProcess extends React.Component<{onClick: Function}, P
        this.fetchOutputSchema(this.state.page);
 
     }
+    public UNSAFE_componentWillReceiveProps(nextProps: Readonly<PanelProcessProps>, nextContext: any): void {
+        
+        if (nextProps.total != this.state.total ) {
+            
+            this.setState({
+                total: nextProps.total
+            }, () => this.fetchOutputSchema(this.state.page))
+        }
+
+        if (nextProps.dataType != this.state.dataType) {
+            this.setState({
+                dataType: nextProps.dataType
+            })
+        }
+    }
+
     public  componentWillUnmount() {
+        
         this.miniFlow.destory();
     }
     private fetchOutputSchema(name: string) {
@@ -103,14 +131,33 @@ export default class PanelProcess extends React.Component<{onClick: Function}, P
         }
         this.setState({loading: true})
 
+        let outputschema: any = ThinkingNodeManager.getOutputSchema(
+                name, 
+                this.getTrueNodeId(this.state.selected.name));
+        
+        if (utils.isPromise(outputschema)) {
+            return outputschema.then((result)=> {
+                this.resetSchema(name, result, false)
+            })
+        } else {
+            if (utils.isPlainObject(outputschema)) {
+                return this.resetSchema(name, outputschema, false)
+            }
+        }
+
         this.fetchHelper({
             page: name
         }).then(result => {
-            this.setState({
-                loading: false,
-                schema: this.cacheTree[name] = result
-            }, this.resetTreeData)
+            this.resetSchema(name, result)
         })
+    }
+    private resetSchema(name, result: any, cache: boolean = true) {
+        this.setState({
+            loading: false,
+            schema:result
+        }, this.resetTreeData)
+
+        cache && (this.cacheTree[name] = result)
     }
     private initMiniFlow() {
         this.miniFlow = new MiniFlow({
@@ -133,13 +180,32 @@ export default class PanelProcess extends React.Component<{onClick: Function}, P
         },0)
         
     }
+    private matchDataType (type: string) {
+        let { dataType } = this.state;
+        
+        if (dataType) {
+            if (!Array.isArray(dataType)) {
+                dataType = [dataType]
+            }
+            
+            return !dataType.includes(upperFirst(type))
+        }
+        
+
+        return false;
+    }
     private getChildren(schema: any, rootPath: any[] = []) {
         let pathname: any = schema.name ? [...rootPath, schema.name].join('.') : rootPath;
+        
         let treedata: any = {
             key: pathname,
+            disabled: this.matchDataType(schema.type),
             title: schema.name,
             ...schema
         }
+
+
+
         switch(schema.type) {
             case 'object':
                 treedata.children = Object.keys(schema.properties).map(it => {
@@ -177,6 +243,9 @@ export default class PanelProcess extends React.Component<{onClick: Function}, P
         this.defaultExpandedKeys = [];
         return [this.getChildren({...schema, name: 'returns'})]
     }
+    public getTrueNodeId(id: string) {
+        return id.replace(this.cavnasId, '');
+    }
     public render () {
         let { selected ={}, starts = [] } = this.state;
         let { program, method, description } = selected.props;
@@ -207,8 +276,8 @@ export default class PanelProcess extends React.Component<{onClick: Function}, P
                                             this.setState({
                                                 selected: it,
                                                 page: this.getCurrentPage(it)
-                                            })
-                                            this.fetchOutputSchema(this.getCurrentPage(it))
+                                            }, ()=> this.fetchOutputSchema(this.getCurrentPage(it)))
+                                            
                                         }
                                     }}
                                 />
@@ -222,14 +291,19 @@ export default class PanelProcess extends React.Component<{onClick: Function}, P
                     <Spin spinning={this.state.loading}>
                         <Tree
                             blockNode
-                            onSelect={(item:any)=> {
-                                item[0] && this.props.onClick(item[0].toLowerCase().replace(/\.\./,'.'), ['$flow',selected.name.replace(this.cavnasId,'')].join('.'))
+                            onSelect={(item:any, info: any)=> {
+                                
+                                item[0] && this.props.onClick(
+                                    item[0].toLowerCase().replace(/\.\./,'.'), 
+                                    ['$flow',this.getTrueNodeId(selected.name)].join('.'),
+                                    info
+                                )
                             }}
                             key={this.state.page}
                             expandedKeys ={this.state.expandedKeys}
                             autoExpandParent={false}
                             onExpand={(expandedKeys, a) => {
-                                console.log(this.state.treeData, expandedKeys,a,2232)
+                                
                                 this.setState({expandedKeys})
                             }}
                             treeData={this.state.treeData}

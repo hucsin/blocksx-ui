@@ -10,6 +10,7 @@ import i18n from '@blocksx/i18n';
 //import  { FlowNodeType,FlowNode } from '../ScenFlow/MiniFlow/typing'
 import { FlowNodeType, FlowNode, FlowConnector, MiniFlow, Icons, SmartPage, FormerTypes, mainTexture, UtilsTool} from '@blocksx/ui';
 
+import './nodes'
 import { FormOutlined, CopyOutlined,HistoryOutlined } from '@ant-design/icons';
 import { FetchResult, withRouter, GlobalScope } from '@blocksx/ui'
 import MircoFlowNode from './components/FlowNode';

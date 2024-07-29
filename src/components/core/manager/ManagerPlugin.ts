@@ -1,6 +1,6 @@
 import { keypath, utils } from '@blocksx/core';
 import { ContextMenuItem } from '@blocksx/ui'
-import EditorContextMenuManger from './MangerContextMenu';
+import EditorContextMenuManger from './ManagerContextMenu';
 
 import WidgetUtils from './WidgetUtils';
 

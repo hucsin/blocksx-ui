@@ -25,6 +25,7 @@ interface IFormerArrays extends IFormerArray {
 
     moreItems?: any;
     props?: any;
+    fieldName?: string
 }
 
 export default class FormerArray extends React.Component<IFormerArrays, { disabled: boolean, value: any }> {
@@ -155,7 +156,7 @@ export default class FormerArray extends React.Component<IFormerArrays, { disabl
                 Exceeds the maximum allowed number of items {!!children.length && <span>(total: {children.length})</span>}
             </div> :
                 <div className="former-array-empty" onClick={this.onArrayItemAdd}>
-                    <PlusOutlined/>Click to add array items {!!children.length && <span>(total: {children.length})</span>}
+                    <PlusOutlined/>Click to add {(this.props.fieldName || 'array items').toLowerCase()} {!!children.length && <span>(total: {children.length})</span>}
                 </div>
         }
         

@@ -11,6 +11,8 @@ interface FormerScopeInputProps {
     onChangeValue: Function;
     parentScope: any;
     serial: number;
+    dataType?: any;
+    strict?: boolean;
 }
 interface FormerScopeInputState {
     defaultValue: string;
@@ -18,6 +20,8 @@ interface FormerScopeInputState {
     value: string;
     index: number;
     serial:number;
+    dataType?: any;
+    strict?: boolean;
 }
 
 
@@ -35,7 +39,9 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             value: props.value,
             //focus: props.focus || false,
             index: props.index,
-            serial: props.serial
+            serial: props.serial,
+            dataType: props.dataType,
+            strict: props.strict
         }
 
         this.ref = React.createRef();
@@ -56,9 +62,23 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 index: nextProps.index
             })
         }
+
         if (nextProps.serial != this.state.serial) {
             this.setState({
                 serial: nextProps.serial
+            })
+        }
+        
+        if (nextProps.dataType != this.state.dataType) {
+            
+            this.setState({
+                dataType: nextProps.dataType
+            })
+        }
+
+        if (nextProps.strict != this.state.strict) {
+            this.setState({
+                strict: nextProps.strict
             })
         }
     }
@@ -96,11 +116,6 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
         
         let innerHTML: string = this.ref.current.innerText;
         
-        if (e.keyCode == 13) {
-            e.stopPropagation();
-            return e.preventDefault();
-        }
-        
         
         if ([8,37,39].indexOf(e.keyCode) > -1) {
             
@@ -125,8 +140,10 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 this.resetLastPosition(currentPostion)
             }, 0)
         } else {    
-
-
+            if (!this.canInput() || e.keyCode ==13) {
+                e.stopPropagation();
+                return e.preventDefault();
+            }
             this.resetLastPosition()
         }
     }
@@ -137,6 +154,21 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
         if (this.ref.current) {
             this.ref.current.focus();
         }
+    }
+    /**
+     * 判断是否能录入
+     */
+    public canInput() {
+        let { dataType } = this.state;
+
+        if (dataType ) {
+            if (!Array.isArray(dataType)) {
+                dataType = [dataType]
+            }
+            return dataType.find(type => ['string', 'boolean', "number", 'date'].includes(type.toLowerCase()))
+        }
+        
+        return true
     }
     public render() {
         
@@ -154,7 +186,8 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 onFocus={()=> {
                     //this.setState({focus: true})
                     
-                    this.context.onFocus(this.ref.current, true)
+                    this.context.onFocus(this.ref.current, true);
+                    this.context.setCurrentDataType(this.state.dataType)
                     this.resetLastPosition();
                 }}
                 //onKeyDown={this.resetCursorPosition}
@@ -173,6 +206,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                         //this.ref.current.innerHTML = '&#8203;';
                        // this.doFocus();
                     }
+                    console.log(originValue, 222)
                     this.doChangeValue(originValue);
                     this.resetLastPosition()
             }}>{this.state.defaultValue}</span>

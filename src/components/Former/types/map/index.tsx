@@ -12,6 +12,7 @@ interface IFormerMap extends IFormerArray {
     onChangeValue: Function;
     'x-type-props'?: any;
     children?:any;
+    fieldName?: any;
 }
 
 export default class FormerMap extends React.Component<IFormerMap, { value: any, originValue: any }> {
@@ -108,7 +109,7 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
     
     private getEmptyChildren() {
         return (
-            <div  className="former-map-empty" onClick={this.onMapItemAdd}><PlusOutlined/> Click to add a new item</div>
+            <div  className="former-map-empty" onClick={this.onMapItemAdd}><PlusOutlined/> Click to add {this.props.fieldName ?  this.props.fieldName.toLowerCase(): 'new item'}</div>
         )
     }
 

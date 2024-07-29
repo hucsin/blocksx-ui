@@ -64,6 +64,8 @@ interface FormerScopeState {
     focusopen: boolean;
     width: any;
     props: any;
+    openTotal: number;
+    currentDataType: any;
 }
 
 export default class FormerScope extends React.Component<FormerScopeProps, FormerScopeState> {
@@ -87,7 +89,9 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             open: false,
             width: this.defaultProps.width,
             props: props.props,
-            focusopen: false
+            focusopen: false,
+            openTotal: 1,
+            currentDataType: null
         }
 
         this.innerRef = React.createRef();
@@ -116,7 +120,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
     }
     public doChangeValue(val?: any) {
         this.setState({
-            value: val || utils.copy(this.state.value)
+            value: utils.isUndefined(val) ?  utils.copy(this.state.value) : val
         }, () => {
             this.props.onChangeValue(this.state.value)
         })
@@ -210,7 +214,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
 
         this.timer = setTimeout(() => {
             this.timer = null;
-            this.setState({ open: true });
+            this.setState({ open: true, openTotal: this.state.openTotal + 1 });
         }, 200)
 
         if (isAct === true) {
@@ -314,15 +318,16 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
 
     public render() {
         let { value } = this.state;
-        let tyepProps: any = this.state.props || this.state.props || this.props['x-type-props'] || {};
-        let width: any = this.state.width || tyepProps.width;
-
+        let typeProps: any = this.state.props || this.state.props || this.props['x-type-props'] || {};
+        let width: any = this.state.width || typeProps.width;
+        // dataType
+        // 
         // 第一个节点
         return (
             <Popover
                 overlayClassName="ui-scope-panel"
 
-                content={<ScopePanel open={this.state.open} scope={this} />}
+                content={<ScopePanel dataType={this.state.currentDataType} open={this.state.open} total={this.state.openTotal} scope={this} />}
                 open={this.state.open}
                 placement={'left'}
 
@@ -367,9 +372,14 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                             onBackwardCursor: this.onBackwardCursor,
                             onFocus: this.onFoucs,
                             onBlur: this.onBlur,
-                            findInputRange: this.findInputRange
+                            findInputRange: this.findInputRange,
+                            setCurrentDataType: (dataType: any)=> {
+                                this.setState({
+                                    currentDataType: dataType
+                                })
+                            }
                         }}>
-                            {<FormerScopeValue onRemoveValue={() => { }} onChangeValue={(val) => {
+                            {<FormerScopeValue strict={typeProps.strict} dataType={typeProps.dataType}  onRemoveValue={() => { }} onChangeValue={(val) => {
                                 this.doChangeValue(val)
                             }} value={value} />}
                         </Context.Provider>

@@ -18,7 +18,7 @@ import TablerList from './TablerList';
 import AuthFilter from './AuthFilter';
 import TablerUtils from '../utils/tool';
 import { routerParams } from '../utils/withRouter';
-import SmartAction from '../utils/SmartAction'
+import SmartAction from '../core/SmartAction'
 
 
 

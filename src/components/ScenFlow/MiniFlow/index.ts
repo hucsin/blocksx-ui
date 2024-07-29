@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { utils } from '@blocksx/core';
 import { MiniFlow as MiniFlowStructural } from '@blocksx/structural'
 import * as DomUtils from '../../utils/dom';
-import GlobalScope  from '../../utils/GlobalScope';
+import GlobalScope  from '../../core/GlobalScope';
 import JSPlumbTool from '../../utils/third-party/jsplumb'
 import Chinampa from './chinampa';
 import DraggableCanvas from './draggable';

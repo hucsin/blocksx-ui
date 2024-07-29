@@ -28,6 +28,9 @@
         border-radius: 10px;;
     }
 }
+.ui-function-tips-inner {
+    max-width: 350px;
+}
 .ui-scope-panel-tooltip {
     .ant-popover-title {
         border-bottom: 1px solid var(--main-border-color);
@@ -87,6 +90,10 @@
             }
             dd > span {
                 display: inline-block;
+                &.ui-disabled {
+                    opacity: .5;
+                    cursor: default;
+                }
                 .anticon {
                     opacity: .2;
                 }
@@ -98,7 +105,7 @@
                 border-radius: 3px;
                 transition: all .2s;
                 &.ant-popover-open,
-                &:not(.o):hover {
+                &:not(.o):not(.ui-disabled):hover {
                     color:#fff;
                     background-color: var(--main-bg-color);
                     span {opacity: .9;}

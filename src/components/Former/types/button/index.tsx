@@ -15,7 +15,7 @@ import Drawer from './drawer';
 import { Button, Popover, Space, List, Spin } from 'antd';
 import * as Icons from '../../../Icons';
 import Avatar from '../avatar';
-import SmartAction from '../../../utils/SmartAction';
+import SmartAction from '../../../core/SmartAction';
 import { pick } from 'lodash';
 
 import './style.scss';
