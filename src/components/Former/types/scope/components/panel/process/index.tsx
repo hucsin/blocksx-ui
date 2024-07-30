@@ -43,7 +43,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         let currentNode: any = GlobalScope.getScope(GlobalScope.TYPES.CURRENTFLOW_NODE);
         let flowMap: any = flow.findAncestralFlowMap(currentNode.value);
 
-        this.cavnasId = 'flow'+ new Date().getTime() +'flow';
+        this.cavnasId = '#flow'+ new Date().getTime() +'#';
 
         let nodes: any = this.fixedName(utils.copy(flowMap.nodes || []), currentNode);
         let selected: any = (nodes.find(it=> !it.disabeld) || {})

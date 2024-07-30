@@ -422,6 +422,12 @@
             height: 100%;
             .ui-classify-group-wrapper {
                height: 100%;
+               .ant-table {
+                  border-radius: 12px;
+               }
+               .ant-table-title {
+                  display: none;
+               }
                .ui-classify-content-wrapper {
                   height: 100%;
                   overflow-y: auto;

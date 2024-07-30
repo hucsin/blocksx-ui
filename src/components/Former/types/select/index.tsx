@@ -72,6 +72,17 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         };
 
     }
+    private clearValue(value: any) {
+        let props:any = this.props['props'] || this.props['x-type-props'] || {};
+
+        let isLabelValue: boolean = utils.isLabelValue(value);
+        
+        if (isLabelValue && !props.labelValue) {
+            value = value.value;
+        }
+
+        return value;
+    }
     private makeGroupDataSource(datasource: any) {
         let list: any = [];
         let group : any = {};
@@ -147,7 +158,13 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         return !!typeProps['mode']
     }
     private onChange = (value: any) => {
-        
+        let props:any = this.props['props'] || this.props['x-type-props'] || {};
+
+        let isLabelValue: boolean = utils.isLabelValue(value);
+        if (isLabelValue && !props.labelValue) {
+            value = value.value;
+        }
+
         this.setState({
             value: value
         }, () => this.props.onChangeValue(value));
@@ -221,7 +238,9 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         let disabled: boolean = props.disabled || this.props.disabled;
 
         let tooltip: string = props.tooltip =='auto' ? this.findCurrentLabel().label  : props.tooltip || this.props.tooltip;
-
+        let value: any = this.clearValue(this.state.value);
+        
+        
         return (
             <Tooltip title={tooltip}>
                 <Select
@@ -242,13 +261,14 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                     popupMatchSelectWidth={popupMatchSelectWidth}
                     mode={this.props.mode}
                     showSearch={true}
+                    labelInValue={props.labelValue}
                     popupClassName={this.props.popupClassName}
                     disabled={disabled}
                     loading={this.state.loading}
                     onSearch={this.onSearch}
                     onChange={this.onChange}
                     size={this.props.size}
-                    value={this.state.value}
+                    value={value}
                     options={this.state.dataSource}
                 >
                 </Select>

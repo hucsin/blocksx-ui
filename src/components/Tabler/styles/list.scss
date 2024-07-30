@@ -51,6 +51,7 @@
     }
 
     .ant-list-item-meta-title  {
+        margin: 2px 0 2px 0 !important;
         .anticon {
             margin-right: 2px;
         }
@@ -104,7 +105,7 @@
     }
     .ui-mircotable-description {
         text-transform: capitalize;
-        opacity: .5;
+        opacity: .3;
     }
     .ant-skeleton {
         padding: 22px;
@@ -574,6 +575,15 @@
                 text-align: left;
             }
         }
+    }
+    .ui-meta-description-wrapper {
+        white-space: nowrap;
+        overflow: hidden;     
+        text-overflow: ellipsis;
+        max-width: calc(80%);
+        display: inline-block;
+        vertical-align: bottom;
+        opacity: .6;
     }
 }
 .ui-mircotable-wrapper {
