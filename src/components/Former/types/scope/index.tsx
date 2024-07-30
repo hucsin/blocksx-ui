@@ -66,6 +66,7 @@ interface FormerScopeState {
     props: any;
     openTotal: number;
     currentDataType: any;
+    disabled?: boolean;
 }
 
 export default class FormerScope extends React.Component<FormerScopeProps, FormerScopeState> {
@@ -91,7 +92,8 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             props: props.props,
             focusopen: false,
             openTotal: 1,
-            currentDataType: null
+            currentDataType: null,
+            disabled: false
         }
 
         this.innerRef = React.createRef();
@@ -325,20 +327,32 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         return !value;
     }
 
+    private isOneValue(value: any) {
+
+        if (Array.isArray(value)) {
+            return value.length <= 1;
+        }
+
+        return true;
+    }
+
     public render() {
         let { value } = this.state;
         let typeProps: any = this.state.props || this.state.props || this.props['x-type-props'] || {};
         let width: any = this.state.width || typeProps.width;
-        let isEmptyValue: boolean = this.isEmptyValue(value)
+        let isEmptyValue: boolean = this.isEmptyValue(value);
+        let disabled: boolean = typeProps.struct ? !this.isOneValue(value) : false;
+        let opened: any = this.state.disabled ? this.state.open : this.state.open;
         // dataType
         // 
+        console.log(this.state.disabled, 3333)
         // 第一个节点
         return (
             <Popover
                 overlayClassName="ui-scope-panel"
 
-                content={<ScopePanel dataType={this.state.currentDataType} open={this.state.open} total={this.state.openTotal} scope={this} />}
-                open={this.state.open}
+                content={<ScopePanel disabled={this.state.disabled} dataType={this.state.currentDataType} open={opened} total={this.state.openTotal} scope={this} />}
+                open={opened}
                 placement={'left'}
 
             >
@@ -384,13 +398,18 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                             onFocus: this.onFoucs,
                             onBlur: this.onBlur,
                             findInputRange: this.findInputRange,
+                            setDisabled: (disabled:boolean) => {
+                                this.setState({
+                                    disabled: disabled
+                                })
+                            },
                             setCurrentDataType: (dataType: any)=> {
                                 this.setState({
                                     currentDataType: dataType
                                 })
                             }
                         }}>
-                            {<FormerScopeValue strict={typeProps.strict} dataType={typeProps.dataType}  onRemoveValue={() => { }} onChangeValue={(val) => {
+                            {<FormerScopeValue  disabled={disabled} strict={typeProps.strict} dataType={typeProps.dataType}  onRemoveValue={() => { }} onChangeValue={(val) => {
                                 this.doChangeValue(val)
                             }} value={value} />}
                         </Context.Provider>

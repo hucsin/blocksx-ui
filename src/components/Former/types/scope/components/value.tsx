@@ -14,14 +14,15 @@ import { ScopeType } from '../types'
 interface FormerScopeProps {
     context?: any;
     dataType?: any;
-    strict?: boolean;
+    disabled?: boolean;
     value: ScopeType[] | string;
     onChangeValue: Function;
     onRemoveValue: Function;
     index: number;
     level: number;
     parentScope?: any;
-    serial: number
+    serial: number;
+    strict?: boolean;
 }
 
 interface FormerScopeState {
@@ -33,6 +34,7 @@ interface FormerScopeState {
 
     reflush: number;
     dataType?: any;
+    disabled?: boolean;
     strict?: boolean;
 }
 
@@ -56,6 +58,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             level: props.level,
             reflush: 1,
             dataType: props.dataType,
+            disabled: props.disabled,
             strict: props.strict
         }
     }
@@ -82,6 +85,11 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         if (nextProps.strict != this.state.strict) {
             this.setState({
                 strict: nextProps.strict
+            })
+        }
+        if (nextProps.disabled != this.state.disabled) {
+            this.setState({
+                disabled: nextProps.disabled
             })
         }
         
@@ -235,6 +243,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         level={this.state.level - 2}
                         dataType={dataType}
                         strict={this.state.strict}
+                        disabled={!this.isCanInput(it.value)}
                         index={index + this.getDefaultIndex(this.state.level - 1) * (idx + 1)}
                         context={this.context}
                         onRemoveValue={(currentIndex) => {
@@ -270,6 +279,20 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             <FormerVariable {...item} />
         )
     }
+    private isCanInput(value: any) {
+
+        if (this.state.strict) {
+            console.log(value, 32223)
+            if (Array.isArray(value)) {
+                
+                return value.length < 1 || value[0].value == '';
+            }
+
+        }
+
+        return true;
+    }
+
     private renderContent = (item: any, index: number, remove: Function) => {
         let parentIndex: number = (index + 1) * this.getDefaultIndex() + this.state.index;
         switch (item.type) {
@@ -280,12 +303,14 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             case 'scope':
                 return this.renderScope(item, parentIndex);
             default:
+                console.log(!this.isCanInput(this.state.value), 222)
                 return (
                     <FormerScopeValue
                         key={[item.type, this.state.reflush, index].join('.')}
                         onRemoveValue={remove}
                         level={this.state.level - 1}
                         index={parentIndex}
+                        disabled={!this.isCanInput(this.state.value)}
                         strict={this.state.strict}
                         dataType={this.state.dataType} 
                         serial={index}
@@ -466,7 +491,6 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     }
     public render() {
         let { value, originValue } = this.state;
-
         if (Array.isArray(value)) {
             return (
                 <>
@@ -480,7 +504,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         } else {
             
             return (
-                <FormerScopeInput dataType={this.state.dataType} strict={this.state.strict} serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any) => {
+                <FormerScopeInput dataType={this.state.dataType} disabled={this.state.disabled} serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any) => {
                     return this.onRemoveValue(current)
                 }} context={this.context} index={this.state.index} onChangeValue={(val) => {
                     this.doChangeValue(val)

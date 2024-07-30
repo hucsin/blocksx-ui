@@ -22,11 +22,13 @@ interface PanelProcessState {
     connectors:any;
     total: number;
     dataType: any;
+    disabled?:boolean;
 }
 
 interface PanelProcessProps {
     onClick: Function, total: number;
     dataType: any;
+    disabled?:boolean;
 }
 
 export default class PanelProcess extends React.Component<PanelProcessProps, PanelProcessState> {
@@ -60,7 +62,8 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
             treeData: [],
             loading: false,
             total: props.total,
-            dataType: props.dataType
+            dataType: props.dataType,
+            disabled: props.disabled
         }
     }
     private getCurrentPage(node: any):any {
@@ -109,6 +112,12 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
             this.setState({
                 total: nextProps.total
             }, () => this.fetchOutputSchema(this.state.page))
+        }
+        if (nextProps.disabled != this.state.disabled ) {
+            
+            this.setState({
+                disabled: nextProps.disabled
+            })
         }
 
         if (nextProps.dataType != this.state.dataType) {
@@ -199,7 +208,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         
         let treedata: any = {
             key: pathname,
-            disabled: this.matchDataType(schema.type),
+            disabled: this.state.disabled || this.matchDataType(schema.type),
             title: schema.name,
             ...schema
         }

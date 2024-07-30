@@ -79,6 +79,8 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
         let hasAdd: boolean = restParams && restParams.type =='rest' && maxParams > parameters.length
         let number: number = children.length;
 
+
+        console.log(funcmeta)
         return (
             <span 
                 className={classnames({
@@ -108,7 +110,7 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
                     )
 
                 })}
-                {hasAdd && <Button tabIndex={-1} size='small' onClick={()=> this.props.onAddParam()} type="text"><Icons.PlusOutlined/></Button>}
+                {hasAdd && <Tooltip title={`More parameter for ${funcmeta.name}`}><Button tabIndex={-1} size='small' onClick={()=> this.props.onAddParam()} type="text"><Icons.EllipsisSuggestionOutlined/></Button></Tooltip>}
                 {paramsmeta.length >0 &&<span 
                     className='ui-scope-keyword'
                     onMouseEnter={this.highlight}

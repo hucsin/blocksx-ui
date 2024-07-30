@@ -7,7 +7,7 @@ import Tooltip from './tooltip';
 import { upperFirst, emit } from 'lodash';
 
 
-export default class PanelOther extends React.Component<{name: string, onClick: Function, dataType: any}, {dataType: any}>{
+export default class PanelOther extends React.Component<{name: string, onClick: Function, dataType: any, disabled?: boolean}, {dataType: any, disabled?: boolean}>{
     private scopeList: any;
     private noticeMap: any = {
         'Math': 'Some mathematical functions for performing numerical calculations. [Know more]()',
@@ -20,14 +20,20 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
         super(props)
         this.scopeList = ScopeManger.findGroup(props.name)
         this.state = {
-            dataType: props.dataType
+            dataType: props.dataType,
+            disabled: props.disabled
         }
     }
 
-    public UNSAFE_componentWillReceiveProps(nextProps: Readonly<{ name: string; onClick: Function; dataType: any; }>, nextContext: any): void {
+    public UNSAFE_componentWillReceiveProps(nextProps: Readonly<{ name: string; onClick: Function; dataType: any; disabled?: boolean }>, nextContext: any): void {
         if (nextProps.dataType != this.state.dataType) {
             this.setState({
                 dataType: nextProps.dataType
+            })
+        }
+        if (nextProps.disabled != this.state.disabled) {
+            this.setState({
+                disabled: nextProps.disabled
             })
         }
     }
@@ -47,6 +53,10 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
 
     public matchTypes(type: string) {
         let { dataType } = this.state;
+
+        if (this.state.disabled) {
+            return false;
+        }
         
         if (dataType) {
             if (!Array.isArray(dataType)) {
@@ -60,6 +70,9 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
     }
 
     public getmessage(type:any) {
+        if (this.state.disabled) {
+            return "The current position does not allow the input of more variables.";
+        }
         return `Returns dataType '${upperFirst(type)}' is not allowed at this position; types (${this.state.dataType}) are allowed at this position.` 
     }
     public render () {

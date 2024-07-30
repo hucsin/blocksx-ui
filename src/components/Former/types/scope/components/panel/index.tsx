@@ -14,12 +14,15 @@ interface ScopePanelProps {
     open: any;
     total: number;
     dataType: any;
+    disabled?: boolean;
 }
 interface ScopePanelState {
     current: string;
     open: any;
     total: number;
     dataType: any;
+
+    disabled?: boolean;
 }
 
 export default class ScopePanel extends React.Component<ScopePanelProps, ScopePanelState> {
@@ -31,7 +34,8 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
             current: 'Thinking',
             open : props.open,
             total: props.total,
-            dataType: props.dataType
+            dataType: props.dataType,
+            disabled: props.disabled
         }
     }
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<ScopePanelProps>, nextContext: any): void {
@@ -46,6 +50,12 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                 total: nextProps.total
             })
         }
+        if (nextProps.disabled != this.state.disabled) {
+            this.setState({
+                disabled: nextProps.disabled
+            })
+        }
+        
         if (nextProps.dataType != this.state.dataType) {
             this.setState({
                 dataType: nextProps.dataType
@@ -57,7 +67,7 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
         switch(name) {
             case 'Thinking':
                 
-                return <PanelProcess dataType={this.state.dataType} total={this.state.total} onClick={(value, keypath: string, { node }) => {
+                return <PanelProcess disabled={this.state.disabled} dataType={this.state.dataType} total={this.state.total} onClick={(value, keypath: string, { node }) => {
                     this.props.scope.addValueIntoScope({
                         type: 'scope',
                         dataType: node.type,
@@ -66,9 +76,9 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                     })
                 }}/>
             case 'Data Stores':
-                return <PanelStorges/>
+                return <PanelStorges />
             default:
-                return <PanelOther dataType={this.state.dataType} name={name} onClick={(item: any)=> {
+                return <PanelOther disabled={this.state.disabled} dataType={this.state.dataType} name={name} onClick={(item: any)=> {
                     this.props.scope.addValueIntoScope(item)
                 }} />
 

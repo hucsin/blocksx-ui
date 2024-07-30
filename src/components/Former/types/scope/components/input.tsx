@@ -12,7 +12,7 @@ interface FormerScopeInputProps {
     parentScope: any;
     serial: number;
     dataType?: any;
-    strict?: boolean;
+    disabled?: boolean;
 }
 interface FormerScopeInputState {
     defaultValue: string;
@@ -21,7 +21,7 @@ interface FormerScopeInputState {
     index: number;
     serial:number;
     dataType?: any;
-    strict?: boolean;
+    disabled?: boolean;
 }
 
 
@@ -41,7 +41,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             index: props.index,
             serial: props.serial,
             dataType: props.dataType,
-            strict: props.strict
+            disabled: props.disabled
         }
 
         this.ref = React.createRef();
@@ -76,9 +76,9 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             })
         }
 
-        if (nextProps.strict != this.state.strict) {
+        if (nextProps.disabled != this.state.disabled) {
             this.setState({
-                strict: nextProps.strict
+                disabled: nextProps.disabled
             })
         }
     }
@@ -161,6 +161,10 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
     public canInput() {
         let { dataType } = this.state;
 
+        if(this.state.disabled) {
+            return false;
+        }
+
         if (dataType ) {
             if (!Array.isArray(dataType)) {
                 dataType = [dataType]
@@ -181,13 +185,16 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 contentEditable="true" 
                 onBlur={()=> { 
                     //this.setState({focus: false})
-                    this.context.onBlur(this.ref.current)
+                    this.context.setDisabled(false);
+                    this.context.onBlur(this.ref.current);
+                    
                 }} 
                 onFocus={()=> {
                     //this.setState({focus: true})
-                    
+                    this.context.setDisabled(this.state.disabled);
                     this.context.onFocus(this.ref.current, true);
-                    this.context.setCurrentDataType(this.state.dataType)
+                    this.context.setCurrentDataType(this.state.dataType);
+                    
                     this.resetLastPosition();
                 }}
                 //onKeyDown={this.resetCursorPosition}
