@@ -17,7 +17,7 @@ class ThinkingStartNode extends IThinkingNode {
                     return StructuralJSON.toSchemaByFields(inputs)
                 }
             }
-            console.log(nodeId, node.props)
+            
             return {
                 type: 'object',
                 properties: {}

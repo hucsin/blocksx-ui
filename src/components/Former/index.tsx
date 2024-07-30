@@ -34,6 +34,7 @@ export interface FormerProps {
     extra?: ExtraContentType;
     className?: string;
     classifyType?: 'tabs' | 'step' | 'verticalTabs';
+    
     groupType?: 'accordion' | 'more',
     groupMeta?: any;
     schemaClassifySort?: any;
@@ -155,6 +156,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
         this.emitter = new EventEmitter();
         this.emitter.setMaxListeners(1000);
+
+        console.log(props, 3333)
     }
     public setCache(key: string, value: any) {
         this.cache[key] = value;

@@ -345,7 +345,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         let opened: any = this.state.disabled ? this.state.open : this.state.open;
         // dataType
         // 
-        console.log(this.state.disabled, 3333)
+        
         // 第一个节点
         return (
             <Popover

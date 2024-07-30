@@ -623,6 +623,17 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         let { schema, dynamicSchema, visible, isStepMode, isStepOne, viewer } = this.state;
         let { pageMeta = {}} = this.props;
         let groupType: any = pageMeta.groupType || pageMeta.props && pageMeta.props.groupType;
+        let groupMeta: any = null;
+
+        if (utils.isPlainObject(groupType)) {
+            groupMeta = groupType;   
+            groupType = groupType.type;
+             
+        } else {
+            groupMeta = pageMeta.groupMeta;
+        }
+        
+        
         let notice: any = this.getDefaultNotice();
         
         let pageSchema: any = isStepMode 
@@ -635,11 +646,12 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         if (!visible && this.props.formerType!=='default') {
             //return null;
         }
-
+        
         
         return (
             <Former
                 groupType ={groupType}
+                groupMeta={groupMeta}
                 title={ this.renderDefaultTitle()}
                 titleContainerRef={this.props.titleContainerRef}
                 icon={this.getDefaultIcon()}
@@ -647,6 +659,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                 size={this.props.size}
                 notice={notice}
                 loading={this.state.loading}
+                
                 className="ui-tabler-former"
                 rowKey={this.props.rowKey}
                 onVisible={(visible)=> {

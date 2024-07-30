@@ -14,7 +14,14 @@ export default class FormerGroupItem extends React.Component<{
         }
     }
     private getDefaultCollapse(props: any) {
+        console.log(props, 333)
+        let { groupMeta = {}}  = props;
+
         if (props.groupType == 'more') {
+
+            if (groupMeta && Array.isArray(groupMeta.fold)) {
+                return groupMeta.fold.indexOf(props.title) > -1;
+            }
             if (props.index > 0) {
                 return true;
             }
@@ -38,7 +45,7 @@ export default class FormerGroupItem extends React.Component<{
     }
     public render() {
         let showMore: boolean = this.state.collapse && this.props.groupType == 'more';
-        let showTitle: boolean = !!this.props.title && (this.props.title.length > 2);
+        let showTitle: boolean = showMore || !!this.props.title && (this.props.title.length > 2);
         
         return (
             <div className={
@@ -52,7 +59,7 @@ export default class FormerGroupItem extends React.Component<{
 
                 {showTitle ? <div className="former-group-item-title" onClick={this.onCollapse}>
 
-                    {showMore ? 'More Setting' : this.props.title}
+                    {showMore ? 'Advanced Setting' : this.props.title}
                     {showMore ? <DownOutlined /> : ''}
                     {!showMore && this.showGroupTips(this.props.title)}
                     <div className="former-group-collapse">{this.state.collapse ? <RightOutlined /> : <DownOutlined />}</div>

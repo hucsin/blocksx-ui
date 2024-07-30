@@ -1,5 +1,5 @@
 import React from 'react';
-import { Popover } from 'antd';
+import { Popover,Alert } from 'antd';
 import { Icons } from '@blocksx/ui';
 
 interface PanelTooltipProps {
@@ -49,12 +49,12 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                     e.preventDefault();
                 }}
             >
-                {this.state.message ? this.state.message :<>
+                
                 <div className='ant-popover-title'>
                     {this.getDefaultTitle()}
                 </div>
                 <div className='ui-function-info'>
-                    <p>{description}</p>
+                    <p>{this.state.message ? <Alert showIcon message={this.state.message} type="warning" /> :description}</p>
                     {parameters && parameters.length>0 && <dl>
                         <dt>Parameters</dt>
                         {parameters.map((it, index)=> {
@@ -83,7 +83,7 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                     })}
 
                 </div>
-                </>}
+                
             </div>
         );
     }

@@ -160,7 +160,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
      */
     public canInput() {
         let { dataType } = this.state;
-
+        
         if(this.state.disabled) {
             return false;
         }
