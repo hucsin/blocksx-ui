@@ -4,8 +4,6 @@
  * 开关，标签，标签（颜色），词典枚举
  */
 import React from 'react';
-import { Tag } from 'antd';
-import Former from '../Former';
 
 import classnames from 'classnames';
 import { utils } from '@blocksx/core';
@@ -34,7 +32,6 @@ export interface TablerCellState {
     editable?: boolean;
 }
 
-const FormerTypes: any = Former.FormerTypes;
 
 export default class TablerCell extends React.Component<TablerCellProps, TablerCellState> {
     public constructor (props: TablerCellProps) {

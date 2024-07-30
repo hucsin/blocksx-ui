@@ -148,6 +148,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
     }
     public componentDidMount() {
         if (this.props.autoInit !== false) {
+            
             this.initDataSource(this.props)
         }
     }
@@ -156,6 +157,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
         
         if (newProps.reflush != this.state.reflush) {
+            
             this.setState({
                 reflush: newProps.reflush
             }, () => {
@@ -281,7 +283,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
     private resetDataSource(dataSource?: any, isAppend?: any, params?: any) {
         let props = this.props;
         let state = this.state;
-
+        
         if (dataSource) {
             // 直接返回为数组格式
             if (utils.isArray(dataSource)) {

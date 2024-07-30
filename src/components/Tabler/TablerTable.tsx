@@ -96,6 +96,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
             cacheFilter: {},
             loading: false,
             reflush: props.reflush,
+            dataSource: this.getDataSource(),
             mode: props.mode
         };
 
@@ -107,6 +108,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
     }
 
     public UNSAFE_componentWillReceiveProps(newProps: any) {
+        
         if (newProps.reflush !== this.state.reflush) {
             this.setState({
                 dataSource: this.getDataSource(),
@@ -174,6 +176,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
 
 
     private getDataSource(): any {
+        
         if (this.props.getDataSource) {
             return this.props.getDataSource() as any[];
         }
@@ -508,7 +511,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
                     size={this.props.size}
                     columns={this.getColumns()}
                     tableLayout={'fixed'}
-                    dataSource={this.getDataSource()}
+                    dataSource={this.state.dataSource}
                     ref={this.tableRef}
 
                     scroll={this.columns.length <= this.props.resizeMaxColumns + 1 ? undefined : { x: this.getTableWidth() }}

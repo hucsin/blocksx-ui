@@ -3,6 +3,7 @@ import React from 'react';
 import { IFormerBase } from '../../typings';
 import dayjs from 'dayjs';
 import { DatePicker } from "antd";
+import './style.scss'
 
 interface FormerDateProps extends IFormerBase {
     value: any,
@@ -25,6 +26,7 @@ interface FormerDateState {
     range?: boolean;
     format?: string;
     placeholder?: string;
+    disabled?: boolean;
 }
 export default class FormerDate extends React.Component<FormerDateProps, FormerDateState> {
     public static defaultProps  = {
@@ -38,7 +40,8 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
             value: props.value,
             range: typeof typeProps.range == 'undefined' ? props.range : typeProps.range,
             format: typeProps.format || props.format,
-            placeholder: typeProps.placeholder
+            placeholder: typeProps.placeholder,
+            disabled: props.disabled
         };
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
@@ -46,6 +49,11 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
         if (newProps.value != this.state.value) {
             this.setState({
                 value: newProps.value
+            })
+        }
+        if (newProps.disabled != this.state.disabled) {
+            this.setState({
+                disabled: newProps.disabled
             })
         }
     }
@@ -59,14 +67,16 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
         }
     }
     public render() {
-        
+        let props:any = this.props['props'] || this.props['x-type-props'] || {};
+        let disabled: boolean = props.disabled || this.props.disabled;
+
         if (this.state.range) {
             let rangeValue: any = this.state.value || [];
             
             return (
                 <DatePicker.RangePicker 
                     size={this.props.size}
-                    disabled={this.props.disabled}  
+                    disabled={disabled}  
                     value={rangeValue.map(it => dayjs(it, this.state.format)) as any} 
                     format={this.state.format}
                     onChange={this.onChangeValue}
@@ -75,7 +85,7 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
         }
        
         return(<DatePicker 
-            disabled={this.props.disabled}  
+            disabled={disabled}  
             size={this.props.size}
             placeholder={this.state.placeholder}
             value={this.state.value && dayjs(this.state.value as any, this.state.format)} 

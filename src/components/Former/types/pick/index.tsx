@@ -100,6 +100,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
         let schema: any = this.getSchema();
         let pageSize: number = this.getDefaultPageSize();
         let defaultParams: any = this.getDefaultParams();
+
         
         return (
             <div className='ui-pick-wrapper'>

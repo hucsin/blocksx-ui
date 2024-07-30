@@ -4,7 +4,7 @@ import { createRoot } from "react-dom/client";
 import { Button } from 'antd';
 import Icon from './components/Former/types/icon';
 //import SqlParser from './demo/Sqlparser'
-import Editor from './components/EditorCore/index';
+//import Editor from './components/EditorCore/index';
 //import CardList from './components/CardList/index';
 import Box from './components/Box/index';
 
@@ -57,14 +57,10 @@ class Text404 extends React.Component<{text: string}, {value:string, type: numbe
           <Button onClick={()=>this.setState({type: 0})}>1</Button><Button onClick={()=>this.setState({type: 1})}>2</Button>
         </div>
         <div style={{display: this.state.type == 0 ?'block' : 'none', height: '100%'}} >
-          <Editor
-            id="string1"
-          />
+        
         </div>
         <div style={{display: this.state.type == 1 ?'block' : 'none', height: '100%'}} >
-          <Editor
-            id="string2"
-          />
+         
         </div>
       </div>
     )

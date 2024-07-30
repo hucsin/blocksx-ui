@@ -5,6 +5,8 @@ import { Popconfirm, Tooltip } from 'antd';
 import * as Icons from '../../../Icons';
 import StepFormer from '../../StepFormer';
 
+import { pick } from 'lodash'
+
 interface IFormerArrayItem extends IFormerBase {
     index: number;
     isLastItem: boolean;
@@ -35,6 +37,9 @@ export default class FormerArrayItem extends React.Component<IFormerArrayItem, {
         }
     }
     public render() {
+        let moreItemfields: any = this.props.moreItems && this.props.moreItems.fields && this.props.moreItems.fields.map(it=> it.fieldKey);
+        
+        
         return (
             <div className="former-array-item" data-index={this.props.index +1}>
                 {this.props.children}
@@ -58,10 +63,11 @@ export default class FormerArrayItem extends React.Component<IFormerArrayItem, {
                     title="Advanced Setting"
                     size="small"
                     onSave={(value)=> {
+                        let trueValue: any = {...pick(value,moreItemfields)}
                         this.setState({
-                            value
+                            value: trueValue
                         })
-                        this.props.onChangeValue && this.props.onChangeValue(value, this.props.index)
+                        this.props.onChangeValue && this.props.onChangeValue(trueValue, this.props.index)
                     }}
                 ><div className='former-array-advanced'><Icons.ControlOutlined/> Advanced Setting</div></StepFormer></div>}
                 <div className='former-array-item-remove'>

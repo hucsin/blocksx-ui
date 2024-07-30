@@ -157,7 +157,6 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         this.emitter = new EventEmitter();
         this.emitter.setMaxListeners(1000);
 
-        console.log(props, 3333)
     }
     public setCache(key: string, value: any) {
         this.cache[key] = value;
@@ -491,7 +490,6 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     private renderLeaf() {
         let { schema = {}, classify, visible, column, notice } = this.state;
 
-
         if (!schema && !visible) {
             return null;
         }
@@ -547,7 +545,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     public onCloseLayer = (e?:any) => {
         
         this.setState({
-            visible: true,
+            visible: false,
             loading: false
         });
         this.props.onClose && this.props.onClose(e === true);
@@ -647,8 +645,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             </>
         );
 
-        if (this.props.titleContainerRef) {
-            return ReactDOM.createPortal(RenderContent, this.props.titleContainerRef.current);
+        if (this.props.titleContainerRef ) {
+            return this.props.titleContainerRef.current ? ReactDOM.createPortal(RenderContent, this.props.titleContainerRef.current) : null;
         }
         return RenderContent;
     }

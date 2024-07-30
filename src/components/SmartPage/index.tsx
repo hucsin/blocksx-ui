@@ -85,6 +85,7 @@ export interface SmartPageProps {
     onGetDependentParameters?: Function;
 
     operateContainerRef?: any;
+    titleContainerRef?: any;
     size?: any;
     triggerMap?: {
         [key:string] : Function;
@@ -213,7 +214,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         this.toolbarRef = props.operateContainerRef || React.createRef();
 
         this.operateContainerRef = props.operateContainerRef || React.createRef();
-        this.titleContainerRef = React.createRef();
+        this.titleContainerRef = props.titleContainerRef || React.createRef();
         this.optionalContainerRef = React.createRef();
 
     }
@@ -720,7 +721,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
         return defaultWidth || 600;
     }
-    private onClose(value?: any) {
+    private onClose = (value?: any)=> {
         if (this.props.onClose) {
             this.props.onClose(value, this.state.changed)
         }
@@ -802,7 +803,10 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 )
                 break;
             default:
-                return this.renderContent();
+                return (
+                    this.renderContent()
+                    
+                );
         }
         
     }

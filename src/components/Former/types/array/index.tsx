@@ -64,8 +64,8 @@ export default class FormerArray extends React.Component<IFormerArrays, { disabl
     private onChangeItemValue(value: any ,index: number) {
         let cuurentValue = this.state.value || [];
 
-        cuurentValue[index] = value;
-      
+        cuurentValue[index] = {...cuurentValue[index], ...value};
+
         this.onChangeValue(cuurentValue)
 
     }

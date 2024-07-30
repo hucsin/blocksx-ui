@@ -282,7 +282,6 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     private isCanInput(value: any) {
 
         if (this.state.strict) {
-            console.log(value, 32223)
             if (Array.isArray(value)) {
                 
                 return value.length < 1 || value[0].value == '';
@@ -303,7 +302,6 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             case 'scope':
                 return this.renderScope(item, parentIndex);
             default:
-                console.log(!this.isCanInput(this.state.value), 222)
                 return (
                     <FormerScopeValue
                         key={[item.type, this.state.reflush, index].join('.')}

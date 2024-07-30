@@ -14,7 +14,7 @@ export default class FormerGroupItem extends React.Component<{
         }
     }
     private getDefaultCollapse(props: any) {
-        console.log(props, 333)
+        
         let { groupMeta = {}}  = props;
 
         if (props.groupType == 'more') {

@@ -6,7 +6,7 @@
     border-radius: 6px;
     padding-top:6px;
     padding-bottom: 6px;
-    &:Hover {
+    &:not(.former-map-disabled):Hover {
 
         > .former-map-add {
             > span {
@@ -30,8 +30,12 @@
         color:#aaa;
         border-radius: 6px;
         cursor: pointer;
+
         
-        &:hover {
+        &.former-map-disabled {
+            cursor: default;
+        }
+        &:not(.former-map-disabled):hover {
             color:var(--main-bg-color)
         }
        

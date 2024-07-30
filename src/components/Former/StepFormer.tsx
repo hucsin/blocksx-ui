@@ -644,7 +644,8 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             
         
         if (!visible && this.props.formerType!=='default') {
-            //return null;
+            // 如果return 当为popover这种模式的时候没办法显示了
+           // return null;
         }
         
         
@@ -746,6 +747,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                 column = {this.props.column ? this.props.column as any : 'two'}
                 width = {this.props.width || (this.props.column =='one' ? 500 : 700)}
                 onClose={(isInitiate?: any) => {
+
                     if (isInitiate) {
                         if (this.cancelDoback()) {
                             return this.setStepOne(true)

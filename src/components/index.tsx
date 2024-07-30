@@ -17,7 +17,7 @@ export { default as ErrorMessage } from './ErrorMessage';
 export { default as Tabler } from './Tabler';
 export { default as Former } from './Former';
 
-export { default as EditorCore } from './EditorCore';
+//export { default as EditorCore } from '../pages/components/EditorCore';
 export { default as SmartRequest } from './utils/SmartRequest';
 export { default as CombineIcon } from './Icons/CombineIcon';
 export { default as UtilsTool } from './utils/tool';
@@ -30,7 +30,7 @@ export * from './ScenFlow/MiniFlow/typing'
 
 export * from './SmartPage/core/texture'
 export * from './ContextMenu/typing';
-export * from './EditorCore/core';
+//export * from './EditorCore/core';
 export *  as Icons from './Icons';
 //export { default as ScenFlow } from './ScenFlow';
 

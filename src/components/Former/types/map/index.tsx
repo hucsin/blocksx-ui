@@ -71,6 +71,9 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
     }
     
     private onMapItemAdd =()=> {
+        if (this.props.viewer) {
+            return;
+        }
         let originValue = this.state.originValue;
         
         originValue.push({
@@ -109,7 +112,12 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
     
     private getEmptyChildren() {
         return (
-            <div  className="former-map-empty" onClick={this.onMapItemAdd}><PlusOutlined/> Click to add {this.props.fieldName ?  this.props.fieldName.toLowerCase(): 'new item'}</div>
+            <div  className={classnames({
+                "former-map-empty": true,
+                'former-map-disabled': this.props.viewer
+            })} onClick={this.onMapItemAdd}>
+                {!this.props.viewer ? <><PlusOutlined/> Click to add {this.props.fieldName ?  this.props.fieldName.toLowerCase(): 'new item'}</> : ' Empty'}
+            </div>
         )
     }
 
@@ -120,7 +128,8 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
         return (
             <div className={
                 classnames("former-map", {
-                    
+
+                    'former-map-disabled': this.props.viewer
                 })
             }>
                 {hasChildren && !this.props.viewer && <div className="former-map-add" onClick={this.onMapItemAdd}><PlusCircleOutlined/></div>}
