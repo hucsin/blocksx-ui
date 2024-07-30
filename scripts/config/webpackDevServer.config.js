@@ -6,6 +6,7 @@ const noopServiceWorkerMiddleware = require('react-dev-utils/noopServiceWorkerMi
 const ignoredFiles = require('react-dev-utils/ignoredFiles');
 const redirectServedPath = require('react-dev-utils/redirectServedPathMiddleware');
 const paths = require('./paths');
+const path = require('path');
 const getHttpsConfig = require('./getHttpsConfig');
 
 const host = process.env.HOST || '0.0.0.0';
@@ -101,6 +102,9 @@ module.exports = function (proxy, allowedHost) {
       // See https://github.com/facebook/create-react-app/issues/387.
       disableDotRule: true,
       index: paths.publicUrlOrPath,
+      rewrites: [
+        { from: /^\/pages\/([0-9a-zA-Z\%\=\_]{15,})$/, to: path.posix.join(paths.publicUrlOrPath, 'pages.html') }
+      ]
     },
     // `proxy` is run between `before` and `after` `webpack-dev-server` hooks
     proxy: {

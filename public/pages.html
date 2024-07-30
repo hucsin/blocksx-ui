@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<meta name="theme-color" content="#000000">
+
+	<link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+
+	<title>Pages App</title>
+  
+  <script>
+    window.__main_bg_color = '#4d53e8';
+    console.warn = ()=> {}
+    console.error = () => {}
+  </script>
+  <style>
+   
+    :root {
+      --main-bg-color: #4d53e8;
+      --main-bg-border-color: #6a80ff;
+      --secondary-bg-color: #7f84fc;
+      --secondary-bg-border-color:#a5a4ff;
+      --main-front-color: #383743;
+      --main-focus-front-color: #111;
+      --main-background-color: #f2f3f5;
+      --secondary-background-color: #f4f5f644;
+
+      --main-active-background-color: #0607090a;
+      --main-hover-background-color:#0607092a;
+      --main-border-color: #e7e7e7;
+      --secondary-border-color: #f0f0f5;
+    } 
+    html {
+      font-family: Inter, sans-serif;
+
+      scroll-behavior: smooth;
+      background-color: var(--main-background-color);
+      color:var(--main-front-color)
+    } 
+  </style>
+</head>
+
+<body>
+	<noscript>
+		You need to enable JavaScript to run this app.
+	</noscript>
+	<div id="root"></div>
+	<!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+</body>
+
+</html>

@@ -201,7 +201,10 @@ module.exports = function (webpackEnv) {
       : isEnvDevelopment && 'cheap-module-source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
-    entry: paths.appIndexJs,
+    entry: {
+      main: paths.appIndexJs,
+      pages: paths.appPagesJs
+    },//paths.appIndexJs,
     output: {
       // The build folder.
       path: paths.appBuild,
@@ -211,7 +214,7 @@ module.exports = function (webpackEnv) {
       // In development, it does not produce real files.
       filename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].js'
-        : isEnvDevelopment && 'static/js/bundle.js',
+        : isEnvDevelopment && 'static/js/[name].bundle.js',
       // There are also additional JS chunk files if you use code splitting.
       chunkFilename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].chunk.js'
@@ -405,7 +408,12 @@ module.exports = function (webpackEnv) {
             {
               test: /\.(mjs|jsx|ts|tsx)$/,
               //include: paths.appSrc,
-              exclude: /node_modules/,
+              //exclude: /(node_modules|EditorCore)/,
+              exclude: [
+                path.resolve(__dirname, '../../src/some-directory-to-exclude'),
+                /(node_modules|EditorCore)/,
+                path.resolve(__dirname, '../../src/pages/components/EditorCore'),
+              ],
               loader: require.resolve('babel-loader'),
               options: {
                 customize: require.resolve(
@@ -592,7 +600,7 @@ module.exports = function (webpackEnv) {
     },
     plugins: [
       // Generates an `index.html` file with the <script> injected.
-      new HtmlWebpackPlugin(
+     /* new HtmlWebpackPlugin(
         Object.assign(
           {},
           {
@@ -616,7 +624,21 @@ module.exports = function (webpackEnv) {
               }
             : undefined
         )
-      ),
+      ),*/
+      new HtmlWebpackPlugin({
+        inject: true,
+        template: paths.appHtml,
+        chunks: ['main'],
+        filename: 'index.html',
+      }),
+      // Generates a `secondary.html` file with the <script> injected.
+      new HtmlWebpackPlugin({
+        inject: true,
+        template: paths.pagesHtml,
+        //template: path.resolve(__dirname, '../public/index.html'),
+        chunks: ['pages'],
+        filename: 'pages.html',
+      }),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358
