@@ -545,7 +545,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     public onCloseLayer = (e?:any) => {
         
         this.setState({
-            visible: false,
+            visible: true,
             loading: false
         });
         this.props.onClose && this.props.onClose(e === true);

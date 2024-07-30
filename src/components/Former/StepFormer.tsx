@@ -747,13 +747,11 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                 column = {this.props.column ? this.props.column as any : 'two'}
                 width = {this.props.width || (this.props.column =='one' ? 500 : 700)}
                 onClose={(isInitiate?: any) => {
-
                     if (isInitiate) {
                         if (this.cancelDoback()) {
-                            return this.setStepOne(true)
+                            return this.setStepOne(true), false;
                         }
                     } 
-
                     // 关闭
                     this.setState({
                         visible: false

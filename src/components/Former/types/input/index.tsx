@@ -58,7 +58,7 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
             }
 
         }
-        console.log(this.props, 333)
+        
         
         if (props.type && props.type == 'password') {
             return (
