@@ -43,9 +43,10 @@ export default class CanvasDraggle {
 
         this.canvas = this.diagram.canvas;
         this.canvasWraper = this.canvas.parentNode;
-        //if (!this.diagram.isViewer) {
+        
+        if (!this.diagram.isViewer && (!this.diagram.small || this.diagram.nodes.length > 12)) {
             this.bindEvent();
-        //}
+        }
     }
     private bindEvent() {
 

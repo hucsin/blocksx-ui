@@ -820,7 +820,7 @@ export default class MiniFlow extends EventEmitter {
         if (this.connectorMap[sourceTargetName]) {
             
             this.instance.deleteConnection(this.connectorMap[sourceTargetName]);
-            this.connectorMap[sourceTargetName] = null;
+            delete this.connectorMap[sourceTargetName];
         }
     }
     private getSafeOpacityColor(color:string) {
@@ -885,7 +885,7 @@ export default class MiniFlow extends EventEmitter {
         });
         
         if (connector && !this.connectorMap[this.getConnectorName(source, target)]) {
-            
+             
             this.setConnectorInstance(source, target, this.instance.connect({
                 source: source,
                 target: target,
@@ -911,8 +911,6 @@ export default class MiniFlow extends EventEmitter {
                         event.stopPropagation();
                     }
                 },
-                //endpoints:["Rectangle", 'Rectangle'],
-                
                 endpointStyles: [{ fill: sourceColor}, { fill: targetColor }],
                 deleteEndpointsOnDetach: false,
                 connectionsDetachable: false,

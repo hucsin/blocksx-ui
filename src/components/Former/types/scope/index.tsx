@@ -345,16 +345,14 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         let opened: any = this.state.disabled ? this.state.open : this.state.open;
         // dataType
         // 
-        
         // 第一个节点
         return (
             <Popover
                 overlayClassName="ui-scope-panel"
 
-                content={<ScopePanel disabled={this.state.disabled} dataType={this.state.currentDataType} open={opened} total={this.state.openTotal} scope={this} />}
+                content={opened ? <ScopePanel disabled={this.state.disabled} dataType={this.state.currentDataType} open={opened} total={this.state.openTotal} scope={this} />: null}
                 open={opened}
                 placement={'left'}
-
             >
                 <div
                     className={classnames('ui-scope', {

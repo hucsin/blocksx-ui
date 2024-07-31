@@ -260,7 +260,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         let { program, method, description } = selected.props;
         let mapheight: number = starts.length ==1 ? 56 : 40 + starts.length * 40;
         
-
+        
         return (
             <div className='ui-scope-process'>
                 <h4><span>Process segment</span><span>Select process node returns data</span></h4>

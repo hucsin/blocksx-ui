@@ -71,6 +71,7 @@ var PLUMB_JS =  {};
 
     var root = PLUMB_JS;
     root.jsPlumbUtil = root.jsPlumbUtil || {};
+    root.curIdStamp  = 100;
     var jsPlumbUtil = root.jsPlumbUtil;
 
     if (typeof exports !=='undefined') { exports.jsPlumbUtil = jsPlumbUtil;}
@@ -4637,9 +4638,9 @@ var PLUMB_JS =  {};
             _suspendDrawing = false,
             _suspendedAt = null,
             DEFAULT_SCOPE = this.Defaults.Scope,
-            _curIdStamp = 1,
+            //_curIdStamp = 1,
             _idstamp = function () {
-                return "" + _curIdStamp++;
+                return "" + (root.curIdStamp ++);
             },
 
             //

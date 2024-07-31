@@ -266,9 +266,7 @@ export default class CanvasFormat {
 
             setTimeout(()=> {
                 !noRepatin && this.miniFlow.instance.repaintEverything();
-                this.miniFlow.instance.getAllConnections().forEach(connection => {
-                    connection.repaint();
-                  });
+                
             }, 0)
         }
        
