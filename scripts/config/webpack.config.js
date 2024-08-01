@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const SelfPlugin = require('./plugin');
 const webpack = require('webpack');
 const resolve = require('resolve');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -90,7 +91,7 @@ const hasJsxRuntime = (() => {
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
 module.exports = function (webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
-  const isEnvProduction = webpackEnv === 'production';
+  const isEnvProduction =  webpackEnv === 'production';
 
   // Variable used for enabling profiling in Production
   // passed into alias object. Uses a flag if passed into the build command
@@ -134,6 +135,7 @@ module.exports = function (webpackEnv) {
             config: false,
             plugins: !useTailwind
               ? [
+               // ...SelfPlugin.plugins,
                   'postcss-flexbugs-fixes',
                   [
                     'postcss-preset-env',
@@ -151,6 +153,7 @@ module.exports = function (webpackEnv) {
                 ]
               : [
                   'tailwindcss',
+                  
                   'postcss-flexbugs-fixes',
                   [
                     'postcss-preset-env',
@@ -192,6 +195,11 @@ module.exports = function (webpackEnv) {
     // Webpack noise constrained to errors and warnings
     stats: 'errors-warnings',
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
+    optimization: {
+    splitChunks: {
+      chunks: 'all', // 分割所有类型的代码
+    },
+  },
     // Stop compilation early in production
     bail: isEnvProduction,
     devtool: isEnvProduction

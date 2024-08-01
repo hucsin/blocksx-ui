@@ -1,4 +1,5 @@
 import React from 'react';
+import { utils } from '@blocksx/core';
 import { SmartRequest, routerParams, withRouter } from '@blocksx/ui';
 import WorkflowDetail  from './components/WorkflowDetail';
 
@@ -37,6 +38,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
     private updateNodeRequest: any;
     private freshNodeRequest: any;
     private addNodeRequest: any;
+    private developmentRequest: any;
     private removeNodeRequest: any;
 
 
@@ -50,7 +52,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
     public initRequestHelper() {
         let path: string = this.props.isTemplate ? '/eos/templates': '/api/thinking';
 
-        this.fetchViewRequest = SmartRequest.createPOST(`${path}/view`);
+        this.fetchViewRequest = SmartRequest.createPOST(`${path}/findThinking`);
         this.fetchUpdateRequest = SmartRequest.createPOST(`${path}/update`);
         this.fetchToggleStatusRequest = SmartRequest.createPOST(`${path}/toggleStatus`);
         this.fetchToggleFavoritesRequest = SmartRequest.createPOST(`${path}/toggleFavorites`);
@@ -60,6 +62,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
         this.fetchRestoreRequest = SmartRequest.createPOST(`${path}/restoreHistory`)
         this.fetchCloneRequest = SmartRequest.createPOST(`${path}/clone`);
 
+        this.developmentRequest = SmartRequest.createPOST(`${path}/upsertThinking`)
         this.updateNodeRequest = SmartRequest.createPOST(`${path}/updateNode`)
         this.removeNodeRequest = SmartRequest.createPOST(`${path}/removeNode`);
         this.freshNodeRequest = SmartRequest.createPOST(`${path}/fresh`);
@@ -89,10 +92,33 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                 }}
                 workflowId={this.props.router.params.id}
                 onFetchValue={()  => {
-                    return this.fetchViewRequest({id: this.props.router.params.id})
+                    
+                    return this.fetchViewRequest({id: this.props.router.params.id}).then((result => {
+                    
+                        return {
+                            ...result,
+                            nodes: utils.decompress(result.nodes) || [],
+                            connectors: utils.decompress(result.connectors) || []
+                        }
+                    }))
                 }}
-                onPublishValue={this.fetchPublishRequest}
-                onEditorNode= {(type: string, { value, diff} : any)=> {
+                onPublishValue={(value) => {
+                    
+                    return this.fetchPublishRequest({
+                        ...value,
+                        nodes: utils.compress(value.nodes),
+                        connectors: utils.compress(value.connectors)
+                    })
+                }}
+                onEditorNode= {(type: string, { value, diff, nodes, connector} : any)=> {
+                  
+
+                    return this.developmentRequest({
+                        id: this.props.router.params.id,
+                        nodes: diff.nodes.length ? nodes : undefined,
+                        connectors: diff.connectors.length ? connector : undefined
+                    })
+                    /*
                     switch(type) {
                         case 'removeNode':
                             return this.removeNodeRequest({
@@ -105,9 +131,15 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                         case 'updateNode':
                             
                             return this.updateNodeRequest(pick(value,['id', 'serial', 'name','icon', 'color', 'type', 'left', 'top', 'connection', 'componentName', 'props']))
-                    }
+                    }*/
                 }}
-                onSaveFlowList={({ diff})=>{
+                onSaveFlowList={({value,  diff, nodes, connector})=>{
+                    
+                    return this.developmentRequest({
+                        id: this.props.router.params.id,
+                        nodes: (!diff.nodes || diff.nodes.length) ? utils.compress(nodes) : undefined,
+                        connectors: (!diff.connectors || diff.connectors.length) ? utils.compress(connector) : undefined
+                    })
                     /**nodes = nodes.map(it => {
                         let props: any = it.props || {};
                         let componentName: any = props.componentName || it.componentName;

@@ -184,10 +184,11 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         this.props.onFetchValue().then((data: FlowDetailData) => {
             // 设置默认数据，一句classify            
             if (!data.nodes || data.nodes.length == 0) {
+                
                 // 人工执行下
                 this.initDefaultvalue(data)
             }
-
+            
 
             this.setState({
                 loading: false,
@@ -226,7 +227,9 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                 diff:  {
                     nodes: StructuralMiniFlow.diffNodes([], data.nodes),
                     connectors: this.coverDiffConnectors(StructuralMiniFlow.diffConnectors([], data.connectors))
-                }
+                },
+                nodes: data.nodes,
+                connector: data.connectors
             })
         }
     }
@@ -281,11 +284,19 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         let { onSaveFlowList, onEditorNode} = this.props;
         switch (type) {
             //case 'addNode':
-            case 'updateNode':
-            case 'removeNode':
-                return onEditorNode(type, cv)
+            case 'updateNode1':
+            case 'removeNode1':
+                return onEditorNode(type, {
+                    nodes,
+                    connector,
+                    ...cv
+                })
             default:
-                onSaveFlowList && onSaveFlowList(cv)
+                onSaveFlowList && onSaveFlowList({
+                    nodes,
+                    connector,
+                    ...cv
+                })
         }
     }
     private cleanNode(node): any {
@@ -507,6 +518,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         this.props.onPublishValue({
                             id:this.state.value.id,
                             version: item.key,
+                            fromVersion: this.state.version,
                             nodes: this.state.nodes,
                             connectors: this.state.connectors
                         }).then(()=> {
