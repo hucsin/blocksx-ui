@@ -36,11 +36,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
     private fetchDeleteHistoryRequest: any;
     private fetchCloneRequest: any;
 
-    private updateNodeRequest: any;
-    private freshNodeRequest: any;
-    private addNodeRequest: any;
     private developmentRequest: any;
-    private removeNodeRequest: any;
 
 
     private router: routerParams;
@@ -62,13 +58,13 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
         this.fetchVersionHistoryRequest = SmartRequest.createPOST(`${path}/history`);
         this.fetchRestoreHistoryRequest = SmartRequest.createPOST(`${path}/restoreHistory`);
         this.fetchDeleteHistoryRequest = SmartRequest.createPOST(`${path}/deleteHistory`);
-        
+
         this.fetchCloneRequest = SmartRequest.createPOST(`${path}/clone`);
 
         this.developmentRequest = SmartRequest.createPOST(`${path}/upsertThinking`)
-        this.updateNodeRequest = SmartRequest.createPOST(`${path}/updateNode`)
-        this.removeNodeRequest = SmartRequest.createPOST(`${path}/removeNode`);
-        this.freshNodeRequest = SmartRequest.createPOST(`${path}/fresh`);
+        //this.updateNodeRequest = SmartRequest.createPOST(`${path}/updateNode`)
+        //this.removeNodeRequest = SmartRequest.createPOST(`${path}/removeNode`);
+        //this.freshNodeRequest = SmartRequest.createPOST(`${path}/fresh`);
 
     }
     
@@ -136,34 +132,20 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                             return this.updateNodeRequest(pick(value,['id', 'serial', 'name','icon', 'color', 'type', 'left', 'top', 'connection', 'componentName', 'props']))
                     }*/
                 }}
-                onSaveFlowList={({value,  diff, nodes, connector})=>{
-                    
+                onSaveFlowList={({type, value,  diff, nodes, connector})=>{
+                   
                     return this.developmentRequest({
+                        removeConnector: type=='removeNode' ? value.filter(it => it.props.connection).map(it=> {
+                            console.log(it)
+                            return {
+                                connection: it.props.connection,
+                                componentName: it.componentName
+                            }
+                        }) : undefined,
                         id: this.props.router.params.id,
                         nodes: (!diff.nodes || diff.nodes.length) ? utils.compress(nodes) : undefined,
                         connectors: (!diff.connectors || diff.connectors.length) ? utils.compress(connector) : undefined
                     })
-                    /**nodes = nodes.map(it => {
-                        let props: any = it.props || {};
-                        let componentName: any = props.componentName || it.componentName;
-                        
-                        let splitName: any = componentName ? componentName.split('.') : ['']
-                        
-                        return {
-                            ...it,
-                            componentName: componentName,
-                            connection: props.connection,
-                            appname: it.appname || splitName[0]
-                        }
-                    })*/
-
-                    return this.freshNodeRequest({
-                        diffNodes: diff.nodes, 
-                        diffConnectors: diff.connectors,
-                        workflowId: this.props.router.params.id
-                    });
-                    
-                    //return this.fetchUpdateRequest({id: value.id, nodes, isPublish: false, connectors})
                 }}
 
                 onCloneValue={(v)=>{

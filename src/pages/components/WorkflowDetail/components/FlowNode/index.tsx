@@ -11,6 +11,7 @@ import { PlusOutlined } from '@ant-design/icons';
 
 import DefaultNodeList from '../../config/DefaultNodeList';
 import { get, set } from 'lodash';
+import { defaultTheme } from 'antd/es/theme/context';
 
 
 
@@ -61,6 +62,7 @@ interface SMircoFlowNode {
     reflush: number;
     value?: any;
     activateList: any;
+    componentName: any;
 }
 
 export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMircoFlowNode> {
@@ -83,7 +85,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
 
         return [
             
-            {
+            this.canShowChildrenAdd()  && this.canShowTrigerAdd() && {
                 type: 'group',
                 name: 'ADD'
             },
@@ -105,7 +107,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 },
                 icon: ['NodeCollapseOutlined','PlusOutlined']
             }: false,
-            this.props.classify !=='thinking' && {
+            this.props.classify =='function' && {
                 type: 'group',
                 name: 'BINDING',
                 control: (c) => {
@@ -120,7 +122,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                     
                 },
             },
-            this.props.classify !=='thinking' && {
+            this.props.classify =='function' && {
                 name: i18n.t('Pages'),
                 type: 'addPages',
                 control: {
@@ -133,7 +135,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 },
                 icon: ['PageCommonOutlined','PlusOutlined']
             },
-            this.props.classify !=='thinking' && {
+            this.props.classify =='function' && {
                 name: i18n.t('OpenAPI'),
                 type: 'addAPI',
                 control: {
@@ -147,15 +149,6 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 icon: ['ApiOutlined','PlusOutlined']
             },
 
-            this.props.classify == 'trigger' && this.canShowTrigerAdd() && {
-                name: i18n.t('Timer'),
-                type: 'addTimer',
-                
-                control: {
-                    hasTimer: false,
-                },
-                icon: ['FieldTimeOutlined','PlusOutlined']
-            },
             {
                 type: 'group',
                 name: 'SETTING'
@@ -211,6 +204,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
 
         let cprops: any = props.props || {};
 
+        let componentName: any = props.componentName || cprops.componentName;
+
         this.state = {
             left: props.left,
             reflush: 1,
@@ -222,7 +217,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             cacheProps: JSON.stringify(cprops),
             openSetting: false,
             hasChanged: false,
-            activateList: props.activateList
+            activateList: props.activateList,
+            componentName
         };
 
         this.mircoFlow = props.mircoFlow;
@@ -268,7 +264,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             if (props != this.state.cacheProps) {
                 this.setState({
                     props: newProps.props,
-                    cacheProps: props
+                    cacheProps: props,
+                    componentName: newProps.props.componentName
                 })
             }
         }
@@ -317,8 +314,9 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         let defaultProps: any = DefaultNodeList.getDefaultTriggerClassifyConfig(
                 utils.isString(type) ? type :  this.props.classify, this.mircoFlow.state.id);
         
+                console.log(defaultProps, 222)
         this.props.onAddTriggerNode 
-            && this.props.onAddTriggerNode(this.props.name, defaultProps);
+            && this.props.onAddTriggerNode(this.props.name, defaultProps || { props: { program: 'Trigger'}});
             
         !utils.isString(type) && this.consume(type)
     }
@@ -342,17 +340,19 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         )
     }
     private canShowChildrenAdd() {
-        return !this.props.isViewer && !this.props.floating
+        return !this.props.isViewer && !this.props.floating && !!this.state.componentName
     }
     private canShowTrigerAdd() {
-        return !this.props.isViewer && this.state.type == 'go' && (this.props.classify!='function')
+        
+        return !this.props.isViewer && this.state.type == 'go' && (this.props.classify!='function') && !!this.state.componentName
     }
     public renderNodeContent(icon: string, color: string) {
-        let { props ={}} = this.props;
-        let type: string  = this.state.type;        
-        let componentName: any = this.props.componentName || props && props.componentName;
-        let nodeType: string = type == 'go' ? componentName ? type :'empty' : type;
         
+        let type: string  = this.state.type;        
+        let componentName: any = this.state.componentName;
+        let nodeType: string = type == 'go' ? this.state.componentName ? type :'empty' : type;
+        
+
 
         switch (nodeType) {
             case 'empty':
@@ -363,8 +363,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         onOpenChange={(v)=> this.setState({openSetting: v})}
 
                         onFetchRecoFilter={(parmas)=>{
-                        
-                            return this.props.fetchMap['programs']({...parmas}, 'notrigger')
+                            console.log(type, 2222)
+                            return this.props.fetchMap['programs']({...parmas}, type =='go' ?  'trigger': 'notrigger')
                         }}
                         onClassifyClick={(row) => {
                             this.props.onUpdateNode && this.props.onUpdateNode(this.props.name, {
@@ -389,13 +389,12 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 return (
                     <SmartPage
                         onGetDependentParameters ={()=> {
-                            
                             return {
                                 workflowId: this.props.workflowId,
                                 nodeName: this.props.name
                             }
                         }}
-                        pageURI='/eos/programs/findPage'
+                        pageURI='/api/thinking/findNodeConfigure'
                         key={name}
                         name={name}
                         reflush={this.state.reflush}
@@ -410,18 +409,23 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                             }
                         }
                         params={()=> {
+                            
+                            let { props = {}} = this.props;
                             return {
-                              //  id: this.props.bytethinkingId,
-                              //  nodeId: this.props.id,
+                                id: parseInt(this.props.workflowId, 10),
+                                node: this.props.name,
+                                dynamic: props.dynamic,
+                                connection: props.connection,
                                // mode: this.state.settingMode,
                                 type: componentName ? 'module' : 'router'
                             }
                         }}
                         icon="SettingOutlined"
                         value={value}
-                        onSchemaResponse={(schema)=> {
+                        onSchemaResponse={(data:any)=> {
+                            let schema = data.schema;
                             if (schema.meta && schema.meta.control) {
-                                this.initControl(schema.meta.control)
+                                this.initControl(schema.meta.control, data)
                             }
                         }}
                         onChangeValue={(val) => {
@@ -461,10 +465,10 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         }
         
     }
-    private initControl(control: any) {        
+    private initControl(control: any, data?: any) {        
         this.control = control;
         //
-        this.patchValue();
+        this.patchValue(data );
     }
     private clearPatchValue(props:any) {
         if (this.control) {
@@ -479,25 +483,32 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
 
         return props;
     }
-    private patchValue() {
+    private patchValue(data ?: any) {
         if (this.control && this.state.settingMode !== 'setting') {
             let { patch, type, listen } = this.control;
             // 如果是值同步，
             if (type == 'sync') {
                 // 依据listen条件获取值
                 
+                
                 let nodeinfo: any = this.mircoFlow.miniFlow.findNode(listen);
                 let state = this.state || {};
-
+               
                 for (let prop in patch) {
                     keypath.setData(state, prop, keypath.getData(nodeinfo, patch[prop]))
                 }
+
+                if (data) {
+                    
+                    data.value = utils.merge({}, state.props.input, data.value)
+                } else {
                 
-                this.setState({
-                    props: state.props,
-                    reflush: state.reflush + 1,
-                    value: state.props.input
-                })
+                    this.setState({
+                        props: state.props,
+                        reflush: state.reflush + 1,
+                        value: state.props.input
+                    })
+                }
 
             }
         }

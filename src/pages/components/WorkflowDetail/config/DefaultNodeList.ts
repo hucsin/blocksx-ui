@@ -64,7 +64,7 @@ export default class DefaultNodeList {
                 type: 'go',
                 props: {
                     icon: 'AutoCloudUtilityOutlined',
-                    
+                    dynamic: true,
                     program: 'Pages',
                     method: 'Linking Page'
                 },
@@ -99,7 +99,7 @@ export default class DefaultNodeList {
                 type: 'go',
                 props: {
                     icon: 'AutoCloudUtilityOutlined',
-
+                    dynamic: true,
                     program: 'OpenAPI',
                     method: 'Linking OpenAPI'
                 },
@@ -186,6 +186,65 @@ export default class DefaultNodeList {
                             method: 'Input Parameters'
                         },
                         serial: 1,
+                        top: 162,
+                        locked: true
+                    },
+                    {
+                        name: bufferName,
+                        type: 'router',
+                        icon: 'DatasourceMiniDataOutlined',
+                        componentName: 'FlowControl.buffer',
+                        color: window['__main_bg_color'],
+                        props: {
+                            icon: 'DatasourceDefaultDataOutlined',
+                            program: 'Buffer',
+                            method: 'Conditional Buffer'
+                        },
+                        top: 162,
+                        left: 258,
+                        serial:2,
+                        locked: true
+                    },
+                    this.getEmptyNode(emptyName, {
+                        left: 458,
+                        top: 162,
+                        serial: 3
+                    })
+                ],
+                connectors: [
+                    {
+                        source: startName,
+                        target: bufferName,
+                        props: {}
+                    },
+                    {
+                        source: bufferName,
+                        target: emptyName,
+                        props: {}
+                    }
+                ]
+            }
+
+        },
+        'trigger': (uniq: string) => {
+            let startName: string = uniq + '1';
+            let bufferName: string = uniq + '2';
+            let emptyName: string = uniq + '3';
+
+            return {
+                nodes: [
+                    {
+                        name: startName,
+                        type: 'go',
+                        isNew: false,
+                        color: '#ccc',
+                        left: 40,
+                        props: {
+                            program: 'Trigger',
+                        },
+                        serial: 1,
+
+                        icon: 'PlusOutlined',
                         top: 162,
                         locked: true
                     },

@@ -294,6 +294,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             default:
                 onSaveFlowList && onSaveFlowList({
                     nodes,
+                    type,
                     connector,
                     ...cv
                 })
@@ -797,7 +798,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             <SmartPage
                 id={'1'}
                 reflush={this.state.connectId}
-                pageURI='/api/thinking/findPage'
+                pageURI='/api/thinking/findNodeConfigure'
                 name={'FlowControl.connector'}
                 type="popover"
                 popoverWrapper={false}

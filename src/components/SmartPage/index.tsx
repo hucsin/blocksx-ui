@@ -22,7 +22,9 @@ import SmartUtil from './core/utils';
 import './style.scss';
 import SmartPageUtils from './core/utils';
 
-import { cloudTexture, mainTexture} from './core/texture'
+import { cloudTexture, mainTexture} from './core/texture';
+
+
 
 
 
@@ -277,11 +279,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             SmartUtil.fetchPageSchema(this.props.pageURI, this.state.name, this.props, paramsObject, (schema) => {
 
                 if (this.props.onSchemaResponse) {
+                    
                     this.props.onSchemaResponse(schema)
                 }
-
+                return schema;
             }).then(async (data:any) => {
-
+                
                 // onSchemaResponse
 
                 if (!this.state.noClassify) {
@@ -327,6 +330,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     
                 }
                 let { meta = {} } = data.schema;
+                // 合并至value
+                if (data.value) {
+                    
+                    data.value  = utils.merge(this.state.value || {}, data.value);
+                    this.onChangeValue(data.value)
+                }
                 
                 Object.assign(data, {
                     title: meta.title || this.state.title,
@@ -335,7 +344,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     noFolder: this.state.noFolder,
                     noHeader: this.state.noHeader,
                     noToolbar: this.state.noToolbar,
-                    noClassify: this.state.noClassify
+                    noClassify: this.state.noClassify,
+                    value: data.value || this.state.value
                 })
 
                 if (this.props.onInitPage) {
@@ -365,6 +375,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             }
         }
 
+        
         if (newProps.name != this.state.name || newProps.id != this.state.id) {
             
             this.setState({
@@ -392,7 +403,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         }
         
         if (!utils.isUndefined(newProps.reflush) && newProps.reflush !== this.state.reflush) {
-            
+            console.log('unchagne', newProps.value)
             this.setState({
                 reflush: newProps.reflush,
                 value: newProps.value

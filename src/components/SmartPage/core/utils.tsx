@@ -25,7 +25,7 @@ export default class SmartPageUtils {
                     let classifyField: any
 
                     if (filter) {
-                        filter(schema)
+                        filter(data)
                     }
                     
                     if (PageManger.has(trueUiType)) {
@@ -37,6 +37,7 @@ export default class SmartPageUtils {
                         }
                         resolve({
                             schema: schema,
+                            value: data.value,
                             uiType: trueUiType,
                             pageMeta: pageMeta,
                             classifyField: classifyField,

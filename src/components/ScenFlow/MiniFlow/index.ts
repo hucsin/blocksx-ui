@@ -197,6 +197,8 @@ export default class MiniFlow extends EventEmitter {
     }
     private doChangeSave(type: string, value?: any) {
         // 触发事件
+      
+
         const playload: any = {
             type,
             value,
@@ -1390,8 +1392,8 @@ export default class MiniFlow extends EventEmitter {
                                 return this.dragTarget = null;
                             } 
 
-                            
-                            this.doChangeSave('removeNode', [node.name]);
+                            console.log(node,222)
+                            this.doChangeSave('removeNode', [node]);
 
 
                             this.dragFreeNode = false;
@@ -1822,8 +1824,10 @@ export default class MiniFlow extends EventEmitter {
         //this.removeConnectorByNodeName(this.dragNodeName);
         let relatedNodeMap: any = [];
         let reconector: any =[];
-        
+
         this.relatedDeleteRouter(nodeName, relatedNodeMap, reconector);
+
+        let needDeleteArray: any [] = [nodeName, ...relatedNodeMap].map(it => this.getNodeByName(it))
         
         if (relatedNodeMap.length) {
             relatedNodeMap.forEach(it => this.deleteNodeByName(it))
@@ -1845,7 +1849,7 @@ export default class MiniFlow extends EventEmitter {
             }
             cb && cb([nodeName, ...relatedNodeMap]);
 
-            cb && this.doChangeSave('removeNode', [nodeName, ...relatedNodeMap]);
+            cb && this.doChangeSave('removeNode', needDeleteArray);
         });
 
     }
