@@ -32,7 +32,8 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
 
     private fetchPragramsRequest: any =  SmartRequest.createPOST('/eos/programs/list');
     private fetchVersionHistoryRequest: any;
-    private fetchRestoreRequest: any
+    private fetchRestoreHistoryRequest: any
+    private fetchDeleteHistoryRequest: any;
     private fetchCloneRequest: any;
 
     private updateNodeRequest: any;
@@ -59,7 +60,9 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
         this.fetchPublishRequest = SmartRequest.createPOST(`${path}/publish`);
 
         this.fetchVersionHistoryRequest = SmartRequest.createPOST(`${path}/history`);
-        this.fetchRestoreRequest = SmartRequest.createPOST(`${path}/restoreHistory`)
+        this.fetchRestoreHistoryRequest = SmartRequest.createPOST(`${path}/restoreHistory`);
+        this.fetchDeleteHistoryRequest = SmartRequest.createPOST(`${path}/deleteHistory`);
+        
         this.fetchCloneRequest = SmartRequest.createPOST(`${path}/clone`);
 
         this.developmentRequest = SmartRequest.createPOST(`${path}/upsertThinking`)
@@ -182,7 +185,8 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                 fetchMap={
                     {
                         'versionHistory': this.fetchVersionHistoryRequest,
-                        'restoreHistory': this.fetchRestoreRequest,
+                        'restoreHistory': this.fetchRestoreHistoryRequest,
+                        'deleteHistory': this.fetchDeleteHistoryRequest,
                         'logs': (pageNumber: number, pageSize: number, params: any) => {
                             
                             return new Promise((resolve, reject)=> {

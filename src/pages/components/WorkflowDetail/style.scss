@@ -1,15 +1,23 @@
-.mircoflow-publish {
-    &.ant-menu-light.ant-menu-root.ant-menu-vertical{
-        border-inline-end:none;
+.ui-publish-wrapper {
+    min-width: 180px;
+    .mircoflow-publish {
+        border-inline-end: 0 !important;
+        &.ant-menu-light.ant-menu-root.ant-menu-vertical{
+            border-inline-end:none;
+        }
+        &.ant-menu-vertical >.ant-menu-item {
+            height: 32px;
+            line-height: 32px;
+            padding: 0px 8px;
+            margin: 8px 0;
+        }
     }
-    &.ant-menu-vertical >.ant-menu-item {
-        height: 32px;
-        line-height: 32px;
-        padding: 0 4px;
+
+    .ant-popover-inner {
+        padding: 8px !important;
+        padding-right: 0 !important;
+
     }
-}
-.ant-tooltip {
-    max-width: 300px;
 }
 .overlays-label {
     position: relative;

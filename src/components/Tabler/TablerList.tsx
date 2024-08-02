@@ -328,11 +328,11 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
 
     private getFieldByPlace(place: string = 'avatar') {
-        let fields: any = this.props.fields;
+        let fields: any = this.props.fields || [];
         return fields.find(it => it.place && it.place == place)
     }
     private getFieldsByPlace(key: string) {
-        let fields: any = this.props.fields;
+        let fields: any = this.props.fields || [];
         
         return fields.filter(it => it.place && it.place == key)
     }
@@ -619,6 +619,8 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         }
     }
     private renderItemDescription(rowData: any, index) {
+
+
         return (
             <>
                 <span className='ui-meta-description-wrapper'>{this.renderDataExtra(rowData, index, 'description', 'renderRowDescription')}</span>

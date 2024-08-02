@@ -504,6 +504,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         return (
             <Menu 
                 rootClassName='mircoflow-publish'
+                selectable={false}
                 onClick={(item)=> {
                     if (item.key == 'history') {
                         this.setState({
@@ -518,7 +519,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         this.props.onPublishValue({
                             id:this.state.value.id,
                             version: item.key,
-                            fromVersion: this.state.version,
+                           // fromVersion: this.state.version,
                             nodes: this.state.nodes,
                             connectors: this.state.connectors
                         }).then(()=> {
@@ -574,7 +575,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         return this.props.onEditorValue({id: this.state.value.id,  status: state}, 'status');
                     }}/>}
                      {!this.props.isViewer && <Tooltip placement="top" title={i18n.t('Publish')}>
-                        <Popover open={this.state.openPublish} content={this.renderPublishContent()} onOpenChange={(v)=>this.setState({openPublish: v})} trigger={'click'}  >
+                        <Popover rootClassName='ui-publish-wrapper' open={this.state.openPublish} content={this.renderPublishContent()} onOpenChange={(v)=>this.setState({openPublish: v})} trigger={'click'}  >
                             <Button loading={this.state.publishing} icon={<Icons.PublishUtilityFilled/>}><span className='ui-empty'>{!this.state.isPublish && '(Unpublished)'}</span>{this.state.version}</Button> 
                         </Popover>
                     </Tooltip>}
@@ -877,7 +878,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                 />}
                 {this.state.openLog && <MircoRunLog  router={this.router} fetchMap={this.props.fetchMap} logId={this.state.openLog} logType={this.state.logType} />}
                 {this.renderNewNodeToolbar()}
-                {this.state.value.id && <MirceVersionHistory onReflush={()=>{ this.reloadData() }} onClose={()=>{this.setState({openVersion:false})}} fetchMap={this.props.fetchMap}  open={this.state.openVersion} id={this.state.value.id}/>}
+                {this.state.value.id && <MirceVersionHistory version={this.state.version} onReflush={()=>{ this.reloadData() }} onClose={()=>{this.setState({openVersion:false})}} fetchMap={this.props.fetchMap}  open={this.state.openVersion} id={this.state.value.id}/>}
                 <div className='ui-background-dwbg' dangerouslySetInnerHTML={{ __html: mainTexture }}></div>
 
                 {this.renderConnectSetting()}

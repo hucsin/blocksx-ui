@@ -1,5 +1,15 @@
 .ui-workflow-versionhistory {
-    
+    .ui-mircotable-extra {
+        button {
+            margin: 0;
+            padding: 0;
+            opacity: .5;
+            transition: all .2s;
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
     .ant-drawer-body {
         overflow:hidden;
         .ant-alert-warning {
