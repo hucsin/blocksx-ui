@@ -484,7 +484,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                     <span className='ui-mircotable-avatar'>
                         {!this.props.avatarMerge ? avatars.map((avatar, index) => {
                             return <FormerTypes.avatar shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} key={index} {...avatar} size={this.getAvatarSize()} style={{ zIndex: avatars.length - index }} />
-                        }) : <FormerTypes.avatar key={2} shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} size={this.getActionSize()} icon={avatars}  />}
+                        }) : <FormerTypes.avatar key={2} shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} size={this.getAvatarSize()} icon={avatars}  />}
                     </span>
                 )
             }

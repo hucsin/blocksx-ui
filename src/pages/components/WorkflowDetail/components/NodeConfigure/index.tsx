@@ -251,7 +251,7 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
                                     place: 'description'
                                 }
                             ]}
-                            avatarSize={40}
+                            avatarSize={42}
                             avatarShape='square'
                             actionSize='small'
                             classify='mini'
@@ -281,8 +281,11 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
 
                             actionSize='small'
                             groupKey='displayType'
+
+                            classify='mini'
                             avatarMerge={true}
-                            avatarSize={40}
+
+                            avatarSize={42}
                             fields={[
                                 {
                                     key: 'icon',

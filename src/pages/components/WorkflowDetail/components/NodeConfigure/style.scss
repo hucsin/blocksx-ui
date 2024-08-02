@@ -119,6 +119,18 @@
     .ui-createdat-wrapper {
         display: none;
     }
+    .ui-mircotable .ui-meta-description-wrapper {
+        white-space: unset;
+        overflow: auto;
+        max-width: 95%;
+        
+    }
+    .ui-mircotable-group  {
+        padding-bottom: 8px;
+    }
+    .ui-mircotable.ui-mircotable-mini .ant-list .ant-list-item .ant-list-item-meta{
+        align-items: center;
+    }
     .ui-mircatable-type-avatar {
         .ui-mircotable-avatar span {
             //color:#fff

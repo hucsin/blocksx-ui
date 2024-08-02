@@ -104,6 +104,7 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
         let props: any = {...this.props, ...this.props['x-type-props']};
         
         if (typeof props.size !='number') {
+            
             props.size=  props.size == 'small' ? 24:  32
         }
         return  props;

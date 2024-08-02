@@ -51,7 +51,7 @@
     }
 
     .ant-list-item-meta-title  {
-        margin: 2px 0 2px 0 !important;
+        margin: 2px 0 2px 0 ;
         .anticon {
             margin-right: 2px;
         }
@@ -231,10 +231,10 @@
     }
     .ant-list .ant-list-item .ant-list-item-meta .ant-list-item-meta-avatar {
         margin-inline-end: 8px;
-        padding: 4px 0;
+        //padding: 4px 0;
     }
     .ant-list .ant-list-item .ant-list-item-meta .ant-list-item-meta-content {
-        padding: 4px 0;
+       // padding: 4px 0;
     }
     .ant-list-item-meta {
         .ant-list-item-meta-description,
@@ -368,7 +368,6 @@
             opacity: .5;
             text-transform: uppercase;
             padding-left: 8px;
-            margin-bottom: 0px;
         }
         border-block-end:none;
         background:#fff;

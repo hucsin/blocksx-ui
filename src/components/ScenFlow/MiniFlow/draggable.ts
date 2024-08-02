@@ -9,7 +9,7 @@
  * 拖动，缩放
  * 
  */
- import * as DomUtils  from '../../utils/dom';
+import * as DomUtils from '../../utils/dom';
 
 const IMAGE_DRAG = new Image;
 IMAGE_DRAG.src = "data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==";
@@ -43,7 +43,7 @@ export default class CanvasDraggle {
 
         this.canvas = this.diagram.canvas;
         this.canvasWraper = this.canvas.parentNode;
-        
+
         if (!this.diagram.isViewer && (!this.diagram.small || this.diagram.nodes.length > 12)) {
             this.bindEvent();
         }
@@ -52,8 +52,8 @@ export default class CanvasDraggle {
 
         DomUtils.addEvent(this.canvasWraper, 'mousewheel', this.mousewheel);
         DomUtils.addEvent(this.canvasWraper, 'DOMMouseScroll', this.mousewheel);
-        
-        if(this.diagram.draggableMode !==false) {
+
+        if (this.diagram.draggableMode !== false) {
             DomUtils.addEvent(this.canvasWraper, 'dragstart', this.canvasDragStart);
             DomUtils.addEvent(this.canvasWraper, 'drag', this.canvasDrag);
             DomUtils.addEvent(this.canvasWraper, 'dragend', this.canvasDragEnd);
@@ -74,16 +74,16 @@ export default class CanvasDraggle {
     }
     private mousewheel = (event: any) => {
         // up
-        if(!this.diagram.freezeState) {
+        if (!this.diagram.freezeState) {
             let step = 0.005;
             let detail = event.detail != 0 ? -event.detail : event.wheelDelta;
 
-            
+
             this.setZoom(this.diagram.getZoom() + (Math.min(Math.abs(detail), 6) * (detail < 0 ? -1 : 1)) * step);
         }
-        
+
         event.preventDefault();
-        
+
     }
     public setZoom(zoom: number) {
 
@@ -92,7 +92,7 @@ export default class CanvasDraggle {
 
             let canvasPosition = Object.assign({}, this.diagram.getPosition());
             canvasPosition.transform = `scale(${zoom})`;
-            
+
             this.diagram.setZoom(this.zoom = zoom);
             this.diagram.setPosition(canvasPosition);
 
@@ -108,8 +108,8 @@ export default class CanvasDraggle {
         })
     }
     public canZoom(zoom: number) {
-       return true;
-        // return this.canvas.offsetWidth * zoom > 400;
+        let bound: any = this.diagram.canvasFormat.getObtainBoundaries();
+        return zoom * bound.width > 400;
     }
     public getSafeZoom(zoom: number) {
         return Math.min(this.zoomMaxNumber, Math.max(this.zoomMinNumber, zoom))
@@ -153,12 +153,12 @@ export default class CanvasDraggle {
         }
     }
     private canvasDragStart = (event: any) => {
-        
-        if (this.diagram.nodes.length <=1) {
+
+        if (this.diagram.nodes.length <= 1) {
             event.stopPropagation();
             event.preventDefault();
         }
-        console.log(this.diagram.draggableMode,22)
+        
         if (this.diagram.draggableMode !== false) {
             event.dataTransfer.setDragImage(IMAGE_DRAG, 2, 2);
         }
