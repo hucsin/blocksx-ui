@@ -11,7 +11,7 @@ import { PlusOutlined } from '@ant-design/icons';
 
 import DefaultNodeList from '../../config/DefaultNodeList';
 import { get, set } from 'lodash';
-import { defaultTheme } from 'antd/es/theme/context';
+import Clock from './clock';
 
 
 
@@ -85,7 +85,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
 
         return [
             
-            this.canShowChildrenAdd()  && this.canShowTrigerAdd() && {
+            (this.canShowChildrenAdd()  || this.canShowTrigerAdd()) && {
                 type: 'group',
                 name: 'ADD'
             },
@@ -152,6 +152,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             {
                 type: 'group',
                 name: 'SETTING'
+            },
+            this.canShowTimter() && {
+                name: i18n.t('Timer setting'),
+                type: 'timer',
+                icon: 'FieldTimeOutlined'
             },
             {
                 name: i18n.t('Configuration'),
@@ -261,11 +266,12 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         }
         if (newProps.props) {
             let props: any = JSON.stringify(newProps.props);
+            
             if (props != this.state.cacheProps) {
                 this.setState({
                     props: newProps.props,
                     cacheProps: props,
-                    componentName: newProps.props.componentName
+                    componentName: newProps.componentName || newProps.props.componentName
                 })
             }
         }
@@ -311,14 +317,20 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     }
     private addTiggerNode = (type?: any)=> {
 
+        !utils.isString(type) && this.consume(type)
+
+        if (this.props.classify == 'function') {
+
+            type = !this.hasPagesNode() ? 'pages' : 'apis';
+        }
         let defaultProps: any = DefaultNodeList.getDefaultTriggerClassifyConfig(
                 utils.isString(type) ? type :  this.props.classify, this.mircoFlow.state.id);
         
-                console.log(defaultProps, 222)
         this.props.onAddTriggerNode 
             && this.props.onAddTriggerNode(this.props.name, defaultProps || { props: { program: 'Trigger'}});
             
-        !utils.isString(type) && this.consume(type)
+        
+        
     }
     private consume(event?: any) {
         event && DomUtils.consume(event);
@@ -332,6 +344,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 <FormerTypes.avatar size={100}  icon={icon} color={color}/>
                 {this.canShowChildrenAdd()&&<div className='ui-adder'  onClick={this.addRouterChildren}><PlusOutlined/></div>}
                 {this.canShowTrigerAdd()  && <div className='ui-adder-router' onClick={this.addTiggerNode}><PlusOutlined/></div>}
+                {this.canShowTimter() && <div className='ui-timer' onClick={()=> {this.onMenuClick({type: 'timer'})}}><Clock/></div>}
                 {props.program &&<div className='ui-title'>
                     <h4>{props.program} <span>{this.props.serial}</span></h4>
                     <span>{props.method }</span>
@@ -339,12 +352,29 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             </>
         )
     }
+    private canShowTimter() {
+        return this.state.type =='go' &&  this.state.componentName && this.props.classify == 'trigger';
+    }
     private canShowChildrenAdd() {
         return !this.props.isViewer && !this.props.floating && !!this.state.componentName
     }
     private canShowTrigerAdd() {
         
-        return !this.props.isViewer && this.state.type == 'go' && (this.props.classify!='function') && !!this.state.componentName
+        if (this.props.classify == 'function') {
+
+
+            return !(this.hasPagesNode() && this.hasOpenAPINode());
+
+        } else {
+            return !this.props.isViewer && this.state.type == 'go' && (this.props.classify!='function') && !!this.state.componentName
+        }
+    }
+    private getPageName() {
+       let map: any =  {
+            'setting': 'ConnectorSetting',
+            'timer': 'Thinking.timer'
+        }
+        return map[this.state.settingMode as string] || this.state.componentName || 'router';
     }
     public renderNodeContent(icon: string, color: string) {
         
@@ -352,7 +382,6 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         let componentName: any = this.state.componentName;
         let nodeType: string = type == 'go' ? this.state.componentName ? type :'empty' : type;
         
-
 
         switch (nodeType) {
             case 'empty':
@@ -363,7 +392,6 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         onOpenChange={(v)=> this.setState({openSetting: v})}
 
                         onFetchRecoFilter={(parmas)=>{
-                            console.log(type, 2222)
                             return this.props.fetchMap['programs']({...parmas}, type =='go' ?  'trigger': 'notrigger')
                         }}
                         onClassifyClick={(row) => {
@@ -383,8 +411,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 let propsvalue = this.state.props || {}
                 let isInputValue: boolean = this.state.settingMode !== 'setting';
                 let value: any  = this.state.value || (isInputValue ? { ...propsvalue.input, $connection: propsvalue.connection } : propsvalue) || {};
-                let name: string = 'setting' === this.state.settingMode ? 'ConnectorSetting' : componentName || 'router';
-                
+                let pagename:string = this.getPageName()
+
                 
                 return (
                     <SmartPage
@@ -395,8 +423,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                             }
                         }}
                         pageURI='/api/thinking/findNodeConfigure'
-                        key={name}
-                        name={name}
+                        key={pagename}
+                        name={pagename}
                         reflush={this.state.reflush}
                         type="popover"
                         isViewer={this.props.isViewer}
@@ -553,15 +581,22 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         : ['router','empty'].indexOf(type)>-1 ? type : 'module',
             canRemove: sources.length <=1 && targets.length <=1,
             nodeLength: allNodes.length > 1 ? 'more' : 'one',
-            hasPages: !!startNodes.find(it=> it.componentName =='Thinking.pages'),
-            hasOpenAPI: !!startNodes.find(it=> it.componentName =='Thinking.openapi'),
-            hasTimer: !!startNodes.find(it=> it.componentName =='Thinking.timer')
+            hasPages: this.hasPagesNode(startNodes),
+            hasOpenAPI: this.hasOpenAPINode(startNodes)
         })
+    }
+    private hasOpenAPINode(nodes?: any) {
+        if (!this.mircoFlow.miniFlow ) return true;
+        let startNodes: any = nodes || this.mircoFlow.miniFlow.getNodes();
+        return !!startNodes.find(it=> it.componentName =='Thinking.openapi')
+    }
+    private hasPagesNode(nodes?: any) {
+        if (!this.mircoFlow.miniFlow ) return true;
+        let startNodes: any = nodes || this.mircoFlow.miniFlow.getNodes();
+        return !!startNodes.find(it=> it.componentName =='Thinking.pages')
     }
     public onMenuClick =(item: any)=> {
         switch(item.type) {
-            case 'addTimer':
-                return this.addTiggerNode('timer')
             case 'addPages':
                 return this.addTiggerNode('pages');
             case 'addAPI':
@@ -571,13 +606,13 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             case 'setting':
                 return this.setState({openSetting: true, settingMode: 'setting'})
             case 'configuration':
-                return this.setState({openSetting: true, settingMode: 'configuration'})
+                return this.setState({openSetting: true, settingMode: 'configuration'});
+            case 'timer':
+                return this.setState({openSetting: true, settingMode: 'timer'})
             case 'add':
                 return this.addRouterChildren()
             case 'delete':
-                return this.mircoFlow.miniFlow.deleteNodeByName(this.props.name, (nodeName: any) => {
-                    console.log(nodeName)
-                })
+                return this.mircoFlow.miniFlow.deleteNodeByName(this.props.name)
         }
     }
     public render () {
