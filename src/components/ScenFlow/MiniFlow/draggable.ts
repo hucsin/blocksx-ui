@@ -109,7 +109,7 @@ export default class CanvasDraggle {
     }
     public canZoom(zoom: number) {
         let bound: any = this.diagram.canvasFormat.getObtainBoundaries();
-        return zoom * bound.width > 400;
+        return zoom * bound.width > 300;
     }
     public getSafeZoom(zoom: number) {
         return Math.min(this.zoomMaxNumber, Math.max(this.zoomMinNumber, zoom))
