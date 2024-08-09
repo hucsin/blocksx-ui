@@ -93,7 +93,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                 onFetchValue={()  => {
                     
                     return this.fetchViewRequest({id: this.props.router.params.id}).then((result => {
-                    
+                        
                         return {
                             ...result,
                             nodes: utils.decompress(result.nodes) || [],
