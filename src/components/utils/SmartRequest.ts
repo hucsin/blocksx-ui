@@ -10,7 +10,7 @@ class SmartRequest {
     private req: any;
 
     public constructor() {
-        Request.axios.defaults.headers.common['x-eos-encrypt'] = true;
+        //Request.axios.defaults.headers.common['x-eos-encrypt'] = true;
     }
     private hasCache(key: string) {
         return !!this.cache[key]
@@ -30,7 +30,7 @@ class SmartRequest {
     
     private getEncodeWrapper(params: any) {
         let validParams: any = this.getValidParmas(params)
-        return validParams;
+        return JSON.stringify(validParams);
     }
     private getCacheParamsKey(params: any) {
         let keys: string[] = Object.keys(params);
@@ -90,6 +90,15 @@ class SmartRequest {
                 return new Promise((resolve) => {
                     resolve(this.req)
                 })
+            }
+
+            let workernumber: any = 'wf01_02';
+
+            if (url.match(/^\/api/)) {
+                console.log(url)
+                workernumber = workernumber.split('_');
+
+                url =`https://${workernumber[0]}.anyhubs.com/${workernumber[1]}${url}`
             }
 
             return new Promise((resolve, reject) => {

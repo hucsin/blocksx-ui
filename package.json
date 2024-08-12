@@ -37,7 +37,7 @@
     "throttle-debounce": "^5.0.0"
   },
   "scripts": {
-    "dev": "cross-env HTTPS=true node ./scripts/start.js",
+    "dev": "cross-env node ./scripts/start.js",
     "build": "node ./scripts/build.js",
     "test": "node ./scripts/test.js"
   },
