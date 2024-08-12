@@ -95,10 +95,11 @@ class SmartRequest {
             let workernumber: any = 'wf01_02';
 
             if (url.match(/^\/api/)) {
-                console.log(url)
                 workernumber = workernumber.split('_');
 
-                url =`https://${workernumber[0]}.anyhubs.com/${workernumber[1]}${url}`
+               //url =`https://${workernumber[0]}.anyhubs.com/${workernumber[1]}${url}`
+                url = `https://wf01.izao.cc/${workernumber[1]}${url}`;
+                
             }
 
             return new Promise((resolve, reject) => {
