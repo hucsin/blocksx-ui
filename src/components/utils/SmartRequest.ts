@@ -93,17 +93,20 @@ class SmartRequest {
             }
 
             let workernumber: any = 'wf01_02';
+            let requestURI: string = '';
 
             if (url.match(/^\/api/)) {
                 workernumber = workernumber.split('_');
 
-               //url =`https://${workernumber[0]}.anyhubs.com/${workernumber[1]}${url}`
-                url = `https://wf01.izao.cc/${workernumber[1]}${url}`;
+                requestURI =`https://${workernumber[0]}.anyhubs.com/${workernumber[1]}${url}`
+               // url = `https://wf01.izao.cc/${workernumber[1]}${url}`;
                 
+            } else {
+                requestURI = `https://uc.anyhubs.com${url}`
             }
 
             return new Promise((resolve, reject) => {
-                Request.post(url, this.getEncodeWrapper(params)).then(({code, result}) => {
+                Request.post(requestURI, this.getEncodeWrapper(params)).then(({code, result}) => {
                     // 正常响应
                     if (code == 200) {
                         call && call(inputParams, result);
