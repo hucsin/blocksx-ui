@@ -209,7 +209,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             id: props.id
         }
         
-        this.requestHelper = SmartRequest.createPOST(props.pageURI);
+        this.requestHelper = SmartRequest.makeGetRequest(props.pageURI);
 
         this.canShow = false;
         this.searchRef = React.createRef();
@@ -619,7 +619,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         if (folderMode == 'filter') {
             // 过滤模式
             if (type == 'list') {
-                fetchREQ = SmartRequest.createPOST(this.state.path + '/' + folderField.folder) ;
+                fetchREQ = SmartRequest.makePostRequest(this.state.path + '/' + folderField.folder) ;
 
                 return (value) => {
                     return fetchREQ({
@@ -630,7 +630,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
             }
         } else if (folderField && folderField.factor) {
-            let fetchREQ: any = SmartRequest.createPOST(folderField.factor.path + '/' + (type || folderField.factor.type || 'list'));
+            let fetchREQ: any = SmartRequest.makePostRequest(folderField.factor.path + '/' + (type || folderField.factor.type || 'list'));
 
             return (value) => {
                 if (folderField.factor.parent) {

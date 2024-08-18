@@ -13,7 +13,8 @@ export default class SmartPageUtils {
         if (this.requestHelperMap[url]) {
             return this.requestHelperMap[url]
         }
-        return this.requestHelperMap[url] = SmartRequest.createPOST(url);
+        
+        return this.requestHelperMap[url] = SmartRequest.makeGetRequest(url);
     }
 
     public static fetchPageSchema (url:string, name: string, props: any = {}, params: any ={}, filter?: Function) {

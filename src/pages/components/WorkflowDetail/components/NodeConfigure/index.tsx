@@ -4,7 +4,7 @@ import './style.scss';
 
 
 import i18n from '@blocksx/i18n';
-import { Icons, DomUtils, FetchResult, MircoAvatar, Tabler, SearchBar } from '@blocksx/ui';
+import { Icons, DomUtils, FetchResult, FormerTypes, Tabler, SearchBar } from '@blocksx/ui';
 
 
 interface NodeConfigureProps {

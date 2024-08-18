@@ -24,9 +24,9 @@ export default class Login extends React.Component {
                         url: 'https://github.com/login/oauth/authorize?client_id=19cac121b19a95697e68'
                     }
                 ]}
-                onSingup={SmartRequest.createPOST('/eos/user/signup', true)}
-                onLogin={SmartRequest.createPOST('/eos/user/login', true)}
-                onBinding={SmartRequest.createPOST('/eos/oauth/binding', true)}
+                onSingup={SmartRequest.makePostRequest('/eos/user/signup')}
+                onLogin={SmartRequest.makePostRequest('/eos/user/login')}
+                onBinding={SmartRequest.makePostRequest('/eos/oauth/binding')}
             ></LoginForm>
         )
     }

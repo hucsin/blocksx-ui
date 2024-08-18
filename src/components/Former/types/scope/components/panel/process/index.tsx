@@ -36,7 +36,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
     private miniFlow: any;
     private defaultExpandedKeys;
     private cacheTree: any ;
-    private fetchHelper: any = SmartRequest.createPOST('/api/thinking/findOutput');
+    private fetchHelper: any = SmartRequest.makeGetRequest('/api/thinking/findOutput');
     public constructor(props: any) {
         super(props);
         let flow: MiniFlow = GlobalScope.getContext(GlobalScope.TYPES.CURRENTFLOW_CONTEXT);

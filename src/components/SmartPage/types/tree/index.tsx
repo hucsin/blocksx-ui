@@ -104,11 +104,11 @@ export default class SmartPageTree extends React.Component<SmartPageTreeProps, S
 
         
 
-        this.requestTreeList = SmartRequest.createPOST(this.props.path + '/tree');
-        this.requestTreeCreate = SmartRequest.createPOST(this.props.path + '/create', true);
-        this.requestTreeChildren = SmartRequest.createPOST(this.props.path + '/children');
-        this.requestTreeDelete = SmartRequest.createPOST(this.props.path + '/delete', true);
-        this.rrequestTreeEdit = SmartRequest.createPOST(this.props.path +'/update', true);
+        this.requestTreeList = SmartRequest.makeGetRequest(this.props.path + '/tree');
+        this.requestTreeCreate = SmartRequest.makePostRequest(this.props.path + '/create');
+        this.requestTreeChildren = SmartRequest.makeGetRequest(this.props.path + '/children');
+        this.requestTreeDelete = SmartRequest.makePostRequest(this.props.path + '/delete');
+        this.rrequestTreeEdit = SmartRequest.makePostRequest(this.props.path +'/update');
     }
     private getDefaultFieldByType(fields: any[], type: string) {
         if (fields) {

@@ -104,11 +104,11 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
         }
     }
     private initRequset() {
-        this.ListRequest = SmartRequst.createPOST(this.props.path + '/list');
-        this.UpdateRequest = SmartRequst.createPOST(this.props.path + '/update', true);
-        this.DeleteRequest = SmartRequst.createPOST(this.props.path + '/delete', ['id'], true);
-        this.CreateRequest = SmartRequst.createPOST(this.props.path + '/create', true);
-        this.ViewRequest = SmartRequst.createPOST(this.props.path + '/view', ['id'], true)
+        this.ListRequest = SmartRequst.makeGetRequest(this.props.path + '/list');
+        this.UpdateRequest = SmartRequst.makePostRequest(this.props.path + '/update');
+        this.DeleteRequest = SmartRequst.makePostRequest(this.props.path + '/delete', ['id']);
+        this.CreateRequest = SmartRequst.makePostRequest(this.props.path + '/create');
+        this.ViewRequest = SmartRequst.makeGetRequest(this.props.path + '/view', ['id'])
     }
 
     private initTableProps() {

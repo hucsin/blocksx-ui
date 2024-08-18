@@ -117,7 +117,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         
         if (this.isStepDynamicFormer()) {
             
-            this.nextDyamicRequest = SmartRequest.createPOST(this.getStepDynamicFormer())
+            this.nextDyamicRequest = SmartRequest.makePostRequest(this.getStepDynamicFormer())
         }
     }
 

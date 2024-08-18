@@ -39,7 +39,7 @@ export default class BoxPricing extends React.Component<PricingProps, {selected:
         }
 
         if (props.motion) {
-            this.requestHelper = SmartRequest.createPOST(props.motion)
+            this.requestHelper = SmartRequest.makePostRequest(props.motion)
         }
     }
     public  componentDidMount(): void {

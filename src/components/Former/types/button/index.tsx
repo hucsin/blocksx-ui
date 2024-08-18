@@ -68,11 +68,11 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
 
 
         if (typeProps.actionURI) {
-            this.actionRequestHelper = SmartRequest.createPOST(typeProps.actionURI)
+            this.actionRequestHelper = SmartRequest.makePostRequest(typeProps.actionURI)
         }
 
         if (typeProps.viewURI) {
-            this.viewRequestHelper = SmartRequest.createPOST(typeProps.viewURI)
+            this.viewRequestHelper = SmartRequest.makeGetRequest(typeProps.viewURI)
         }
     }
     private getCacheKey() {

@@ -24,7 +24,7 @@ interface RouterLayoutState {
 }
 
 export default class RouterLayout extends React.Component<RouterLayoutProps, RouterLayoutState> {
-    private onFetchPageTree: any = SmartRequest.createPOST('/eos/resources/findTree', true);
+    private onFetchPageTree: any = SmartRequest.makeGetRequest('/eos/resources/findTree');
     public constructor(props: RouterLayoutProps) {
         super(props)
 

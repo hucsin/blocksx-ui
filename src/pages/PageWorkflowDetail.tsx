@@ -30,7 +30,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
     private fetchToggleFavoritesRequest: any ;
     private fetchPublishRequest: any;
 
-    private fetchPragramsRequest: any =  SmartRequest.createPOST('/eos/programs/list');
+    private fetchPragramsRequest: any =  SmartRequest.makeGetRequest('/eos/programs/list');
     private fetchVersionHistoryRequest: any;
     private fetchRestoreHistoryRequest: any
     private fetchDeleteHistoryRequest: any;
@@ -49,22 +49,22 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
     public initRequestHelper() {
         let path: string = this.props.isTemplate ? '/eos/templates': '/api/thinking';
 
-        this.fetchViewRequest = SmartRequest.createPOST(`${path}/findThinking`);
-        this.fetchUpdateRequest = SmartRequest.createPOST(`${path}/update`);
-        this.fetchToggleStatusRequest = SmartRequest.createPOST(`${path}/toggleStatus`);
-        this.fetchToggleFavoritesRequest = SmartRequest.createPOST(`${path}/toggleFavorites`);
-        this.fetchPublishRequest = SmartRequest.createPOST(`${path}/publish`);
+        this.fetchViewRequest = SmartRequest.makeGetRequest(`${path}/findThinking`);
+        this.fetchUpdateRequest = SmartRequest.makePostRequest(`${path}/update`);
+        this.fetchToggleStatusRequest = SmartRequest.makePostRequest(`${path}/toggleStatus`);
+        this.fetchToggleFavoritesRequest = SmartRequest.makePostRequest(`${path}/toggleFavorites`);
+        this.fetchPublishRequest = SmartRequest.makePostRequest(`${path}/publish`);
 
-        this.fetchVersionHistoryRequest = SmartRequest.createPOST(`${path}/history`);
-        this.fetchRestoreHistoryRequest = SmartRequest.createPOST(`${path}/restoreHistory`);
-        this.fetchDeleteHistoryRequest = SmartRequest.createPOST(`${path}/deleteHistory`);
+        this.fetchVersionHistoryRequest = SmartRequest.makeGetRequest(`${path}/history`);
+        this.fetchRestoreHistoryRequest = SmartRequest.makePostRequest(`${path}/restoreHistory`);
+        this.fetchDeleteHistoryRequest = SmartRequest.makePostRequest(`${path}/deleteHistory`);
 
-        this.fetchCloneRequest = SmartRequest.createPOST(`${path}/clone`);
+        this.fetchCloneRequest = SmartRequest.makePostRequest(`${path}/clone`);
 
-        this.developmentRequest = SmartRequest.createPOST(`${path}/upsertThinking`)
-        //this.updateNodeRequest = SmartRequest.createPOST(`${path}/updateNode`)
-        //this.removeNodeRequest = SmartRequest.createPOST(`${path}/removeNode`);
-        //this.freshNodeRequest = SmartRequest.createPOST(`${path}/fresh`);
+        this.developmentRequest = SmartRequest.makePostRequest(`${path}/upsertThinking`)
+        //this.updateNodeRequest = SmartRequest.makePostRequest(`${path}/updateNode`)
+        //this.removeNodeRequest = SmartRequest.makePostRequest(`${path}/removeNode`);
+        //this.freshNodeRequest = SmartRequest.makePostRequest(`${path}/fresh`);
 
     }
     

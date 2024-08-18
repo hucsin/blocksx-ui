@@ -13,7 +13,7 @@ import { ConnectionsDirectivityOutlined } from '../Icons';
 import InputForm from './InputForm'
 import './style.scss'
 
-import MircoAvatar from '../MircoAvatar';
+import MircoAvatar from '../Former/types/avatar';
 import UtilsTool from '../utils/tool';
 
 

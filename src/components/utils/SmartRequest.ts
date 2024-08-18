@@ -6,17 +6,9 @@ import { pick } from 'lodash';
 
 class SmartRequest {
     
-    private cache: any = {};
-    private req: any;
 
     public constructor() {
         //Request.axios.defaults.headers.common['x-eos-encrypt'] = true;
-    }
-    private hasCache(key: string) {
-        return !!this.cache[key]
-    }
-    private getCache(key: string) {
-        return this.cache[key]
     }
     private getValidParmas(params: any) {
         let value: any = {}
@@ -32,15 +24,21 @@ class SmartRequest {
         let validParams: any = this.getValidParmas(params)
         return JSON.stringify(validParams);
     }
-    private getCacheParamsKey(params: any) {
-        let keys: string[] = Object.keys(params);
+    private forceGetMethod = [
+        'list',
+        'view',
+        'find',
+        'all'
+    ]
+    public isForceGetRequst(path: string) {
+        if (path) {
+            let splitPath: string[] = path.split('/');
+            let method: any = splitPath.pop();
 
-        return keys.sort((a,b )=> a > b ? 1 : -1).map(it => {
-            return [it, params[it]].join('-')
-        }).join(':')
-    }
-    public reqcache(req) {
-        this.req = req;
+            if (this.forceGetMethod.includes(method) || method.startsWith('find')) {
+                return true;
+            }
+        }
     }
     public combineParamsList(paramsList: any) {
         let params: any = {};
@@ -60,56 +58,50 @@ class SmartRequest {
 
         return params;
     }
+    private getRequestParams(request: any, fields?: any) {
+        let inputParams: any = Array.isArray(request) ?  this.combineParamsList(request): request;
+        return  fields ? pick(inputParams, fields) : inputParams;
+    }
+
+
+    private getUserZone() {
+        // TODO 需要修改成从cookie中获取
+        return 'wf01_02'.split('_')
+    }
+    private getRequestURI(url: string) {
+        
+        if(url.match(/^\/api/)) {
+            let zone: string[] = this.getUserZone();
+            return `https://${zone[0]}.anyhubs.com/${zone[1]}${url}`
+        } else {
+            return `https://uc.anyhubs.com${url}`;
+        }
+    }
+
+    public makePostRequestByMotion(motion: string, path: string, fields?: any) {
+        let truePath: string = motion.indexOf('/') > -1 ? motion : [path, motion].join('/');
+
+        return this.isForceGetRequst(truePath) 
+            ? this.makeGetRequest(truePath, fields) 
+            : this.makePostRequest(truePath, fields)
+    }
     /**
      * 创建request请求
      */
-    public createPOST(url: string, fields?: any, noCache?: any, call?: Function) {
+    public makePostRequest(url: string, fields?: any) {
 
-        if (typeof fields == 'boolean') {
-            fields =  null;
-            call = noCache;
-            noCache = fields;
+        if (this.isForceGetRequst(url)) {
+            return this.makeGetRequest(url, fields)
         }
 
         return (request: any) => {
-            let inputParams: any = Array.isArray(request) ?  this.combineParamsList(request): request;
-            let params: any = fields ? pick(inputParams, fields) : inputParams;
-
-            if (!noCache) {
-                let cacheKey: string = this.getCacheParamsKey(params);
-                if (this.hasCache(cacheKey)) {
-                    return new Promise((resolve)=> {
-                        let result: any = this.getCache(cacheKey);
-                        call && call(inputParams, result);
-                        resolve(result)
-                    })
-                }
-            }
-            
-            if (this.req) {
-                return new Promise((resolve) => {
-                    resolve(this.req)
-                })
-            }
-
-            let workernumber: any = 'wf01_02';
-            let requestURI: string = '';
-
-            if (url.match(/^\/api/)) {
-                workernumber = workernumber.split('_');
-
-                requestURI =`https://${workernumber[0]}.anyhubs.com/${workernumber[1]}${url}`
-               // url = `https://wf01.izao.cc/${workernumber[1]}${url}`;
-                
-            } else {
-                requestURI = `https://uc.anyhubs.com${url}`
-            }
+            let params = this.getRequestParams(request, fields);
 
             return new Promise((resolve, reject) => {
-                Request.post(requestURI, this.getEncodeWrapper(params)).then(({code, result}) => {
+                Request.post(this.getRequestURI(url), this.getEncodeWrapper(params)).then(({code, result}) => {
                     // 正常响应
                     if (code == 200) {
-                        call && call(inputParams, result);
+                       // call && call(inputParams, result);
                         resolve(result)
                     } else {
                         // 302 跳转
@@ -125,13 +117,30 @@ class SmartRequest {
         }
     }
 
-    public createPOSTByMotion(motion: string, path: string, fields?: any, noCache?: any, call?: Function) {
-        let truePath: string = motion.indexOf('/') > -1 ? motion : [path, motion].join('/');
 
-        return this.createPOST(truePath, fields, noCache, call)
-    }
-    public createGET(url: string, noCache?: boolean) {
+    public makeGetRequest(url: string,  fields?: any) {
+        return (request: any) => {
+            let params = this.getRequestParams(request, fields);
 
+            return new Promise((resolve, reject) => {
+                Request.get(this.getRequestURI(url), this.getValidParmas(params)).then(({code, result}) => {
+                    // 正常响应
+                    console.log(code, 3333)
+                    if (code == 200) {
+                       // call && call(inputParams, result);
+                        resolve(result)
+                    } else {
+                        // 302 跳转
+                        if (code == 302) {
+                            window.location.href = result.url;
+                        }
+                    }
+                }).catch((e: any,) => {
+                    message.error(e.message || e || 'system error');
+                    reject(e)
+                })
+            })
+        }
     }
 }
 

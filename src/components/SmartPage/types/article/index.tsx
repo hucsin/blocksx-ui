@@ -165,7 +165,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
     }
     private createRequst(mode: string, path:string) {
         if (!this.requestMap[mode]) {
-            this.requestMap[mode] = SmartRequst.createPOST(this.props.path +'/' + path, true)
+            this.requestMap[mode] = SmartRequst.makePostRequest(this.props.path +'/' + path, true)
         }
     }
 

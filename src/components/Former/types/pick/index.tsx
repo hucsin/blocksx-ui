@@ -37,7 +37,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
             path = meta.props.path;
         }
 
-        this.requestHelper =  SmartRequest.createPOST(path +'/list');
+        this.requestHelper =  SmartRequest.makeGetRequest(path +'/list');
     }
     private onChange =(value: any) => {
         this.setState({

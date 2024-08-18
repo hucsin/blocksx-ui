@@ -29,14 +29,13 @@ export default class CleanseSchema {
             let fieldObject: any = this.makeField(field);
 
             if (fieldMeta.motion) {
-                fieldObject.motion = SmartRequst.createPOST(path + `/${fieldMeta.motion}`, ['id', fieldObject.key], true)
+                fieldObject.motion = SmartRequst.makePostRequest(path + `/${fieldMeta.motion}`, ['id', fieldObject.key])
             }
 
             if (factor) {
 
-                let factorRequst: any = SmartRequst.createPOST(
-                    factor.path + `/${field.factor.type || field.factor.name}`,
-                    true
+                let factorRequst: any = SmartRequst.makePostRequest(
+                    factor.path + `/${field.factor.type || field.factor.name}`
                 );
                 fieldObject.dataSource = (value: any) => {
                     let params: any = {
@@ -53,11 +52,7 @@ export default class CleanseSchema {
 
                     return factorRequst(params)
                 }
-                // 
-                //console.log(fieldMeta.tags, 987654)
-                //if (fieldMeta.folder) {
-                //    fieldObject.onTagsList = SmartRequst.createPOST(factor.path + '/list')
-                // }
+                
 
             }
 
@@ -80,11 +75,11 @@ export default class CleanseSchema {
                             }
                         },
 
-                        onPage: SmartRequst.createPOST(field.relatedPath + '/list'),
-                        onCreate: SmartRequst.createPOST(field.relatedPath + '/create', true),
-                        onDelete: SmartRequst.createPOST(field.relatedPath + '/delete', ['id'], true),
-                        onView: SmartRequst.createPOST(field.relatedPath + '/view', ['id']),
-                        onEdit: SmartRequst.createPOST(field.relatedPath + '/update', true)
+                        onPage: SmartRequst.makeGetRequest(field.relatedPath + '/list'),
+                        onCreate: SmartRequst.makePostRequest(field.relatedPath + '/create'),
+                        onDelete: SmartRequst.makePostRequest(field.relatedPath + '/delete', ['id']),
+                        onView: SmartRequst.makeGetRequest(field.relatedPath + '/view', ['id']),
+                        onEdit: SmartRequst.makePostRequest(field.relatedPath + '/update')
                     } : {},
                     fields: this.getFieldProps(path, field.fields) || [],
                     searcher: this.getSearch(field.fields)
@@ -221,7 +216,7 @@ export default class CleanseSchema {
                 if (isRecord) {
                     Object.assign(rowOperate, {
                         type: this.tablerRecordTypeMap[type[1]] || type[1],
-                        motion: op.motion ? SmartRequst.createPOST(path + '/' + op.motion, true) : null
+                        motion: op.motion ? SmartRequst.makePostRequest(path + '/' + op.motion) : null
                     })
                 }
 

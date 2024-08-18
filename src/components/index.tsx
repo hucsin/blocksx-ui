@@ -12,7 +12,6 @@ export { default as Pick } from './Pick';
 export { default as MiniFlow  } from './ScenFlow/MiniFlow';
 export { default as RouterLayout } from './RouterLayout';
 export { default as LoginForm } from './LoginForm';
-export { default as MircoAvatar} from './MircoAvatar';
 export { default as ErrorMessage } from './ErrorMessage';
 export { default as Tabler } from './Tabler';
 export { default as Former } from './Former';

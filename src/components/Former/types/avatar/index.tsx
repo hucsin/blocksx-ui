@@ -21,7 +21,8 @@ export interface IMircoAvatar extends IFormerBase {
 
     autoColor?: boolean;
     style?: any;
-    shape?: 'circle' | 'square'
+    shape?: 'circle' | 'square';
+    onClick?: Function;
 }
 
 
@@ -41,8 +42,8 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
         '#E67E22',
         '#E74C3C',
     ]
-    private getColor(text) {
-        let hash: number = Math.abs(utils.hashcode(text));
+    private getColor(text: string) {
+        let hash: number = Math.abs(parseInt(utils.hashcode(text), 10));
         let number = hash % this.defaultColor.length;
         return this.defaultColor[number];
     }

@@ -7,7 +7,7 @@ import SmartRequest from '../components/utils/SmartRequest'
 import './smartpage.scss';
 
 export default class DemoScenFlow extends React.Component<{}, {menu: any, page: string,currentKey ?: string }> {
-    private menuRequest: any = SmartRequest.createPOST('/eos/resources/findTree', true);
+    private menuRequest: any = SmartRequest.makeGetRequest('/eos/resources/findTree');
     public constructor() {
         super({})
         let cache: any = window.localStorage.getItem('__cache');

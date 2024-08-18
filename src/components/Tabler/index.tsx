@@ -159,7 +159,8 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
         if (newProps.reflush != this.state.reflush) {
             
             this.setState({
-                reflush: newProps.reflush
+                reflush: newProps.reflush,
+                pageNumber: 1
             }, () => {
                 
                 this.resetDataSource();

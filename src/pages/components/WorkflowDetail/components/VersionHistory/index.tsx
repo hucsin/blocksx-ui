@@ -2,7 +2,7 @@ import React from 'react';
 import { Drawer, Alert, Space, Button,Popconfirm } from 'antd';
 import i18n from '@blocksx/i18n';
 
-import { MircoAvatar, Tabler, FormerTypes } from '@blocksx/ui';
+import { Tabler, FormerTypes } from '@blocksx/ui';
 
 import { UserOutlined } from '@ant-design/icons'
 
@@ -136,7 +136,7 @@ export default class VersionHistory extends React.Component<VersionHistoryProps,
                         }
                     }}
                     renderItemClassName={it => `ui-runlog-${it.type}`}
-                    renderRowAvatar={()=><MircoAvatar shape='square' color="transparent" icon="HistoryOutlined"/>}
+                    renderRowAvatar={()=><FormerTypes.avatar shape='square' color="transparent" icon="HistoryOutlined"/>}
                     onFetchList={(params: any) => {
                         console.log(params, 333)
                         return this.fetchVersionHistory({

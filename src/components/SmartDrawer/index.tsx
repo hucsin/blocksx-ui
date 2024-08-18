@@ -123,7 +123,7 @@ class SmartDrawer extends React.Component<SmartDrawerProps, SmartDrawerState> {
     private onSelectedValue =(value)=> {
         let { mode, motion } = this.props;
         if (mode == 'pick' && motion) {
-            let requestHelper: any = SmartRequest.createPOST(motion);
+            let requestHelper: any = SmartRequest.makePostRequest(motion);
             this.setState({loading:true})
             requestHelper(pick(value, ['id'])).then((result) => {
                 
@@ -160,7 +160,7 @@ class SmartDrawer extends React.Component<SmartDrawerProps, SmartDrawerState> {
                             
                         } else {
                             let motion: Function = SmartRequest
-                                        .createPOSTByMotion(operate.motion, this.props.path || '');
+                                        .makePostRequestByMotion(operate.motion, this.props.path || '');
 
                             this.setState({
                                 loadingIndex: index

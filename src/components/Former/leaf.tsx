@@ -2,7 +2,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { clone } from 'lodash';
-import classnames from 'classnames';
 import { Popover, Space,Tooltip } from 'antd';
 
 import OneOf from './oneOf';
@@ -11,7 +10,7 @@ import { IFormerControl } from './typings';
 import { EventEmitter } from 'events';
 import Validation from './validation';
 import ConstValue from './const';
-import { utils } from '@blocksx/core';
+import { utils, keypath } from '@blocksx/core';
 import * as Icons from '../Icons'
 
 
@@ -386,7 +385,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             let dotProp: any = prop?.split('.');
             
             if (dotProp.length == 2) {
-                return utils.get(allValue, prop)
+                return keypath.get(allValue, prop as string)
             }
         }
         
