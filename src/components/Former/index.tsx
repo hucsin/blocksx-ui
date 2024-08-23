@@ -314,11 +314,12 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     private onChangeValue = (value: any, type?: string) => {
         let trueValue: any = utils.copy(value);
+        console.log(type, 333)
         if (!type) {
             if (this.timer) {
                 clearInterval(this.timer);
             }
-            this.timer = setTimeout(() => {
+            return this.timer = setTimeout(() => {
 
                 this.setState({
                     value: trueValue,
@@ -333,11 +334,16 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                
                 //}
             }, 200);
-        }
+        } 
         // man 是人工触发的
         if (this.props.onChangeValue && type =='man') {
+            
             this.props.onChangeValue(trueValue);
         }
+        
+        this.setState({
+            disabled: false
+        })
     }
     public validationValue(cb: Function, parmas?: any) {
         let count: number = this.emitter.listenerCount('validation');

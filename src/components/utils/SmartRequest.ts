@@ -1,5 +1,7 @@
 import { Request } from '@blocksx/swap';
-//import Encode from '@blocksx/encrypt/lib/encode';
+
+import { Encode, Decode} from '@blocksx/encrypt';
+
 import { message } from 'antd';
 import { pick } from 'lodash';
 
@@ -22,6 +24,7 @@ class SmartRequest {
     
     private getEncodeWrapper(params: any) {
         let validParams: any = this.getValidParmas(params)
+        
         return JSON.stringify(validParams);
     }
     private forceGetMethod = [
@@ -65,16 +68,22 @@ class SmartRequest {
 
 
     private getUserZone() {
-        // TODO 需要修改成从cookie中获取
-        return 'wf01_02'.split('_')
+        let zone: any = document.cookie.match(/__zone=([^;]+)/);
+        
+        if (zone = Decode.decode(Decode.decode(decodeURIComponent(zone[1])))) {
+            return zone.split('_')
+        } else {
+            // 跳转到登陆页
+            window.location.href= "/login"
+        }
     }
-    private getRequestURI(url: string) {
+    public getRequestURI(url: string) {
         
         if(url.match(/^\/api/)) {
             let zone: string[] = this.getUserZone();
-            return `https://${zone[0]}.anyhubs.com/${zone[1]}${url}`
+            return `//${zone[0]}.anyhubs.com/${zone[1]}${url}`
         } else {
-            return `https://uc.anyhubs.com${url}`;
+            return `//uc.anyhubs.com${url}`;
         }
     }
 
@@ -85,9 +94,31 @@ class SmartRequest {
             ? this.makeGetRequest(truePath, fields) 
             : this.makePostRequest(truePath, fields)
     }
+    public dealHeader(response: any, match?:any) {
+        if (response && response.headers) {
+            let contentType: string = response.headers['content-type'];
+            if (contentType) {
+                // token
+                if (match = contentType.match(/;tn\/([^;]+)/)) {
+                    localStorage.setItem('__token', match[1])
+                }
+
+                // zone
+                if (match =  contentType.match(/;ze\/([^;]+)/)) {
+                    localStorage.setItem('__zone', match[1])
+                }
+            }
+        }
+    }
     /**
      * 创建request请求
      */
+    public getHeaders() {
+       
+        return {
+            'Accept': 'application/json, text/plain, */*'
+        }
+    }
     public makePostRequest(url: string, fields?: any) {
 
         if (this.isForceGetRequst(url)) {
@@ -98,7 +129,12 @@ class SmartRequest {
             let params = this.getRequestParams(request, fields);
 
             return new Promise((resolve, reject) => {
-                Request.post(this.getRequestURI(url), this.getEncodeWrapper(params)).then(({code, result}) => {
+
+                Request.post(this.getRequestURI(url)
+                    , this.getEncodeWrapper(params)
+                    , this.getHeaders()
+                    , this.dealHeader
+                ).then(({code, result}) => {
                     // 正常响应
                     if (code == 200) {
                        // call && call(inputParams, result);
@@ -123,9 +159,12 @@ class SmartRequest {
             let params = this.getRequestParams(request, fields);
 
             return new Promise((resolve, reject) => {
-                Request.get(this.getRequestURI(url), this.getValidParmas(params)).then(({code, result}) => {
+                Request.get(this.getRequestURI(url)
+                    , this.getValidParmas(params)
+                    , this.getHeaders() 
+                    , this.dealHeader
+                ).then(({code, result}) => {
                     // 正常响应
-                    console.log(code, 3333)
                     if (code == 200) {
                        // call && call(inputParams, result);
                         resolve(result)

@@ -1,3 +1,4 @@
+import SmartRequest from "@blocksx/ui/utils/SmartRequest";
 
 class SmartActionWindow {
     public doAction(params: Record<string, any>, callback: Function) {
@@ -6,8 +7,8 @@ class SmartActionWindow {
         let screenHeight = window.screen.height;
         let windowWidth = Math.min(1000, screenWidth -  300);
         let windowHeight = Math.min(700, screenHeight - 200);
-
-        window.open(params.url, params.id, `width=${windowWidth},height=${windowHeight},top=${(screenHeight-windowHeight)/2},left=${(screenWidth-windowWidth)/2},menubar=no,toolbar=no,resizable=no,focus=1`)
+        
+        window.open(SmartRequest.getRequestURI(params.url), params.id, `width=${windowWidth},height=${windowHeight},top=${(screenHeight-windowHeight)/2},left=${(screenWidth-windowWidth)/2},menubar=no,toolbar=no,resizable=no,focus=1`)
 
         let timer = setInterval((message) => {
             //console.log(currentWindow,122, currentWindow.closed, 33333)

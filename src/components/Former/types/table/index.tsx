@@ -579,7 +579,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
                 <Former
                     type="drawer"
                     title={this.getDefaultTitle()}
-                    value={this.state.record}
+                    value={this.state.record || {}}
                     visible={this.state.visible}
                     schema={this.getDefaultSchema()}
                     viewer={this.state.formerViewer}
