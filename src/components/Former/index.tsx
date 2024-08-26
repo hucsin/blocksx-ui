@@ -314,7 +314,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     private onChangeValue = (value: any, type?: string) => {
         let trueValue: any = utils.copy(value);
-        console.log(type, 333)
+        
         if (!type) {
             if (this.timer) {
                 clearInterval(this.timer);

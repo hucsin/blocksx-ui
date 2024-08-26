@@ -376,6 +376,9 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         }
         return map[this.state.settingMode as string] || this.state.componentName || 'router';
     }
+    private getTrueValue() {
+
+    }
     public renderNodeContent(icon: string, color: string) {
         
         let type: string  = this.state.type;        
@@ -410,10 +413,12 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             default:
                 let propsvalue = this.state.props || {}
                 let isInputValue: boolean = this.state.settingMode !== 'setting';
-                let value: any  = this.state.value || (isInputValue ? { ...propsvalue.input, $connection: propsvalue.connection } : propsvalue) || {};
+                let inputKey: string =  this.state.settingMode == 'timer' ? 'timer' : 'input';
+                let noInputKey: string = this.state.settingMode == 'timer' ? 'input': 'timer';
+                
+                let value: any  = this.state.value || (isInputValue ? { ...propsvalue[inputKey], $connection: propsvalue.connection } : propsvalue) || {};
                 let pagename:string = this.getPageName()
 
-                
                 return (
                     <SmartPage
                         onGetDependentParameters ={()=> {
@@ -464,19 +469,24 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                                 
                                 if (isInputValue) {
                                     
-                                    propsvalue.input = {
-                                        ...propsvalue.input,
+                                    propsvalue[inputKey] = {
+                                        ...propsvalue[inputKey],
+
                                         ...utils.getSafeObject(props)
                                     };
+
+
+
                                     propsvalue.connection = props['$connection'];
                                 } else {
                                     propsvalue = props;
                                 }
                                 
                                 let cacheValue: any = this.clearPatchValue(propsvalue);
+                                
                                 this.setState({
                                     props: cacheValue,
-                                    value: isInputValue ? cacheValue.input : cacheValue,
+                                    value: null,
                                     hasChanged: true
                                 }, ()=> this.onCloseLayer())
                             } else {
@@ -604,11 +614,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             case 'addTrigger':
                 return this.addTiggerNode();
             case 'setting':
-                return this.setState({openSetting: true, settingMode: 'setting'})
+                return this.setState({openSetting: true, value: null, settingMode: 'setting'})
             case 'configuration':
-                return this.setState({openSetting: true, settingMode: 'configuration'});
+                return this.setState({openSetting: true, value: null, settingMode: 'configuration'});
             case 'timer':
-                return this.setState({openSetting: true, settingMode: 'timer'})
+                return this.setState({openSetting: true, value: null, settingMode: 'timer'})
             case 'add':
                 return this.addRouterChildren()
             case 'delete':
