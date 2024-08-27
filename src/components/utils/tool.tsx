@@ -300,15 +300,50 @@ export default class TablerUtils {
     }
     public static getDefaultSchemaProperties(fields?: any) {
         let fieldsObject: any = {};
+        let splitObject: any = {};
 
         fields.forEach((it: any, index: number) => {
             let fieldKey: string = it.key || it.fieldKey;
 
             if (!this.isColumnOnly(it)) {
-                fieldsObject[fieldKey] = this.getDefaultFieldSchema(it, index)
+                // 如果是带有$符号的key
+                
+                if (fieldKey.indexOf('$')  > -1) {
+
+                    let split: any = fieldKey.split('$');
+
+                    if (!splitObject[split[0]]) {
+                        console.log(333333, it.group)
+                        fieldsObject[split[0]] = {
+                            type: 'object',
+                            uiType: 'object',
+                            'x-index': index,
+                            'x-group':  it.group || '2',
+                            defaultValue: {},
+                            'x-colspan': 2
+                        };
+                        splitObject[split[0]] = []
+                    }
+
+                    splitObject[split[0]].push({
+                        ...it,
+                        key: split[1],
+                        group: '',
+                        fieldKey: split[1]
+                    })
+
+
+                } else {
+                
+                    fieldsObject[fieldKey] = this.getDefaultFieldSchema(it, index)
+                }
             }
         });
 
+        // 合并
+        Object.entries(splitObject).forEach(([key, value]) => {
+            fieldsObject[key].properties = this.getDefaultSchemaProperties(value)
+        })
 
         return fieldsObject;
     }
@@ -326,6 +361,7 @@ export default class TablerUtils {
         return fields.filter(it=> this.isColumnOnly(it)).map(it => it.key || it.fieldKey)
     }
     public static getDefaultSchema(fields?: any) {
+        console.log(this.getDefaultSchemaProperties(fields))
         return {
             type: 'object',
             "title": "xxx",

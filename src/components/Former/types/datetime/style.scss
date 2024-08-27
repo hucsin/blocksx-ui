@@ -1,0 +1,23 @@
+.former-object-item-content {
+    > .ant-space-gap-row-small {
+        column-gap: 0px;
+        > .ant-space-item:first-child  {
+            margin-right: -1px;
+            >.ant-select {
+                .ant-select-selector {
+                    border-radius: 6px 0 0 6px;
+                    
+                }
+            }
+        }
+        > .ant-space-item:last-child  {
+            >.ant-input-number,
+            >.ant-picker {
+                    border-radius: 0px 6px 6px 0px;
+                    
+                
+            }
+        }
+        
+    }
+}   

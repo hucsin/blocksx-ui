@@ -8,6 +8,8 @@
  */
 export { default as group } from './group';
 export { default as date } from './date';
+export { default as datetime } from './datetime';
+
 export { default as avatar } from './avatar';
 export { default as array } from './array';
 export { default as object } from './object';

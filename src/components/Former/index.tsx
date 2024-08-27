@@ -181,8 +181,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
     }
     public UNSAFE_componentWillReceiveProps(newProps: FormerProps) {
-
+        console.log(newProps.schema, 33333)
         if (newProps.schema != this.state.schema) {
+            
             this.setState({
                 schema: newProps.schema,
                 classify: this.splitClassifySchema(newProps.schema)

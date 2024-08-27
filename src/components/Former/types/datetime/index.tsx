@@ -2,7 +2,7 @@
 import React from 'react';
 import { IFormerBase } from '../../typings';
 import dayjs from 'dayjs';
-import { DatePicker } from "antd";
+import { TimePicker } from "antd";
 import './style.scss'
 
 interface FormerDateProps extends IFormerBase {
@@ -28,7 +28,7 @@ interface FormerDateState {
     placeholder?: string;
     disabled?: boolean;
 }
-export default class FormerDate extends React.Component<FormerDateProps, FormerDateState> {
+export default class FormerDateTime extends React.Component<FormerDateProps, FormerDateState> {
     public static defaultProps  = {
         range: false,
         format: 'YYYY/MM/DD'
@@ -70,28 +70,14 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
         let disabled: boolean = props.disabled || this.props.disabled;
 
-        if (this.state.range) {
-            let rangeValue: any = this.state.value || [];
-            
-            return (
-                <DatePicker.RangePicker 
-                    size={this.props.size}
-                    disabled={disabled}  
-                    value={rangeValue.map(it => dayjs(it, this.state.format)) as any} 
-                    format={this.state.format}
-                    onChange={this.onChangeValue}
-                />
-            )
-        }
-
-       
-        return(<DatePicker 
+        return(<TimePicker 
             disabled={disabled}  
-            size={this.props.size}
             {...props}
+            style={{width: props.width}}
+            size={this.props.size}
             placeholder={this.state.placeholder}
-            value={this.state.value && dayjs(this.state.value as any, this.state.format)} 
-            format={this.state.format}
+           // value={this.state.value && dayjs(this.state.value as any, this.state.format)} 
+            //format={this.state.format}
             onChange={this.onChangeValue}
         />)
     }

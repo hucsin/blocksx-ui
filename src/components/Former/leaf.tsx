@@ -770,7 +770,6 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     private isShowObjectKeyByProp(prop: string) {
         let { controlHide } = this.state;
         
-
         return controlHide.indexOf(prop) == -1;
     }
     private renderObjectNode(children: any[], Child: any) {
@@ -799,6 +798,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             let props: any = this.properties[prop];
                             let hidden: boolean = props['x-type'] == 'hidden';
                             
+                            
                             let itemvalue: any = this.getValueByProps(value[prop], properties, value, prop);
                             
                             let leafProps: any = {
@@ -826,7 +826,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                     //
                                 }
                             };
-
+                            
                             if (portalField[prop]) {
                                 portalMap[portalField[prop].target].cache[prop].leafProps = leafProps;
                                 return false;
@@ -1091,9 +1091,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
            //let 
             let Compactwrap: any = [];
             let noCompact: any = [];
+            console.log(Portal.length, viewProps)
             Portal.forEach((it)=> {
+                
                 let {leafProps} = it;
-                if (['input','select'].indexOf(leafProps.uiType) > -1) {
+                if (['input','select', 'date', 'datetime'].indexOf(leafProps.uiType) > -1) {
                     Compactwrap.push(it)
                 } else {
                     noCompact.push(it)
@@ -1119,6 +1121,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
         }
         
+        
         return <View {...viewProps} ref={this.wrapperRef}/>
 
     }
@@ -1132,8 +1135,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     private renderPortal(portalMap) {
         if (portalMap) {
             return portalMap.map(it => {
-                let { description} = it.leafProps;
-                return <Leaf {...it.leafProps} former={this.props.former} tooltip ={description} popupMatchSelectWidth={false}/>
+                
+                if (it.leafProps) {
+                    let { description} = it.leafProps;
+                    return <Leaf {...it.leafProps} former={this.props.former} tooltip ={description} popupMatchSelectWidth={false}/>
+                }
             })
         }
     }
