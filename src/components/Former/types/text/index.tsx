@@ -16,17 +16,35 @@ interface FormerTextState {
 
 export default class FormerText extends React.Component<FormerTextProps, FormerTextState> {
     private ref: any;
+    private lastPos: number;
     public constructor(props: FormerTextProps) {
         super(props);
         this.state = {
             value: props.value || ''
         }
+
         this.ref = React.createRef();
+        this.lastPos = 0;
+    }
+    public componentDidMount(): void {
+        this.setValue(this.state.value)
+    }
+    private setValue(val: string) {
+        if (this.ref.current) {
+            this.ref.current.innerText = val;
+            
+            //setTimeout(()=> {
+            this.lastPos && utils.setCursorPosition(this.ref.current, this.lastPos)
+            //}, 0)
+        }
     }
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<FormerTextProps>, nextContext: any): void {
         if (nextProps.value != this.state.value) {
+            
             this.setState({
                 value: nextProps.value
+            }, ()=> {
+               this.setValue(nextProps.value)
             })
         }
     }
@@ -37,13 +55,7 @@ export default class FormerText extends React.Component<FormerTextProps, FormerT
 
         this.props.onChangeValue && this.props.onChangeValue(val)
     }
-    private resetLastPosition() {
-        let currentNumber: number = utils.getCursorPosition(this.ref.current);
-        //this.lastPostion = typeof postion =='number' ? postion : utils.getCursorPosition(this.ref.current)
-        setTimeout(()=> {
-            utils.setCursorPosition(this.ref.current, currentNumber)
-        }, 0)
-    }
+    
     public render() {
         return (
             <span
@@ -51,6 +63,7 @@ export default class FormerText extends React.Component<FormerTextProps, FormerT
                 className='ui-former-text'
                 contentEditable="true" 
                 onBlur={()=> {this.props.onBlur()}}
+                autoFocus={false}
                 onInput={({ target }: any)=>{
                     let originValue: any = target.innerText.trim().replace(/\<[^\>]+\>/ig, '');
                     if (!originValue) {
@@ -59,10 +72,9 @@ export default class FormerText extends React.Component<FormerTextProps, FormerT
                     }
                     
                     this.doChangeValue(originValue);
-
-                    this.resetLastPosition();
+                    this.lastPos =  utils.getCursorPosition(this.ref.current);
                 }}
-            >{this.state.value}</span>
+            ></span>
         )
     }
 }
