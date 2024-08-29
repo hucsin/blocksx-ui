@@ -46,7 +46,10 @@
         // opacity: 0;
     }
 }
-
+.ui-node-status-popover {
+    margin: 0;
+    padding-left: 16px;
+}
 .ui-mircoflow-node {
     position: absolute;
     width: 120px;
@@ -55,6 +58,48 @@
     text-align: center;
     border: 9px solid  var(--main-background-color);
     z-index: 20;
+    .ui-node-status {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        background-color: #fff;
+        border-radius: 16px;
+        text-align: center;
+        font-size: 16px;
+        line-height: 24px;
+        z-index: 111;
+        top: -10px;
+        left: -10px;
+        
+        &.ui-node-status-running {
+            color: #007BFF;
+        }
+        &.ui-node-status-faild {
+            color: #DC3545;
+            border: 1px solid #DC3545;
+
+            &.ui-node-status-errorMessage{
+                background-color: #DC3545;
+                color:#fff;
+            }
+        }
+        &.ui-node-status-success {
+            background-color: #28A745;
+            color:#fff;
+        }
+        &.ui-node-status-miss {
+            display: none;
+            &.ui-node-status-errorMessage {
+                display: block;
+
+                color: #DC3545;
+                animation: loop 4s linear infinite;
+                
+                background-color: #ccc;
+
+            }
+        }
+    }
     .ui-timer  {
         background-color: #fff;
         width: 40px;

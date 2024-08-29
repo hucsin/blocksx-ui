@@ -2,7 +2,8 @@ import React from 'react';
 import i18n from '@blocksx/i18n';
 import dayjs from 'dayjs';
 import classnames from 'classnames';
-import { Space, List, Avatar, Segmented, Button, Tooltip, Tag, Radio, DatePicker } from 'antd';
+import { StructuralMiniFlow } from '@blocksx/structural';
+import { Space, message, Segmented, Button, Tooltip, Tag, Radio, DatePicker } from 'antd';
 import { Icons, Tabler } from '@blocksx/ui';
 import { CaretRightFilled, HistoryOutlined,LoadingOutlined } from '@ant-design/icons';
 
@@ -15,6 +16,8 @@ export interface IRuntTest {
     openType: string;
     fetchMap: FetchMap;
     historyType: string;
+    getSchema: Function;
+    switchRunStatus: Function;
     historyStartDate: string;
     historyEndDate: string;
     runId: string;
@@ -22,6 +25,7 @@ export interface IRuntTest {
 
 export interface SRuntTest {
     openType: string;
+    loading: boolean;
 
     historyType: string;
     historyStartDate: any;
@@ -47,7 +51,8 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
             historyType: props.historyType,
             historyStartDate: props.historyStartDate,
             historyEndDate: props.historyEndDate,
-            runId: props.runId
+            runId: props.runId,
+            loading: false
         }
         this.router = props.router;
     }
@@ -207,6 +212,48 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
         }
         return null;
     }
+    private dealMiss(fields: any[]) {
+        let map: any = {};
+        fields.forEach(it => map[it.name] = it)
+        
+        this.props.switchRunStatus('miss', map)
+    }
+    public runTest = ()=> {
+        let schema: any = this.props.getSchema();
+
+        StructuralMiniFlow.validateFlowConfiguration(schema).then(e=> {
+            this.setState({loading: true})
+            this.props.switchRunStatus('running')
+            this.props.fetchMap.runtest({
+                id: this.props.router.params.id,
+                ...this.props.getSchema(),
+            }).then((result: any)=> {
+
+                switch(result.type) {
+                    case 'miss': // 配置错误
+                        this.dealMiss(result.fields)
+                        break;
+                    case 'done':
+                    default:
+                        this.props.switchRunStatus('runed', StructuralMiniFlow.walkThroughSnapshot(result.snapshot));
+                    
+                }
+                //
+                //this.setState({loading: false})
+            }).catch((msg)=> {
+               // this.setState({loading: false})
+              // message.error(msg.message);
+               this.props.switchRunStatus('')
+
+            }).finally(()=> this.setState({loading: false}))
+
+        }).catch(e=> {
+            // tishi
+        }) 
+
+        
+        
+    }
     public render() {
        
         return (
@@ -215,16 +262,16 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
                 'ui-body-hidden': !this.state.openType
             })}>
                 <div className='ui-header'>
-                    <div className='ui-runtest-bar'>
-                    <CaretRightFilled/>  {i18n.t('Run test')}
+                    <div className='ui-runtest-bar' >
+                        <Button size='large' loading={this.state.loading} onClick={this.runTest} icon={<CaretRightFilled/>}>{i18n.t('Run test')}</Button>
                     </div>
                     <div className='ui-runtest-action'>
                         <Space size='large'>
                             <Segmented value={this.state.openType} options={[
-                                {
-                                    label: (<span><HistoryOutlined/> {i18n.t('History')}</span>),
+                                /*{
+                                    label: (<span><HistoryOutlined/> {i18n.t('Local History')}</span>),
                                     value: 'history'
-                                }/*,
+                                },
                                 {
                                     label: (<span><Icons.IStatistics/> {i18n.t('Statistics')}</span>),
                                     value: 'statistics'

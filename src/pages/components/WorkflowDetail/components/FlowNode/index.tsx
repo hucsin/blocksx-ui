@@ -12,6 +12,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import DefaultNodeList from '../../config/DefaultNodeList';
 import { get, set } from 'lodash';
 import Clock from './clock';
+import { Popover } from 'antd';
 
 
 
@@ -23,6 +24,8 @@ interface IMircoFlowNode {
     classify: any;
     mircoFlow: any;
     floating?: boolean;
+    status?: any;
+    statusMessage?: any;
     locked?: boolean;
     bytethinkingId?: number;
     componentName?: string;
@@ -55,6 +58,8 @@ interface SMircoFlowNode {
     type: string;
     isNew?: boolean;
     props: any;
+    status: any,
+    statusMessage: any;
     cacheProps: any;
     openSetting: boolean;
     hasChanged: boolean;
@@ -223,7 +228,9 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             openSetting: false,
             hasChanged: false,
             activateList: props.activateList,
-            componentName
+            componentName,
+            status: '',
+            statusMessage: ''
         };
 
         this.mircoFlow = props.mircoFlow;
@@ -234,6 +241,18 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         if (newProps.activateList != this.state.activateList) {
             this.setState({
                 activateList: newProps.activateList
+            })
+        }
+
+        if (newProps.status != this.state.status) {
+            this.setState({
+                status: newProps.status,
+                statusMessage: newProps.statusMessage
+            })
+        }
+        if (newProps.statusMessage != this.state.statusMessage) {
+            this.setState({
+                statusMessage: newProps.statusMessage
             })
         }
 
@@ -335,12 +354,50 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     private consume(event?: any) {
         event && DomUtils.consume(event);
     }
+    private  statusIconMap: any = {
+        running: 'LoadingOutlined',
+        success: 'CheckOutlined',
+        faild: 'InfoOutlined',
+        miss: 'SettingFilled'
+    };
+    public renderStatusPopover(message: any) {
+        let msg:any = Array.isArray(message) ? message :  message  ? [message]: null;
+
+        if (msg ) {
+            return (
+                <ul className='ui-node-status-popover'>
+                    {msg.map(it => <li>{it}</li>)}
+                </ul>
+            )
+        }
+    }
+    public renderStatus() {
+
+        let status: string = this.state.status; // running, success, faild, miss
+        
+        let IconView: any = Icons[this.statusIconMap[status]]
+        //let statusIcon: 
+        if (status && IconView) {
+            return (
+                <div className={classnames({
+                    'ui-node-status': true,
+                    [`ui-node-status-${status}`]: status,
+                    'ui-node-status-errorMessage': this.state.statusMessage
+                })}>
+                    <Popover content={this.renderStatusPopover(this.state.statusMessage)}>
+                        {<IconView/>}
+                    </Popover>
+                </div>
+            )
+        }
+    }
     public renderDefaultNodeContent(icon: any, color: string) {
         let { props = {}} = this.state;
         
         //let startNodes: any = this.mircoFlow.miniFlow.getNodes();
         return (
             <>
+                {this.renderStatus()}
                 <FormerTypes.avatar size={100}  icon={icon} color={color}/>
                 {this.canShowChildrenAdd()&&<div className='ui-adder'  onClick={this.addRouterChildren}><PlusOutlined/></div>}
                 {this.canShowTrigerAdd()  && <div className='ui-adder-router' onClick={this.addTiggerNode}><PlusOutlined/></div>}
@@ -375,9 +432,6 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             'timer': 'Thinking.timer'
         }
         return map[this.state.settingMode as string] || this.state.componentName || 'router';
-    }
-    private getTrueValue() {
-
     }
     public renderNodeContent(icon: string, color: string) {
         

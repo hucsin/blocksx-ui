@@ -12,7 +12,7 @@ export default class Clock extends React.Component {
                 <div className='clock-pane'>
                     {Array.from({length: 12}).map((it, index) => {
                         return (
-                            <span style={{'--i': index+1} as any}>{index+1}</span>
+                            <span key={index} style={{'--i': index+1} as any}>{index+1}</span>
                         )
                     })}
                 </div>

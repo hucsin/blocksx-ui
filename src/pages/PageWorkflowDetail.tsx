@@ -34,6 +34,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
     private fetchVersionHistoryRequest: any;
     private fetchRestoreHistoryRequest: any
     private fetchDeleteHistoryRequest: any;
+    private fetchRunTestRequest: any;
     private fetchCloneRequest: any;
 
     private developmentRequest: any;
@@ -61,7 +62,9 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
 
         this.fetchCloneRequest = SmartRequest.makePostRequest(`${path}/clone`);
 
-        this.developmentRequest = SmartRequest.makePostRequest(`${path}/upsertThinking`)
+        this.developmentRequest = SmartRequest.makePostRequest(`${path}/upsertThinking`);
+
+        this.fetchRunTestRequest = SmartRequest.makePostRequest(`${path}/test`)
         //this.updateNodeRequest = SmartRequest.makePostRequest(`${path}/updateNode`)
         //this.removeNodeRequest = SmartRequest.makePostRequest(`${path}/removeNode`);
         //this.freshNodeRequest = SmartRequest.makePostRequest(`${path}/fresh`);
@@ -169,6 +172,8 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                         'versionHistory': this.fetchVersionHistoryRequest,
                         'restoreHistory': this.fetchRestoreHistoryRequest,
                         'deleteHistory': this.fetchDeleteHistoryRequest,
+
+                        'runtest': this.fetchRunTestRequest,
                         'logs': (pageNumber: number, pageSize: number, params: any) => {
                             
                             return new Promise((resolve, reject)=> {

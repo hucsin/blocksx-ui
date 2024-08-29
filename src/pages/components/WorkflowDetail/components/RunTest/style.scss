@@ -63,13 +63,37 @@
         cursor: pointer;
         display: inline-block;
         pointer-events: auto;
-        span {
-            background:var(--main-color);
-            color:var(--main-inverse-color);
+        button {
+            border: none;
+            background-color: transparent;
+            box-shadow: none;
+            outline: none !important;
+            padding: 8px;
+            > span:not(.ant-btn-icon) {
+                font-size: 24px;
+            }
+            &:Hover {
+                background-color: transparent !important;
+            }
+        }
+        button span.ant-btn-icon {
+            
+            color:var(--main-bg-color);
             border-radius: 5px;
-            padding: 12px;
+            height: 42px;
+            width: 42px;
+            text-align: center;
+             background-color: #fff;
+            line-height: 42px;
             margin-right: 8px;
             transition: all .2s;
+            border: 1px solid var(--main-bg-color);
+            
+            span {
+                font-size: 24px;
+                position: relative;
+                top: 2px;
+            }
         }
         &:hover {
            span{ transform: scale(1.05);}

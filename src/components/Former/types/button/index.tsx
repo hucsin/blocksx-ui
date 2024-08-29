@@ -23,6 +23,7 @@ import './style.scss';
 interface IFormerInput extends IFormerBase {
     value: any,
     props: any;
+    fieldKey?: string;
     fieldName?:string;
     size: any,
     disabled?: boolean,
@@ -256,7 +257,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
     private onSelectedItem(value: any) {
         let { props } = this.state;
         let { rowKey = 'id' } = props;
-
+        
         if (value && value[rowKey]) {    
             this.setState({
                 ...value,
@@ -264,9 +265,13 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             })
             // TODO 
             if (this.props.former) {
+                console.log(this.props, {
+                    ...value,
+                    [`${this.props.fieldKey}`]: value[rowKey]
+                })
                 this.props.former.resetSafeValue({
                     ...value,
-                    [`${this.props.fieldName}`]: value[rowKey]
+                    [`${this.props.fieldKey}`]: value[rowKey]
                 })
             }
         }

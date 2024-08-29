@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Space, Dropdown, Tooltip, Popover, Menu, Spin, Input } from 'antd';
+import { Button, Space, Dropdown, Tooltip, Popover, Menu, Spin, Input, notification } from 'antd';
 import { omit } from 'lodash';
 import classnames from 'classnames';
 import { utils } from '@blocksx/core';
@@ -112,6 +112,9 @@ interface MircoFlowState {
     editLoading: boolean;
     reflush: any;
 
+    runStatus: string;
+    runNodeStatus: any;
+
     titleIsInput: boolean;
     titleOffsetWidth: number;
     // todo
@@ -144,6 +147,10 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         this.state = {
             titleIsInput: false,
             titleOffsetWidth: 0,
+            
+            runStatus: '',
+            runNodeStatus: '',
+
             nodes: [],
             workflowType: '',
             value: {},
@@ -178,7 +185,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     public componentDidMount() {
        this.reloadData()
     }
-    
+
     public reloadData() {
         this.setState({loading: true})
         this.props.onFetchValue().then((data: FlowDetailData) => {
@@ -189,7 +196,6 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                 this.initDefaultvalue(data)
             }
             
-
             this.setState({
                 loading: false,
                 value: data,
@@ -494,6 +500,14 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             </div>
         )
     }
+    private isTestRunSuccess() {
+        let { runStatus, runNodeStatus = {} } = this.state;
+        if (runStatus == 'runed') {
+            return !runNodeStatus.NODE_BREAK  ? true : Object.keys(runNodeStatus.NODE_BREAK).length ==0 
+        }
+
+        return false;
+    }
     private renderPublishContent() {
 
         let version: any = this.state.version || '';
@@ -514,26 +528,38 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                             
                         })
                     } else {
-                        // 发布
-                        this.setState({publishing: true,openPublish:false})
+                        // 先检查运行状态
 
-                        this.props.onPublishValue({
-                            id:this.state.value.id,
-                            version: item.key,
-                           // fromVersion: this.state.version,
-                            nodes: this.state.nodes,
-                            connectors: this.state.connectors
-                        }).then(()=> {
-                            this.setState({
+                        if (this.isTestRunSuccess()) {
+
+                            // 发布
+                            this.setState({publishing: true,openPublish:false})
+
+                            this.props.onPublishValue({
+                                id:this.state.value.id,
                                 version: item.key,
-                                isPublish: true,
-                                publishing: false
+                            // fromVersion: this.state.version,
+                                nodes: this.state.nodes,
+                                connectors: this.state.connectors
+                            }).then(()=> {
+                                this.setState({
+                                    version: item.key,
+                                    isPublish: true,
+                                    publishing: false
+                                })
+                            }).catch(()=>{
+                                this.setState({
+                                    publishing: false
+                                })
                             })
-                        }).catch(()=>{
-                            this.setState({
-                                publishing: false
+                        } else {
+                            notification.warning({
+                                //title: 'dd',
+                                duration: 4,
+                                message: 'Please click the “Run test” button in the lower-left corner before proceeding with the release, and only perform the release after the tests have successfully passed.'
                             })
-                        })
+                        }
+
                     }
                 }}
                 items={[
@@ -569,7 +595,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         return (
             <div className='ui-mircoflow-action-toolbar'>
                 <Space>
-                    {!this.props.isTemplate && <MagicSwitch  size="default" loading={true}  value={this.state.status} onChangeValue={(state: boolean)=> {
+                    {!this.props.isTemplate && false && <MagicSwitch  size="default" loading={true}  value={this.state.status} onChangeValue={(state: boolean)=> {
                         this.setState({
                             status: state
                         })
@@ -664,10 +690,40 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     public addTriggerNodeById = (id: string, props?: any) => {
         this.miniFlow.addStartNodesByNodeName(id, props)
     }
+    private getNodeStatus(node: any) {
+        let { runStatus, runNodeStatus  } = this.state;
+        
+        switch(runStatus) {
+            case 'runed':
+                if (runNodeStatus && runNodeStatus[node.name]) {
+                    let nodeInfo: any = runNodeStatus[node.name];
+                    switch(nodeInfo.status) {
+                        case 'NODE_BREAK':
+                            return {
+                                code: 'faild',
+                                message: !nodeInfo.childrenProcess && nodeInfo.statusMessage && nodeInfo.statusMessage.message
+                            }
+                        case 'NODE_FINISH':
+                            return 'success'
+                    }
+                }
+
+            case 'running':
+                return runStatus;
+            case 'miss':
+                return {
+                    code: 'miss',
+                    message: runNodeStatus[node.name] ? runNodeStatus[node.name].message : ''
+                }
+                //  处理配置没有设置好的情况
+        }
+        
+    }
     public renderFlowList() {
         if (this.state.loading) {
             return <Spin spinning/>
         }
+
         return (
             <div 
                 id={this.cavnasId}
@@ -678,12 +734,35 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                 ref={ref => this.canvasPanel = ref}
             >
                 {this.state.nodes.length ? this.state.nodes.map(node => {
+                    
+                    let nodeStatus: any = this.getNodeStatus(node);
+                    let status: string = nodeStatus ? nodeStatus.code || nodeStatus : '';
+                    let statusMessage: string = nodeStatus ? nodeStatus.message : '';
+
+
                     return <MircoFlowNode fetchMap={this.props.fetchMap} key={[this.state.reflush,node.name].join('')} {...node} 
-                        onUpdateNode={this.updateNodeByName}
+                        onUpdateNode={(id,nodeInfo,isPatch)=> {
+
+                            if (this.state.runStatus !=='miss') {   
+                                this.setState({
+                                    runStatus: '',
+                                    runNodeStatus: {}
+                                })
+                            } else {
+                                let runNodeStatus = this.state.runNodeStatus;
+                                delete runNodeStatus[node.name];
+                                this.setState({
+                                    runNodeStatus
+                                })
+                            }
+                            this.updateNodeByName(id,nodeInfo,isPatch)
+                        }}
                         classify={this.state.classify}
                         onAddNodeChildren={this.addNodeChildrenByName}
                         onAddTriggerNode={this.addTriggerNodeById}
                         mircoFlow={this}
+                        status={status}
+                        statusMessage={statusMessage}
                         activateList={this.state.activateList}
                         workflowId={this.props.workflowId}
                         getFormerSchema={this.props.getFormerSchema}
@@ -691,9 +770,9 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         onMouseEnter={(name)=> {
                             this.miniFlow.resetIterationRelevantMap();
                     
-                                this.setState({
-                                    activateList: this.miniFlow.getCurrentIterationRelevantMap(name)
-                                })
+                            this.setState({
+                                activateList: this.miniFlow.getCurrentIterationRelevantMap(name)
+                            })
                         }}
                         onMouseLeave={()=> {
                             this.setState({
@@ -871,6 +950,18 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                 {!this.props.isViewer && <MircoRunTest 
                     fetchMap={this.props.fetchMap} 
                     router={this.router} 
+                    getSchema={()=> {
+                        return {
+                            nodes: this.state.nodes,
+                            connectors: this.state.connectors
+                        }
+                    }}
+                    switchRunStatus={(state: 'running' | 'runed', payload?: any)=> {
+                        this.setState({
+                            runStatus: state,
+                            runNodeStatus: payload || {}
+                        })
+                    }}
                     openType={this.state.openType}
                     historyType={this.state.historyType}
                     historyStartDate={this.state.historyStartDate}

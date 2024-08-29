@@ -31,7 +31,7 @@ interface FormerDateState {
 export default class FormerDateTime extends React.Component<FormerDateProps, FormerDateState> {
     public static defaultProps  = {
         range: false,
-        format: 'YYYY/MM/DD'
+        format: 'HH:mm:ss'
     }
     public constructor(props: FormerDateProps) {
         super(props);
@@ -76,7 +76,7 @@ export default class FormerDateTime extends React.Component<FormerDateProps, For
             style={{width: props.width}}
             size={this.props.size}
             placeholder={this.state.placeholder}
-           // value={this.state.value && dayjs(this.state.value as any, this.state.format)} 
+            value={this.state.value && dayjs(this.state.value as any, this.state.format)} 
             //format={this.state.format}
             onChange={this.onChangeValue}
         />)

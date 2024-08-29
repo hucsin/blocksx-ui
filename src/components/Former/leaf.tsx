@@ -1091,7 +1091,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
            //let 
             let Compactwrap: any = [];
             let noCompact: any = [];
-            console.log(Portal.length, viewProps)
+            
             Portal.forEach((it)=> {
                 
                 let {leafProps} = it;

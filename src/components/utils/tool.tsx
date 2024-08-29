@@ -269,7 +269,7 @@ export default class TablerUtils {
             //'x-model-switch': true,
             
 
-            'x-index': utils.isNullValue(it.index) ? index : it.index,
+            'x-index': it.key.indexOf('_') == 0 ? -1 : utils.isNullValue(it.index) ? index : it.index,
             'x-control': it.control,
             'x-validation': this.getValidationValue(it),
             [`${it.uiType =='array' ? 'items': 'properties'}`]: 
@@ -308,12 +308,11 @@ export default class TablerUtils {
             if (!this.isColumnOnly(it)) {
                 // 如果是带有$符号的key
                 
-                if (fieldKey.indexOf('$')  > -1) {
+                if (fieldKey.indexOf('$')  > 1) {
 
                     let split: any = fieldKey.split('$');
 
                     if (!splitObject[split[0]]) {
-                        console.log(333333, it.group)
                         fieldsObject[split[0]] = {
                             type: 'object',
                             uiType: 'object',
@@ -361,7 +360,6 @@ export default class TablerUtils {
         return fields.filter(it=> this.isColumnOnly(it)).map(it => it.key || it.fieldKey)
     }
     public static getDefaultSchema(fields?: any) {
-        console.log(this.getDefaultSchemaProperties(fields))
         return {
             type: 'object',
             "title": "xxx",
