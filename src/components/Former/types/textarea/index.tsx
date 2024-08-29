@@ -7,7 +7,6 @@
  * @FilePath: /packages/design-components/src/former/types/textarea/index.tsx
  */
 import React from 'react';
-import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
 import { Input } from 'antd';
 

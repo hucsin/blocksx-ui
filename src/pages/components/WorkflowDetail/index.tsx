@@ -481,8 +481,14 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                     <Space>
                     
                         <span className='ui-text'>
-                        {this.state.classifyLabel && <span className='ui-tag'><Tooltip title={this.state.classifyLabel.label}>{UtilsTool.renderIconComponent(this.state.classifyLabel)}</Tooltip></span>}
-                            {!this.state.titleIsInput 
+                            <FormerTypes.text 
+                                value={value.title} 
+                                onBlur={this.onBlurTitle}
+                                onChangeValue={(val) => {
+                                    this.onChangeTitle({ target: {value:val}})
+                                }} 
+                            />
+                            {0 && !this.state.titleIsInput 
                                 ? <span onClick={this.onTitleClick}>{value.title}</span> 
                                 : <Input 
                                     autoFocus
@@ -595,6 +601,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         return (
             <div className='ui-mircoflow-action-toolbar'>
                 <Space>
+                {this.state.classifyLabel && <span className='ui-tag'><Tooltip title={this.state.classifyLabel.label}>{UtilsTool.renderIconComponent(this.state.classifyLabel)}</Tooltip></span>}
                     {!this.props.isTemplate && false && <MagicSwitch  size="default" loading={true}  value={this.state.status} onChangeValue={(state: boolean)=> {
                         this.setState({
                             status: state
@@ -968,6 +975,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                     historyEndDate={this.state.historyEndDate}
                     runId={this.state.openLog}
                 />}
+                
                 {this.state.openLog && <MircoRunLog  router={this.router} fetchMap={this.props.fetchMap} logId={this.state.openLog} logType={this.state.logType} />}
                 {this.renderNewNodeToolbar()}
                 {this.state.value.id && <MirceVersionHistory version={this.state.version} onReflush={()=>{ this.reloadData() }} onClose={()=>{this.setState({openVersion:false})}} fetchMap={this.props.fetchMap}  open={this.state.openVersion} id={this.state.value.id}/>}

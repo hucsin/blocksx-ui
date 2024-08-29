@@ -269,7 +269,7 @@ export default class TablerUtils {
             //'x-model-switch': true,
             
 
-            'x-index': it.key.indexOf('_') == 0 ? -1 : utils.isNullValue(it.index) ? index : it.index,
+            'x-index': (it.key || it.fieldKey || '').indexOf('_') == 0 ? -1 : utils.isNullValue(it.index) ? index : it.index,
             'x-control': it.control,
             'x-validation': this.getValidationValue(it),
             [`${it.uiType =='array' ? 'items': 'properties'}`]: 

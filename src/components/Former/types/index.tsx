@@ -24,6 +24,7 @@ export { default as image } from './image';
 export { default as condition } from './condition';
 
 export { default as textarea } from './textarea';
+export { default as text } from './text';
 
 export { default as select } from './select';
 export { default as tags } from './tags';
