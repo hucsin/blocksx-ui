@@ -515,7 +515,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         return false;
     }
     private renderPublishContent() {
-
+        let { value = {} } = this.state;
         let version: any = this.state.version || '';
         let versionSplit: any = version.split('.').map(it => parseInt(it, 10));
         let versionOne: string = [versionSplit[0], versionSplit[1], versionSplit[2] + 1].join('.');
@@ -542,9 +542,13 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                             this.setState({publishing: true,openPublish:false})
 
                             this.props.onPublishValue({
-                                id:this.state.value.id,
+                                id:value.id,
                                 version: item.key,
                             // fromVersion: this.state.version,
+                                title: value.title,
+                                type: value.classify,
+                                description: value.description,
+
                                 nodes: this.state.nodes,
                                 connectors: this.state.connectors
                             }).then(()=> {

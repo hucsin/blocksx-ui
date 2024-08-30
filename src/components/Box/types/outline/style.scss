@@ -3,6 +3,10 @@
     padding: 48px;
     background:#fff;
     border-radius: 16px;
+    h1.ant-typography,
+    h2.ant-typography {
+        padding-top: 16px; 
+    }
 
     .block-outline-subtitle {
         font-size:16px;

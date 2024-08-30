@@ -565,7 +565,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             let dictmap: any = classifyField.meta.classify == 'noall' ? [] : [{value: 'all', label: 'All'}];
 
             classifyField.dict && (dictmap = dictmap.concat(classifyField.dict))
-            
+            console.log(classifyField,323233)
             return (
                 <>
                 <div className={classnames({

@@ -9,7 +9,6 @@ import { BoxItem, BoxAction, BoxTag } from '../../interface';
 import BoxManger from '../../BoxManger';
 
 import './style.scss';
-import Icon from '@ant-design/icons/lib/components/Icon';
 /**
  * 概览，
  * 显示：图标
@@ -97,10 +96,11 @@ export default class Outline extends React.Component<BoxItem, any> {
         return 2;
     }
     public render() {
+        console.log(this.props,3323)
         return (
             <>
                 {this.renderAvatar()}
-                {this.props.title && <Typography.Title level={1}>{this.props.title}</Typography.Title>}
+                {this.props.title && <Typography.Title level={this.getTitleLevel()}>{this.props.title}</Typography.Title>}
                 {this.props.description && <Typography.Paragraph className='block-subtitle'><ReactMarkdown>{this.props.description}</ReactMarkdown></Typography.Paragraph>}
                 {this.renderActions()}
                 {this.renderTags()}

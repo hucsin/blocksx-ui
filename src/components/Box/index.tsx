@@ -35,7 +35,7 @@ export default class Box extends React.Component<BoxProps, BoxState> {
         if (BoxManger.has(it.type)) {
             let View: any = BoxManger.get(it.type);
            
-            return <View key={index} {...it} size={this.props.size} events={this.props.events} toolbarRef={this.props.toolbarRef}/>
+            return <View key={index} size={this.props.size}  {...it} events={this.props.events} toolbarRef={this.props.toolbarRef}/>
         }
 
     }

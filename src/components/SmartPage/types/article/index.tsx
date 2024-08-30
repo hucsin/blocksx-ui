@@ -91,6 +91,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
             this.setState({
                 loading: true
             })
+            
             this.findRequst('record.init')({
                 ...pick(this.state.value, ['id'])
             }).then(result=> {
@@ -109,7 +110,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                 this.setState(stateValue, ()=> {
                     !this.state.dataSource && this.initDefaultDataSource();
                 })
-            })
+            }).catch(e=>{})
         }
 
         
@@ -125,8 +126,8 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                 case 'smartpage':
                     datasource.push({
                         type: 'smartpage',
-                        path: this.props.path + '/' + (optional.URI && optional.URI['record.schema'] || 'pageschema'),
-                        name: value.id // TODO
+                        path: optional.schemaPath || (this.props.path + '/' + (optional.URI && optional.URI['record.schema'] || 'pageschema')),
+                        name: optional.schemaName ||value.id // TODO
                     })
                     break;
             }
@@ -165,7 +166,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
     }
     private createRequst(mode: string, path:string) {
         if (!this.requestMap[mode]) {
-            this.requestMap[mode] = SmartRequst.makePostRequest(this.props.path +'/' + path, true)
+            this.requestMap[mode] = SmartRequst.makePostRequest(this.props.path +'/' + path)
         }
     }
 
@@ -178,6 +179,8 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
     }
     private renderByPlace(place: string) {
         let { value = {}} = this.state;
+        let { pageMeta ={} } = this.props;
+        
 
         let title: any = this.filterFields(place);
         
@@ -187,8 +190,12 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
             let trueValue: any = value[it.fieldKey];
 
             if (place == 'avatar') {
-                
-                if (it.dict) {
+                // 先看pageMEta
+                if (pageMeta.icon || this.state.icon) {
+                    return (
+                        <FormerTypes.avatar autoColor={false}  key={'a'+index} icon={pageMeta.icon|| this.state.icon} />
+                    )
+                } else if (it.dict) {
                     let matchitem: any = it.dict.find(it=> it.value == trueValue);
                     if (matchitem) {
                         return (
@@ -280,8 +287,8 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                                 let {pageMeta = {}} = data;
                                 this.setState({
                                     title: pageMeta.title,
-                                    summary: pageMeta.summary
-                                   
+                                    summary: pageMeta.summary,
+                                    icon: pageMeta.icon
                                 })
                             }}
                         />

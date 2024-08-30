@@ -45,8 +45,8 @@
     }
     
     .ui-block-item-type-outline {
-        border: 1px solid #f0f0f0;
-        padding: 64px;
+        border: 1px solid #f4f4f4;
+        padding: 48px;
         height: calc(100% - 129px)
     }
 
@@ -318,9 +318,6 @@
             font-size: 16px;
         }
 
-        button:first-child{
-            vertical-align: bottom;;   
-        }
         > button {
             padding: 0;
             > span {

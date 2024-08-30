@@ -32,6 +32,9 @@
         margin: 0px;
         padding-bottom: 16px;
         border-bottom: 1px solid #f2f2f2;
+        .ant-typography {
+            opacity: .8;
+        }
 
         .ui-smartpage-article-toolbar {
             position: absolute;
