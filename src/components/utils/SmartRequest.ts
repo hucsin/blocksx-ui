@@ -134,7 +134,8 @@ class SmartRequest {
                     , this.getEncodeWrapper(params)
                     , this.getHeaders()
                     , this.dealHeader
-                ).then(({code, result}) => {
+                ).then(({code,message, result}) => {
+
                     // 正常响应
                     if (code == 200) {
                        // call && call(inputParams, result);
@@ -143,6 +144,10 @@ class SmartRequest {
                         // 302 跳转
                         if (code == 302) {
                             window.location.href = result.url;
+                        } else {
+                            if (message) {
+                                message.error(message)
+                            }
                         }
                     }
                 }).catch((e: any,) => {
@@ -163,7 +168,8 @@ class SmartRequest {
                     , this.getValidParmas(params)
                     , this.getHeaders() 
                     , this.dealHeader
-                ).then(({code, result}) => {
+                ).then(({code, message, result}) => {
+                    console.log(code, message, 33)
                     // 正常响应
                     if (code == 200) {
                        // call && call(inputParams, result);
@@ -172,11 +178,15 @@ class SmartRequest {
                         // 302 跳转
                         if (code == 302) {
                             window.location.href = result.url;
+                        } else {
+                            if (message) {
+                                message.error(message)
+                            }
                         }
                     }
                 }).catch((e: any,) => {
                     message.error(e.message || e || 'system error');
-                    reject(e)
+                  //  reject(e)
                 })
             })
         }

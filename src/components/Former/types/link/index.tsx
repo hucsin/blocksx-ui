@@ -39,12 +39,19 @@ export default class FormerLink extends React.Component<IFormerLabel, SFormerLab
         // @ts-ignore
         let defaultOrigin: any = window.location.origin;
         let props: any = this.props['props'] || this.props['x-type-props'];
-        let { icon, dir,  name, notice,  origin = defaultOrigin, path = '/', target='_blank'} = props;
+        let { icon, dir,  name, notice,  origin = defaultOrigin, path = '/', target='_blank', params = {}} = props;
 
         let url: string = origin + path + encodeURIComponent(this.state.value);
         let tips: string = notice || url;
         let display: string = name ? utils.template(name, this.state) : url;
         let IconView: any = Icons[icon] || Icons['OpenWindowUtilityOutlined'];
+
+        Object.entries(params).forEach((([key, value]:any)=> {
+            if (!url.includes('?')) {
+                url += '?'
+            }
+            url += '&' + key +'='+ encodeURIComponent(value)
+        }))
         
         return (<span className={classnames({
                     'ui-link': true,

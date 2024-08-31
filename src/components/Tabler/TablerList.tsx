@@ -53,6 +53,7 @@ export interface TablerState {
     mode?: string;
 }
 
+
 interface TablerListProps extends TablerProps {
     mode?: string;
     autoColor?: boolean;
@@ -64,6 +65,7 @@ interface TablerListProps extends TablerProps {
     maxIcon?: number;
     minIcon?: number;
     avatarShape?: any;
+    noCreateAt?: any;
     groupKey?: string;
     icon?: string;
     classify?: 'mini' | 'default';
@@ -92,6 +94,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     static defaultProps = {
         pageSize: 10,
         pageNumber: 1,
+        noCreateAt: false,
         type: 'table',
         layout: 'avatar',
         mode: 'default', //default, pick/small/sample
@@ -624,7 +627,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         return (
             <>
                 <span className='ui-meta-description-wrapper'>{this.renderDataExtra(rowData, index, 'description', 'renderRowDescription')}</span>
-                {this.props.layout!=='card' && this.renderCreateAt(rowData)}
+                {(this.props.layout!=='card' && !this.props.noCreateAt) && this.renderCreateAt(rowData)}
             </>
         )
     }

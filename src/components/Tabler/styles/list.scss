@@ -33,13 +33,30 @@
         box-shadow: rgba(0, 0, 0, 0.08) 0px 6px 6px 0px;
     }
 }
+.ui-mircatable-type-info {
+    .ant-list-item {
+        border-bottom: 1px dashed var(--secondary-border-color) !important;
+        .ant-list-item-meta {
+            padding-bottom: 4px !important; 
+        }
+        
+    }
+    .ui-meta-description-wrapper {
+        max-width: 100% !important;
+    }
+    .ant-list-item-meta-title {
+        display:none !important;
+    }
+}
 .ui-mircotable {
     .ui-label-empty {
         display:none;
     }
     position: relative;
     height: 100%;
-
+   .ui-text {
+    display: inline;
+   }
     .ui-block {
         height: 100%;
     }
@@ -527,7 +544,7 @@
             white-space:initial;
             height: 64px;
             overflow: hidden;
-            text-overflow: ellipsis;
+            //text-overflow: ellipsis;
             display: -webkit-box;           /* 使用 flexbox 模型 */
             -webkit-box-orient: vertical;   /* 设置 flex 方向为垂直 */
             -webkit-line-clamp: 3;          /* 显示的行数 */
@@ -575,7 +592,7 @@
     .ui-meta-description-wrapper {
         white-space: nowrap;
         overflow: hidden;     
-        text-overflow: ellipsis;
+        //text-overflow: ellipsis;
         max-width: calc(80%);
         display: inline-block;
         vertical-align: bottom;

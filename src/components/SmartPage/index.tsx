@@ -482,7 +482,6 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 params[this.state.folderField.key] = folderName;
             }
         }
-
         if (this.props.onGetDependentParameters) {
             Object.assign(params, this.props.onGetDependentParameters(v))
         }
@@ -565,7 +564,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             let dictmap: any = classifyField.meta.classify == 'noall' ? [] : [{value: 'all', label: 'All'}];
 
             classifyField.dict && (dictmap = dictmap.concat(classifyField.dict))
-            console.log(classifyField,323233)
+            
             return (
                 <>
                 <div className={classnames({
@@ -773,7 +772,6 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         )
     }
     public render() {
-        
         switch (this.props.type) {
             case 'drawer':
                 return (<Drawer

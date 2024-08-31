@@ -67,6 +67,7 @@ interface TablerValueProps extends TablerProps {
 
     selectedRowKeys?: any[];
     batchOpertate?: any[]
+    
     mode?: string;
     optional?: boolean;
 
@@ -518,6 +519,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             ...rowData,
             ...(this.props.onGetRequestParams && this.props.onGetRequestParams(rowData, rowIndex) || {})
         }
+        
         
         // 子组建回掉
         callback && callback(operate, rowData, rowIndex)

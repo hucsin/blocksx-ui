@@ -19,7 +19,7 @@ import Util from '../../../utils';
 import ArticleContent from './content';
 import Box from '../../../Box';
 import Former from '../../../Former';
-import SmartPage from '../../index';
+import SmartPage, {WithRouterSmartPage} from '../../index';
 
 import { pick } from 'lodash'
 
@@ -122,12 +122,14 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
         let datasource: any = [];
 
         if (optional && optional.type) {
+            let { schema = {}, params = {}} = optional;
             switch(optional.type) {
                 case 'smartpage':
                     datasource.push({
                         type: 'smartpage',
-                        path: optional.schemaPath || (this.props.path + '/' + (optional.URI && optional.URI['record.schema'] || 'pageschema')),
-                        name: optional.schemaName ||value.id // TODO
+                        params: params,
+                        path: schema.path || (this.props.path + '/' + (optional.URI && optional.URI['record.schema'] || 'pageschema')),
+                        name: schema.name ||value.id // TODO
                     })
                     break;
             }
@@ -269,7 +271,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
         switch (item.type) {
             case 'smartpage':
                     return (
-                        <SmartPage 
+                        <WithRouterSmartPage 
                             key={index}
                             pageURI={item.path}
                             name={item.name}
@@ -282,6 +284,10 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                             noSearcher={true}
                             size={'small'}
                             operateContainerRef={this.operateContainerRef}
+                            onGetDependentParameters={()=> {
+                                let { value} = this.state;
+                                return item.params ? utils.pick(value, Object.keys(item.params)) : {}
+                            }}
                             onInitPage={(data)=> {
                                 
                                 let {pageMeta = {}} = data;

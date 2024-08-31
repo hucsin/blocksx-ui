@@ -202,6 +202,7 @@ export default class CleanseSchema {
      */
     public static getRowoperate(path:string, schema: any) {
         let meta: any = schema.meta;
+        
         if (utils.isArray(meta.rowoperate)) {
             return meta.rowoperate.map(op => {
                 let rowOperate: any = {
@@ -219,7 +220,6 @@ export default class CleanseSchema {
                         motion: op.motion ? SmartRequst.makePostRequest(path + '/' + op.motion) : null
                     })
                 }
-
 
                 return rowOperate;
             })

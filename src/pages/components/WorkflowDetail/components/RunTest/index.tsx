@@ -1,5 +1,6 @@
 import React from 'react';
 import i18n from '@blocksx/i18n';
+import { SmartPage } from '@blocksx/ui';
 import dayjs from 'dayjs';
 import classnames from 'classnames';
 import { StructuralMiniFlow } from '@blocksx/structural';
@@ -131,77 +132,8 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
     }
     private renderHistoryBody () {
         return (
-            <Tabler.TablerList
-                maxIcon={1}
-                minIcon={1}
-                iconKey='type'
-                size='small'
-                actionSize='small'
-                iconMaps={{
-                    edit: 'FormOutlined',
-                    run: 'IRun',
-                    remoting: 'IRemoting',
-                    workflow: 'IWorkflow',
-                    switchOpen: 'ISwitchOpen'
-                }}
-                descriptionIconMap={[
-                    {
-                        icon: 'History',
-                        key: 'version'
-                    },
-                    {
-                        icon: 'IDataTransfer',
-                        key: 'dataTransfer'
-                    }
-                ]}
-                titleKey='started'
-                onFetchList = {(pageNumber: number, pageSize:number, params: any) => {
-                    return (this.props.fetchMap[this.state.openType] as any)(pageNumber, pageSize, {
-                        ...params,
-                        type: this.state.openType,
-                        status: this.state.historyType,
-                        startDate: this.state.historyStartDate,
-                        endDate: this.state.historyEndDate
-                    })
-                }}
-                renderItemClassName={(item: any) => {
-                    
-                    if (item.runId == this.state.runId) {
-                        return 'ui-selected stop-animation'
-                    } else {
-                        return this.actionTypeMap.indexOf(item.type)>-1 ? '' : 'stop-animation';
-                    }
-                }}
-                renderExtra={(item: any) => {
-                    if (this.actionTypeMap.indexOf(item.type) > -1) {
-                       return <Button size="small">View</Button>
-                    }
-                    return null;    
-                }}
-                onItemClick={(rowItem)=> {
-                    this.openLogPanel(rowItem.runId)
-                }}
-                renderDescription={(item: any)=> {
-                    if (this.actionTypeMap.indexOf(item.type) > -1) {
-                        
-                        return (
-                            <span>
-                                {<Tag icon={item.status == 'Runing' ? <LoadingOutlined/> : null} color={this.colorMap[item.status]}>{item.status}</Tag>}
-                                {i18n.t('Duration ' + item.duration)}
-                            </span>
-                        )
-                            
-                    } else {
-                        if (item.type =='edit') {
-                            return i18n.t('Edited by {author}' , {author:item.author})
-                        } else {
-                            if (item.type == 'switchOpen') {
-                                return i18n.t(`${item.status =='Activated' ? 'Activated' : 'Deactivated'} by {author}` , {author: item.author})
-                            }
-                        }
-                    }
-
-                }}
+            <SmartPage
+                name={'taskhistory'}
             />
         )
     }
@@ -223,6 +155,7 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
 
         StructuralMiniFlow.validateFlowConfiguration(schema).then(e=> {
             this.setState({loading: true})
+
             this.props.switchRunStatus('running')
             this.props.fetchMap.runtest({
                 id: this.props.router.params.id,
@@ -268,10 +201,10 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
                     <div className='ui-runtest-action'>
                         <Space size='large'>
                             <Segmented value={this.state.openType} options={[
-                                /*{
-                                    label: (<span><HistoryOutlined/> {i18n.t('Local History')}</span>),
+                                {
+                                    label: (<span><HistoryOutlined/> {i18n.t('Run History')}</span>),
                                     value: 'history'
-                                },
+                                }/*,
                                 {
                                     label: (<span><Icons.IStatistics/> {i18n.t('Statistics')}</span>),
                                     value: 'statistics'

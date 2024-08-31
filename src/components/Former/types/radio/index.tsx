@@ -129,7 +129,7 @@
                         }} className={classnames({
                             'ui-viewer': this.props.viewer,
                             'ui-selected': !this.props.viewer && it.value == value
-                        })} key={it.value} >{VIcon ? <Tooltip title={it.description || it.label}><VIcon/>{this.props.viewer && it.label}</Tooltip> :it.label}</label>
+                        })} key={it.value} style={{color: it.color}}>{VIcon ? <Tooltip title={it.description || it.label}><VIcon/>{this.props.viewer && it.label}</Tooltip> :it.label}</label>
                     )
                 })}
             </div>

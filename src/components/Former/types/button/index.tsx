@@ -319,7 +319,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
         this.props.former.validationValue((val) => {
             this.doMetaAction(val);
         }, {
-            noValidationField: this.props.fieldName
+            noValidationField: this.props.fieldKey
         })
     }
     public renderMetaButton() {

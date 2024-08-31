@@ -54,6 +54,7 @@ export default class TablerUtils {
         // 当当前字段是存在action的时候
         //if (field.action) {
         let uiType: string = field.uiType || field.type;
+        
 
         if (utils.isPlainObject(field.column)) {
             if (field.column.uiType) {
@@ -118,11 +119,13 @@ export default class TablerUtils {
             
             return (
                 <Space size={'small'} key={'c' + field.key}>
-                    <span>
+                    <span className='ui-text'>
                         {iconField ? <Tooltip title={field.fieldName}>{TablerUtils.renderIconComponent({
                             icon: this.findIconInField(field, value)
                         })}</Tooltip> : null}
-                        {TablerUtils.renderValue(field, value)}
+                        <Tooltip title={field.summary ? utils.isString(field.summary) ? field.summary : value : ''}>
+                            {TablerUtils.renderValue(field, value)}
+                        </Tooltip>
                     </span>
                     {props.suffix}
                 </Space>

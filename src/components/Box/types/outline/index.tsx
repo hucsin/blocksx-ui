@@ -96,7 +96,7 @@ export default class Outline extends React.Component<BoxItem, any> {
         return 2;
     }
     public render() {
-        console.log(this.props,3323)
+        
         return (
             <>
                 {this.renderAvatar()}
