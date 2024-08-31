@@ -285,8 +285,19 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                             size={'small'}
                             operateContainerRef={this.operateContainerRef}
                             onGetDependentParameters={()=> {
-                                let { value} = this.state;
-                                return item.params ? utils.pick(value, Object.keys(item.params)) : {}
+                                let { value } = this.state;
+                                let parameters: any = {};
+                                
+                                if (item.params) {
+                                    Object.entries(item.params).forEach(([key, val]: any) => {
+                                        if (typeof val == 'boolean') {
+                                            parameters[key] = value[key]
+                                        } else {
+                                            parameters[key] = val
+                                        }
+                                    })
+                                }
+                                return parameters
                             }}
                             onInitPage={(data)=> {
                                 

@@ -1,7 +1,7 @@
 .ui-runtest-toolbar {
     position: absolute;
     bottom: 16px;
-    left: 32px;
+    left: 16px;
     z-index: 112;
     right: 32px;
 
@@ -18,11 +18,14 @@
     .ui-mircotable-avatar {
         padding-left: 0 !important;
     }
+    .ui-mircotable.ui-mircotable-mini .ant-list .ant-list-item {
+        padding-bottom: 0 !important;
+    }
     .ui-mircotable.ui-mircotable-horizontal .ant-list-item {
         padding: 0;
         border-radius: 6px;
         border-bottom: 0 !important;
-        margin-bottom: 2px !important;
+        margin-bottom: 8px !important;
     }
     .ui-smartpage-wrapper .ui-mircotable {
         padding-left: 12px !important;
@@ -38,7 +41,7 @@
         padding-top: 6px;
     }
     .ant-list-item-meta-avatar {
-        margin: 2px;    
+        margin: 3px;    
         
         margin-inline-end: 8px !important;   
     }
@@ -150,7 +153,6 @@
     }
     .ui-body {
         margin-top: 8px;
-        opacity: .7;
         background-color: var(--main-inverse-bg-color);
         transition: all .2s;
         overflow: auto;

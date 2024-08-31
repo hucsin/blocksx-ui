@@ -6,8 +6,6 @@ import classnames from 'classnames';
 import { StructuralMiniFlow } from '@blocksx/structural';
 import { Space, message, Segmented, Button, Tooltip, Tag, Radio, DatePicker } from 'antd';
 import { Icons, Tabler } from '@blocksx/ui';
-import { CaretRightFilled, HistoryOutlined,LoadingOutlined } from '@ant-design/icons';
-
 import { FetchMap } from '../../typing';
 import './style.scss';
 
@@ -196,13 +194,13 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
             })}>
                 <div className='ui-header'>
                     <div className='ui-runtest-bar' >
-                        <Button size='large' loading={this.state.loading} onClick={this.runTest} icon={<CaretRightFilled/>}>{i18n.t('Run test')}</Button>
+                        <Button size='large' loading={this.state.loading} onClick={this.runTest} icon={<Icons.CaretRightFilled/>}>{i18n.t('Run test')}</Button>
                     </div>
                     <div className='ui-runtest-action'>
                         <Space size='large'>
                             <Segmented value={this.state.openType} options={[
                                 {
-                                    label: (<span><HistoryOutlined/> {i18n.t('Run History')}</span>),
+                                    label: (<span><Icons.HistoryOutlined/> {i18n.t('Run History')}</span>),
                                     value: 'history'
                                 }/*,
                                 {
