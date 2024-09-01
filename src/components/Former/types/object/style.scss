@@ -51,13 +51,15 @@
             width: 50%;
         }
 
-        padding-bottom: 24px;
+        padding-bottom: 16px;
         padding-right: 24px;
         padding-left: 24px;
 
         &.former-object-label-hidden {
+            
             .former-object-item-label {
                 padding-bottom: 0;
+                display: none;;
             }
             .former-object-label-menu,
             .former-object-label-title {

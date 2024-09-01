@@ -25,6 +25,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
     }
 
     private fetchViewRequest: any ;
+    private fetchViewTaskHistory: any;
     private fetchUpdateRequest: any;
     private fetchToggleStatusRequest: any;
     private fetchToggleFavoritesRequest: any ;
@@ -51,6 +52,8 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
         let path: string = this.props.isTemplate ? '/eos/templates': '/api/thinking';
 
         this.fetchViewRequest = SmartRequest.makeGetRequest(`${path}/findThinking`);
+        this.fetchViewTaskHistory = SmartRequest.makeGetRequest(`${path}/taskHistory`)
+
         this.fetchUpdateRequest = SmartRequest.makePostRequest(`${path}/update`);
         this.fetchToggleStatusRequest = SmartRequest.makePostRequest(`${path}/toggleStatus`);
         this.fetchToggleFavoritesRequest = SmartRequest.makePostRequest(`${path}/toggleFavorites`);
@@ -103,6 +106,22 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                             connectors: utils.decompress(result.connectors) || []
                         }
                     }))
+                }}
+                onFetchHistory = {(hisId: string) => {
+                    return this.fetchViewTaskHistory({id: hisId}).then(result => {
+                        let schema: any  = result.schema || {};
+
+                        if (!schema.nodes[0].name) {
+                            schema.nodes = utils.decompress(schema.nodes);
+                            schema.connectors = utils.decompress(schema.connectors);
+                        }
+
+
+                        return {
+                            ...result,
+                            schema: schema
+                        }
+                    })
                 }}
                 onPublishValue={(value) => {
                     

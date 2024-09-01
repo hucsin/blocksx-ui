@@ -169,7 +169,7 @@ class SmartRequest {
                     , this.getHeaders() 
                     , this.dealHeader
                 ).then(({code, message, result}) => {
-                    console.log(code, message, 33)
+                    
                     // 正常响应
                     if (code == 200) {
                        // call && call(inputParams, result);

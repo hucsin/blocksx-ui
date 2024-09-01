@@ -10,6 +10,11 @@
       background-color: #fff;
    }
 }
+.ui-flownode-config {
+   .ui-label-empty {
+      display:none;
+   }
+}
 .ui-smartpage-article-toolbar  {
    .tabler-batch-add {
       .icons-combine-bottomRight > span:last-child {
@@ -119,6 +124,9 @@
 .ui-smartpage-wrapper {
    height: 100%;
    min-height: 420px;
+   .ui-mircotable-wrapper {
+      height: 100%;
+   }
    .ui-mircotable .ant-divider-horizontal.ant-divider-with-text {
       
       margin: 32px;

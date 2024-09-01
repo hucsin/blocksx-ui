@@ -7,6 +7,7 @@ import './style.scss';
 
 export default class FormerNotice extends React.Component<{value?: any, icon?: any, color?: any, props?: any, notice?: any}, {notice: any,color: any,icon:any,value: any}> {
 
+    public static Viewer: any = FormerNotice;
     public static defaultProps ={
         icon: 'NotificationOutlined#ccc'
     }

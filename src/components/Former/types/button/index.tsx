@@ -239,7 +239,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                 if (data.smartaction) {
                     SmartAction.doAction(data, (value: any)=> {
                         //alert(333)
-                        console.log(value)
+                       // console.log(value)
                         if (value) {
                             this.updateView(value)
                             this.loading(false)
@@ -265,10 +265,10 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             })
             // TODO 
             if (this.props.former) {
-                console.log(this.props, {
+               /* console.log(this.props, {
                     ...value,
                     [`${this.props.fieldKey}`]: value[rowKey]
-                })
+                })*/
                 this.props.former.resetSafeValue({
                     ...value,
                     [`${this.props.fieldKey}`]: value[rowKey]

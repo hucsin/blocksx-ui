@@ -20,16 +20,21 @@ export interface IRuntTest {
     historyStartDate: string;
     historyEndDate: string;
     runId: string;
+    reflush: any;
+    disabled: any;
+    onOpenLogPanel?: Function;
 }
 
 export interface SRuntTest {
     openType: string;
     loading: boolean;
+    reflush: any;
 
     historyType: string;
     historyStartDate: any;
     historyEndDate: any;
     runId: string;
+    disabled: any;
 }
 
 export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
@@ -46,12 +51,14 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
     public constructor(props) {
         super(props);
         this.state = {
+            reflush: props.reflush,
             openType: props.openType,
             historyType: props.historyType,
             historyStartDate: props.historyStartDate,
             historyEndDate: props.historyEndDate,
             runId: props.runId,
-            loading: false
+            loading: false,
+            disabled: props.disabled
         }
         this.router = props.router;
     }
@@ -62,6 +69,19 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
                 openType: newProps.openType
             })
         }
+        
+        if (newProps.disabled != this.state.disabled) {
+            this.setState({
+                disabled: newProps.disabled
+            })
+        }
+
+        if (newProps.reflush != this.state.reflush) {
+            this.setState({
+                reflush: newProps.reflush
+            })
+        }
+
         if (newProps.historyType != this.state.historyType) {
             this.setState({
                 historyType: newProps.historyType
@@ -100,6 +120,9 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
         utils.goQuery({
             logs: id
         });
+
+        this.props.onOpenLogPanel && this.props.onOpenLogPanel(id)
+
     }
     public onChangeType= (e: any) => {
         let { utils } = this.router;
@@ -129,9 +152,28 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
         })
     }
     private renderHistoryBody () {
+        
         return (
             <SmartPage
+                reflush = {this.state.reflush}
                 name={'taskhistory'}
+                props ={{
+                    selectedRow: {
+                        id: this.state.runId
+                    },
+                    avatarReverseColor: true,
+                    value: [this.state.runId],
+                    optional: true
+                }}
+
+                onSelectedValue={(v)=>{
+                    this.openLogPanel(v.id)
+                }}
+                onGetDependentParameters={()=> {
+                    return {
+                        job: this.props.router.params.id
+                    }
+                }}
             />
         )
     }
@@ -194,7 +236,7 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
             })}>
                 <div className='ui-header'>
                     <div className='ui-runtest-bar' >
-                        <Button size='large' loading={this.state.loading} onClick={this.runTest} icon={<Icons.CaretRightFilled/>}>{i18n.t('Run test')}</Button>
+                        <Button disabled={this.state.disabled} size='large' loading={this.state.loading} onClick={this.runTest} icon={<Icons.CaretRightFilled/>}>{i18n.t('Run test')}</Button>
                     </div>
                     <div className='ui-runtest-action'>
                         <Space size='large'>

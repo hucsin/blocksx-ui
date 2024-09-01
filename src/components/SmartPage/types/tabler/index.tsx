@@ -22,6 +22,7 @@ export interface SmartPageTablerProps {
     searchRef?: any;
     toolbarRef?: any;
     operateContainerRef?: any;
+    avatarReverseColor?: any;
     optionalContainerRef?: any;
     noOperater?: boolean;
     noSearcher?: boolean;
@@ -37,6 +38,7 @@ export interface SmartPageTablerProps {
     rowKey?: any;
 
     onOptionalOpen?: Function;
+    selectedRow?: any;
 }
 export interface SmartPageTablerState {
     tableProps: any;
@@ -68,7 +70,8 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
             reflush: props.reflush,
             rowSelection: props.rowSelection,
             mode: props.mode,
-            optional: props.optional
+            optional: props.optional,
+            selectedRow: props.selectedRow
         }
 
         //this.initTableProps();
@@ -178,17 +181,20 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
     private hideOptionalWrapper =(noHide?: boolean) => {
 
         if (!noHide) {
-            this.props.onOptionalOpen && this.props.onOptionalOpen(true)
-            this.setState({
-                selectedRow: null
-            })
+            
+            if (this.props.onOptionalOpen) {
+                this.props.onOptionalOpen(true)
+                this.setState({
+                    selectedRow: null
+                })
+            }
         }
     }
     public render() {
         let { selectedRow } = this.state;
         let pageMeta: any = this.props.pageMeta || { title: '' }
         let selectedRowKeys: any = selectedRow? selectedRow[this.props.rowKey || 'id'] : null;
-
+        
         return (
             <>
                 {this.props.optional && this.renderOptional()}
@@ -207,6 +213,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                     router={this.props.router}
                     size={this.props.size}
                     notice={this.props.notice}
+                    avatarReverseColor={this.props.avatarReverseColor}
                     
                     onGetRequestParams={this.getRequestParams}
 
@@ -229,10 +236,13 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                                 this.props.onSelectedValue && this.props.onSelectedValue(rowData);
                             } else {
                                 if (this.props.optional) {
-                                this.props.onOptionalOpen && this.props.onOptionalOpen();
+                                    this.props.onOptionalOpen && this.props.onOptionalOpen();
                                 }
                             }
+                        } else {
+                            this.props.onSelectedValue && this.props.onSelectedValue(rowData);
                         }
+
 
                         this.setState({
                             selectedRow: rowData

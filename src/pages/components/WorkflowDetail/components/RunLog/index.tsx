@@ -1,9 +1,12 @@
 import React from 'react';
-
-import { Space, Descriptions, Divider} from 'antd';
-import { Icons, ErrorMessage, Tabler } from '@blocksx/ui';
+import classnames from 'classnames';
+import { utils } from '@blocksx/core';
+import { Space, Descriptions, Divider, Alert } from 'antd';
+import { Icons, ErrorMessage, TablerUtils } from '@blocksx/ui';
 import { UserOutlined, CloseCircleFilled, TranslationOutlined } from '@ant-design/icons';
 
+
+import { MiniFlow as StructuralMiniFlow } from '@blocksx/structural';
 
 import { FetchMap } from '../../typing';
 
@@ -13,7 +16,10 @@ interface RunLogProps {
     router: any;
     fetchMap: FetchMap;
     logId: string;
+    value: any;
     logType: string;
+    nodeStatus: any;
+    onCloseLog?: Function
 }
 
 interface RunLogState {
@@ -23,8 +29,10 @@ interface RunLogState {
     title: string;
     author: string;
     dataTransfer:string;
+    value: any;
     version: string;
     duration: string;
+    nodeStatus: any;
 }
 
 export default class RunLog extends React.Component<RunLogProps, RunLogState> {
@@ -39,7 +47,9 @@ export default class RunLog extends React.Component<RunLogProps, RunLogState> {
             author: '',
             dataTransfer: '',
             version: '',
-            duration: ''
+            value: props.value,
+            duration: '',
+            nodeStatus: props.nodeStatus
         }
         this.router = props.router;
     }
@@ -48,7 +58,19 @@ export default class RunLog extends React.Component<RunLogProps, RunLogState> {
         if (newProps.logId !== this.state.logId) {
             this.setState({
                 logId: newProps.logId,
+                //value: newProps.value,
                 runId: this.getRunId(newProps.logId)
+            })
+        }
+        if (newProps.value !== this.state.value ) {
+            this.setState({
+                value: newProps.value
+            })
+        }
+
+        if (newProps.nodeStatus != this.state.nodeStatus) {
+            this.setState({
+                nodeStatus: newProps.nodeStatus
             })
         }
 
@@ -64,6 +86,9 @@ export default class RunLog extends React.Component<RunLogProps, RunLogState> {
         utils.goQuery({
             logs: ''
         });
+
+        this.props.onCloseLog && this.props.onCloseLog()
+        
     }
     private getRunId(logId: string) {
         if (logId) {
@@ -73,75 +98,149 @@ export default class RunLog extends React.Component<RunLogProps, RunLogState> {
             }
         }
     }
+    
     public renderTitle() {
+        let { value = {} } = this.state;
         return (
             <span>
-                <Icons.HistoryUtilityOutlined/>
-                {this.state.title}
+                <Icons.TimerIntervalUtilityOutlined/>
+                {utils.toLocaleDate(value.startAt|| new Date())}
             </span>
         )
     }
+    private getTaskDuration() {
+        let { value = {} } = this.state;
+        let startAt: number = value.startAt;
+        let endAt: number = value.endAt || new Date().getTime();
+
+        return utils.formatTimeInterval(endAt -  startAt)
+    }
+    private getNodeList(schema: any) {
+        if (schema) {
+
+            return {
+                queue: StructuralMiniFlow.getNodeQueue(
+                    schema.connectors || schema.pipes,
+                    StructuralMiniFlow.findStartNode(schema.nodes).map(it=> it.name),
+                    true
+                ),
+                nodeMap: StructuralMiniFlow.getNodeMaps(schema.nodes)
+            }
+        }
+    }
+    private getDisabled(status: any) {
+        switch(status.status) {
+            case 'NODE_BREAK':
+                if (!status.statusMessage) {
+                    return true;
+                }
+            case 'NODE_FINISH':
+                return false;
+            case 'NODE_NOT_RUNING':
+            default:
+                return true;
+        }
+    }
+    private statusMap: any = {
+        pending: {
+            label: 'Pending',
+            color: 'yello'
+        },
+        progress: {
+            label: 'Progress',
+            color: 'blue'
+        },
+        completed: {
+            label: 'Completed', color: 'green'
+        },
+        failed: {
+            label: 'Failed', color: 'red' 
+        }
+    }
+    public renderStatus() {
+        let { value = {} } = this.state;
+        let item: any;
+
+        if (item = this.statusMap[value.status]) {
+            return (
+                <span style={{color:item.color}}>{item.label}</span>
+            )
+        }
+    }
+    private renderEmblem() {
+        let { value = {}} = this.state;
+        let text: string = value.type == 'test' ? 'TEST' : 'PROD'
+        return (
+            <div className='ui-emblem' data-text={text}></div>
+        )
+    }
+    public renderItem(node: any, status: any) {
+        
+        switch(status.status) {
+            case 'NODE_BREAK':
+                if (status.statusMessage) {
+                    return <Alert 
+                    
+                        type="error" 
+                        showIcon  
+                        description= {JSON.stringify(status.statusMessage.message || 'Unknown Error')}
+                    />
+                }
+                break;
+            case 'NODE_FINISH':
+                return <Alert 
+                        message="Finsh"  
+                        type="success" 
+                        showIcon  
+                        description= {'dd'}
+                    />
+            default:
+                return (
+                    null
+                )
+
+        }
+    }
     public render() {
+        let { value = {} } = this.state;
+        let nodelist: any = this.getNodeList(value.schema)
+      
         return (
             <div className='ui-mircoflow-log'>
-
+                {this.renderEmblem()}
                 <Descriptions column={1} title={this.renderTitle()}>
-                     <Descriptions.Item label="RunId">{this.state.runId}</Descriptions.Item>
-                     <Descriptions.Item label="Duration">{this.state.duration}</Descriptions.Item>
+                     <Descriptions.Item label="RunId">{value.logId}</Descriptions.Item>
+                     <Descriptions.Item label="Duration"> {this.getTaskDuration()}</Descriptions.Item>
                      <Descriptions.Item >
                         <Space>
-                            <span><UserOutlined/>{this.state.author}</span>
-                            <span><Icons.HistoryUtilityOutlined/>{this.state.version}</span>
-                            <span><TranslationOutlined/>{this.state.dataTransfer}</span>
+                            <span><UserOutlined/> {value.createdBy}</span>
+                            <span><Icons.HistoryUtilityOutlined/> {value.version}</span>
+                            {this.renderStatus()}
                         </Space>
                      </Descriptions.Item>
                 </Descriptions>
                 <div onClick={this.onCloseLogPanel} className='ui-mircoflow-log-close'><CloseCircleFilled/></div>
                 <Divider plain>Run logs</Divider>
-                <Tabler.TablerList
-                    maxIcon={1}
-                    minIcon={1}
-                    size='small'
-                    classify="mini"
-                    actionSize='small'
-                    iconKey='status'
-                    iconMaps={{
-                        Success: 'CheckCircleOutlined',
-                        Error: 'WarningOutlined',
-                        Runing: 'LoadingOutlined'
-                    }}
-                    renderItemContent ={(rowItem: any, index: number)=> {
-                        if (rowItem.status == 'Error') {
+                <div className='ui-runlog-body'>
+                    {
+                        nodelist && nodelist.queue.map((it, index)=> {
+                            let node: any = nodelist.nodeMap.get(it) || {};
+                            let { props = {}} = node;
+                            let status: any = this.state.nodeStatus[node.name] || {};
+                            
                             return (
-                                <ErrorMessage key={index} errorMessage={rowItem.errorMessage} />
+                                <dl key={index} className={classnames({
+                                    'ui-disabled': this.getDisabled(status)
+                                })}>
+                                    <dt> {TablerUtils.renderIconComponent(node)} <span className='ui-method'>{props.method}</span> <span className='ui-program'>{props.program}</span>  <span className='ui-serial'>{node.serial}</span></dt>
+                                    <dd>
+                                        {this.renderItem(node, status)}
+                                    </dd>
+                                </dl>
                             )
-                        }
-                        return null;
-                    }}
-                    renderListItemExtra={(rowItem: any, index: number)=> {
-                        return (
-                            <span className='ui-step-number'>#{rowItem.stepNumber}</span>
-                        )
-                    }}
-                    renderItemClassName ={it => `ui-runlog-${it.type}`}
-                    onFetchList = {(pageNumber: number, pageSize:number, params: any) => {
-                        return (this.props.fetchMap['logs'] as any)(pageNumber, pageSize, {
-                            ...params,
-                        }).then(data => {
-
-                            this.setState({
-                                title: data.title,
-                                duration: data.duration,
-                                version: data.version,
-                                author: data.author,
-                                runId: data.runId,
-                                dataTransfer: data.dataTransfer
-                            })
-                            return data;
                         })
-                    }}
-                    renderExtra={()=>{}}
-                ></Tabler.TablerList>
+                    }
+                </div>
             </div>
         )
     }

@@ -123,7 +123,7 @@ export default class TablerUtils {
                         {iconField ? <Tooltip title={field.fieldName}>{TablerUtils.renderIconComponent({
                             icon: this.findIconInField(field, value)
                         })}</Tooltip> : null}
-                        <Tooltip title={field.summary ? utils.isString(field.summary) ? field.summary : value : ''}>
+                        <Tooltip placement="topLeft" overlayClassName="ui-tooltip" title={field.summary ? utils.isString(field.summary) ? field.summary : value : ''}>
                             {TablerUtils.renderValue(field, value)}
                         </Tooltip>
                     </span>

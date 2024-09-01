@@ -366,7 +366,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         if (msg ) {
             return (
                 <ul className='ui-node-status-popover'>
-                    {msg.map(it => <li>{it}</li>)}
+                    {msg.map((it, index) => <li key={index}>{it}</li>)}
                 </ul>
             )
         }
@@ -484,6 +484,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         pageURI='/api/thinking/findNodeConfigure'
                         key={pagename}
                         name={pagename}
+                        rootClassName="ui-flownode-config"
                         reflush={this.state.reflush}
                         type="popover"
                         isViewer={this.props.isViewer}

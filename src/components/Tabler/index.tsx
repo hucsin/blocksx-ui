@@ -125,7 +125,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             reflush: props.reflush,
             childrenReflush: props.reflush,
             value: props.selectedRowKeys,
-
+            
             smartPageOpen: false,
             smartPageData: {},
             mode: props.mode,
@@ -168,7 +168,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
             })
         }
-
+        
         if (newProps.selectedRowKeys != this.state.selectedRowKeys) {
             this.setState({
                 selectedRowKeys: newProps.selectedRowKeys,
@@ -403,7 +403,6 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 }
             })
         }
-
 
         if (rowBatch.length > 0 && batchList.length > 0) {
             batchList = [

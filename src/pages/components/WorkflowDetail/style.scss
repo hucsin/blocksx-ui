@@ -1,3 +1,18 @@
+.ui-tooltip {
+    min-width: 200px;
+    max-width: 400px;
+    .ant-tooltip-inner {
+        padding: 16px;
+        &::before {
+            display: block;
+            border-bottom: 1px dashed #f2f2f2;
+            content: "TIPS";
+            position: relative;
+            top: -8px;
+            opacity: .5;
+        }
+    }
+}
 .ui-publish-wrapper {
     min-width: 180px;
     .mircoflow-publish {
@@ -184,7 +199,7 @@
     }
     &.ui-runlog-show {
         .ui-runtest-toolbar {
-            right: 450px;
+            right: 440px;
         }
         .ui-mircoflow-body {
             width: calc(100% - 430px);
@@ -216,29 +231,13 @@
         }
     }
     
-    .ui-mircoflow-log {
-        bottom: 24px;
-        .ui-mircotable {
-            height: calc(100% - 130px);
-        }
-    }
 }
 
 
 @media screen and (max-height: 800px) {
     .ui-mircoflow {
         
-        .ui-mircoflow-log {
-            width: 260px;
-        }
-        &.ui-runlog-show {
-            .ui-mircoflow-body {
-                width: calc(100% - 290px);
-            }
-            .ui-runtest-toolbar {
-                right: 310px;
-            }
-        }
+        
         .ui-mircoflow-flowlist {
             height: calc(100% - 60px)
         }
@@ -266,6 +265,24 @@
             .ui-mircotable {
                 overflow: auto;
                 height: calc(100% - 120px)
+            }
+        }
+        
+        
+    }
+}
+@media screen and (max-width: 1300px) {
+    .ui-mircoflow {
+        
+        .ui-mircoflow-log {
+            width: 260px;
+        }
+        &.ui-runlog-show {
+            .ui-mircoflow-body {
+                width: calc(100% - 290px);
+            }
+            .ui-runtest-toolbar {
+                right: 320px;
             }
         }
         

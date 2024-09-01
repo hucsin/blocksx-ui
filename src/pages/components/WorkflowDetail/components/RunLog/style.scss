@@ -1,13 +1,113 @@
 .ui-mircoflow-log {
     position: absolute;
     top: 60px;
-    right: 0px;
-    width: 400px;
-    bottom: 24px;
-    background-color: var(--main-inverse-bg-color);
-    border-left: 1px solid var(--main-border-color);
+    right: 16px;
+    width: 380px;
+    bottom: 16px;
+
+    background-color: #fff;
     z-index: 12;
-    padding: 0px 16px ;
+    padding: 16px ;
+    
+    border-radius: 12px 12px;
+    counter-reset: list-counter;
+    box-shadow: 0 2px 4px 0 rgba(30, 30, 31, 0.0392156863);
+    
+    .ui-emblem {
+        position: absolute;
+        height: 0;
+
+        border-radius: 0px 12px 0 0;
+        width: 0;
+        border: 18px dashed transparent;
+        border-top-color: #ddd;
+        border-right-color: #ddd;
+        right: 0px;
+        top: 0px;
+        &::after {
+            position: absolute;
+            top: -13px;
+            right: -20px;
+            font-size: 12px;
+            content: attr(data-text);
+            
+            color:#000;
+            transform: scale(.7) rotate(45deg);
+            text-shadow: 2px 2px 1px rgba(0, 0, 0, .056);
+        }
+    }
+
+    .ui-runlog-body {
+        height: calc(100% - 138px);
+        width: calc(100%);
+        overflow: auto;
+        padding-right: 17px;
+    }
+    
+    dl {
+        padding: 8px;
+        border-radius: 6px;
+        margin-bottom: 2px;
+        margin-top: 0;
+        position: relative;
+        transition: all .2s;
+        background: #fff;
+
+        &.ui-disabled {
+            dt {
+                opacity: .5;
+                .anticon {
+                    color:#ccc !important
+                }
+            }
+            dd {
+                display:none;
+            }
+        }
+
+        &:hover {
+            border-color: var(--main-bg-color);
+            box-shadow: 1px 1px 4px rgba(0, 0, 0, .056);
+        }
+        dd {
+            margin-inline-start: 0px;
+            padding-top: 4px;
+            .ant-alert {
+                padding: 8px;
+            }
+        }
+        dt {
+            &:before {
+                counter-increment: list-counter; /* 每次遇到 li 元素，计数器加 1 */
+                content: "#" counter(list-counter); /* 输出计数器的值作为内容 */
+                //position: absolute;
+                left: 0px;
+                opacity: .2;
+            }
+            font-size: 14px;
+
+
+            .ui-program {
+                opacity: .5;
+                font-size: 12px;
+            }
+            .ui-method {
+                font-size: 12px;
+            }
+            .ui-serial {
+                font-size:12px;
+                display: inline-block;
+                border: 1px solid #ccc;
+                line-height: 12px;
+                text-align: center;
+                opacity: .3;
+                width: 12px;
+                border-radius: 3px;
+                margin-left: -4px;
+
+            }
+        }
+    }
 
     .ui-mircoflow-log-close {
         position: absolute;
@@ -100,6 +200,8 @@
             opacity: .7;
             .anticon {
                 margin-right: 8px;
+                font-size: 42px;
+                vertical-align: middle;
             }
         }
     }

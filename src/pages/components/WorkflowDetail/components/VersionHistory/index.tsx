@@ -138,7 +138,6 @@ export default class VersionHistory extends React.Component<VersionHistoryProps,
                     renderItemClassName={it => `ui-runlog-${it.type}`}
                     renderRowAvatar={()=><FormerTypes.avatar shape='square' color="transparent" icon="HistoryOutlined"/>}
                     onFetchList={(params: any) => {
-                        console.log(params, 333)
                         return this.fetchVersionHistory({
                             ...params,
                             id: this.props.id
