@@ -611,6 +611,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                     let { batchAction }  = this.state;
     
                     let callback: any = () => {
+                        console.log(3333333,3333, batchAction, params)
                         // 跳转到router
                         if (batchAction && batchAction.router && this.props.router) {
                                 this.props.router.utils.goPath(batchAction.router, val);
@@ -680,7 +681,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                         onConfirm={() => this.onActionClick(it, rowData, rowIndex)}
                     >
                         <Button
-                            type="link"
+                            //type="link"
                             
                             size={size || this.props.size}
                             danger={it.danger}
@@ -694,7 +695,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             } else {
                 return (
                     <Button
-                        type="link"
+                        //type="link"
                         size={size || this.props.size}
                         danger={it.danger}
                         key={index}

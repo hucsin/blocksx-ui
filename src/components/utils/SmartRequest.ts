@@ -2,7 +2,7 @@ import { Request } from '@blocksx/swap';
 
 import { Encode, Decode} from '@blocksx/encrypt';
 
-import { message } from 'antd';
+import { message as MessageFor } from 'antd';
 import { pick } from 'lodash';
 
 
@@ -79,11 +79,15 @@ class SmartRequest {
     }
     public getRequestURI(url: string) {
         
-        if(url.match(/^\/api/)) {
-            let zone: string[] = this.getUserZone();
-            return `//${zone[0]}.anyhubs.com/${zone[1]}${url}`
+        if (url.match(/^https:\/\//)) {
+            return url;
         } else {
-            return `//uc.anyhubs.com${url}`;
+            if(url.match(/^\/api/)) {
+                let zone: string[] = this.getUserZone();
+                return `//${zone[0]}.anyhubs.com/${zone[1]}${url}`
+            } else {
+                return `//uc.anyhubs.com${url}`;
+            }
         }
     }
 
@@ -134,7 +138,7 @@ class SmartRequest {
                     , this.getEncodeWrapper(params)
                     , this.getHeaders()
                     , this.dealHeader
-                ).then(({code,message, result}) => {
+                ).then(({code, message, result}) => {
 
                     // 正常响应
                     if (code == 200) {
@@ -146,12 +150,12 @@ class SmartRequest {
                             window.location.href = result.url;
                         } else {
                             if (message) {
-                                message.error(message)
+                                MessageFor.error(message)
                             }
                         }
                     }
                 }).catch((e: any,) => {
-                    message.error(e.message || e || 'system error');
+                    MessageFor.error(e.message || e || 'system error');
                     reject(e)
                 })
             })
@@ -180,12 +184,12 @@ class SmartRequest {
                             window.location.href = result.url;
                         } else {
                             if (message) {
-                                message.error(message)
+                                MessageFor.error(message)
                             }
                         }
                     }
                 }).catch((e: any,) => {
-                    message.error(e.message || e || 'system error');
+                    MessageFor.error(e.message || e || 'system error');
                   //  reject(e)
                 })
             })

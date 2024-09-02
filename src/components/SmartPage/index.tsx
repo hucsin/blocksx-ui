@@ -716,7 +716,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         return (
             <div className={classnames({
                 'ui-smartpage-wrapper': true,
-                [this.props.rootClassName]: this.props.rootClassName,
+                [this.props.rootClassName as string]: this.props.rootClassName,
                 [`ui-smartpage-layout-${this.state.layout}`]: this.state.layout
             })}>
                 <Spin spinning={this.state.loading}>

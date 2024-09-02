@@ -4,6 +4,9 @@
     left: 16px;
     z-index: 112;
     right: 32px;
+    .ui-mircotable .ui-block-item-type-outline {
+        border:none;
+    }
     .ui-background-dwbg {
         display:none;
     }
@@ -15,11 +18,33 @@
           }
     }
 
+    .ui-mircotable .ui-block-item-type-outline {
+        height: 100%;
+        padding: 0;
+        .ant-avatar {
+            display: none;
+        }
+    }
+
     .ui-mircatable-type-info {
         .ui-mircotable .ui-mircotable-avatar > span {
             border-width: 1px;
         }
+        .ant-list-items {
+
+            counter-reset: list-counter;
+        }
         .ant-list-item {
+            .ant-list-item-meta::before {
+                counter-increment: list-counter; /* 每次遇到 li 元素，计数器加 1 */
+                content: "#" counter(list-counter); /* 输出计数器的值作为内容 */
+                //position: absolute;
+                left: 0px;
+                opacity: .1;
+                padding-top: 5px;
+                padding-left: 4px;
+                padding-right: 5px;
+            }
             .ant-list-item-meta-content {
                 
                 .ant-space:last-child {
@@ -81,7 +106,8 @@
         display: none;
     }
     .ui-smartpage-wrapper .ui-classify-wrapper {
-        padding:0 10px
+        padding:0 10px;
+
     }
     .ui-classify-content-wrapper {
         margin-top: 0;
@@ -221,9 +247,15 @@
     }
     .ui-body {
         margin-top: 8px;
-        background-color: var(--main-inverse-bg-color);
+        background-color: #fff;
         transition: all .2s;
+        border-radius: 12px;
+
         overflow: auto;
+        box-shadow: 0 2px 4px 0 rgba(30, 30, 31, 0.0392156863);
+        .ui-mircotable-scrollTop::before {
+            display:none;
+        }
         .ant-list-item {
             &.ui-selected {
                 

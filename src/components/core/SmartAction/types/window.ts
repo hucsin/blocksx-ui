@@ -1,6 +1,16 @@
 import SmartRequest from "@blocksx/ui/utils/SmartRequest";
 
+import { Encode, Decode} from '@blocksx/encrypt';
+
+
 class SmartActionWindow {
+    private getSelfCookie() {
+        let match: any = document.cookie.match(/__=([^;]+)/)
+        return match && Decode.decode(decodeURIComponent(match[1]))
+    }
+    private deleteSelfCookie() {
+        document.cookie =  '__=; expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/; domain=.anyhubs.com;' 
+    }
     public doAction(params: Record<string, any>, callback: Function) {
         
         let screenWidth = window.screen.width;
@@ -11,12 +21,11 @@ class SmartActionWindow {
         window.open(SmartRequest.getRequestURI(params.url), params.id, `width=${windowWidth},height=${windowHeight},top=${(screenHeight-windowHeight)/2},left=${(screenWidth-windowWidth)/2},menubar=no,toolbar=no,resizable=no,focus=1`)
 
         let timer = setInterval((message) => {
-            //console.log(currentWindow,122, currentWindow.closed, 33333)
-            
-            if (message = localStorage.getItem("message")) {
+            if (message = this.getSelfCookie()) {
                 callback(message);
                 clearInterval(timer);
-                localStorage.removeItem('message')
+                
+                this.deleteSelfCookie()
             }
         }, 200)
     }

@@ -29,6 +29,7 @@ export interface SRuntTest {
     openType: string;
     loading: boolean;
     reflush: any;
+    forceReflush: any;
 
     historyType: string;
     historyStartDate: any;
@@ -58,7 +59,8 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
             historyEndDate: props.historyEndDate,
             runId: props.runId,
             loading: false,
-            disabled: props.disabled
+            disabled: props.disabled,
+            forceReflush: props.reflush
         }
         this.router = props.router;
     }
@@ -78,13 +80,15 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
 
         if (newProps.reflush != this.state.reflush) {
             this.setState({
-                reflush: newProps.reflush
+                reflush: newProps.reflush,
+                forceReflush: newProps.reflush
             })
         }
 
         if (newProps.historyType != this.state.historyType) {
             this.setState({
-                historyType: newProps.historyType
+                historyType: newProps.historyType,
+                forceReflush: +new Date()
             })
         }
 
@@ -155,7 +159,7 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
         
         return (
             <SmartPage
-                reflush = {this.state.reflush}
+                reflush = {this.state.forceReflush}
                 name={'taskhistory'}
                 props ={{
                     selectedRow: {
@@ -170,8 +174,18 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
                     this.openLogPanel(v.id)
                 }}
                 onGetDependentParameters={()=> {
+                    let type: string = this.state.historyType;
+                    let extendsd: any = {};
+                    if (['test', 'prod'].includes(type)) {
+                        extendsd.type = type == 'test' ? 'test' : 'interval'
+                    } else {
+                        if (type) {
+                            extendsd.status = type;
+                        }
+                    }
                     return {
-                        job: this.props.router.params.id
+                        job: this.props.router.params.id,
+                        ...extendsd
                     }
                 }}
             />
@@ -255,7 +269,7 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
 
                     <div className='ui-exte'>
                         <Space>
-                            {this.state.openType=='history' && <Tooltip title={i18n.t('Filter dates for the history')}>
+                            {false && this.state.openType=='history' && <Tooltip title={i18n.t('Filter dates for the history')}>
                                 <DatePicker.RangePicker
                                     defaultValue={[this.state.historyStartDate && dayjs(decodeURIComponent(this.state.historyStartDate), this.dateFormat), this.state.historyEndDate && dayjs(decodeURIComponent(this.state.historyEndDate), this.dateFormat)]}
                                     format={this.dateFormat}
@@ -263,12 +277,14 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
                                     onChange={this.onChangeRangeDate}
                                 />
                             </Tooltip>}
-                            {this.state.openType=='history' &&<Tooltip title={i18n.t('Filter the history status')}>
+                            {this.state.openType=='history' &&
                                 <Radio.Group size="small"  value={this.state.historyType} onChange={this.onChangeType}>
-                                    <Radio.Button value="working">{i18n.t('Working')}</Radio.Button>
-                                    <Radio.Button value="edit">{i18n.t('Edit')}</Radio.Button>
+                                    <Radio.Button value="test">{i18n.t('Test')}</Radio.Button>
+                                    <Radio.Button value="prod">{i18n.t('Prod')}</Radio.Button>
+                                    <Radio.Button value="completed">{i18n.t('Success')}</Radio.Button>
+                                    <Radio.Button value="failed">{i18n.t('Failed')}</Radio.Button>
                                 </Radio.Group>
-                            </Tooltip>}
+                            }
                             <Tooltip title={i18n.t('Close the panel')}>
                                 <Button onClick={this.onExpand} size="small" icon={<Icons.DownDirectivityOutlined/>}></Button>
                             </Tooltip>
