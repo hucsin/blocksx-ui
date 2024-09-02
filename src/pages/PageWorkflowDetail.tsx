@@ -16,6 +16,8 @@ interface FlowEditState {
 
 }
 
+// @ts-ignore
+window.utils = utils;
 
 class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
 

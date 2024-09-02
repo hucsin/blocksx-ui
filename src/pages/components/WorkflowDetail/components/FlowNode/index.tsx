@@ -384,7 +384,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                     [`ui-node-status-${status}`]: status,
                     'ui-node-status-errorMessage': this.state.statusMessage
                 })}>
-                    <Popover content={this.renderStatusPopover(this.state.statusMessage)}>
+                    <Popover title="TIPS" align={{offset: [-12,-10]}} placement='topLeft' overlayClassName="ui-tooltip" content={this.renderStatusPopover(this.state.statusMessage)}>
                         {<IconView/>}
                     </Popover>
                 </div>

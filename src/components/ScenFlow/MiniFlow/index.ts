@@ -99,7 +99,7 @@ export default class MiniFlow extends EventEmitter {
     private zoomSize: number;
     public constructor(props: MiniFlowMap) {
         super();
-        this.uniq = props.uniq || 'default';
+        this.uniq = props.uniq || '';
         
         this.canvas = document.getElementById(props.canvas as string);
         this.cavnasWrapper = this.canvas.parentNode;
@@ -452,7 +452,12 @@ export default class MiniFlow extends EventEmitter {
     }
 
     private getUniqName() {
-        return utils.uniq(this.uniq);
+        let serials: any = this.nodes.map(it=> it.serial).sort((a,b) => {
+            return a > b ? -1 : 1;
+        })
+        
+        return 'd' + (serials.shift() + 1)
+        //return utils.uniq(this.uniq);
     }
 
     private getRouterNodeConfig(nodeConfig: any, isTemporary:boolean = true) {

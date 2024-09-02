@@ -371,7 +371,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     public initMiniFlow(id: any) {
         
         this.miniFlow = new MiniFlow({
-            uniq: Encode.encode('Mini#' + id),
+            uniq: '',
             canvas: this.cavnasId,
             isViewer: this.isDisabeld() || this.props.isViewer,
             unlinkChinampaPanel: this.unlinkPanel,

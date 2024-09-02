@@ -41,7 +41,7 @@ export default class DefaultNodeList {
         }
     }
     public static getUniqName(id: any) {
-        return utils.uniq(Encode.encode('mini#' + id));
+        return 'c'//utils.uniq(Encode.encode('mini#' + id));
     }
 
     public static getDefaultTriggerClassifyConfig(classify: string, id: any) {
@@ -118,10 +118,10 @@ export default class DefaultNodeList {
         return {};
     }
     public static classifyMap:any =  {
-        thinking: (uniq: string) => {
-            let sourceNodeName: string = uniq + '1';
-            let targetNodeName: string = uniq + '2';
-            let emptyNodeName: string = uniq + '3';
+        thinking: (uniq?: string) => {
+            let sourceNodeName: string = 't1';
+            let targetNodeName: string = 't2';
+            let emptyNodeName: string = 't3';
 
             return {
                 nodes: [
@@ -165,10 +165,10 @@ export default class DefaultNodeList {
                 ]
             }
         },
-        'function': (uniq: string) => {
-            let startName: string = uniq + '1';
-            let bufferName: string = uniq + '2';
-            let emptyName: string = uniq + '3';
+        'function': (uniq?: string) => {
+            let startName: string = 't1';
+            let bufferName: string = 't2';
+            let emptyName: string = 't3';
 
             return {
                 nodes: [
@@ -226,10 +226,10 @@ export default class DefaultNodeList {
             }
 
         },
-        'trigger': (uniq: string) => {
-            let startName: string = uniq + '1';
-            let bufferName: string = uniq + '2';
-            let emptyName: string = uniq + '3';
+        'trigger': (uniq?: string) => {
+            let startName: string =  't1';
+            let bufferName: string = 't2';
+            let emptyName: string = 't3';
 
             return {
                 nodes: [
