@@ -1,6 +1,6 @@
 .ui-tooltip {
     min-width: 200px;
-    max-width: 400px;
+    max-width: 500px;
     .ant-tooltip-inner {
         padding: 16px;
         &::before {
@@ -11,6 +11,10 @@
             top: -8px;
             opacity: .5;
         }
+    }
+    .ui-output-tips .ui-run-log-output {
+        border-radius: 12px;
+        border: 1px solid #eee;
     }
 }
 .ui-publish-wrapper {
@@ -78,6 +82,12 @@
 .ui-mircoflow {
     height: 100%;
     position: relative;
+    .ant-spin-nested-loading {
+        height: 100%;
+        .ant-spin-container{
+            height: 100%;
+        }
+    }
    
     .ui-mircoflow-body {
         position: relative;

@@ -4,9 +4,9 @@ import { utils } from '@blocksx/core';
 import { Space, Descriptions, Divider, Alert } from 'antd';
 import { Icons, ErrorMessage, TablerUtils } from '@blocksx/ui';
 import { UserOutlined, CloseCircleFilled, TranslationOutlined } from '@ant-design/icons';
-
-
 import { MiniFlow as StructuralMiniFlow } from '@blocksx/structural';
+
+import Output from '../Output';
 
 import { FetchMap } from '../../typing';
 
@@ -174,7 +174,7 @@ export default class RunLog extends React.Component<RunLogProps, RunLogState> {
             <div className='ui-emblem' data-text={text}></div>
         )
     }
-    public renderItem(node: any, status: any) {
+    public renderItem(node: any, status: any, index: number) {
         
         switch(status.status) {
             case 'NODE_BREAK':
@@ -188,12 +188,17 @@ export default class RunLog extends React.Component<RunLogProps, RunLogState> {
                 }
                 break;
             case 'NODE_FINISH':
-                return <Alert 
-                        message="Finsh"  
-                        type="success" 
-                        showIcon  
-                        description= {'dd'}
+                
+                return (
+                    <Alert
+                        type="success"
+                        showIcon
+                        description={<Output 
+                            key={node.name}
+                            expand={index>=2}
+                            nodeStatus={this.state.nodeStatus[node.name]}/>}
                     />
+                )
             default:
                 return (
                     null
@@ -234,7 +239,7 @@ export default class RunLog extends React.Component<RunLogProps, RunLogState> {
                                 })}>
                                     <dt> {TablerUtils.renderIconComponent(node)} <span className='ui-method'>{props.method}</span> <span className='ui-program'>{props.program}</span>  <span className='ui-serial'>{node.serial}</span></dt>
                                     <dd>
-                                        {this.renderItem(node, status)}
+                                        {this.renderItem(node, status, index)}
                                     </dd>
                                 </dl>
                             )

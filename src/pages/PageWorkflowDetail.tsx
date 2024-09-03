@@ -112,16 +112,20 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                 onFetchHistory = {(hisId: string) => {
                     return this.fetchViewTaskHistory({id: hisId}).then(result => {
                         let schema: any  = result.schema || {};
-
-                        if (!schema.nodes[0].name) {
-                            schema.nodes = utils.decompress(schema.nodes);
-                            schema.connectors = utils.decompress(schema.connectors);
+                        
+                        if (schema.nodes) {
+                            if (!schema.nodes[0].name) {
+                                schema.nodes = utils.decompress(schema.nodes);
+                                schema.connectors = utils.decompress(schema.connectors);
+                            }
+                        } else {
+                            result.schema =  result.schema && Array.isArray(result.schema) ? utils.decompress(result.schema) : result.schema;
+                            result.payload = utils.isArray(result.payload) ? utils.decompress(result.payload) : result.payload;
+                            result.snapshot = result.snapshot && !result.snapshot.nodes  ? utils.decompress(result.snapshot) : result.snapshot;
                         }
-
-
+                        console.log(result, 333)
                         return {
-                            ...result,
-                            schema: schema
+                            ...result
                         }
                     })
                 }}

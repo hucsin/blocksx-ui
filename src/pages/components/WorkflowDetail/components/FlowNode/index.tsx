@@ -3,14 +3,15 @@ import classnames from 'classnames';
 import { utils, keypath } from '@blocksx/core';
 import './style.scss';
 import { FetchMap } from '../../typing';
-import NodeConfigure from '../NodeConfigure';
+import NodeConfigure from './NodeConfigure';
 import { DomUtils, FormerTypes, ContextMenu, Icons, SmartPage, GlobalScope } from '@blocksx/ui';
 
 import i18n from '@blocksx/i18n';
 import { PlusOutlined } from '@ant-design/icons';
 
 import DefaultNodeList from '../../config/DefaultNodeList';
-import { get, set } from 'lodash';
+import { set } from 'lodash';
+import Output from '../Output'
 import Clock from './clock';
 import { Popover } from 'antd';
 
@@ -25,7 +26,8 @@ interface IMircoFlowNode {
     mircoFlow: any;
     floating?: boolean;
     status?: any;
-    statusMessage?: any;
+    //statusMessage?: any;
+    nodeStatus?: any;
     locked?: boolean;
     bytethinkingId?: number;
     componentName?: string;
@@ -59,7 +61,9 @@ interface SMircoFlowNode {
     isNew?: boolean;
     props: any;
     status: any,
-    statusMessage: any;
+    
+    //statusMessage: any;
+    nodeStatus?: any;
     cacheProps: any;
     openSetting: boolean;
     hasChanged: boolean;
@@ -230,7 +234,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             activateList: props.activateList,
             componentName,
             status: '',
-            statusMessage: ''
+            nodeStatus: props.nodeStatus
         };
 
         this.mircoFlow = props.mircoFlow;
@@ -247,12 +251,12 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         if (newProps.status != this.state.status) {
             this.setState({
                 status: newProps.status,
-                statusMessage: newProps.statusMessage
+                nodeStatus: newProps.nodeStatus
             })
         }
-        if (newProps.statusMessage != this.state.statusMessage) {
+        if (newProps.nodeStatus != this.state.nodeStatus) {
             this.setState({
-                statusMessage: newProps.statusMessage
+                nodeStatus: newProps.nodeStatus
             })
         }
 
@@ -360,15 +364,43 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         faild: 'InfoOutlined',
         miss: 'SettingFilled'
     };
-    public renderStatusPopover(message: any) {
-        let msg:any = Array.isArray(message) ? message :  message  ? [message]: null;
+    private isShowError() {
+        let { nodeStatus = {} } = this.state;
+        
+        if (nodeStatus.status == 'NODE_BREAK') {
+            return !!nodeStatus.message
+        }
+    }
+    private isShowSuccess() {
 
-        if (msg ) {
+        let { nodeStatus = {} } = this.state;
+        if (nodeStatus.status == 'NODE_FINISH') {
+            return nodeStatus.outcome && nodeStatus.outcome.$data;
+        }
+    }
+    private canShowPopover() {
+        return this.isShowError() || this.isShowSuccess();
+    }
+    public renderStatusPopover() {
+        let status: string = this.state.status; // running, success, faild, miss
+        
+        let IconView: any = Icons[this.statusIconMap[status]]
+        if (this.canShowPopover()) {
+            let type: string = this.isShowSuccess() ? 'success': 'error';
             return (
-                <ul className='ui-node-status-popover'>
-                    {msg.map((it, index) => <li key={index}>{it}</li>)}
-                </ul>
+                <div className={classnames({
+                    'ui-popover-tips': true,
+                    [`ui-popover-tips-${type}`]: type
+                })}>
+                    <p><IconView/> {this.isShowSuccess() ? 'Success' : 'Error'}</p>
+                    {this.isShowSuccess() 
+                        ? <Output nodeStatus={this.state.nodeStatus} /> 
+                        : <div>{this.state.nodeStatus.message}</div>}
+                </div>
             )
+            
+        } else {
+            return null;
         }
     }
     public renderStatus() {
@@ -379,12 +411,17 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         //let statusIcon: 
         if (status && IconView) {
             return (
-                <div className={classnames({
+                <div
+                    onClick={(e)=> {
+                        e.stopPropagation();
+                        //e.preventDefault();
+                    }}
+                    className={classnames({
                     'ui-node-status': true,
                     [`ui-node-status-${status}`]: status,
-                    'ui-node-status-errorMessage': this.state.statusMessage
+                    'ui-node-status-errorMessage': this.isShowError()
                 })}>
-                    <Popover title="TIPS" align={{offset: [-12,-10]}} placement='topLeft' overlayClassName="ui-tooltip" content={this.renderStatusPopover(this.state.statusMessage)}>
+                    <Popover align={{offset: [-12,-10]}} placement='topLeft' overlayClassName="ui-tooltip" content={this.renderStatusPopover()}>
                         {<IconView/>}
                     </Popover>
                 </div>

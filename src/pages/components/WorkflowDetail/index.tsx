@@ -510,8 +510,9 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         this.setState({
             titleIsInput: false
         })
-
-        this.props.onEditorValue && this.props.onEditorValue(value)
+        if (!this.isDisabeld()) {
+            this.props.onEditorValue && this.props.onEditorValue(value)
+        }
 
     }
     public onChangeTitle =(e )=>  {
@@ -548,16 +549,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                                     this.onChangeTitle({ target: {value:val}})
                                 }} 
                             />}
-                            {0 && !this.state.titleIsInput 
-                                ? <span onClick={this.onTitleClick}>{value.title}</span> 
-                                : <Input 
-                                    autoFocus
-                                    value={value.title} 
-                                    onBlur={this.onBlurTitle}
-                                    style={{width: this.state.titleOffsetWidth}}
-                                    onChange={this.onChangeTitle} 
-                                />
-                            }
+                            
                         </span>
                         
                     </Space>
@@ -674,7 +666,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                     }}/>}
                      {!this.props.isViewer && <Tooltip placement="top" open={this.isDisabeld() ? false : undefined} title={i18n.t('Publish')}>
                         <Popover rootClassName='ui-publish-wrapper' open={this.isDisabeld() ? false : this.state.openPublish} content={this.renderPublishContent()} onOpenChange={(v)=>this.setState({openPublish: v})} trigger={'click'}  >
-                            <Button loading={this.state.publishing} icon={<Icons.PublishUtilityFilled/>}><span className='ui-empty'>{!this.state.isPublish && '(Unpublished)'}</span>{this.state.version}</Button> 
+                            <Button loading={this.state.publishing} disabled={this.isDisabeld()} icon={<Icons.PublishUtilityFilled/>}><span className='ui-empty'>{!this.state.isPublish && '(Unpublished)'}</span>{this.state.version}</Button> 
                         </Popover>
                     </Tooltip>}
                     <Tooltip placement="top" title={i18n.t('Auto align the {pageType}', {pageType: this.props.pageType})}>
@@ -791,8 +783,9 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         
     }
     public renderFlowList() {
+        let { runNodeStatus = {} } = this.state;
         if (this.state.loading) {
-            return <Spin spinning/>
+            return null;
         }
 
         return (
@@ -808,8 +801,11 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                     
                     let nodeStatus: any = this.getNodeStatus(node);
                     let status: string = nodeStatus ? nodeStatus.code || nodeStatus : '';
-                    let statusMessage: string = nodeStatus ? nodeStatus.message : '';
-
+                    //let statusMessage: string = nodeStatus ? nodeStatus.message : '';
+                    let nodeStatusCob: any = {
+                        ...runNodeStatus[node.name],
+                        ...nodeStatus
+                    }
 
                     return <MircoFlowNode fetchMap={this.props.fetchMap} key={[this.state.reflush,node.name].join('')} {...node} 
                         onUpdateNode={(id,nodeInfo,isPatch)=> {
@@ -833,7 +829,8 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         onAddTriggerNode={this.addTriggerNodeById}
                         mircoFlow={this}
                         status={status}
-                        statusMessage={statusMessage}
+                        nodeStatus={nodeStatusCob}
+                        
                         activateList={this.state.activateList}
                         workflowId={this.props.workflowId}
                         getFormerSchema={this.props.getFormerSchema}
@@ -995,72 +992,75 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     public render () {
         let formerSchema: any  = this.getFormerSchema();
         return (
-            <div ref={this.canvasRef} className={classnames({
-                'ui-mircoflow': true,
-                'ui-runtest-show': !!this.state.openType,
-                'ui-runlog-show': !!this.state.openLog
-            })} >
-                {formerSchema && <SmartPage  
-                    name={this.props.pageType}
-                    type='drawer' 
-                    uiType='former'
-                    simplicity
-                    value={this.getValue()}
-                    title={(this.state.formerType == 'clone' ? 'Clone' : 'Edit') + ' the '+ this.props.pageType}
-                    open={this.state.formerVisible}
-                    onChangeValue={this.onFormerSave}
-                    onClose={()=>{this.setState({formerVisible:false})}}
-                    okText={i18n.t(this.state.formerType == 'clone' ? 'Clone' : 'Save')}
-                />}
-                {this.renderHeader()}
-                {this.renderResponse()}
-                {this.renderActionToolbar()}
-                <div draggable className='ui-mircoflow-body'>
-                    {this.renderFlowList()}
+            
+                <div ref={this.canvasRef} className={classnames({
+                    'ui-mircoflow': true,
+                    'ui-runtest-show': !!this.state.openType,
+                    'ui-runlog-show': !!this.state.openLog
+                })} >
+                    <Spin spinning={this.state.loading} wrapperClassName="3" size="large" >
+                        {formerSchema && <SmartPage  
+                            name={this.props.pageType}
+                            type='drawer' 
+                            uiType='former'
+                            simplicity
+                            value={this.getValue()}
+                            title={(this.state.formerType == 'clone' ? 'Clone' : 'Edit') + ' the '+ this.props.pageType}
+                            open={this.state.formerVisible}
+                            onChangeValue={this.onFormerSave}
+                            onClose={()=>{this.setState({formerVisible:false})}}
+                            okText={i18n.t(this.state.formerType == 'clone' ? 'Clone' : 'Save')}
+                        />}
+                        {this.renderHeader()}
+                        {this.renderResponse()}
+                        {this.renderActionToolbar()}
+                        <div draggable className='ui-mircoflow-body'>
+                            {this.renderFlowList()}
+                        </div>
+                        {!this.props.isViewer && <MircoRunTest 
+                            fetchMap={this.props.fetchMap} 
+                            router={this.router} 
+                            disabled={this.isDisabeld()}
+                            onOpenLogPanel={(logId)=> {
+                                //
+                                this.fetchTaskHistory(logId)
+                            }}
+                            getSchema={()=> {
+                                return {
+                                    version: this.state.version,
+                                    nodes: this.state.nodes,
+                                    connectors: this.state.connectors
+                                }
+                            }}
+                            reflush={this.state.reflushHistory}
+                            switchRunStatus={(state: 'running' | 'runed', payload?: any)=> {
+                                this.setState({
+                                    runStatus: state,
+                                    runNodeStatus: payload || {}
+                                })
+
+                                if (state == 'runed') {
+                                    this.setState({
+                                        reflushHistory: +new Date()
+                                    })
+                                }
+                            }}
+                            openType={this.state.openType}
+                            historyType={this.state.historyType}
+                            historyStartDate={this.state.historyStartDate}
+                            historyEndDate={this.state.historyEndDate}
+                            runId={this.state.openLog}
+                        />}
+                        
+                        {this.state.openLog && <MircoRunLog onCloseLog={()=> {this.reloadData()}} nodeStatus={this.state.runNodeStatus} value={this.state.value} router={this.router} fetchMap={this.props.fetchMap} logId={this.state.openLog} logType={this.state.logType} />}
+                        {this.renderNewNodeToolbar()}
+                        {this.state.value.id && <MirceVersionHistory version={this.state.version} onReflush={()=>{ this.reloadData() }} onClose={()=>{this.setState({openVersion:false})}} fetchMap={this.props.fetchMap}  open={this.state.openVersion} id={this.state.value.id}/>}
+                        <div className='ui-background-dwbg' dangerouslySetInnerHTML={{ __html: mainTexture }}></div>
+
+                        {this.renderConnectSetting()}
+                    </Spin>
                 </div>
-                {!this.props.isViewer && <MircoRunTest 
-                    fetchMap={this.props.fetchMap} 
-                    router={this.router} 
-                    disabled={this.isDisabeld()}
-                    onOpenLogPanel={(logId)=> {
-                        //
-                        this.fetchTaskHistory(logId)
-                    }}
-                    getSchema={()=> {
-                        return {
-                            version: this.state.version,
-                            nodes: this.state.nodes,
-                            connectors: this.state.connectors
-                        }
-                    }}
-                    reflush={this.state.reflushHistory}
-                    switchRunStatus={(state: 'running' | 'runed', payload?: any)=> {
-                        this.setState({
-                            runStatus: state,
-                            runNodeStatus: payload || {}
-                        })
-
-                        if (state == 'runed') {
-                            this.setState({
-                                reflushHistory: +new Date()
-                            })
-                        }
-                    }}
-                    openType={this.state.openType}
-                    historyType={this.state.historyType}
-                    historyStartDate={this.state.historyStartDate}
-                    historyEndDate={this.state.historyEndDate}
-                    runId={this.state.openLog}
-                />}
-                
-                {this.state.openLog && <MircoRunLog onCloseLog={()=> {this.reloadData()}} nodeStatus={this.state.runNodeStatus} value={this.state.value} router={this.router} fetchMap={this.props.fetchMap} logId={this.state.openLog} logType={this.state.logType} />}
-                {this.renderNewNodeToolbar()}
-                {this.state.value.id && <MirceVersionHistory version={this.state.version} onReflush={()=>{ this.reloadData() }} onClose={()=>{this.setState({openVersion:false})}} fetchMap={this.props.fetchMap}  open={this.state.openVersion} id={this.state.value.id}/>}
-                <div className='ui-background-dwbg' dangerouslySetInnerHTML={{ __html: mainTexture }}></div>
-
-                {this.renderConnectSetting()}
-                
-            </div>
+            
         )
     }
 }

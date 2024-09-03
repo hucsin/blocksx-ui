@@ -12,7 +12,22 @@
     border-radius: 12px 12px;
     counter-reset: list-counter;
     box-shadow: 0 2px 4px 0 rgba(30, 30, 31, 0.0392156863);
-    
+    .ant-alert-message {
+        margin-bottom: 0px;
+    }
+    .ant-alert-success {
+        background-color: #fff;
+        .anticon-check-circle {
+            color:#52c41a;
+            margin-inline-end: 4px;
+        }
+        .ui-run-log-output {
+            padding-left: 32px;
+            left: -47px;
+            position: relative;
+            width: calc(100% + 8px);
+        }
+    }
     .ui-emblem {
         position: absolute;
         height: 0;
@@ -74,6 +89,10 @@
             padding-top: 4px;
             .ant-alert {
                 padding: 8px;
+                transition: all .2s;
+                &:hover {
+                    opacity: 1;
+                }
             }
         }
         dt {
@@ -187,15 +206,15 @@
     .ant-alert-with-description .ant-alert-icon {
         font-size:16px;
     }
-    .ant-descriptions-header {
+    >.ant-descriptions  .ant-descriptions-header {
         margin-bottom: 4px;
     }
-    .ant-descriptions .ant-descriptions-row >td{
+    >.ant-descriptions .ant-descriptions-row >td{
         margin-bottom: 0;
         padding-bottom: 0;
 
     }
-    .ant-descriptions-title {
+    >.ant-descriptions > .ant-descriptions-title {
         span {
             opacity: .7;
             .anticon {
@@ -205,11 +224,11 @@
             }
         }
     }
-    .ant-descriptions .ant-descriptions-item-container .ant-descriptions-item-label {
+    >.ant-descriptions .ant-descriptions-item-container .ant-descriptions-item-label {
         width: 75px;
         padding-left: 8px;
     }
-    .ant-descriptions-item-content {
+    >.ant-descriptions  .ant-descriptions-item-content {
         opacity: .6;
         overflow:hidden;
         text-overflow: ellipsis;

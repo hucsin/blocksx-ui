@@ -59,6 +59,7 @@ class RouterUtils {
     }
     public goQuery(query?: any) {
         Object.assign(this.router.query, query);
+        
         this.go(this.router.location.pathname, {
             ...this.router.query,
             ...query

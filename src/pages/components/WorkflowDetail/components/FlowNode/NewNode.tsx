@@ -1,6 +1,6 @@
 import React from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import NodeConfigure from '../NodeConfigure';
+import NodeConfigure from './NodeConfigure';
 import { FetchMap } from '../../typing';
 
 interface NewNodeProps {

@@ -166,10 +166,14 @@ class SmartRequest {
     public makeGetRequest(url: string,  fields?: any) {
         return (request: any) => {
             let params = this.getRequestParams(request, fields);
+            let query: string = this.getValidParmas(params);
+            
 
             return new Promise((resolve, reject) => {
                 Request.get(this.getRequestURI(url)
-                    , this.getValidParmas(params)
+                    , {
+                        _: Encode.encode(JSON.stringify(query))
+                    }
                     , this.getHeaders() 
                     , this.dealHeader
                 ).then(({code, message, result}) => {

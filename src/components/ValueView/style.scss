@@ -1,0 +1,56 @@
+.ui-tooltip-valueview {
+    min-width: 200px;
+    max-width: 400px;
+    min-height: 200px;
+    max-height: 400px;
+}
+.ui-valueview {
+    .ui-empty.ant-popover-open {
+        color:var(--main-bg-color)
+    }
+    .ui-valueview-table-button {
+        cursor: pointer;
+        &.ant-popover-open {
+            color: var(--main-bg-color);
+        }
+    }
+    &:not(.ui-valueview-wrapper-default) {
+        .ui-valueview {
+            padding-left: 12px;
+        }
+    }
+    .ant-descriptions-header {
+        margin-bottom: 0px;
+        
+    }
+    .ant-descriptions-title {
+        font-weight: normal;
+        opacity: .3;
+        font-size:13px;
+        padding-bottom: 0px;
+        text-transform: capitalize;
+
+    }
+
+    .ant-descriptions-view {
+        
+        border-radius: 8px;
+        font-size:12px;
+        padding: 8px;
+        margin-bottom: 8px;
+        
+        border: 1px dashed var(--secondary-border-color);
+    }
+
+
+   
+}
+
+
+.ui-valueview-table {
+    .ant-table-wrapper .ant-table.ant-table-small .ant-table-cell, 
+    .ant-table-wrapper .ant-table.ant-table-small .ant-table-thead>tr>th {
+        padding: 3px;
+        font-size:12px;
+    }
+}

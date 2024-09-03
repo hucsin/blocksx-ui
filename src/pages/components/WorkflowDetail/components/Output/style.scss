@@ -1,0 +1,49 @@
+.ui-output-tips {
+    .ant-table-wrapper .ant-table {
+        background-color: transparent;
+    }
+    &.ui-output-expand {
+        .ui-output-header {
+            .anticon {
+                display: none;
+            }
+        }
+        .ui-run-log-output {
+            display:none;
+        }
+    }
+    .ui-run-log-output {
+        max-height: 120px;
+        overflow: auto;
+        word-wrap: normal;
+        padding: 8px;
+        word-break: break-all
+    }
+    .ui-output-header {
+        position: relative;
+        .anticon {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            cursor: pointer;
+        }
+    }
+    .ant-segmented {
+        padding: 0;
+        top: -4px;
+        position: relative;
+        background-color: transparent;
+        .ant-segmented-item-selected {
+            color:var(--main-bg-color)
+        }
+    }
+}
+.ui-tooltip {
+    .ui-output-tips {
+        .ui-output-header {
+            .anticon {
+                display:none;
+            }
+        }
+    }
+}

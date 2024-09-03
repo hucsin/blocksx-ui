@@ -93,6 +93,10 @@
                     right: -11px;
                     top: 8px;
                 }
+                .ant-list-item-meta-description::before  {
+                    opacity: 1;
+                    color:var(--main-bg-color)
+                }
                 //border: 1px solid var(--main-bg-color) !important;
                 .ui-meta-description-wrapper {
                     opacity: 1;
