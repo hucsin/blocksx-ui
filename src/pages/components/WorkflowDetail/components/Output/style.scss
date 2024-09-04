@@ -1,12 +1,44 @@
 .ui-output-tips {
+    &.ui-output-fullscreen {
+        position: fixed;
+        width: calc(100vw);
+        height: calc(100vh);
+        box-sizing: border-box;
+        padding: 32px;
+        z-index: 111;
+        left: 0;
+        top: 0;
+        background-color: #fff;
+         div.ui-output-header {
+            left: 32px;
+            top: 32px;
+            position: absolute;
+            width: calc(100% - 32px);
+            .ant-space {
+                position: absolute;
+                right: 32px;
+            }
+        }
+        .ui-run-log-output {
+            margin-top: 24px;
+            padding: 24px !important;
+            left: 0px !important;
+            width: 100%;
+            border-radius: 12px;
+            font-size: 14px;
+            
+            box-sizing: border-box;
+            max-height: calc(100% - 40px);
+            height: calc(100% - 40px);
+            border: 1px solid var(--main-border-color);
+        }
+    }
     .ant-table-wrapper .ant-table {
         background-color: transparent;
     }
     &.ui-output-expand {
         .ui-output-header {
-            .anticon {
-                display: none;
-            }
+          
         }
         .ui-run-log-output {
             display:none;
@@ -17,15 +49,26 @@
         overflow: auto;
         word-wrap: normal;
         padding: 8px;
-        word-break: break-all
+        word-break: break-all;
+
     }
     .ui-output-header {
         position: relative;
-        .anticon {
+        .ant-space {
             position: absolute;
             top: 1px;
             right: 1px;
             cursor: pointer;
+            span {
+                opacity: .5;
+            }
+            span:hover {
+                opacity: 1;
+            }
+            span.ui-selected {
+                opacity: .9;
+                color:var(--main-bg-color)
+            }
         }
     }
     .ant-segmented {
@@ -33,17 +76,9 @@
         top: -4px;
         position: relative;
         background-color: transparent;
+        font-size: 12px;
         .ant-segmented-item-selected {
             color:var(--main-bg-color)
-        }
-    }
-}
-.ui-tooltip {
-    .ui-output-tips {
-        .ui-output-header {
-            .anticon {
-                display:none;
-            }
         }
     }
 }

@@ -369,4 +369,66 @@ export default class TablerUtils {
             properties: this.getDefaultSchemaProperties(fields)
         }
     }
+
+    public static  toggleFullscreen(elem: any) {
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) { // Firefox
+          elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) { // Chrome, Safari, Opera
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { // IE/Edge
+          elem.msRequestFullscreen();
+        }
+    }
+
+    public static downloadFile(filename, content) {
+        // 创建一个 Blob 对象，内容类型默认为 text/plain
+        //@ts-ignore
+        const blob = new Blob([content], { type: 'text/plain' });
+    
+        // 检查浏览器是否为 IE 并支持 msSaveBlob 方法
+        //@ts-ignore
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            // 如果是 IE 使用 msSaveBlob 方法下载文件
+            //@ts-ignore
+            window.navigator.msSaveBlob(blob, filename);
+        } else {
+            // 其他现代浏览器的下载方式
+            //@ts-ignore
+            const url = URL.createObjectURL(blob); // 创建 Blob URL
+            //@ts-ignore
+            const a = document.createElement('a'); // 创建 <a> 元素
+            a.href = url;
+            a.download = filename; // 设置下载文件名
+    
+            // 触发下载
+            //@ts-ignore
+            document.body.appendChild(a); // 需要将元素添加到 DOM 中才能触发点击
+            a.click();
+    
+            // 下载完成后清理
+            //@ts-ignore
+            document.body.removeChild(a); // 移除 <a> 元素
+            //@ts-ignore
+            URL.revokeObjectURL(url); // 释放 Blob URL
+        }
+    }
+    public static  exitFullscreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        // @ts-ignore
+        } else if (document.mozCancelFullScreen) { // Firefox
+            // @ts-ignore
+            document.mozCancelFullScreen();
+            // @ts-ignore
+        } else if (document.webkitExitFullscreen) { // Chrome, Safari, Opera
+            // @ts-ignore
+            document.webkitExitFullscreen();
+            // @ts-ignore
+        } else if (document.msExitFullscreen) { // IE/Edge
+            // @ts-ignore
+            document.msExitFullscreen();
+        }
+    }
 }

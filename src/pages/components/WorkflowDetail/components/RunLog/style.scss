@@ -6,7 +6,7 @@
     bottom: 16px;
 
     background-color: #fff;
-    z-index: 12;
+    z-index: 130;
     padding: 16px ;
     
     border-radius: 12px 12px;
@@ -68,6 +68,15 @@
         transition: all .2s;
         background: #fff;
 
+        opacity: .8;
+        &:hover {
+            
+            border-color: var(--main-bg-color);
+            box-shadow: 1px 1px 4px rgba(0, 0, 0, .056);
+            opacity: 1;
+            transform: scale(1.01);
+        }
+
         &.ui-disabled {
             dt {
                 opacity: .5;
@@ -80,13 +89,10 @@
             }
         }
 
-        &:hover {
-            border-color: var(--main-bg-color);
-            box-shadow: 1px 1px 4px rgba(0, 0, 0, .056);
-        }
         dd {
             margin-inline-start: 0px;
             padding-top: 4px;
+            
             .ant-alert {
                 padding: 8px;
                 transition: all .2s;
@@ -130,11 +136,9 @@
 
     .ui-mircoflow-log-close {
         position: absolute;
-        left: -10px;
-        font-size:18px;
-        top: 50%;
-        margin-top: -50px;
-        
+        left: -11px;
+        font-size: 27px;
+        top: -14px;
         
         span {
             opacity: .2;
@@ -160,6 +164,9 @@
         .ant-list-item-meta-title {
             background:var(--module-go-bg-color)
         }
+    }
+    .ant-alert-description {
+        font-size: 12px;
     }
     .ui-runlog-router {
         .ant-list-item-meta-title {
@@ -214,7 +221,7 @@
         padding-bottom: 0;
 
     }
-    >.ant-descriptions > .ant-descriptions-title {
+    >.ant-descriptions   >.ant-descriptions-header > .ant-descriptions-title {
         span {
             opacity: .7;
             .anticon {

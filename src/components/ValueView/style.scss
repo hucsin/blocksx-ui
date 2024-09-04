@@ -1,19 +1,19 @@
 .ui-tooltip-valueview {
     min-width: 200px;
     max-width: 400px;
-    min-height: 200px;
     max-height: 400px;
+}
+.ui-valueview-table-button {
+    cursor: pointer;
+    &.ant-popover-open {
+        color: var(--main-bg-color);
+    }
 }
 .ui-valueview {
     .ui-empty.ant-popover-open {
         color:var(--main-bg-color)
     }
-    .ui-valueview-table-button {
-        cursor: pointer;
-        &.ant-popover-open {
-            color: var(--main-bg-color);
-        }
-    }
+   
     &:not(.ui-valueview-wrapper-default) {
         .ui-valueview {
             padding-left: 12px;
@@ -31,7 +31,9 @@
         text-transform: capitalize;
 
     }
-
+    .ant-descriptions .ant-descriptions-row >td  {
+        padding-bottom: 4px;
+    }
     .ant-descriptions-view {
         
         border-radius: 8px;

@@ -97,6 +97,7 @@ export default class ValueView extends React.Component<ValueViewProps, ValueView
                 }
             ]
         }} />*/
+         
         switch(this.state.type) {
             case 'json':
                 return this.renderJSON();

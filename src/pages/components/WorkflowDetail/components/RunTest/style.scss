@@ -30,30 +30,11 @@
         .ui-mircotable .ui-mircotable-avatar > span {
             border-width: 1px;
         }
-        .ant-list-items {
-
-            counter-reset: list-counter;
-        }
         .ant-list-item {
             .ant-list-item-meta-content {
                 .ant-list-item-meta-description {
+                    font-size:13px;
                     position: relative;
-                    padding-left: 14px;
-                }
-                .ant-list-item-meta-description::before {
-                    counter-increment: list-counter; /* 每次遇到 li 元素，计数器加 1 */
-                    content: "#" counter(list-counter); /* 输出计数器的值作为内容 */
-                    //position: absolute;
-                    left: -13px;
-                    opacity: .2;
-                    font-size:12px;
-                    padding-top: 5px;
-                    padding-left: 4px;
-                    padding-right: 5px;
-                    position: absolute;
-                    top: -2px;
-                    width: 30px;
-                    text-align: right;
                 }
                 .ant-space:last-child {
                     opacity: .3;
@@ -80,6 +61,12 @@
                 opacity: 1;
                 background: #fff !important;
                 position: relative;
+                .ui-mrcotable-content,
+                .former-radio-button  label{
+                     
+                        color:var(--main-bg-color) !important;
+                    
+                }
                 .ui-mrcotable-content {
                     opacity: .9;
                 }
@@ -135,7 +122,7 @@
         padding: 0;
         border-radius: 6px;
         border: 1px solid #fff;
-        margin-bottom: 4px !important;
+        margin-bottom: 0px !important;
     }
     .ui-smartpage-wrapper .ui-mircotable {
         padding-left: 12px !important;

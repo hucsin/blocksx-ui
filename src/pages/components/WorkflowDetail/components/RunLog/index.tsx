@@ -20,6 +20,7 @@ interface RunLogProps {
     logType: string;
     nodeStatus: any;
     onCloseLog?: Function
+    onToggleActivate: Function;
 }
 
 interface RunLogState {
@@ -234,9 +235,18 @@ export default class RunLog extends React.Component<RunLogProps, RunLogState> {
                             let status: any = this.state.nodeStatus[node.name] || {};
                             
                             return (
-                                <dl key={index} className={classnames({
-                                    'ui-disabled': this.getDisabled(status)
-                                })}>
+                                <dl 
+                                    key={index} 
+                                    className={classnames({
+                                        'ui-disabled': this.getDisabled(status)
+                                    })}
+                                    onMouseEnter={()=> {
+                                        this.props.onToggleActivate([node.name])
+                                    }}
+                                    onMouseLeave={()=> {
+                                        this.props.onToggleActivate([])
+                                    }}
+                                >
                                     <dt> {TablerUtils.renderIconComponent(node)} <span className='ui-method'>{props.method}</span> <span className='ui-program'>{props.program}</span>  <span className='ui-serial'>{node.serial}</span></dt>
                                     <dd>
                                         {this.renderItem(node, status, index)}

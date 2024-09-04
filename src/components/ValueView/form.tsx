@@ -6,9 +6,7 @@ import { Descriptions } from 'antd';
 import ValueViewTable from './table/index'
 
 export default class ValueViewForm extends React.Component<{ value: any, column?: number, title?: string}, { value: any, total: number}> {
-    public static defaultProps = {
-        column: 3
-    }
+  
     public constructor(props: any) {
         super(props);
 
@@ -80,8 +78,12 @@ export default class ValueViewForm extends React.Component<{ value: any, column?
                     </div>
                 )
             case 'object':
+                let valueLength: number = Object.keys(value).length;
+                let column: number = this.props.column || (valueLength < 8 ? 1 : 2 );
+
+
                 return (
-                    <Descriptions column={this.props.column} className={classnames({
+                    <Descriptions column={ column } className={classnames({
                         [`ui-valueview-${title}`]: true
                     })} title={title == 'default' ? '' : <>{title }<span className='ui-empty'>{'<Object>'}</span></>} items={this.getDescritions(value, title == 'default' ? '' : title)} />
                 )

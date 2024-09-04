@@ -448,9 +448,12 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
         return null
     }
-    private isReverseColor() {
+    private isReverseColor(rowData) {
         
-        return this.props.avatarReverseColor || this.props.layout == 'card';
+        let reverseColor: any =  this.props.avatarReverseColor || this.props.layout == 'card';
+        if (reverseColor) {
+            return this.isSelectedRow(rowData) ? !reverseColor : reverseColor;
+        }
     }
     private renderAvatarAuto(avatarPlace: any, rowData: any) {
         let fieldKey: string = avatarPlace.fieldKey;
@@ -460,11 +463,11 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         
         if (findIcon && findIcon.icon) {
             return (<span className='ui-mircotable-avatar'>
-                <FormerTypes.avatar reverseColor={this.isReverseColor()} key={1} type={this.getAvatarShape()} autoColor={!!this.props.autoColor} color={findIcon.color} icon={findIcon.icon}  size={this.getAvatarSize()}  />
+                <FormerTypes.avatar reverseColor={this.isReverseColor(rowData)} key={1} type={this.getAvatarShape()} autoColor={!!this.props.autoColor} color={findIcon.color} icon={findIcon.icon}  size={this.getAvatarSize()}  />
             </span>)
         } else {
             return (<span className='ui-mircotable-avatar'>
-                <FormerTypes.avatar reverseColor={this.isReverseColor()} key={2} type={this.getAvatarShape()} autoColor={false} icon={data}  size={this.getAvatarSize()}  />
+                <FormerTypes.avatar reverseColor={this.isReverseColor(rowData)} key={2} type={this.getAvatarShape()} autoColor={false} icon={data}  size={this.getAvatarSize()}  />
             </span>)
         }
     }
@@ -485,9 +488,9 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 if (this.props.layout == 'connections' || this.props.avatar ==='connections') {
                     return (
                         <span className='ui-mircotable-avatar-con'>
-                            <FormerTypes.avatar  reverseColor={this.isReverseColor()} key={1} type="string" viewer={true}  icon={this.props.icon} size={40} />
+                            <FormerTypes.avatar  reverseColor={this.isReverseColor(rowData)} key={1} type="string" viewer={true}  icon={this.props.icon} size={40} />
                             <Icons.ConnectionsDirectivityOutlined key={2} />
-                            <FormerTypes.avatar  reverseColor={this.isReverseColor()} key={3} type="string" {...avatars[0]} size={40} />
+                            <FormerTypes.avatar  reverseColor={this.isReverseColor(rowData)} key={3} type="string" {...avatars[0]} size={40} />
                         </span>
                     )
                 }
@@ -495,8 +498,8 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 return (
                     <span className='ui-mircotable-avatar'>
                         {!this.props.avatarMerge ? avatars.map((avatar, index) => {
-                            return <FormerTypes.avatar  reverseColor={this.isReverseColor()} shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} key={index} {...avatar} size={this.getAvatarSize()} style={{ zIndex: avatars.length - index }} />
-                        }) : <FormerTypes.avatar  reverseColor={this.isReverseColor()} key={2} shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} size={this.getAvatarSize()} icon={avatars}  />}
+                            return <FormerTypes.avatar  reverseColor={this.isReverseColor(rowData)} shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} key={index} {...avatar} size={this.getAvatarSize()} style={{ zIndex: avatars.length - index }} />
+                        }) : <FormerTypes.avatar  reverseColor={this.isReverseColor(rowData)} key={2} shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} size={this.getAvatarSize()} icon={avatars}  />}
                     </span>
                 )
             }
@@ -579,6 +582,9 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
         return this.state.optional || props.rowClickOperate ;
     }
+    private isSelectedRow(rowData: any) {
+        return rowData[this.props.rowKey] == this.state.selectedKey
+    }
     private renderListItem = (rowData: any, index: number) => {
 
         let ItemClassName: string = this.props.renderRowClassName ? this.props.renderRowClassName(rowData, index) : '';
@@ -587,7 +593,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         if (this.canRowClick() ){
             ItemClassName += ' ui-tabler-item-canselected'
 
-            if ( this.state.optional&& rowData[this.props.rowKey] == this.state.selectedKey) {
+            if ( this.state.optional&& this.isSelectedRow(rowData)) {
                 ItemClassName+= ' ui-tabler-item-selected';
             }
         }

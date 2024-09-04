@@ -1050,9 +1050,19 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                             historyStartDate={this.state.historyStartDate}
                             historyEndDate={this.state.historyEndDate}
                             runId={this.state.openLog}
+                            
                         />}
                         
-                        {this.state.openLog && <MircoRunLog onCloseLog={()=> {this.reloadData()}} nodeStatus={this.state.runNodeStatus} value={this.state.value} router={this.router} fetchMap={this.props.fetchMap} logId={this.state.openLog} logType={this.state.logType} />}
+                        {this.state.openLog && <MircoRunLog 
+                            onCloseLog={()=> {this.reloadData()}} 
+                            nodeStatus={this.state.runNodeStatus} 
+                            onToggleActivate={(v)=> {
+                                this.setState({
+                                    activateList: v
+                                })
+                            }}
+                            value={this.state.value} 
+                            router={this.router} fetchMap={this.props.fetchMap} logId={this.state.openLog} logType={this.state.logType} />}
                         {this.renderNewNodeToolbar()}
                         {this.state.value.id && <MirceVersionHistory version={this.state.version} onReflush={()=>{ this.reloadData() }} onClose={()=>{this.setState({openVersion:false})}} fetchMap={this.props.fetchMap}  open={this.state.openVersion} id={this.state.value.id}/>}
                         <div className='ui-background-dwbg' dangerouslySetInnerHTML={{ __html: mainTexture }}></div>

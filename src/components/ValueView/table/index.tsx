@@ -42,7 +42,7 @@ export default class ValueViewTable extends React.Component<{ value: any }, { va
         return [{
             key: '#',
             title: <span className='ui-empty'>#</span>,
-            width: 20,
+            width: 22,
             fixed: 'left',
             render: (_,__, index)=> {
                 return <span className='ui-empty'>{index + 1}</span>;
@@ -63,14 +63,14 @@ export default class ValueViewTable extends React.Component<{ value: any }, { va
             render: (record: any) => {
                 return this.renderPopover(
                     <span className='ui-valueview-table-button'><Icons.PicRightOutlined /></span>,
-                    <ValueViewForm column={2} value={record}/>
+                    <ValueViewForm value={record}/>
                 )
             }
         }]
     }
     public renderPopover(children: any, content: any) {
         return (
-            <Popover title="Detailed Field(s)" align={{offset: [10,-10]}} placement='rightTop' overlayClassName="ui-tooltip-valueview"  content={content}>
+            <Popover title="Detailed Field(s)" align={{offset: [14,-10]}} placement='topRight' overlayClassName="ui-tooltip-valueview"  content={content}>
                 {children}
             </Popover>
         )
@@ -92,7 +92,7 @@ export default class ValueViewTable extends React.Component<{ value: any }, { va
                 return (
                     this.renderPopover(
                         <span className='ui-empty'>{'<Object>'}</span>,
-                        <ValueViewForm column={2} value={cell}/>
+                        <ValueViewForm value={cell}/>
                     )
                 )
             }
