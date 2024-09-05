@@ -112,9 +112,10 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         })
     }
     private cleanOriginValue(value: any) {
+        console.log(value, 333383838)
         // 清理padding
         return value.filter(it => {
-            if (!it.value && it.padding) {
+            if (!it.value && (it.padding || value.length>1)) {
                 return false;
             }
 

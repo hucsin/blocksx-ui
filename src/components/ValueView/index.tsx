@@ -56,7 +56,7 @@ export default class ValueView extends React.Component<ValueViewProps, ValueView
                     <ValueViewTable value={value}/>
                 )
             } else {
-                return this.renderJSON(value)
+                return <pre>{this.renderJSON(value)}</pre>
             }
         } else {
             return <ValueViewForm value ={value} />
@@ -100,7 +100,7 @@ export default class ValueView extends React.Component<ValueViewProps, ValueView
          
         switch(this.state.type) {
             case 'json':
-                return this.renderJSON();
+                return <pre>{this.renderJSON()}</pre>;
             case 'text':
                 return this.renderTEXT();
             default: 

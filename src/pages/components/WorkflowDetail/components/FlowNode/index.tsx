@@ -764,7 +764,6 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     }
     private renderNodeSubIcon(icon?: string) {
         let { props ={} } = this.state;
-
         let Iconview: any = Icons[icon || props.subicon];
         
         if (Iconview) {

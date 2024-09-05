@@ -1,6 +1,6 @@
 .ui-output-tips {
     &.ui-output-fullscreen {
-        position: fixed;
+        position: fixed !important;
         width: calc(100vw);
         height: calc(100vh);
         box-sizing: border-box;
@@ -8,12 +8,15 @@
         z-index: 111;
         left: 0;
         top: 0;
+        opacity: 1;
         background-color: #fff;
          div.ui-output-header {
             left: 32px;
-            top: 32px;
+            top: 24px;
             position: absolute;
             width: calc(100% - 32px);
+            font-size: 16px;
+            
             .ant-space {
                 position: absolute;
                 right: 32px;
@@ -33,6 +36,21 @@
             border: 1px solid var(--main-border-color);
         }
     }
+
+    .ant-descriptions-item-container {
+        display: block;
+        
+    }
+    .ant-descriptions-item-container {
+        .ant-descriptions-item-content{
+            display: block;
+            position: relative;
+            margin-top: -2px;
+        }
+        .ant-descriptions-item-label {
+            display:block;
+        }
+    }
     .ant-table-wrapper .ant-table {
         background-color: transparent;
     }
@@ -50,6 +68,13 @@
         word-wrap: normal;
         padding: 8px;
         word-break: break-all;
+        pre {
+            margin: 0;
+            line-height: 16px;
+            white-space: pre-wrap;
+            word-wrap: break-word; /* For legacy browsers */
+            word-break: break-all;
+        }
 
     }
     .ui-output-header {

@@ -18,11 +18,9 @@ class ThinkingStartNode extends IThinkingNode {
                 }
             }
             
-            return {
-                type: 'object',
-                properties: {}
-            }
+            return ThinkingNodeManager.getDefaultOutput()
         }
+        
         return true;
     }
 }

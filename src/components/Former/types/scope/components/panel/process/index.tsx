@@ -1,12 +1,14 @@
 import React from 'react';
+import classnames from 'classnames';
 import { StructuralMiniFlow } from '@blocksx/structural';
 import { utils } from '@blocksx/core';
-import { Tooltip, Tree, Spin } from 'antd'
+import { Tooltip, Tree, Spin, Tabs } from 'antd'
 import { upperFirst } from 'lodash'
 import { GlobalScope, MiniFlow, SmartRequest, ThinkingNodeManager } from '@blocksx/ui';
 import ProcessNode from './node';
 
 import './style.scss'
+import exp from 'constants';
 
 interface PanelProcessState {
     page: string;
@@ -34,6 +36,7 @@ interface PanelProcessProps {
 export default class PanelProcess extends React.Component<PanelProcessProps, PanelProcessState> {
     private cavnasId: string;
     private miniFlow: any;
+    private treeData: any;
     private defaultExpandedKeys;
     private cacheTree: any ;
     private fetchHelper: any = SmartRequest.makeGetRequest('/api/thinking/findOutput');
@@ -56,7 +59,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
             currentType: currentNode.type,
             current: this.cavnasId + currentNode.value,
             selected: selected,
-            expandedKeys: [],
+            expandedKeys: {},
             page: StructuralMiniFlow.getComponentName(selected),
             schema: {},
             treeData: [],
@@ -70,10 +73,13 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         
         return StructuralMiniFlow.getComponentName(node)
     }
-    private resetTreeData() {
+    private resetTreeData = (schema?: any, cache?: boolean) => {
+        
         this.setState({
-            treeData: this.getTreeData(this.state.schema),
-            expandedKeys: this.defaultExpandedKeys
+            treeData: this.treeData = this.getTreeData(schema || this.state.schema),
+          //  expandedKeys: this.defaultExpandedKeys
+        }, () => {
+
         })
     }
     private fixedName(info: any, currentNode?: any) {
@@ -132,18 +138,19 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         this.miniFlow.destory();
     }
     private fetchOutputSchema(name: string) {
-
+        
         if (this.cacheTree[name]) {
             return this.setState({
-                schema: this.cacheTree[name]
+                ...this.cacheTree[name]
             }, this.resetTreeData)
         }
         this.setState({loading: true})
 
         let outputschema: any = ThinkingNodeManager.getOutputSchema(
-                name, 
-                this.getTrueNodeId(this.state.selected.name));
-        
+            name, 
+            this.getTrueNodeId(this.state.selected.name)
+        );
+
         if (utils.isPromise(outputschema)) {
             return outputschema.then((result)=> {
                 this.resetSchema(name, result, false)
@@ -153,20 +160,33 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
                 return this.resetSchema(name, outputschema, false)
             }
         }
+    }
+    private getExpandedKeys(treeData: any) {
 
-        this.fetchHelper({
-            page: name
-        }).then(result => {
-            this.resetSchema(name, result)
+        let expandedKeys: any = [];
+        treeData.forEach(it => {
+            expandedKeys.push(it.key);
+            it.children && it.children.forEach(it => {
+                expandedKeys.push(it.key)
+            })
         })
+        
+        return expandedKeys;
     }
     private resetSchema(name, result: any, cache: boolean = true) {
+        
         this.setState({
             loading: false,
             schema:result
-        }, this.resetTreeData)
+        })
 
-        cache && (this.cacheTree[name] = result)
+        this.resetTreeData(result, cache)
+
+        cache && (this.cacheTree[name] = {
+            ...this.cacheTree[name],
+            schema: result,
+            treeData: this.treeData
+        })
     }
     private initMiniFlow() {
         this.miniFlow = new MiniFlow({
@@ -189,17 +209,17 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         },0)
         
     }
-    private matchDataType (type: string) {
+    private matchDataType (type: string, subtype?: string) {
         let { dataType } = this.state;
+        let trueType: string = subtype ? [upperFirst(type), upperFirst(subtype)].join('') : upperFirst(type)
         
         if (dataType) {
             if (!Array.isArray(dataType)) {
                 dataType = [dataType]
             }
-            
-            return !dataType.includes(upperFirst(type))
+
+            return !dataType.includes(upperFirst(trueType))
         }
-        
 
         return false;
     }
@@ -208,11 +228,10 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         
         let treedata: any = {
             key: pathname,
-            disabled: this.state.disabled || this.matchDataType(schema.type),
+            
             title: schema.name,
             ...schema
         }
-
 
 
         switch(schema.type) {
@@ -242,28 +261,99 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
                 break;
         }
 
-        if (rootPath.length < 2) {
-            this.defaultExpandedKeys.push(treedata.key)
-        }
-        
-        return treedata;
+        return {
+            ...treedata,
+            disabled: this.state.disabled || this.matchDataType(schema.type, treedata.subtype)
+        };
     }
     public getTreeData(schema: any) {
-        this.defaultExpandedKeys = [];
-        return [this.getChildren({...schema, name: 'returns'})]
+        //this.defaultExpandedKeys = [];
+        if (Array.isArray(schema)) {
+            return schema.map((it, index) => {
+                return [this.getChildren({
+                    ...it, 
+                    name: 'outputs'
+                })]
+            })
+        }
+        return [this.getChildren({...schema, name: 'outputs'})]
     }
     public getTrueNodeId(id: string) {
         return id.replace(this.cavnasId, '');
     }
+
+    public renderTree(index: number = 0) {
+        let { selected ={}, starts = [], treeData,schema, expandedKeys ={} } = this.state;
+        let mapheight: number = starts.length ==1 ? 56 : 40 + starts.length * 40;
+        
+        let treeDisplay: any = Array.isArray(schema) ? treeData[index] : treeData;
+        let treeExpandedKeys: any = expandedKeys[index] || this.getExpandedKeys(treeDisplay)
+
+        return (<Tree
+            blockNode
+            onSelect={(item:any, info: any)=> {
+                
+                item[0] && this.props.onClick(
+                    item[0].replace(/\.\./,'.'), 
+                    ['$flow',this.getTrueNodeId(selected.name)].join('.'),
+                    info
+                )
+            }}
+            key={[this.state.page, index].join('_')}
+            expandedKeys ={treeExpandedKeys}
+            autoExpandParent={false}
+            onExpand={(ekeys, a) => {
+                expandedKeys[index] = ekeys;
+
+                this.setState({
+                    expandedKeys: expandedKeys
+                })
+            }}
+            treeData={treeDisplay}
+            style={{
+                maxHeight: `calc( 100vh - ${mapheight + 360}px)`
+            }}
+            titleRender={(item: any)=> {
+                return (
+                    <>
+                        {item.title}
+                        {item.type && <span className='u-type'>{'<'+ upperFirst(item.type) + (item.subtype ? upperFirst(item.subtype): '') +'>'}</span>}
+                        {item.description && <span className='u-description'>{item.description}</span>}
+                    </>
+                )
+            }}
+        />)
+    }
+    public renderTreeBody() {
+        let { treeData, schema } = this.state;
+
+        if (Array.isArray(schema)) {
+            return (
+                <Tabs
+                    size='small'
+                    items = {treeData.map((it, index) => {
+                        let item: any = it[0];
+                        return {
+                            key:item.description || item.name,
+                            label: item.description || item.name,
+                            children: this.renderTree(index)
+                        }
+                    })}
+                >
+                </Tabs>
+            )
+        }
+
+        return this.renderTree()
+    }
     public render () {
-        let { selected ={}, starts = [] } = this.state;
+        let { selected ={}, starts = [], schema } = this.state;
         let { program, method, description } = selected.props;
         let mapheight: number = starts.length ==1 ? 56 : 40 + starts.length * 40;
         
-        
         return (
             <div className='ui-scope-process'>
-                <h4><span>Process segment</span><span>Select process node returns data</span></h4>
+                <h4><span>Process segment</span><span>Select process node outputs data</span></h4>
                 <div className='ui-scope-process-wrapper'>
                 <div 
                     className='ui-scope-process-map' data-draggable
@@ -286,7 +376,6 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
                                                 selected: it,
                                                 page: this.getCurrentPage(it)
                                             }, ()=> this.fetchOutputSchema(this.getCurrentPage(it)))
-                                            
                                         }
                                     }}
                                 />
@@ -296,39 +385,14 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
                 </div>
                 </div>
                 <div className='ui-scope-tree'>
-                    <h4><Tooltip title={description}> <span>{method}</span> <span className='number'>{selected.serial}</span> </Tooltip> <span>Returns data</span></h4>
+                    <h4><Tooltip title={description}> <span>{method}</span> <span className='number'>{selected.serial}</span> </Tooltip> <span>Outputs data</span></h4>
                     <Spin spinning={this.state.loading}>
-                        <Tree
-                            blockNode
-                            onSelect={(item:any, info: any)=> {
-                                
-                                item[0] && this.props.onClick(
-                                    item[0].toLowerCase().replace(/\.\./,'.'), 
-                                    ['$flow',this.getTrueNodeId(selected.name)].join('.'),
-                                    info
-                                )
-                            }}
-                            key={this.state.page}
-                            expandedKeys ={this.state.expandedKeys}
-                            autoExpandParent={false}
-                            onExpand={(expandedKeys, a) => {
-                                
-                                this.setState({expandedKeys})
-                            }}
-                            treeData={this.state.treeData}
-                            style={{
-                                maxHeight: `calc( 100vh - ${mapheight + 360}px)`
-                            }}
-                            titleRender={(item: any)=> {
-                                return (
-                                    <>
-                                        {item.title}
-                                        {item.type && <span className='u-type'>{'<'+ upperFirst(item.type) + (item.subtype ? upperFirst(item.subtype): '') +'>'}</span>}
-                                        {item.description && <span className='u-description'>{item.description}</span>}
-                                    </>
-                                )
-                            }}
-                        />
+                        <div className={classnames({
+                            'ant-tree-wrapper': true,
+                            'ant-tree-tabs': Array.isArray(schema)
+                        })}>
+                            {this.renderTreeBody()}
+                        </div>
                     </Spin>
 
                 </div>

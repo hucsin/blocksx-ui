@@ -277,6 +277,14 @@ export default class MiniFlow extends EventEmitter {
         
         return this.nodes.find(it => it.name == name)
     }
+    public getSourceNodeByName(target: string) {
+        let connect: any = this.getConnectorByTargetName(target);
+
+        if (connect && connect[0]) {
+            
+            return this.getNodeByName(connect[0].source);
+        }
+    }
     // 判断该节点是否有路由节点连线
     private findRouterConnectorByNodeName(nodeName: string) {
         return this.connector.filter(conn => {

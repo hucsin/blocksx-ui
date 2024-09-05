@@ -84,13 +84,28 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
 
         }
     }
+    private typeMaps: any = {
+        Math: 'Number'
+    }
+    private filterTabs(tabs: any) {
+        let { dataType } = this.state;
+
+        return tabs.filter(it => {
+            let trueType: string = this.typeMaps[it] || it;
+            
+            if (['Array','Object'].includes(trueType)) {
+                return dataType.join(',').indexOf(trueType) > -1;
+            }
+            return dataType.includes(trueType)
+        })
+    }
     public render() {
         let groupKeys: any = Object.keys(this.groupList);
-        let titleKeys: any = [
-            'Thinking',
+        let titleKeys: any = ['Thinking', ...this.filterTabs([
+            
             ...groupKeys,
-            'Data Stores'
-        ]
+            //'Data Stores'
+        ])]
         
         if (!this.state.open) {
             return null;

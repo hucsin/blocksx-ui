@@ -109,7 +109,7 @@ export default class RunLogOutput extends React.Component<RunLogOutputProps, {va
                 ref={this.ref} 
                 onMouseLeave={()=> {
                     this.setState({
-                        fullscreen: false
+                      //  fullscreen: false
                     })
                 }}
                 className={classnames({
