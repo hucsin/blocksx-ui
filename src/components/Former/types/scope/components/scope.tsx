@@ -1,18 +1,18 @@
 import React from 'react';
-import { GlobalScope, Icons} from '@blocksx/ui';
+import { GlobalScope, Icons, FormerTypes} from '@blocksx/ui';
 import ScopeTooltip from './panel/tooltip';
 import { upperFirst } from 'lodash';
 
 interface FormerScopeProps {
     type: string;
     value: any;
+    source?: any;
     dataType?: string;
     keypath: string;
 }
 
 interface FormerScopeState {
     keypath: string[];
-    
 }
 
 export default class FormerScope extends React.Component<FormerScopeProps, FormerScopeState> {
@@ -30,16 +30,16 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
 
         switch(keypath[0]) {
             case '$flow':
-
-                let node: any = this.miniFlow.getNodeByName(keypath[1])
+                let node: any = this.miniFlow.getNodeByName(this.props.source || keypath[1])
                 
                 if (node) {
                     return {
-                        scope: 'Thinking workflow',
+                        scope: 'Workflow Nodes',
                         icon: node.icon,
                         color: node.color,
                         serial: node.serial,
-                        name: node.props.method,
+                        subtitle: node.props.method,
+                        title: node.props.program,
                         description: node.props.description
                     };
                 }
@@ -50,17 +50,19 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
     }
     public render() {
         let props: any = this.getDefaultProps();
+
         let keypath: any = this.state.keypath || [];
+        let truepath: string = keypath.slice(1, keypath.length).join('.') 
         let IconView: any = Icons[props.icon] || Icons.FlowUtilityOutlined; 
-        let displayvalue: string = (this.props.value ||'').replace(/^returns\./, '')
+        let displayvalue: string = [truepath,(this.props.value ||'').replace(/^outputs\./, '')].join('.')
         
         return (
-            <ScopeTooltip {...props} icon={<IconView/>} other={[
+            <ScopeTooltip {...props} icon={<IconView style={{color:props.color}}/>} other={[
                 
                 {
                     name: 'SCOPE',
-                    subname: props.scope + ` (serial:${props.serial})`,
-                    description: keypath.slice(1, keypath.length).join('.') 
+                    subname: props.scope,
+                    description: <>{truepath} {this.props.source &&<span className='ui-empty'> ⇐ {this.props.source}</span>}</>
                 },
                 {
                     name: 'KEYPATH',
@@ -68,7 +70,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                     description: this.props.value
                 }
             ]} >
-                <span className='ui-scope-scope'><IconView />{displayvalue}{props.serial && <span className='number'>{props.serial}</span>}</span>
+                <span className='ui-scope-scope'><IconView />{displayvalue}</span>
             </ScopeTooltip>
         )
     }

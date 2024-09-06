@@ -374,7 +374,7 @@ export default class MiniFlow extends EventEmitter {
             target
         }
     }
-    private addNode(node: any, nosave?: boolean) {
+    public getNextMaxSerial() {
         let maxnumber: number = 0;
 
         this.nodes.forEach(it => {
@@ -383,9 +383,16 @@ export default class MiniFlow extends EventEmitter {
             }
         })
 
+        return maxnumber + 1;
+    }
+    private addNode(node: any, nosave?: boolean) {
+        
+        let nextSerial: number = this.getNextMaxSerial();
+
         this.nodes.push({
             ...node,
-            serial: maxnumber +1
+            //name: 'U' + String(nextSerial).padStart(2,'0'),
+            serial: nextSerial
         });
 
         !nosave && this.doChangeSave('addNode', node);
@@ -460,11 +467,7 @@ export default class MiniFlow extends EventEmitter {
     }
 
     private getUniqName() {
-        let serials: any = this.nodes.map(it=> it.serial).sort((a,b) => {
-            return a > b ? -1 : 1;
-        })
-        
-        return 'd' + (serials.shift() + 1)
+        return 'U' + String(this.getNextMaxSerial()).padStart(2,'0')
         //return utils.uniq(this.uniq);
     }
 
@@ -836,6 +839,7 @@ export default class MiniFlow extends EventEmitter {
             
             this.instance.deleteConnection(this.connectorMap[sourceTargetName]);
             delete this.connectorMap[sourceTargetName];
+            delete this.connectorInstanceMap[sourceTargetName]
         }
     }
     private getSafeOpacityColor(color:string) {
@@ -898,6 +902,7 @@ export default class MiniFlow extends EventEmitter {
                 ]
             }
         });
+        
         
         if (connector && !this.connectorMap[this.getConnectorName(source, target)]) {
              
@@ -1405,7 +1410,6 @@ export default class MiniFlow extends EventEmitter {
                                 return this.dragTarget = null;
                             } 
 
-                            console.log(node,222)
                             this.doChangeSave('removeNode', [node]);
 
 
@@ -1460,6 +1464,8 @@ export default class MiniFlow extends EventEmitter {
             DomUtils.addClass(element, 'destroy');
             setTimeout(() => {
                 element.style.display = 'none'
+                //element.parentNode.removeChild(element)
+                //this.instance.repaintEverything();
                 cb && cb();
             }, 400)
         }

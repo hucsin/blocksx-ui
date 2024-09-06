@@ -4,6 +4,7 @@ import * as Icons from '../../../../Icons';
 
 interface FormerVariableProps {
     name: string;
+    
     description: string;
 }
 

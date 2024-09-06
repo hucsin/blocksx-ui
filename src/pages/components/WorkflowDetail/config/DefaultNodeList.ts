@@ -4,13 +4,14 @@ import Encode from '@blocksx/encrypt/lib/encode';
 import { buffer } from 'stream/consumers';
 
 export default class DefaultNodeList {
-    public static getIdeaNode(name: string, props?: any) {
+    public static getIdeaNode(props: any) {
         return {
             isNew: false,
+            serial: 1,
             icon: 'IdeaSuggestionOutlined',
             color: '#de8a00',
             componentName: 'Thinking.idea',
-            ...props,
+            
             type: 'go',
             props: {
                 icon: 'IdeaCloudUtilityOutlined',
@@ -18,14 +19,17 @@ export default class DefaultNodeList {
                 program: 'Thinking',
                 method: 'Decision rules'
             },
-            serial: 1,
-            locked: true,
-            name: name
+            name: this.getUniqName(props.serial || 1),
+            ...props,
+            locked: true
         }
     }
-    public static getEmptyNode(name: string, props?:any) {
+    public static getUniqName(serial: number) {
+        return 'U' + String(serial).padStart(2, '0')
+    }
+    public static getEmptyNode(props?:any) {
         return {
-            name: name,
+            name: this.getUniqName(props.serial || 2),
             type: 'empty',
             isNew: false,
             color: '#ccc',
@@ -40,21 +44,18 @@ export default class DefaultNodeList {
 
         }
     }
-    public static getUniqName(id: any) {
-        return 'c'//utils.uniq(Encode.encode('mini#' + id));
-    }
 
-    public static getDefaultTriggerClassifyConfig(classify: string, id: any) {
+    public static getDefaultTriggerClassifyConfig(classify: string, serial: number) {
         
         if (this.triggerClassifyMap[classify]) {
-            return this.triggerClassifyMap[classify](this.getUniqName(id), {isNew: true});
+            return this.triggerClassifyMap[classify]( {isNew: true, serial});
         }
     }
     public static triggerClassifyMap: any = {
-        thinking: (uniq:any, props?: any)=> {
-            return this.getIdeaNode(uniq, props)
+        thinking: (props: any)=> {
+            return this.getIdeaNode(props)
         },
-        pages: (uniq: any, props?: any) => {
+        pages: (props: any) => {
             return {
                 isNew: false,
                 icon: 'PagesCommonOutlined',
@@ -69,10 +70,10 @@ export default class DefaultNodeList {
                     method: 'Linking Page'
                 },
                 floating: true,
-                name: uniq
+                name: this.getUniqName(props.serial)
             }
         },
-        timer: (uniq: any, props?: any) => {
+        timer: (props: any) => {
             return {
                 isNew: false,
                 icon: 'FieldTimeOutlined',
@@ -86,10 +87,10 @@ export default class DefaultNodeList {
                 },
 
                 floating: true,
-                name: uniq
+                name: this.getUniqName(props.serial)
             }
         },
-        apis: (uniq: any, props?: any)=> {
+        apis: (props: any)=> {
             return {
                 isNew: false,
                 icon: 'ApiOutlined',
@@ -105,7 +106,7 @@ export default class DefaultNodeList {
                 },
 
                 floating: true,
-                name: uniq
+                name: this.getUniqName(props.serial)
             }
         }
     }
@@ -118,16 +119,13 @@ export default class DefaultNodeList {
         return {};
     }
     public static classifyMap:any =  {
-        thinking: (uniq?: string) => {
-            let sourceNodeName: string = 't1';
-            let targetNodeName: string = 't2';
-            let emptyNodeName: string = 't3';
+        thinking: () => {
 
             return {
                 nodes: [
-                    this.getIdeaNode(sourceNodeName, {left: 40, top: 162}),
+                    this.getIdeaNode({left: 40, top: 162}),
                     {
-                        name: targetNodeName,
+                        name: 'U02',
                         componentName: 'Thinking.think',
                         type: 'router',
                         isNew: false,
@@ -143,37 +141,32 @@ export default class DefaultNodeList {
                         },
                         locked: true
                     },
-                    this.getEmptyNode(emptyNodeName, {
+                    this.getEmptyNode({
                         left: 458,
                         top: 162,
-                        
                         serial: 3
                     })
                 ],
                 connectors: [
                     {
-                        source: sourceNodeName,
-                        target: targetNodeName,
+                        source: 'U01',
+                        target: 'U02',
                         props: {}
 
                     },
                     {
-                        source: targetNodeName,
-                        target: emptyNodeName,
+                        source: 'U02',
+                        target: 'U03',
                         props: {}
                     }
                 ]
             }
         },
-        'function': (uniq?: string) => {
-            let startName: string = 't1';
-            let bufferName: string = 't2';
-            let emptyName: string = 't3';
-
+        'function': () => {
             return {
                 nodes: [
                     {
-                        name: startName,
+                        name: 'U01',
                         type: 'go',
                         isNew: false,
                         icon: 'StartCircleUtilityFilled',
@@ -190,7 +183,7 @@ export default class DefaultNodeList {
                         locked: true
                     },
                     {
-                        name: bufferName,
+                        name: 'U02',
                         type: 'router',
                         icon: 'DatasourceMiniDataOutlined',
                         componentName: 'FlowControl.buffer',
@@ -205,7 +198,7 @@ export default class DefaultNodeList {
                         serial:2,
                         locked: true
                     },
-                    this.getEmptyNode(emptyName, {
+                    this.getEmptyNode({
                         left: 458,
                         top: 162,
                         serial: 3
@@ -213,28 +206,25 @@ export default class DefaultNodeList {
                 ],
                 connectors: [
                     {
-                        source: startName,
-                        target: bufferName,
+                        source: 'U01',
+                        target: 'U02',
                         props: {}
                     },
                     {
-                        source: bufferName,
-                        target: emptyName,
+                        source: 'U02',
+                        target: 'U03',
                         props: {}
                     }
                 ]
             }
 
         },
-        'trigger': (uniq?: string) => {
-            let startName: string =  't1';
-            let bufferName: string = 't2';
-            let emptyName: string = 't3';
+        'trigger': () => {
 
             return {
                 nodes: [
                     {
-                        name: startName,
+                        name: "U01",
                         type: 'go',
                         isNew: false,
                         color: '#ccc',
@@ -249,7 +239,7 @@ export default class DefaultNodeList {
                         locked: true
                     },
                     {
-                        name: bufferName,
+                        name: 'U02',
                         type: 'router',
                         icon: 'DatasourceMiniDataOutlined',
                         componentName: 'FlowControl.buffer',
@@ -264,7 +254,7 @@ export default class DefaultNodeList {
                         serial:2,
                         locked: true
                     },
-                    this.getEmptyNode(emptyName, {
+                    this.getEmptyNode({
                         left: 458,
                         top: 162,
                         serial: 3
@@ -272,13 +262,13 @@ export default class DefaultNodeList {
                 ],
                 connectors: [
                     {
-                        source: startName,
-                        target: bufferName,
+                        source: 'U01',
+                        target: 'U02',
                         props: {}
                     },
                     {
-                        source: bufferName,
-                        target: emptyName,
+                        source: 'U02',
+                        target: 'U03',
                         props: {}
                     }
                 ]

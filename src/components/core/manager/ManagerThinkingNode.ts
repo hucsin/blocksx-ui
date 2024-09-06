@@ -31,7 +31,24 @@ export default class ThinkingNodeManager {
             }
         }
 
-        return this.fetchHelper({page: key});
+        return this.fetchHelper({page: key}).then(result => {
+            
+            if (Array.isArray(result)) {
+                return result.map(it => {
+                    return {
+                        ...it,
+                        source: nodeId,
+                        sourceType: key
+                    }
+                })
+            }
+            
+            return {
+                ...result,
+                source: nodeId,
+                sourceType: key
+            };
+        });
     }
     public static getDefaultOutput() {
         return {

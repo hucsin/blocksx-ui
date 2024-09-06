@@ -15,6 +15,8 @@ interface ScopePanelProps {
     total: number;
     dataType: any;
     disabled?: boolean;
+    value: any;
+    iterator?: boolean;
 }
 interface ScopePanelState {
     current: string;
@@ -23,6 +25,7 @@ interface ScopePanelState {
     dataType: any;
 
     disabled?: boolean;
+    value: any;
 }
 
 export default class ScopePanel extends React.Component<ScopePanelProps, ScopePanelState> {
@@ -35,7 +38,8 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
             open: props.open,
             total: props.total,
             dataType: props.dataType,
-            disabled: props.disabled
+            disabled: props.disabled,
+            value: props.value
         }
     }
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<ScopePanelProps>, nextContext: any): void {
@@ -61,20 +65,37 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                 dataType: nextProps.dataType
             })
         }
+
+        if (nextProps.value != this.state.value) {
+            this.setState({
+                value: nextProps.value
+            })
+        }
     }
     private renderBody(name) {
 
         switch (name) {
             case 'Thinking':
            
-                return <PanelProcess  disabled={this.state.disabled} dataType={this.state.dataType} total={this.state.total} onClick={(value, keypath: string, { node }) => {
-                    this.props.scope.addValueIntoScope({
-                        type: 'scope',
-                        dataType: node.type,
-                        keypath: keypath,
-                        value: value
-                    })
-                }} />
+                return (
+                    <PanelProcess  
+                        disabled={this.state.disabled} 
+                        dataType={this.state.dataType} 
+                        total={this.state.total}
+                        iterator={this.props.iterator}
+
+                        value={this.state.value}
+                        
+                        onClick={(value, keypath: string, { source, node }) => {
+                            this.props.scope.addValueIntoScope({
+                                type: 'scope',
+                                dataType: node.type,
+                                source, 
+                                keypath: keypath,
+                                value: value
+                            })
+                        }} 
+                />)
             case 'Data Stores':
                 return <PanelStorges />
             default:
@@ -88,16 +109,16 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
         Math: 'Number'
     }
     private filterTabs(tabs: any) {
-        let { dataType } = this.state;
+        let { dataType = [] } = this.state;
 
-        return tabs.filter(it => {
+        return dataType ? tabs.filter(it => {
             let trueType: string = this.typeMaps[it] || it;
             
             if (['Array','Object'].includes(trueType)) {
                 return dataType.join(',').indexOf(trueType) > -1;
             }
             return dataType.includes(trueType)
-        })
+        }): tabs;
     }
     public render() {
         let groupKeys: any = Object.keys(this.groupList);

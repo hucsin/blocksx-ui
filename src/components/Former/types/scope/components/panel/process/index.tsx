@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { StructuralMiniFlow } from '@blocksx/structural';
 import { utils } from '@blocksx/core';
-import { Tooltip, Tree, Spin, Tabs } from 'antd'
+import { Tooltip, Tree, Spin, Tabs, Space } from 'antd'
 import { upperFirst } from 'lodash'
 import { GlobalScope, MiniFlow, SmartRequest, ThinkingNodeManager } from '@blocksx/ui';
 import ProcessNode from './node';
@@ -25,21 +25,26 @@ interface PanelProcessState {
     total: number;
     dataType: any;
     disabled?:boolean;
+
+    value?: any;
+    selectedKeypath?: string;
 }
 
 interface PanelProcessProps {
     onClick: Function, total: number;
     dataType: any;
     disabled?:boolean;
+    value?: any;
+    iterator?: boolean;
 }
 
 export default class PanelProcess extends React.Component<PanelProcessProps, PanelProcessState> {
     private cavnasId: string;
     private miniFlow: any;
     private treeData: any;
-    private defaultExpandedKeys;
+    //private defaultExpandedKeys;
     private cacheTree: any ;
-    private fetchHelper: any = SmartRequest.makeGetRequest('/api/thinking/findOutput');
+    //private fetchHelper: any = SmartRequest.makeGetRequest('/api/thinking/findOutput');
     public constructor(props: any) {
         super(props);
         let flow: MiniFlow = GlobalScope.getContext(GlobalScope.TYPES.CURRENTFLOW_CONTEXT);
@@ -47,11 +52,11 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         let flowMap: any = flow.findAncestralFlowMap(currentNode.value);
 
         this.cavnasId = '#flow'+ new Date().getTime() +'#';
-
         let nodes: any = this.fixedName(utils.copy(flowMap.nodes || []), currentNode);
         let selected: any = (nodes.find(it=> !it.disabeld) || {})
-
+        
         this.cacheTree = {};
+
         this.state = {
             nodes: nodes,
             connectors: this.fixedName(utils.copy(flowMap.connectors || [])),
@@ -66,7 +71,8 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
             loading: false,
             total: props.total,
             dataType: props.dataType,
-            disabled: props.disabled
+            disabled: props.disabled,
+            selectedKeypath: this.getSelectedKeyPath(props.value)
         }
     }
     private getCurrentPage(node: any):any {
@@ -97,7 +103,9 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
                     }
                 }
             }
+            it.originalName = it.name;
             it.name = this.cavnasId + it.name;
+            
 
             return it;
         })
@@ -131,11 +139,24 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
                 dataType: nextProps.dataType
             })
         }
+        //console.log('process',nextProps.value != this.state.value, nextProps.value, 2338889)
+        if (nextProps.value != this.state.value) {
+            this.setState({
+                value: nextProps.value,
+                selectedKeypath: this.getSelectedKeyPath(nextProps.value)
+            })
+        }
     }
 
-    public  componentWillUnmount() {
+    public componentWillUnmount() {
         
         this.miniFlow.destory();
+    }
+    private getSelectedKeyPath(value:any) {
+        if (Array.isArray(value) && value[0]) {
+            return value[0].value;
+        }
+        return '';
     }
     private fetchOutputSchema(name: string) {
         
@@ -229,8 +250,8 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         let treedata: any = {
             key: pathname,
             
+            ...schema,
             title: schema.name,
-            ...schema
         }
 
 
@@ -263,18 +284,21 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
 
         return {
             ...treedata,
-            disabled: this.state.disabled || this.matchDataType(schema.type, treedata.subtype)
+            disabled: this.state.selectedKeypath == pathname ? false : this.state.disabled || this.matchDataType(schema.type, treedata.subtype)
         };
     }
     public getTreeData(schema: any) {
         //this.defaultExpandedKeys = [];
         if (Array.isArray(schema)) {
             return schema.map((it, index) => {
+                if (!this.props.iterator && it.iterator && schema.length > 1) {
+                    return false;
+                }
                 return [this.getChildren({
                     ...it, 
-                    name: 'outputs'
+                    name: it.name || (it.iterator && this.props.iterator ? '$iterator.outputs' :'outputs')
                 })]
-            })
+            }).filter(Boolean)
         }
         return [this.getChildren({...schema, name: 'outputs'})]
     }
@@ -287,18 +311,22 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         let mapheight: number = starts.length ==1 ? 56 : 40 + starts.length * 40;
         
         let treeDisplay: any = Array.isArray(schema) ? treeData[index] : treeData;
-        let treeExpandedKeys: any = expandedKeys[index] || this.getExpandedKeys(treeDisplay)
+        let treeExpandedKeys: any = expandedKeys[index] || this.getExpandedKeys(treeDisplay);
+        
+        let currentSource: string = treeDisplay[0] ? treeDisplay[0].source : selected.originalName;
 
         return (<Tree
+            multiple
             blockNode
             onSelect={(item:any, info: any)=> {
-                
+//                let 
                 item[0] && this.props.onClick(
                     item[0].replace(/\.\./,'.'), 
-                    ['$flow',this.getTrueNodeId(selected.name)].join('.'),
-                    info
+                    ['$flow', selected.originalName].join('.'),
+                    { ...info, source: selected.originalName !== currentSource ?  currentSource : '' }
                 )
             }}
+            selectedKeys={this.state.selectedKeypath ? [this.state.selectedKeypath as string] : undefined}
             key={[this.state.page, index].join('_')}
             expandedKeys ={treeExpandedKeys}
             autoExpandParent={false}
@@ -325,7 +353,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         />)
     }
     public renderTreeBody() {
-        let { treeData, schema } = this.state;
+        let { treeData, schema, selected={} } = this.state;
 
         if (Array.isArray(schema)) {
             return (
@@ -333,12 +361,24 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
                     size='small'
                     items = {treeData.map((it, index) => {
                         let item: any = it[0];
+                        let showSource: boolean = item.source ? item.source !== selected.originalName : false;
+                        
                         return {
                             key:item.description || item.name,
-                            label: item.description || item.name,
+                            label: (
+                                <Space>
+                                    <Tooltip title={item.iterator ? `Automatically call the ‘${item.description|| item.name}’ API to retrieve details when iterating over the results.` : "Retrieve data returned by the API."}>
+                                        {item.description || item.name} {item.iterator && this.props.iterator ? '(iterator)' : ''}
+                                    </Tooltip>
+
+                                    {showSource && <Tooltip title="The raw data is passed in from this node.">
+                                        <span className='number'>{item.source}</span>
+                                    </Tooltip>}
+                                </Space>
+                            ),
                             children: this.renderTree(index)
                         }
-                    })}
+                    }).filter(Boolean)}
                 >
                 </Tabs>
             )
@@ -385,7 +425,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
                 </div>
                 </div>
                 <div className='ui-scope-tree'>
-                    <h4><Tooltip title={description}> <span>{method}</span> <span className='number'>{selected.serial}</span> </Tooltip> <span>Outputs data</span></h4>
+                    <h4><Tooltip title={description}>  <span className='number'>{selected.originalName}</span> <span>{method}</span> </Tooltip> <span>Outputs data</span></h4>
                     <Spin spinning={this.state.loading}>
                         <div className={classnames({
                             'ant-tree-wrapper': true,

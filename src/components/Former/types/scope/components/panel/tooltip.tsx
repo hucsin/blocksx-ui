@@ -5,6 +5,8 @@ import { Icons } from '@blocksx/ui';
 interface PanelTooltipProps {
     children: any;
     name: string;
+    title?: string,
+    subtitle?: string;
     type?: string;
     description: string;
     parameters?: any[]; 
@@ -108,8 +110,12 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                 {')'}
             </>)
         }
-        return this.props.name
+        return <div className='ui-tooltip-title'>
+            <p>{this.props.title}</p>
+            <p>{this.props.subtitle}</p>
+        </div>
     }
+
     private getTitleIcon() {
         
         if (this.props.icon) {

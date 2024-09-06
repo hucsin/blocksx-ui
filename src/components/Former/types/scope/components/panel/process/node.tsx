@@ -6,6 +6,7 @@ interface ProcessNodeProps {
     left: number;
     top: number;
     name: string;
+    originalName: string;
     icon: string;
     color: string;
     serial: number;
@@ -80,7 +81,7 @@ export default class ProcessNode extends React.Component<ProcessNodeProps, {sele
                 }}
             >
                 <FormerTypes.avatar reverseColor={true} size={64}  icon={icon} color={color}/>
-                {props && <div className='ui-scope-text'>{props.method}<span>{this.props.serial}</span></div>}
+                {props && <div className='ui-scope-text'>{props.method}<span>{this.props.originalName}</span></div>}
             </div>
         )
     }

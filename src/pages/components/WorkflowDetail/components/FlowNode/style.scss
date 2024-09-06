@@ -243,13 +243,14 @@
                 border: 1px solid var(--main-border-color);
                 display: inline-block;
                 line-height: 12px;
-                width: 12px;
+                opacity: .6;
                 font-size: 12px;
                 border-radius: 3px;
-                margin-left: 4px;
+                margin-left: 0px;
                 margin-top: 5px;
-            
+                top: -2px;
                 position: absolute;
+                transform: scale(.8);
             }
         }
     }

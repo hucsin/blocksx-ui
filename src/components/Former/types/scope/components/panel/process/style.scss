@@ -68,11 +68,16 @@
                 padding: 0 2px;
                 border-radius: 3px;
                 line-height: 14px;
-                margin-left: 4px;
+                margin-left: -8px;
                 font-size:12px;
-                height: 14px;
+                height: 12px;
+                top: -3px;
+                opacity: .5;
+                transform: scale(.8);
                 text-align: center;
                 vertical-align: middle;
+                position: absolute;
+                
             }
         }
         &::after {
@@ -132,6 +137,10 @@
             padding-left: 16px;
             font-size: 14px;
             margin-bottom: 8px;
+            span.number {
+                opacity: .5;
+                font-size:12px;
+            }
             &::before {
                // display:none;
             }
@@ -196,7 +205,7 @@
         padding: 8px;
         margin-top: 8px;
         overflow: auto;
-        min-height: 310px;
+        //min-height: 310px;
         box-sizing: border-box;
         &.ant-tree-tabs {
             height: calc(100% + 32px);

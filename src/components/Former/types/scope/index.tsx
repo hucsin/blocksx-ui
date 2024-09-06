@@ -120,9 +120,17 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         }
 
     }
+    private clearValue(val: any) {
+        
+        return Array.isArray(val) ? val.filter(it => {
+            return !!it.value
+        }) : val;
+    }
     public doChangeValue(val?: any) {
+        
+        let value: any = this.clearValue(val);
         this.setState({
-            value: utils.isUndefined(val) ?  utils.copy(this.state.value) : val
+            value: utils.isUndefined(value) ?  utils.copy(this.state.value) : value
         }, () => {
             this.props.onChangeValue(this.state.value)
         })
@@ -344,13 +352,24 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         let disabled: boolean = typeProps.struct ? !this.isOneValue(value) : false;
         let opened: any = this.state.disabled ? this.state.open : this.state.open;
         // dataType
-        // 
+        
         // 第一个节点
         return (
             <Popover
                 overlayClassName="ui-scope-panel"
 
-                content={opened ? <ScopePanel disabled={this.state.disabled} dataType={this.state.currentDataType} open={opened} total={this.state.openTotal} scope={this} />: null}
+                content={opened 
+                    ? <ScopePanel 
+                        iterator={typeProps.iterator}
+                        disabled={this.state.disabled} 
+                        dataType={this.state.currentDataType} 
+                        open={opened} 
+                        total={this.state.openTotal} 
+                        scope={this}
+                        value = {value}
+                      />
+                    : null
+                }
                 open={opened}
                 placement={'left'}
             >
@@ -407,9 +426,9 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                                 })
                             }
                         }}>
-                            {<FormerScopeValue  disabled={disabled} strict={typeProps.strict} dataType={typeProps.dataType}  onRemoveValue={() => { }} onChangeValue={(val) => {
+                            {<FormerScopeValue disabled={disabled} strict={typeProps.strict} dataType={typeProps.dataType}  onRemoveValue={() => { }} onChangeValue={(val) => {
                                 this.doChangeValue(val)
-                            }} value={value} />}
+                            }} value={value && value.length ? value :[{type:'input', value: ''}]} />}
                         </Context.Provider>
                     </div>
                 </div>

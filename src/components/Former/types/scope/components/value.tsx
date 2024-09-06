@@ -15,7 +15,7 @@ interface FormerScopeProps {
     context?: any;
     dataType?: any;
     disabled?: boolean;
-    value: ScopeType[] | string;
+    value: any;
     onChangeValue: Function;
     onRemoveValue: Function;
     index: number;
@@ -23,6 +23,7 @@ interface FormerScopeProps {
     parentScope?: any;
     serial: number;
     strict?: boolean;
+    iterator?: boolean
 }
 
 interface FormerScopeState {
@@ -112,7 +113,6 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         })
     }
     private cleanOriginValue(value: any) {
-        console.log(value, 333383838)
         // 清理padding
         return value.filter(it => {
             if (!it.value && (it.padding || value.length>1)) {
@@ -130,6 +130,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         })
     }
     private getOriginValue(value) {
+
         if (Array.isArray(value)) {
             // 遍历数据项，给添加空白
             let originValue: any = [];
@@ -270,7 +271,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         )
     }
     private renderScope(item: any, parentIndex: number) {
-
+        
         return (
             <FormerScopeLabel {...item} />
         )

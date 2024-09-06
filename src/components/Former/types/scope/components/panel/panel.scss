@@ -29,12 +29,35 @@
     }
 }
 .ui-function-tips-inner {
-    max-width: 450px;
+    max-width: 500px;
+    .ui-function-info {
+        p {
+            border: 1px dashed var(--main-border-color);
+            border-radius: 12px;
+            padding: 8px;
+        }
+    }
 }
 .ui-scope-panel-tooltip {
     .ant-popover-title {
         border-bottom: 1px solid var(--main-border-color);
         padding-bottom: 8px;
+        .anticon {
+            font-size:42px;
+            opacity: .5;
+        }
+        .ui-tooltip-title {
+            display:inline-block;
+            p {
+                margin: 0;
+                padding: 0;
+                
+                &:last-child {
+                    opacity: .5;
+                    font-weight: 400;
+                }
+            }
+        }
     }
 }
 .ui-scope-panel-inner {

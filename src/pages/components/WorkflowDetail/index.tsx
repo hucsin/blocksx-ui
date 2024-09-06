@@ -344,6 +344,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     public saveFlowList(value: any, nodes: any, connector: any, type: any, cv: any) {
         if (!this.isDisabeld()) {
             let { onSaveFlowList, onEditorNode} = this.props;
+
             switch (type) {
                 //case 'addNode':
                 case 'updateNode1':
@@ -379,7 +380,9 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             chinampaPanel: this.responsePanel,
 
             onChangeValue: ({ type, value, nodes, connector }:FlowDetailData, isdraging: boolean, diffMap: any = {}) => {
+                
                 if (!this.props.isViewer) {
+                    
                     if (!isdraging) {
                         
                         if (type !== 'updateNode') {

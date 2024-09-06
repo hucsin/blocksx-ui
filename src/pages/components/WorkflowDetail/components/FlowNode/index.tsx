@@ -347,7 +347,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             type = !this.hasPagesNode() ? 'pages' : 'apis';
         }
         let defaultProps: any = DefaultNodeList.getDefaultTriggerClassifyConfig(
-                utils.isString(type) ? type :  this.props.classify, this.mircoFlow.state.id);
+                utils.isString(type) ? type :  this.props.classify, this.mircoFlow.miniFlow.getNextMaxSerial());
         
         this.props.onAddTriggerNode 
             && this.props.onAddTriggerNode(this.props.name, defaultProps || { props: { program: 'Trigger'}});
@@ -440,7 +440,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 {this.canShowTrigerAdd()  && <div className='ui-adder-router' onClick={this.addTiggerNode}><PlusOutlined/></div>}
                 {this.canShowTimter() && <div className='ui-timer' onClick={()=> {this.onMenuClick({type: 'timer'})}}><Clock/></div>}
                 {props.program &&<div className='ui-title'>
-                    <h4>{props.program} <span>{this.props.serial}</span></h4>
+                    <h4>{props.program} <span>{this.props.name}</span></h4>
                     <span>{props.method }</span>
                 </div>}
             </>
@@ -714,7 +714,9 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             case 'add':
                 return this.addRouterChildren()
             case 'delete':
-                return this.mircoFlow.miniFlow.deleteNodeByName(this.props.name)
+                return this.mircoFlow.miniFlow.deleteNodeByName(this.props.name, ()=> {
+
+                })
         }
     }
     public render () {
