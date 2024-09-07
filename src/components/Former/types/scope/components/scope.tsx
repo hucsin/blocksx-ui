@@ -54,7 +54,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         let keypath: any = this.state.keypath || [];
         let truepath: string = keypath.slice(1, keypath.length).join('.') 
         let IconView: any = Icons[props.icon] || Icons.FlowUtilityOutlined; 
-        let displayvalue: string = [truepath,(this.props.value ||'').replace(/^outputs\./, '')].join('.')
+        let displayvalue: string = [truepath,(this.props.value ||'').replace(/outputs\./, '')].join('.')
         
         return (
             <ScopeTooltip {...props} icon={<IconView style={{color:props.color}}/>} other={[
