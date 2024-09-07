@@ -123,7 +123,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                             result.payload = utils.isArray(result.payload) ? utils.decompress(result.payload) : result.payload;
                             result.snapshot = result.snapshot && !result.snapshot.nodes  ? utils.decompress(result.snapshot) : result.snapshot;
                         }
-                        
+                        console.log(result, 801)
                         return {
                             ...result
                         }
@@ -163,7 +163,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                 onSaveFlowList={({type, value,  diff, nodes, connector})=>{
                    
                     return this.developmentRequest({
-                        removeConnector: type=='removeNode' ? value.filter(it => it.props.connection).map(it=> {
+                        removeConnector: type == 'removeNode' ? value.filter(it => it.props.connection).map(it=> {
                             console.log(it)
                             return {
                                 connection: it.props.connection,
