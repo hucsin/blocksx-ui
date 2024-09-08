@@ -130,6 +130,7 @@ interface MircoFlowState {
     classifyLabel?: any;
     activateList: any;
 
+    removeNodeCountMap: any;
     
 }
 
@@ -181,7 +182,8 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
 
             openhelper: false,
             connectProps: {},
-            activateList: []
+            activateList: [],
+            removeNodeCountMap: {}
         }
 
         this.cavnasId = utils.uniq('MircoFlow');
@@ -790,8 +792,20 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         }
         
     }
+
+    private onRemoveNode(name: string) {
+        let { removeNodeCountMap } = this.state;
+        if (removeNodeCountMap[name]) {
+            removeNodeCountMap[name] +=1
+        } else {
+            removeNodeCountMap[name] = 1;
+        }
+        this.setState({
+            removeNodeCountMap
+        })
+    }
     public renderFlowList() {
-        let { runNodeStatus = {} } = this.state;
+        let { runNodeStatus = {}, removeNodeCountMap={} } = this.state;
         if (this.state.loading) {
             return null;
         }
@@ -814,8 +828,14 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         ...runNodeStatus[node.name],
                         ...nodeStatus
                     }
-
-                    return <MircoFlowNode fetchMap={this.props.fetchMap} key={[this.state.reflush,node.name].join('')} {...node} 
+                    //console.log([this.state.reflush,node.name, removeNodeCountMap[node.name]].join(''), node.name)
+                    return <MircoFlowNode 
+                        fetchMap={this.props.fetchMap} 
+                        key={[this.state.reflush,node.name, removeNodeCountMap[node.name]].join('')} 
+                        {...node} 
+                        onRemoveNode={(name)=> {
+                            this.onRemoveNode(name)
+                        }}
                         onUpdateNode={(id,nodeInfo,isPatch)=> {
 
                             if (this.state.runStatus !=='miss') {   

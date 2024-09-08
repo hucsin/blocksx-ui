@@ -205,6 +205,7 @@ export default class MiniFlow extends EventEmitter {
             nodes: utils.copy(this.nodes),
             connector: utils.copy(this.connector)
         };
+
         // this.flushNodes();
         if (this.doChangeValue) {
             return this.doChangeValue(playload, this.isAnimationing || this.draggingFlag)
@@ -794,6 +795,7 @@ export default class MiniFlow extends EventEmitter {
 
     private bindEvent() {
         this.instance.bind('connection', (e) => {
+            
             this.connectorMap[this.getConnectorName(e.sourceId, e.targetId)] = e.connection;
         })
         if (!this.isViewer) {
@@ -905,7 +907,7 @@ export default class MiniFlow extends EventEmitter {
         
         
         if (connector && !this.connectorMap[this.getConnectorName(source, target)]) {
-             
+            
             this.setConnectorInstance(source, target, this.instance.connect({
                 source: source,
                 target: target,
@@ -932,7 +934,7 @@ export default class MiniFlow extends EventEmitter {
                     }
                 },
                 endpointStyles: [{ fill: sourceColor}, { fill: targetColor }],
-                deleteEndpointsOnDetach: false,
+                deleteEndpointsOnDetach: true,
                 connectionsDetachable: false,
                 connector: ['Straight'],
                 draggable: false,
@@ -1357,7 +1359,6 @@ export default class MiniFlow extends EventEmitter {
     private resetFlowNode(node?: any) {
         if (node) {
             let nodeName: any = node.name;
-
             if (!this.nodeMap[nodeName]) {
                 this.instance.draggable(nodeName, {
                     // filter: '.scenflow-node'
@@ -1457,19 +1458,6 @@ export default class MiniFlow extends EventEmitter {
         }
     }
 
-    private dropNodeByName(nodeName: string, cb?: Function) {
-        let element: any = document.getElementById(nodeName);
-
-        if (element) {
-            DomUtils.addClass(element, 'destroy');
-            setTimeout(() => {
-                element.style.display = 'none'
-                //element.parentNode.removeChild(element)
-                //this.instance.repaintEverything();
-                cb && cb();
-            }, 400)
-        }
-    }
 
     private findOffsetNodes(left: number, top: number) {
 
@@ -1859,18 +1847,54 @@ export default class MiniFlow extends EventEmitter {
         }
         
         this.markNodeRemoveByName(nodeName);
+        //JSPlumbTool.jsPlumb.empty(nodeName);
+        //JSPlumbTool.jsPlumb.deleteConnectionsForElement(nodeName);
+
+// 删除该节点的所有端点
+        //JSPlumbTool.jsPlumb.removeAllEndpoints(nodeName);
+        
+
+       // let t=this.instance.getConnections();
+        
 
         this.dropNodeByName(nodeName, () => {
-            this.removeNodeByName(nodeName);    
+            this.removeNodeByName(nodeName);
             
             if (this.nodes.length ==0) {
                 this.cavnasDraggable.reset()
             }
             cb && cb([nodeName, ...relatedNodeMap]);
-
             cb && this.doChangeSave('removeNode', needDeleteArray);
+            
+            this.nodeMap[nodeName] = null;
+            
+            setTimeout(()=> {
+                //this.instance.reset();
+                //this.instance.repaintEverything();
+                this.instance.unmanage(nodeName, true)
+                
+               //JSPlumbTool.jsPlumb.remove(nodeName, true);
+            }, 0)
         });
 
+    }
+
+    private dropNodeByName(nodeName: string, cb?: Function) {
+        let element: any = document.getElementById(nodeName);
+        
+        if (element) {
+            DomUtils.addClass(element, 'destroy');
+            setTimeout(() => {
+                element.style.display = 'none'
+                //element.parentNode.removeChild(element)
+                //this.instance.repaintEverything();
+                cb && cb();
+                //console.log(33333)
+
+            }, 400)
+        } else {
+          // cb && cb();
+        }
     }
     private isRouterNode(node: any) {
         return node.type == 'router' && node.componentName == 'FlowControl.router'

@@ -13472,6 +13472,7 @@ var PLUMB_JS =  {};
 
                     if (manipulateDOM) {
                         try {
+                            
                             self.getDragArea().removeChild(__el);
                         } catch (e) {
                             

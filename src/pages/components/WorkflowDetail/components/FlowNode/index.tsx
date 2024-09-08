@@ -50,6 +50,7 @@ interface IMircoFlowNode {
     
     getFormerSchema(type: string):any;
     onChangeProps(value: any):any;
+    onRemoveNode(name: string):any;
     activateList: any;
 
 }
@@ -723,7 +724,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 return this.addRouterChildren()
             case 'delete':
                 return this.mircoFlow.miniFlow.deleteNodeByName(this.props.name, ()=> {
-
+                    this.props.onRemoveNode && this.props.onRemoveNode(this.props.name)
                 })
         }
     }
