@@ -28,6 +28,7 @@ interface IMircoFlowNode {
     status?: any;
     //statusMessage?: any;
     nodeStatus?: any;
+    nodesStatus?: any;
     locked?: boolean;
     bytethinkingId?: number;
     componentName?: string;
@@ -64,6 +65,7 @@ interface SMircoFlowNode {
     
     //statusMessage: any;
     nodeStatus?: any;
+    nodesStatus?: any;
     cacheProps: any;
     openSetting: boolean;
     hasChanged: boolean;
@@ -234,7 +236,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             activateList: props.activateList,
             componentName,
             status: '',
-            nodeStatus: props.nodeStatus
+            nodeStatus: props.nodeStatus,
+            nodesStatus: props.nodesStatus
         };
 
         this.mircoFlow = props.mircoFlow;
@@ -257,6 +260,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         if (newProps.nodeStatus != this.state.nodeStatus) {
             this.setState({
                 nodeStatus: newProps.nodeStatus
+            })
+        }
+        if (newProps.nodesStatus != this.state.nodesStatus) {
+            this.setState({
+                nodesStatus: newProps.nodesStatus
             })
         }
 
@@ -375,7 +383,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
 
         let { nodeStatus = {} } = this.state;
         if (nodeStatus.status == 'NODE_FINISH') {
-            return nodeStatus.outcome && nodeStatus.outcome.$data;
+            return nodeStatus.outcome && nodeStatus.outcome;
         }
     }
     private canShowPopover() {
@@ -394,7 +402,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 })}>
                     <p><IconView/> {this.isShowSuccess() ? 'Success' : 'Error'}</p>
                     {this.isShowSuccess() 
-                        ? <Output nodeStatus={this.state.nodeStatus} /> 
+                        ? <Output nodeStatus={this.state.nodeStatus} nodesStatus={this.state.nodesStatus} /> 
                         : <div>{this.state.nodeStatus.message}</div>}
                 </div>
             )

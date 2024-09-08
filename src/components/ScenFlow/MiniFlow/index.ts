@@ -1056,7 +1056,7 @@ export default class MiniFlow extends EventEmitter {
                 instance.setHoverPaintStyle(hoverPaintStyle)
             } catch(e) {}
 
-            this.emit('unHighlightConnect', {
+            event && this.emit('unHighlightConnect', {
                 event,
                 target,
                 source,

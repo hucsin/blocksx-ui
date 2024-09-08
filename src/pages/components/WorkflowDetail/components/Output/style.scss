@@ -34,6 +34,13 @@
             max-height: calc(100% - 40px);
             height: calc(100% - 40px);
             border: 1px solid var(--main-border-color);
+            .ant-tabs-nav {
+                margin-bottom: 16px;
+            }
+            .ant-tabs-tab {
+                padding: 2px 8px;
+                font-size:14px;
+            }
         }
     }
 
@@ -41,14 +48,20 @@
         display: block;
         
     }
+    .ant-descriptions .ant-descriptions-item-label::after {
+        margin-inline: 0;
+        display: none;;
+    }
     .ant-descriptions-item-container {
         .ant-descriptions-item-content{
             display: block;
             position: relative;
-            margin-top: -6px;
+            line-height: 15px;
+
         }
         .ant-descriptions-item-label {
             display:block;
+            text-transform: capitalize;
         }
     }
     .ant-table-wrapper .ant-table {
@@ -68,6 +81,27 @@
         word-wrap: normal;
         padding: 8px;
         word-break: break-all;
+        .ant-tabs-tab {
+            padding: 0 2px;
+            font-size:12px;
+            opacity: .5;
+            transition: all .2s;
+            &:hover {
+                opacity: .8;
+            }
+        }
+        .ant-tabs-extra-content {
+            .anticon {
+                padding-right: 8px;
+                opacity: .5;
+            }
+        }
+        .ant-tabs-nav {
+            margin-bottom: 4px;
+        }
+        .ant-tabs .ant-tabs-tab+.ant-tabs-tab {
+            margin-left: 4px;
+        }
         pre {
             margin: 0;
             line-height: 16px;

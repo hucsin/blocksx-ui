@@ -473,16 +473,21 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             
         })
         this.miniFlow.on('unHighlightConnect', () => {
-            let { current } = this.connectHelperRef;
-            if (current) {
-                current.style.display ='none';
-                this.setState({
-                    openhelper: false
-                })
-            }
+            this.hideHelper();
         })
     }
-   
+    
+    private hideHelper(unhigh: boolean = false) {
+        let { current } = this.connectHelperRef;
+        if (current) {
+            current.style.display ='none';
+            this.setState({
+                openhelper: false
+            })
+        }
+
+        unhigh && this.miniFlow.unHighlightConnector();
+    }
     private getQueryValue(queryKey: string) {
         let { query = {} } = this.router;
         return query[queryKey] || ''
@@ -931,7 +936,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     private onCloseLayer = ()=> {
 
         if (this.state.connectPropsHasChanged ) {
-
+            console.log(333,23, this.state.connectProps)
             // save
             this.miniFlow.updateHighlightConnectProps(this.state.connectProps || {})
             
@@ -976,7 +981,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                     
                 // let pickvalue: any = pick(this.state.props, ['icon', 'color'])
                     //console.log(pickvalue, props, 222, this.state.props)
-                    
+                   
                     this.setState({
                         //  props: props,
                         connectProps: props,
@@ -984,6 +989,12 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                     })
                 }} 
                 noToolbar
+                onMouseLeave={()=> { 
+                    this.setState({ openhelper: false })
+                    this.onCloseLayer();
+                    this.hideHelper(true);
+                }}
+                
                 open={this.state.openhelper}
                 onShow={()=>this.setState({openhelper: true})}
                 onClose={()=>this.onCloseLayer()}
@@ -996,11 +1007,13 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         let formerSchema: any  = this.getFormerSchema();
         return (
             
-                <div ref={this.canvasRef} className={classnames({
-                    'ui-mircoflow': true,
-                    'ui-runtest-show': !!this.state.openType,
-                    'ui-runlog-show': !!this.state.openLog
-                })} >
+                <div
+                    ref={this.canvasRef} className={classnames({
+                        'ui-mircoflow': true,
+                        'ui-runtest-show': !!this.state.openType,
+                        'ui-runlog-show': !!this.state.openLog
+                    })} 
+                >
                     <Spin spinning={this.state.loading} wrapperClassName="3" size="large" >
                         {formerSchema && <SmartPage  
                             name={this.props.pageType}

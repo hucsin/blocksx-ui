@@ -55,8 +55,8 @@ export default class FormerCondition extends React.Component<FormerConditionProp
     public doChangeValue(noChange?: boolean) {
         this.setState({
             index: 0,
-            left: 0,
-            right: 0,
+           // left: 0,
+           // right: 0,
             value: utils.copy(this.state.value)
         }, ()=> {
             !noChange && this.props.onChangeValue(this.state.value)
@@ -75,7 +75,7 @@ export default class FormerCondition extends React.Component<FormerConditionProp
         let caseInsensitive: any = TupleSymbol[tuple.value.operator] || {};
         let hideLeft: any = this.state.right == index;
         let hideRight: any = this.state.left == index;
-        
+
         return (
             <div className={classnames({
                 'ui-regular-tuple': true,
@@ -86,6 +86,7 @@ export default class FormerCondition extends React.Component<FormerConditionProp
                 <Space.Compact block>
                     {React.cloneElement(slotMap.left, {
                         value: tuple.value.left,
+                        strict: true,
                         props: hideLeft ? {
                             width: 0
                         } : hideRight ? { width: 'calc(100% - 23px)'}: undefined,
@@ -97,6 +98,7 @@ export default class FormerCondition extends React.Component<FormerConditionProp
                         },
                         onChangeValue: (value)=> {
                             tuple.value.left = value;
+                        
                             changeValue(tuple.value)
                         }
                     })}
@@ -113,6 +115,7 @@ export default class FormerCondition extends React.Component<FormerConditionProp
                     }}><Icons.CaseUtilityOutlined/></Button></Tooltip>}
                     {!caseInsensitive.single && React.cloneElement(slotMap.right, {
                         value: tuple.value.right,
+                        strict: true,
                         props: hideRight ? {
                             width: 0
                         } : hideLeft ? {width: "calc(100% - 23px)"} : undefined,

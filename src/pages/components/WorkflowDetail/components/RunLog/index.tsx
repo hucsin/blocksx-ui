@@ -197,6 +197,7 @@ export default class RunLog extends React.Component<RunLogProps, RunLogState> {
                         description={<Output 
                             key={node.name}
                             expand={index>=2}
+                            nodesStatus={this.state.nodeStatus}
                             nodeStatus={this.state.nodeStatus[node.name]}/>}
                     />
                 )
@@ -247,7 +248,7 @@ export default class RunLog extends React.Component<RunLogProps, RunLogState> {
                                         this.props.onToggleActivate([])
                                     }}
                                 >
-                                    <dt> {TablerUtils.renderIconComponent(node)} <span className='ui-method'>{props.method}</span> <span className='ui-program'>{props.program}</span>  <span className='ui-serial'>{node.serial}</span></dt>
+                                    <dt> {TablerUtils.renderIconComponent(node)} <span className='ui-method'>{props.method}</span> <span className='ui-program'>{props.program}</span>  <span className='ui-serial'>{node.name}</span></dt>
                                     <dd>
                                         {this.renderItem(node, status, index)}
                                     </dd>

@@ -92,7 +92,8 @@ export interface SmartPageProps {
     size?: any;
     triggerMap?: {
         [key: string]: Function;
-    }
+    };
+    onMouseLeave?: Function
 }
 
 export interface SmartPageState {
@@ -718,7 +719,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 'ui-smartpage-wrapper': true,
                 [this.props.rootClassName as string]: this.props.rootClassName,
                 [`ui-smartpage-layout-${this.state.layout}`]: this.state.layout
-            })}>
+            })}
+
+            onMouseLeave={()=> {
+                this.props.onMouseLeave && this.props.onMouseLeave()
+            }}
+            >
                 <Spin spinning={this.state.loading}>
 
                     {this.state.uiType ? this.renderMainContent() : <Empty />}
@@ -805,7 +811,6 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         overlayStyle={{
                             width: this.getDefaultWidth()
                         }}
-
                         rootClassName="ui-smartpage-popover"
                         autoAdjustOverflow={true}
                         onOpenChange={this.toggleOpenStatus}

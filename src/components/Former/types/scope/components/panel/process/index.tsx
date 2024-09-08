@@ -128,7 +128,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
             }, () => this.fetchOutputSchema(this.state.page))
         }
         if (nextProps.disabled != this.state.disabled ) {
-            
+            console.log('disab-=-=-=-=-=-=led', nextProps.disabled)
             this.setState({
                 disabled: nextProps.disabled
             })
@@ -281,7 +281,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
             default:
                 break;
         }
-
+        console.log(3333333222, this.state.disabled, this.state.selectedKeypath == pathname)
         return {
             ...treedata,
             disabled: this.state.selectedKeypath == pathname ? false : this.state.disabled || this.matchDataType(schema.type, treedata.subtype)
@@ -318,6 +318,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         return (<Tree
             multiple
             blockNode
+            disabled={this.state.disabled}
             onSelect={(item:any, info: any)=> {
 //                let 
                 item[0] && this.props.onClick(

@@ -267,7 +267,6 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
     }
     private onBlur = (current) => {
         //this.focusInput = null;
-
         if (current == this.focusInput) {
             this.focusInput = null;
             if (this.timer) {
@@ -338,6 +337,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
     private isOneValue(value: any) {
 
         if (Array.isArray(value)) {
+            //console.log(value, 3220019191)
             return value.length <= 1;
         }
 
@@ -347,12 +347,13 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
     public render() {
         let { value } = this.state;
         let typeProps: any = this.state.props || this.state.props || this.props['x-type-props'] || {};
+        let strict: boolean = utils.isUndefined(typeProps.strict) ? true : typeProps.strict;
         let width: any = this.state.width || typeProps.width;
         let isEmptyValue: boolean = this.isEmptyValue(value);
         let disabled: boolean = typeProps.struct ? !this.isOneValue(value) : false;
         let opened: any = this.state.disabled ? this.state.open : this.state.open;
+
         // dataType
-        
         // 第一个节点
         return (
             <Popover
@@ -416,19 +417,24 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                             onBlur: this.onBlur,
                             findInputRange: this.findInputRange,
                             setDisabled: (disabled:boolean) => {
+                                console.log('setdisabled', !!disabled)
                                 this.setState({
-                                    disabled: disabled
+                                    disabled: !!disabled
                                 })
                             },
                             setCurrentDataType: (dataType: any)=> {
                                 this.setState({
                                     currentDataType: dataType
                                 })
+                            },
+                            getCurrentValue: () => {
+                                return this.state.value;
                             }
                         }}>
-                            {<FormerScopeValue disabled={disabled} strict={typeProps.strict} dataType={typeProps.dataType}  onRemoveValue={() => { }} onChangeValue={(val) => {
+                            {<FormerScopeValue disabled={disabled} strict={strict} dataType={typeProps.dataType}  onRemoveValue={() => { }} onChangeValue={(val) => {
+                                
                                 this.doChangeValue(val)
-                            }} value={value && value.length ? value :[{type:'input', value: ''}]} />}
+                            }} value={value && value.length ? value :[{type:'value', value: ''}]} />}
                         </Context.Provider>
                     </div>
                 </div>

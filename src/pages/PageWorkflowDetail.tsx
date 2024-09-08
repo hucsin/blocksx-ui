@@ -123,7 +123,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                             result.payload = utils.isArray(result.payload) ? utils.decompress(result.payload) : result.payload;
                             result.snapshot = result.snapshot && !result.snapshot.nodes  ? utils.decompress(result.snapshot) : result.snapshot;
                         }
-                        console.log(result, 801)
+                        
                         return {
                             ...result
                         }

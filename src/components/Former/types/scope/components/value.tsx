@@ -136,13 +136,16 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             let originValue: any = [];
 
             value.forEach((it: any, index: number) => {
+                
                 if (it.type == 'value') {
                     originValue.push(it)
                 } else {
-                    let preNode: any = originValue[originValue.length - 1];
+                    //let preNode: any = originValue[originValue.length - 1];
+                    let preNode: any = originValue[ index -1];
+                    //let currentNode: any = originValue [ index ];
                     let nextNode: any = value[index + 1];
                     // 检查前面是否有value
-                    if (!preNode || preNode.type !== 'value') {
+                    if ((!preNode || preNode.type !== 'value')) {
                         originValue.push({
                             type: 'value',
                             padding: true,
@@ -158,7 +161,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                     originValue.push(it);
 
 
-                    if (!nextNode || nextNode.type !== 'value') {
+                    if ((!nextNode || nextNode.type !== 'value')) {
                         originValue.push({
                             type: 'value',
                             padding: true,
@@ -209,6 +212,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 name={item.name}
                 key={[item.name, this.state.reflush, index].join('.')}
                 parameters={item.parameters}
+                strict={this.props.strict}
                 onAddParam={() => {
                     item.parameters.push({
                         type: 'value',
@@ -284,8 +288,8 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     private isCanInput(value: any) {
 
         if (this.state.strict) {
+            
             if (Array.isArray(value)) {
-                
                 return value.length < 1 || value[0].value == '';
             }
 
@@ -407,7 +411,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     }
     private calculateParametersLength(item: any) {
         let length: number = 0;
-
+        
         if (Array.isArray(item.parameters)) {
             if (item.parameters.length) {
                 item.parameters.forEach(item => {
@@ -434,9 +438,11 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             return this.doFocus(currentIndex - 1), false;
         }
 
+        
         // 需要判断上一个值是否是是value
         let prevScpoe: any = originValue[index - 1];
         let currentCusorposition: number = -1;
+        
 
         if (prevScpoe.type == 'value') {
             if (this.isSampleScopeValue(prevScpoe) && prevScpoe.value.length > 0) {
@@ -491,6 +497,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     }
     public render() {
         let { value, originValue } = this.state;
+        //console.log(value.length, 'render value')
         if (Array.isArray(value)) {
             return (
                 <>
@@ -504,7 +511,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         } else {
             
             return (
-                <FormerScopeInput dataType={this.state.dataType} disabled={this.state.disabled} serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any) => {
+                <FormerScopeInput dataType={this.state.dataType} strict={this.state.strict} disabled={this.state.disabled} serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any) => {
                     return this.onRemoveValue(current)
                 }} context={this.context} index={this.state.index} onChangeValue={(val) => {
                     this.doChangeValue(val)

@@ -13,6 +13,7 @@ interface FormerScopeInputProps {
     serial: number;
     dataType?: any;
     disabled?: boolean;
+    strict?: boolean;
 }
 interface FormerScopeInputState {
     defaultValue: string;
@@ -22,6 +23,7 @@ interface FormerScopeInputState {
     serial:number;
     dataType?: any;
     disabled?: boolean;
+    strict?: boolean;
 }
 
 
@@ -41,7 +43,8 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             index: props.index,
             serial: props.serial,
             dataType: props.dataType,
-            disabled: props.disabled
+            disabled: props.disabled,
+            strict: props.strict
         }
 
         this.ref = React.createRef();
@@ -60,6 +63,12 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
         if (nextProps.index != this.state.index) {
             this.setState({
                 index: nextProps.index
+            })
+        }
+
+        if (nextProps.strict != this.state.strict) {
+            this.setState({
+                strict: nextProps.strict
             })
         }
 
@@ -140,7 +149,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 this.resetLastPosition(currentPostion)
             }, 0)
         } else {    
-            if (!this.canInput() || e.keyCode ==13) {
+            if (!this.canInput() || e.keyCode == 13) {
                 e.stopPropagation();
                 return e.preventDefault();
             }
@@ -155,25 +164,42 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             this.ref.current.focus();
         }
     }
+    
     /**
      * 判断是否能录入
      */
-    public canInput() {
+    public canInput(ig: boolean = false) {
         let { dataType } = this.state;
         
+
+        if (!ig && dataType ) {
+            if (!Array.isArray(dataType)) {
+                dataType = [dataType]
+            }
+            if (!dataType.find(type => ['string', 'boolean', "number", 'date'].includes(type.toLowerCase()))) {
+
+                return false;
+            }
+        }
+        // 严格模式
+        if (this.state.strict) {
+            let value: any = this.context.getCurrentValue();
+            if (!value ||  !value.length) {
+                return true;
+            } else {
+                console.log(value, 322323)
+                return (value.length == 1 && value[0].type == 'value')
+            }
+        }
+
+
         if(this.state.disabled) {
             return false;
         }
 
-        if (dataType ) {
-            if (!Array.isArray(dataType)) {
-                dataType = [dataType]
-            }
-            return dataType.find(type => ['string', 'boolean', "number", 'date'].includes(type.toLowerCase()))
-        }
-        
         return true
     }
+    
     public render() {
         
         return (
@@ -183,15 +209,21 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 data-serial={this.state.serial}
                 className="ui-scope-input" 
                 contentEditable="true" 
-                onBlur={()=> { 
+                onBlur={()=> {
                     //this.setState({focus: false})
                     this.context.setDisabled(false);
                     this.context.onBlur(this.ref.current);
                     
                 }} 
                 onFocus={()=> {
+                    
                     //this.setState({focus: true})
-                    this.context.setDisabled(this.state.disabled);
+                    if (this.state.strict) {
+                        this.context.setDisabled(!this.canInput(true) || !!this.state.value)
+                        console.log(this.canInput(),!this.canInput() || !!this.state.value, this.state.value, 382929292)
+                    } else {
+                        this.context.setDisabled(this.state.disabled);
+                    }
                     this.context.onFocus(this.ref.current, true);
                     this.context.setCurrentDataType(this.state.dataType);
                     
@@ -214,8 +246,18 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                        // this.doFocus();
                     }
                     
-                    this.doChangeValue(originValue);
-                    this.resetLastPosition()
+                    if (this.canInput()) {
+                    
+                        this.doChangeValue(originValue);
+                        this.resetLastPosition()
+
+                        if (this.state.strict) {
+                            this.context.setDisabled(originValue)
+                        }
+                    }
+
+                
+
             }}>{this.state.defaultValue}</span>
         )
     }

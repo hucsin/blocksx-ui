@@ -10,7 +10,8 @@ interface FormerScopeFunctionProps {
     //index: number;
     name: string;
     parameters: any[]
-    onAddParam: Function
+    onAddParam: Function;
+    strict?: boolean;
 }
 
 interface FormerScopeFunctionState {

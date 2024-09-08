@@ -79,11 +79,10 @@ export default class ValueViewForm extends React.Component<{ value: any, column?
                 )
             case 'object':
                 let valueLength: number = Object.keys(value).length;
-                let column: number = this.props.column || (valueLength < 8 ? 1 : 2 );
-
+                let column: number = this.props.column || (valueLength < 8 ? 1 : 3 );
 
                 return (
-                    <Descriptions column={ column } className={classnames({
+                    <Descriptions  column={ column } className={classnames({
                         [`ui-valueview-${title}`]: true
                     })} title={title == 'default' ? '' : <>{title }<span className='ui-empty'>{'<Object>'}</span></>} items={this.getDescritions(value, title == 'default' ? '' : title)} />
                 )
@@ -96,9 +95,11 @@ export default class ValueViewForm extends React.Component<{ value: any, column?
             if (Array.isArray(value)) {
                 value = JSON.stringify(value);
             }
+            let valueLength: number = String(value).length;
             return {
                 key: key,
                 label: title ? ['',key].join('.') :key,
+                span: valueLength > 25 ?  valueLength < 100 ? 2 : 3 : 1,
                 children: value
             }
         })
