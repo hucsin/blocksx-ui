@@ -374,8 +374,12 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         miss: 'SettingFilled'
     };
     private isShowError() {
-        let { nodeStatus = {} } = this.state;
+        let { nodeStatus = {}, status } = this.state;
         
+        if (nodeStatus.code == 'miss') {
+            return !!nodeStatus.message;
+        }
+
         if (nodeStatus.status == 'NODE_BREAK') {
             return !!nodeStatus.message
         }
@@ -383,7 +387,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     private isShowSuccess() {
 
         let { nodeStatus = {} } = this.state;
-        if (nodeStatus.status == 'NODE_FINISH') {
+        if (nodeStatus.status == 'NODE_FINISH' ) {
             return nodeStatus.outcome && nodeStatus.outcome;
         }
     }
@@ -417,6 +421,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         let status: string = this.state.status; // running, success, faild, miss
         
         let IconView: any = Icons[this.statusIconMap[status]]
+        
         //let statusIcon: 
         if (status && IconView) {
             return (

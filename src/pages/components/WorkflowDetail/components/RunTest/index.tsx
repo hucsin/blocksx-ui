@@ -215,7 +215,7 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
                 id: this.props.router.params.id,
                 ...this.props.getSchema(),
             }).then((result: any)=> {
-
+                console.log(result, 'run test')
                 switch(result.type) {
                     case 'miss': // 配置错误
                         this.dealMiss(result.fields)

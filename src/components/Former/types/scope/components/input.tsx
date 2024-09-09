@@ -187,7 +187,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             if (!value ||  !value.length) {
                 return true;
             } else {
-                console.log(value, 322323)
+               
                 return (value.length == 1 && value[0].type == 'value')
             }
         }
@@ -220,7 +220,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                     //this.setState({focus: true})
                     if (this.state.strict) {
                         this.context.setDisabled(!this.canInput(true) || !!this.state.value)
-                        console.log(this.canInput(),!this.canInput() || !!this.state.value, this.state.value, 382929292)
+                      
                     } else {
                         this.context.setDisabled(this.state.disabled);
                     }
