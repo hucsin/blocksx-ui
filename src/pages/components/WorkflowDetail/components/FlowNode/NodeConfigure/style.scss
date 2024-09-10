@@ -6,15 +6,20 @@
     .ant-list-item-action {
         display:none;
     }
+    .ant-divider {
+        display: none;
+    }
     .ant-popover-inner {
-        padding: 16px;
+        padding: 20px;
     }
     .ui-searchbar {
         position: absolute;
         right: 0;
         width: 140px;
     }
-   
+    .ui-mircotable .ant-list-split .ant-list-item.ui-mircotable-group {
+        margin-bottom: 0;
+    }
     .ui-recofilter-title {
         position: relative;
 
@@ -59,7 +64,7 @@
         font-weight: initial;
     }
     .ant-popover-title {
-        border-bottom: 1px solid var(--main-inverse-border-color);
+        border-bottom: 1px solid var(--main-border-color);
         padding-bottom: 8px;
     }
     .ant-tag {
@@ -116,6 +121,17 @@
     }
 }
 .ui-node-configure-wrapper {
+    .ui-avatar-merge {
+        .ui-sub {
+            right: -12px;
+            bottom: -12px;
+            .ant-avatar {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 20px !important;
+            }
+        }
+    }
     .ui-createdat-wrapper {
         display: none;
     }

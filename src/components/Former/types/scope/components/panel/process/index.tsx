@@ -8,7 +8,6 @@ import { GlobalScope, MiniFlow, SmartRequest, ThinkingNodeManager } from '@block
 import ProcessNode from './node';
 
 import './style.scss'
-import exp from 'constants';
 
 interface PanelProcessState {
     page: string;
@@ -47,8 +46,10 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
     //private fetchHelper: any = SmartRequest.makeGetRequest('/api/thinking/findOutput');
     public constructor(props: any) {
         super(props);
+        
         let flow: MiniFlow = GlobalScope.getContext(GlobalScope.TYPES.CURRENTFLOW_CONTEXT);
-        let currentNode: any = GlobalScope.getScope(GlobalScope.TYPES.CURRENTFLOW_NODE) || {};
+        let currentNode: any = GlobalScope.getScope(GlobalScope.TYPES.CURRENTFLOW_NODE)
+        
         let flowMap: any = flow.findAncestralFlowMap(currentNode.value);
 
         this.cavnasId = '#flow'+ new Date().getTime() +'#';
@@ -387,6 +388,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
     }
     public render () {
         let { selected ={}, starts = [], schema } = this.state;
+        
         let { program, method, description } = selected.props;
         let mapheight: number = starts.length ==1 ? 56 : 40 + starts.length * 40;
         

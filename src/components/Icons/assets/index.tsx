@@ -10,6 +10,7 @@ export { default as DocumentAddDataFilled } from './DocumentAddDataFilled';
 export { default as EditUtilityFilled } from './EditUtilityFilled';
 export { default as EnlargeUtilityFilled } from './EnlargeUtilityFilled';
 export { default as FilterDataFilled } from './FilterDataFilled';
+export { default as GmailBrandFilled } from './GmailBrandFilled';
 export { default as GoLeftDirectivityFilled } from './GoLeftDirectivityFilled';
 export { default as GoRightDirectivityFilled } from './GoRightDirectivityFilled';
 export { default as GoldendbBrandFilled } from './GoldendbBrandFilled';

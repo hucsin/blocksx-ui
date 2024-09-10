@@ -661,7 +661,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     
         this.patchValue();
         this.setState({openSetting: true});
-
+       
+        this.setGlobalScope();
+    }
+    private setGlobalScope() {
+ 
         GlobalScope.setScope(GlobalScope.TYPES.CURRENTFLOW_NODE, {
             type: 'node',
             value: this.props.name
@@ -760,6 +764,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                     this.onContextMenu(event)
                 }}
                 onMouseEnter={()=> {
+                    this.setGlobalScope();
                     this.props.onMouseEnter(this.props.name)
                 }}
                 onMouseLeave={()=> {

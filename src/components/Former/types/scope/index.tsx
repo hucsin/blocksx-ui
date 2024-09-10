@@ -417,7 +417,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                             onBlur: this.onBlur,
                             findInputRange: this.findInputRange,
                             setDisabled: (disabled:boolean) => {
-                                console.log('setdisabled', !!disabled)
+                                
                                 this.setState({
                                     disabled: !!disabled
                                 })
