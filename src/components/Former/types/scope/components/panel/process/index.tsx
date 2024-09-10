@@ -48,7 +48,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
     public constructor(props: any) {
         super(props);
         let flow: MiniFlow = GlobalScope.getContext(GlobalScope.TYPES.CURRENTFLOW_CONTEXT);
-        let currentNode: any = GlobalScope.getScope(GlobalScope.TYPES.CURRENTFLOW_NODE);
+        let currentNode: any = GlobalScope.getScope(GlobalScope.TYPES.CURRENTFLOW_NODE) || {};
         let flowMap: any = flow.findAncestralFlowMap(currentNode.value);
 
         this.cavnasId = '#flow'+ new Date().getTime() +'#';
