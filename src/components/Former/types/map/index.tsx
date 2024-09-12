@@ -13,9 +13,10 @@ interface IFormerMap extends IFormerArray {
     'x-type-props'?: any;
     children?:any;
     fieldName?: any;
+    readonly?: boolean;
 }
 
-export default class FormerMap extends React.Component<IFormerMap, { value: any, originValue: any }> {
+export default class FormerMap extends React.Component<IFormerMap, { value: any, originValue: any, readonly: boolean }> {
 
     static Item = FormerMapItem;
 
@@ -25,13 +26,19 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
         
         this.state = {
             value: value,
-            originValue: this.getKeyValueArray(value)
+            originValue: this.getKeyValueArray(value),
+            readonly: props.readonly || false
         };
     }
     public UNSAFE_componentWillReceiveProps(newProps:any) {
         if (newProps.originValue !== this.state.originValue) {
             this.setState({
                 originValue: newProps.originValue || []
+            })
+        }
+        if (newProps.readonly !== this.state.readonly) {
+            this.setState({
+                readonly: newProps.readonly || false
             })
         }
     }
@@ -71,7 +78,7 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
     }
     
     private onMapItemAdd =()=> {
-        if (this.props.viewer) {
+        if (this.props.viewer || this.state.readonly) {
             return;
         }
         let originValue = this.state.originValue;
@@ -114,9 +121,9 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
         return (
             <div  className={classnames({
                 "former-map-empty": true,
-                'former-map-disabled': this.props.viewer
+                'former-map-disabled': this.props.viewer || this.state.readonly
             })} onClick={this.onMapItemAdd}>
-                {!this.props.viewer ? <><PlusOutlined/> Click to add {this.props.fieldName ?  this.props.fieldName.toLowerCase(): 'new item'}</> : ' Empty'}
+                {!this.props.viewer && !this.state.readonly ? <><PlusOutlined/> Click to add {this.props.fieldName ?  this.props.fieldName.toLowerCase(): 'new item'}</> : ' Empty'}
             </div>
         )
     }
@@ -129,7 +136,7 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
             <div className={
                 classnames("former-map", {
 
-                    'former-map-disabled': this.props.viewer
+                    'former-map-disabled': this.props.viewer || this.state.readonly
                 })
             }>
                 {hasChildren && !this.props.viewer && <div className="former-map-add" onClick={this.onMapItemAdd}><PlusCircleOutlined/></div>}

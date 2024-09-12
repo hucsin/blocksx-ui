@@ -30,6 +30,7 @@ export interface ILeaf {
     onChangeValue?: Function;
     onDealControl?: Function;
     childrenControl?: object;
+    readonly?: boolean;
 
     "x-type"?: string;
     type: string;
@@ -66,6 +67,7 @@ interface TLeaf {
 
     validationState?: any; // 验证状态
     validationMessage?: any;
+    readonly?: boolean;
 }
 
 interface IControl {
@@ -124,7 +126,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             oneOfCache: {},
             viewer: props.viewer,
             originValue: this.getMapOriginValue(value || {}),
-            canmodify: props.canmodify
+            canmodify: props.canmodify,
+            readonly: props.readonly || false
         }
 
         this.wrapperRef = React.createRef();
@@ -190,6 +193,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         if (newProps.viewer != this.state.viewer) {
             this.setState({
                 viewer: newProps.viewer
+            })
+        }
+        if (newProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: newProps.readonly
             })
         }
 
@@ -814,6 +822,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                 },
                                 key:[this.path, prop, index, 'leaf'].join('.'),
                                 viewer:this.state.viewer,
+                                readonly: this.state.readonly,
                                 canmodify:this.state.canmodify,
 
                                 size:this.props.size,
@@ -905,6 +914,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
                 former={this.props.former}
                 viewer={this.state.viewer}
+                readonly={this.state.readonly}
                 canmodify={this.state.canmodify}
                 size={this.props.size}
                 rootEmitter={this.props.rootEmitter}
@@ -1012,6 +1022,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
                                     former={this.props.former}
                                     viewer={this.state.viewer}
+                                    readonly={this.state.readonly}
                                     canmodify={this.state.canmodify}
                                     value={it}
                                     runtimeValue={this.state.runtimeValue}

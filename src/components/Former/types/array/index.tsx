@@ -25,10 +25,11 @@ interface IFormerArrays extends IFormerArray {
 
     moreItems?: any;
     props?: any;
-    fieldName?: string
+    fieldName?: string;
+    readonly?: boolean;
 }
 
-export default class FormerArray extends React.Component<IFormerArrays, { disabled: boolean, value: any }> {
+export default class FormerArray extends React.Component<IFormerArrays, { disabled: boolean, value: any, readonly: boolean }> {
 
     static Item = FormerArrayItem;
     private contextRef: any ;
@@ -37,20 +38,26 @@ export default class FormerArray extends React.Component<IFormerArrays, { disabl
         
         this.state = {
             value: props.value,
-            disabled: this.getDisabled()
+            disabled: this.getDisabled(props),
+            readonly: props.readonly || false
         };
         
         this.contextRef = React.createRef();
     }
-    private getDisabled() {
+    private getDisabled(propss: any) {
         let { props = {} } = this.props;
 
-        return typeof props.disabled !== 'undefined' ? props.disabled : this.props.disabled;
+        return ((propss || this.state).readonly) || (typeof props.disabled !== 'undefined' ? props.disabled : this.props.disabled);
     }
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<IFormerArrays>): void {
         if (nextProps.value !== this.state.value) {
             this.setState({
                 value: nextProps.value
+            })
+        }
+        if (nextProps.readonly !== this.state.readonly) {
+            this.setState({
+                readonly: nextProps.readonly || false
             })
         }
     }

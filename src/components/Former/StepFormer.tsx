@@ -52,6 +52,7 @@ export interface IFormerType {
     onView?: Function;
     okText?: string;
     viewer?: boolean;
+    readonly?: boolean;
     titleContainerRef?: any;
     hideButtons?:boolean;
     defaultFirstTitle?: string;
@@ -77,7 +78,7 @@ export interface SFormerType {
     setpOneValue?: any;
     loading?: boolean;
     iconType?: string;
-
+    readonly?: boolean;
     reflush?: any;
 }
 
@@ -110,7 +111,8 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             loading: false,
             id: 0,
             reflush: props.reflush || 'default' ,
-            iconType:  (isStepMode ?  isStepOne ? 'avatar' : 'icon' : props.iconType || 'avatar')
+            iconType:  (isStepMode ?  isStepOne ? 'avatar' : 'icon' : props.iconType || 'avatar'),
+            readonly: props.readonly
         }
 
 
@@ -267,6 +269,12 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             this.setState({
                 viewer: newProps.viewer,
                 schema: this.getSchema(fields || this.state.fields)
+            })
+        }
+
+        if (newProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: newProps.readonly
             })
         }
     }
@@ -648,7 +656,6 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
            // return null;
         }
         
-        
         return (
             <Former
                 groupType ={groupType}
@@ -730,6 +737,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                 disabled = {this.state.isStepMode && !this.state.setpOneValue}
                 value = {{...this.state.value}}
                 viewer = {this.state.viewer}
+                readonly = {this.state.readonly}
                 canmodify = {this.state.value && this.state.value.id}
                 onGetDependentParameters = {(value: any)=> {
                     if (this.props.onGetRequestParams) {

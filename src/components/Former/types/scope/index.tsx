@@ -55,7 +55,9 @@ interface FormerScopeProps {
     value: any;
     props: any;
     onFocus?: Function;
+    former: any;
     onBlur?: Function;
+    readonly?: boolean;
 }
 interface FormerScopeState {
     value: ScopeType[],
@@ -67,6 +69,7 @@ interface FormerScopeState {
     openTotal: number;
     currentDataType: any;
     disabled?: boolean;
+    readonly?: boolean;
 }
 
 export default class FormerScope extends React.Component<FormerScopeProps, FormerScopeState> {
@@ -93,11 +96,14 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             focusopen: false,
             openTotal: 1,
             currentDataType: null,
-            disabled: false
+            disabled: false,
+            readonly: props.readonly || false
         }
 
         this.innerRef = React.createRef();
+
     }
+
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<FormerScopeProps>, nextContext: any): void {
         if (nextProps.value !== this.state.value) {
             this.setState({
@@ -117,8 +123,18 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                 props: this.defaultProps,
                 ...this.defaultProps
             })
+        }   
+        if (nextProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: nextProps.readonly
+            })
         }
 
+    }
+    public onGetDependentParameters(params: any = {}) {
+
+        return this.props.former && this.props.former.props.onGetDependentParameters 
+            ? this.props.former.props.onGetDependentParameters(params) : {}
     }
     private clearValue(val: any) {
         
@@ -212,6 +228,9 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         }
     }
     private onFoucs = (current?: any, isAct?: any) => {
+        if (this.state.readonly) {
+            return;
+        }
 
         if (this.timer) {
             clearTimeout(this.timer);
@@ -266,6 +285,10 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         }
     }
     private onBlur = (current) => {
+        if (this.state.readonly) {
+            return;
+        }
+        
         //this.focusInput = null;
         if (current == this.focusInput) {
             this.focusInput = null;
@@ -352,7 +375,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         let isEmptyValue: boolean = this.isEmptyValue(value);
         let disabled: boolean = typeProps.struct ? !this.isOneValue(value) : false;
         let opened: any = this.state.disabled ? this.state.open : this.state.open;
-
+        
         // dataType
         // 第一个节点
         return (
@@ -363,11 +386,14 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                     ? <ScopePanel 
                         iterator={typeProps.iterator}
                         disabled={this.state.disabled} 
+                        readonly={this.state.readonly}
                         dataType={this.state.currentDataType} 
                         open={opened} 
+                        panel={typeProps.panel}
                         total={this.state.openTotal} 
                         scope={this}
                         value = {value}
+                        onGetDependentParameters={()=> this.onGetDependentParameters()}
                       />
                     : null
                 }
@@ -377,7 +403,8 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                 <div
                     className={classnames('ui-scope', {
                         'ui-scope-focus':this.state.focusopen,
-                        'ui-scope-visibility': this.state.width === 0
+                        'ui-scope-visibility': this.state.width === 0,
+                        'ui-scope-textarea': typeProps.type == 'textarea'
                     })}
                     style={{
                         width: width
@@ -431,9 +458,11 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                                 return this.state.value;
                             }
                         }}>
-                            {<FormerScopeValue disabled={disabled} strict={strict} dataType={typeProps.dataType}  onRemoveValue={() => { }} onChangeValue={(val) => {
+                            {<FormerScopeValue readonly={this.state.readonly} disabled={disabled} strict={strict} dataType={typeProps.dataType}  onRemoveValue={() => { }} onChangeValue={(val) => {
+                                if (!this.state.readonly) {
+                                    this.doChangeValue(val)
+                                }
                                 
-                                this.doChangeValue(val)
                             }} value={value && value.length ? value :[{type:'value', value: ''}]} />}
                         </Context.Provider>
                     </div>

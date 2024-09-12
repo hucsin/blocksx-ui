@@ -48,9 +48,11 @@ export default class ValueViewTable extends React.Component<{ value: any }, { va
                 return <span className='ui-empty'>{index + 1}</span>;
             }
         },...columns.map(it => {
+            let title: string = it.replace(/[A-Z]/g, (_,__)=> {return ' ' + _})
+
             return {
                 key: it,
-                title: it,
+                title: utils.upperFirst(title),
                 dataIndex: it,
                 render: (_,text,t) => {
                     return this.renderCellItem(_)

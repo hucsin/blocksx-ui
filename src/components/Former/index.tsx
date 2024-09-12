@@ -75,7 +75,8 @@ export interface FormerProps {
 
     canmodify?: boolean;
     notice?: any;
-    hideButtons?: boolean
+    hideButtons?: boolean;
+    readonly?: boolean;
 }
 
 interface FormerState {
@@ -102,6 +103,7 @@ interface FormerState {
     fetching?: boolean;
     globalMessage?: string;
     notice?: any;
+    readonly?: boolean;
 }
 /**
  * 三种模式
@@ -148,7 +150,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             loading: props.loading || false,
             fetching: false,
             canmodify: props.canmodify,
-            notice: props.notice
+            notice: props.notice,
+            readonly: props.readonly || false
         };
         
         this.timer = null;
@@ -215,6 +218,12 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                     disabled: newProps.disabled
                 })
             }
+        }
+
+        if (newProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: newProps.readonly || false
+            })
         }
         
         if (newProps.loading != this.state.loading) {
@@ -525,6 +534,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         onChangeValue={this.onChangeValue}
                         onGetDependentParameters={this.props.onGetDependentParameters}
                         viewer={this.state.viewer}
+                        readonly={this.state.readonly}
                         xxx="222"
                         groupType={this.props.groupType}
                         groupMeta={this.props.groupMeta}

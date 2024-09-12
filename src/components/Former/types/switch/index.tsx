@@ -26,6 +26,7 @@ interface IFormerSwitch extends IFormerBase {
     size?: any;
     loading?: boolean;
     onChangeValue: Function;
+    readonly?: boolean;
 }
 
 class FormerSwitchViewer extends React.Component<{value: any}> {
@@ -36,7 +37,7 @@ class FormerSwitchViewer extends React.Component<{value: any}> {
     }
 }
 
-export default class FormerSwitch extends React.Component<IFormerSwitch, { value: any; loading: any }> {
+export default class FormerSwitch extends React.Component<IFormerSwitch, { value: any; loading: any; readonly?: boolean }> {
     public static Viewer: any = FormerSwitchViewer;
     public static defaultProps = {
         loading: false,
@@ -46,13 +47,19 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
         super(props);
         this.state = {
             value: props.value,
-            loading: false
+            loading: false,
+            readonly: props.readonly || false
         }
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
         if (newProps.value != this.state.value) {
             this.setState({
                 value: newProps.value
+            })
+        }
+        if (newProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: newProps.readonly || false
             })
         }
     }
@@ -97,7 +104,7 @@ export default class FormerSwitch extends React.Component<IFormerSwitch, { value
                         checkedChildren={CheckedIconView ? <CheckedIconView/> : this.props.checkedText}
                         loading  = {loading}
                         size     = {size}
-                        disabled = {(false === this.props.canOff ? this.state.value : false) || disabled}  
+                        disabled = {this.state.readonly || (false === this.props.canOff ? this.state.value : false) || disabled}  
                         checked  = {this.state.value} 
                         onChange = {this.onChange} 
                     />

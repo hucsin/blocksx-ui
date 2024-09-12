@@ -14,6 +14,7 @@ interface FormerScopeInputProps {
     dataType?: any;
     disabled?: boolean;
     strict?: boolean;
+    readonly?: boolean;
 }
 interface FormerScopeInputState {
     defaultValue: string;
@@ -24,6 +25,7 @@ interface FormerScopeInputState {
     dataType?: any;
     disabled?: boolean;
     strict?: boolean;
+    readonly?: boolean;
 }
 
 
@@ -44,7 +46,8 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             serial: props.serial,
             dataType: props.dataType,
             disabled: props.disabled,
-            strict: props.strict
+            strict: props.strict,
+            readonly: props.readonly || false
         }
 
         this.ref = React.createRef();
@@ -88,6 +91,12 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
         if (nextProps.disabled != this.state.disabled) {
             this.setState({
                 disabled: nextProps.disabled
+            })
+        }
+
+        if (nextProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: nextProps.readonly
             })
         }
     }
@@ -208,15 +217,20 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 data-index={this.state.index}
                 data-serial={this.state.serial}
                 className="ui-scope-input" 
-                contentEditable="true" 
+                contentEditable={this.state.readonly ? false : true} 
                 onBlur={()=> {
+                    if (this.state.readonly) {
+                        return;
+                    }
                     //this.setState({focus: false})
                     this.context.setDisabled(false);
                     this.context.onBlur(this.ref.current);
                     
                 }} 
                 onFocus={()=> {
-                    
+                    if (this.state.readonly) {
+                        return;
+                    }
                     //this.setState({focus: true})
                     if (this.state.strict) {
                         this.context.setDisabled(!this.canInput(true) || !!this.state.value)

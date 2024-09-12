@@ -8,6 +8,7 @@ import FunctionManger from '../core/ScopeManger';
 import FormerScopeInput from './input';
 import FormerScopeLabel from './scope';
 import FormerVariable from './variable';
+import FormerView from './view';
 //import FormerScope from '..';
 import { ScopeType } from '../types'
 
@@ -24,6 +25,7 @@ interface FormerScopeProps {
     serial: number;
     strict?: boolean;
     iterator?: boolean
+    readonly?: boolean;
 }
 
 interface FormerScopeState {
@@ -37,6 +39,7 @@ interface FormerScopeState {
     dataType?: any;
     disabled?: boolean;
     strict?: boolean;
+    readonly?: boolean;
 }
 
 export default class FormerScopeValue extends React.Component<FormerScopeProps, FormerScopeState> {
@@ -60,7 +63,8 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             reflush: 1,
             dataType: props.dataType,
             disabled: props.disabled,
-            strict: props.strict
+            strict: props.strict,
+            readonly: props.readonly || false
         }
     }
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<FormerScopeProps>, nextContext: any): void {
@@ -86,6 +90,11 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         if (nextProps.strict != this.state.strict) {
             this.setState({
                 strict: nextProps.strict
+            })
+        }
+        if (nextProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: nextProps.readonly
             })
         }
         if (nextProps.disabled != this.state.disabled) {
@@ -213,6 +222,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 key={[item.name, this.state.reflush, index].join('.')}
                 parameters={item.parameters}
                 strict={this.props.strict}
+                readonly={this.state.readonly}
                 onAddParam={() => {
                     item.parameters.push({
                         type: 'value',
@@ -232,6 +242,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                             <Select 
                                 popupMatchSelectWidth={false}
                                 defaultActiveFirstOption
+                                disabled={this.state.readonly}
                                 value={it.value || parameterMeta.enum[0].value}
                                 onChange={(v)=> {
                                     it.value = v;
@@ -248,6 +259,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         key={[item.name, this.state.reflush, idx].join('.')}
                         level={this.state.level - 2}
                         dataType={dataType}
+                        readonly={this.state.readonly}
                         strict={this.state.strict}
                         disabled={!this.isCanInput(it.value)}
                         index={index + this.getDefaultIndex(this.state.level - 1) * (idx + 1)}
@@ -282,7 +294,12 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     }
     private renderVariable(item: any, parentIndex: number) {
         return (
-            <FormerVariable {...item} />
+            <FormerVariable readonly={this.state.readonly} {...item} />
+        )
+    }
+    private renderView(item: any, parentIndex: number) {
+        return (
+            <FormerView readonly={this.state.readonly} {...item} />
         )
     }
     private isCanInput(value: any) {
@@ -301,6 +318,8 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     private renderContent = (item: any, index: number, remove: Function) => {
         let parentIndex: number = (index + 1) * this.getDefaultIndex() + this.state.index;
         switch (item.type) {
+            case 'view':
+                return this.renderView(item, parentIndex);
             case 'function':
                 return this.renderFunction(item, parentIndex);
             case 'variable':
@@ -318,6 +337,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         strict={this.state.strict}
                         dataType={this.state.dataType} 
                         serial={index}
+                        readonly={this.state.readonly}
                         context={this.context}
                         value={item.value}
                         parentScope={this}
@@ -511,7 +531,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         } else {
             
             return (
-                <FormerScopeInput dataType={this.state.dataType} strict={this.state.strict} disabled={this.state.disabled} serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any) => {
+                <FormerScopeInput readonly={this.state.readonly} dataType={this.state.dataType} strict={this.state.strict} disabled={this.state.disabled} serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any) => {
                     return this.onRemoveValue(current)
                 }} context={this.context} index={this.state.index} onChangeValue={(val) => {
                     this.doChangeValue(val)

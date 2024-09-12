@@ -28,7 +28,8 @@ interface IFormerInput extends IFormerBase {
     size: any,
     disabled?: boolean,
     former?: any;
-    onChangeValue: Function
+    onChangeValue: Function;
+    readonly?: boolean;
 }
 
 interface FormerInputState {
@@ -43,7 +44,7 @@ interface FormerInputState {
     subtitle?: string;
     emptyNotice: string;
     loading?: boolean;
-    
+    readonly?: boolean;
 }
 
 export default class FormerButton extends React.Component<IFormerInput,  FormerInputState> {
@@ -64,7 +65,8 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             value: props.value,
             open: false,
             loading: false,
-            props: props['x-type-props']
+            props: props['x-type-props'],
+            readonly: props.readonly || false
         };
 
 
@@ -161,6 +163,11 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                 value: newProps.value
             })
         }
+        if (newProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: newProps.readonly || false
+            })
+        }   
     }
     
     private renderIcon() {
@@ -352,13 +359,13 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                     </div>
                     
                 </div>
-                { this.viewRequestHelper ? <Button onMouseEnter={()=> {
+                { this.viewRequestHelper ? <Button disabled={this.state.readonly} onMouseEnter={()=> {
                     if (this.state.value) {
                         this.setState({open: true})
                     }
                 }} 
                 onClick={() => {
-                    if (this.state.value) {
+                    if (!this.state.readonly && this.state.value) {
                         this.doAction()
                     }
                 }}

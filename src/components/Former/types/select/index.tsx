@@ -33,6 +33,7 @@ export interface FormerSelectProps extends IFormerBase {
     dataSource?: any;
     autoClear?: any;
     popupMatchSelectWidth?: boolean;
+    readonly?: boolean;
 }
 
 
@@ -48,6 +49,7 @@ export interface FormerSelectState {
 
     search?: string;
     query?: string;
+    readonly?: boolean;
 }
 
 
@@ -68,7 +70,8 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
             originSource: datasource,
             loading: false,
             multiple: isMultiple,
-            runtimeValue: props.runtimeValue
+            runtimeValue: props.runtimeValue,
+            readonly: props.readonly || false
         };
 
     }
@@ -140,6 +143,11 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         if (newProps.runtimeValue != this.state.runtimeValue) {
             this.setState({
                 runtimeValue: newProps.runtimeValue
+            })
+        }
+        if (newProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: newProps.readonly || false
             })
         }
 
@@ -258,12 +266,13 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                             width: props.width 
                         }
                     }
+                    
                     popupMatchSelectWidth={popupMatchSelectWidth}
                     mode={this.props.mode}
                     showSearch={true}
                     labelInValue={props.labelValue}
                     popupClassName={this.props.popupClassName}
-                    disabled={disabled}
+                    disabled={this.state.readonly || disabled}
                     loading={this.state.loading}
                     onSearch={this.onSearch}
                     onChange={this.onChange}

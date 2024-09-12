@@ -11,6 +11,8 @@ import { IFormerBase } from '../../typings';
 import * as Icons from '../../../Icons';
 import { Input } from 'antd';
 
+import './style.scss';
+
 interface IFormerInput extends IFormerBase {
     value: any,
     size: any,
@@ -19,12 +21,14 @@ interface IFormerInput extends IFormerBase {
     onChangeValue: Function;
     onFocus?: Function;
     onBlur?: Function;
+    readonly?: boolean;
 }
-export default class FormerInput extends React.Component<IFormerInput, { value: any }> {
+export default class FormerInput extends React.Component<IFormerInput, {readonly: boolean, value: any }> {
     public constructor(props: IFormerInput) {
         super(props);
         this.state = {
-            value: props.value
+            value: props.value,
+            readonly: props.readonly || false
         };
         
     }
@@ -33,6 +37,11 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
         if (newProps.value != this.state.value) {
             this.setState({
                 value: newProps.value
+            })
+        }
+        if (newProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: newProps.readonly || false
             })
         }
     }
@@ -62,11 +71,11 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
         
         if (props.type && props.type == 'password') {
             return (
-                <Input.Password size={this.props.size} {...props} disabled={disabled} value={this.state.value} onChange={this.onChange} />
+                <Input.Password size={this.props.size} {...props} disabled={this.state.readonly || disabled} value={this.state.value} onChange={this.onChange} />
             )
         } else {
             return (
-                <Input size={this.props.size}  {...props} onFocus={this.props.onFocus} onBlur={this.props.onBlur} style={{width: props.width}} disabled={disabled} value={this.state.value} onChange={this.onChange} />
+                <Input size={this.props.size}  {...props} onFocus={this.props.onFocus} onBlur={this.props.onBlur} style={{width: props.width}} disabled={this.state.readonly || disabled} value={this.state.value} onChange={this.onChange} />
             )
         }
     }

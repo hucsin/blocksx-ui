@@ -37,6 +37,7 @@ export interface SmartPageProps {
     params?: any;
     id?: string;
     isViewer?: boolean;
+    readonly?: boolean;
     history?: any;
     router?: routerParams;
     children?: any;
@@ -145,6 +146,8 @@ export interface SmartPageState {
     pageMete?: any;
 
     props: any;
+
+    readonly?: boolean;
 }
 
 
@@ -211,7 +214,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             folderReflush: +new Date,
             layout: '',
             id: props.id,
-            props: props.props
+            props: props.props,
+            readonly: props.readonly
         }
 
         this.requestHelper = SmartRequest.makeGetRequest(props.pageURI);
@@ -428,6 +432,11 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             this.needInitSchema();
         }
 
+        if (!utils.isUndefined(newProps.readonly) && newProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: newProps.readonly
+            })
+        }
 
     }
     private needInitSchema() {
@@ -523,6 +532,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             autoInit: !this.state.folderField,
             router: this.props.router,
             viewer: this.props.isViewer,
+            readonly: this.state.readonly,
             title: this.state.title,
             path: this.state.path,
             reflush: this.state.reflush,

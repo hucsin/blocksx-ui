@@ -523,7 +523,6 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 
                 let value: any  = this.state.value || (isInputValue ? { ...propsvalue[inputKey], $connection: propsvalue.connection } : propsvalue) || {};
                 let pagename:string = this.getPageName()
-
                 return (
                     <SmartPage
                         onGetDependentParameters ={()=> {
@@ -538,7 +537,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         rootClassName="ui-flownode-config"
                         reflush={this.state.reflush}
                         type="popover"
-                        isViewer={this.props.isViewer}
+                        readonly={this.props.isViewer}
                         simplicity
                         props={
                             {

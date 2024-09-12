@@ -12,6 +12,7 @@ interface FormerScopeFunctionProps {
     parameters: any[]
     onAddParam: Function;
     strict?: boolean;
+    readonly?: boolean;
 }
 
 interface FormerScopeFunctionState {
@@ -20,6 +21,7 @@ interface FormerScopeFunctionState {
     parameters: any[]
     hight: boolean;
     open:boolean;
+    readonly?: boolean;
 }
 
 export default class FormerScopeFunction extends React.Component<FormerScopeFunctionProps, FormerScopeFunctionState> {
@@ -32,7 +34,8 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
             name: props.name,
             parameters: props.parameters,
             hight: false,
-            open: false
+            open: false,
+            readonly: props.readonly || false
         }
         this.schema = FunctionManger.get(props.name)
     }
@@ -54,6 +57,12 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
         if (nextProps.parameters != this.state.parameters) {
             this.setState({
                 parameters: nextProps.parameters
+            })
+        }
+
+        if (nextProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: nextProps.readonly || false
             })
         }
     }
@@ -81,7 +90,6 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
         let number: number = children.length;
 
 
-        console.log(funcmeta)
         return (
             <span 
                 className={classnames({

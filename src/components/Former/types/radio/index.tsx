@@ -21,6 +21,7 @@
     value: any;
     disabled?: boolean;
     onDescriptionSwitch?: Function;
+    readonly?: boolean;
  }
 
  export default class FormerRadio extends React.Component<IFormerRadio, {dataSource: any, props:any,disabled?: boolean, value: any }>{
@@ -34,7 +35,7 @@
         this.state = {
             props: props['x-type-props'] || {},
             value: props.value,
-            disabled: props.disabled,
+            disabled: props.disabled || props.disabled,
             dataSource: this.props.dataSource
         }
         
@@ -69,6 +70,11 @@
         if (newProps.value !== this.state.value) {
             this.setState({
                 value: newProps.value
+            })
+        }
+        if (newProps.readonly !== this.state.disabled) {
+            this.setState({
+                disabled: newProps.readonly
             })
         }
     }

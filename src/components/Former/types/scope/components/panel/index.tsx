@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import PanelProcess from './process';
 import PanelStorges from './storges';
 import PanelOther from './other';
+import PanelView from './view';
 import ScopeManger from '../../core/ScopeManger';
 import Avatar from '../../../avatar';
 
@@ -17,30 +18,38 @@ interface ScopePanelProps {
     disabled?: boolean;
     value: any;
     iterator?: boolean;
+    panel: any;
+    onGetDependentParameters?: Function;
+    readonly?: boolean;
 }
 interface ScopePanelState {
-    current: string;
+    current: number;
     open: any;
     total: number;
-    dataType: any;
-
+    dataType: any;  
+    panel: any;
     disabled?: boolean;
     value: any;
+    readonly?: boolean;
 }
 
 export default class ScopePanel extends React.Component<ScopePanelProps, ScopePanelState> {
     private groupList: any = ScopeManger.findGroup();
     private timer: any;
+    private cache:any;
     public constructor(props: ScopePanelProps) {
         super(props);
         this.state = {
-            current: 'Thinking',
+            current: 0,
             open: props.open,
             total: props.total,
             dataType: props.dataType,
             disabled: props.disabled,
-            value: props.value
+            value: props.value,
+            panel: props.panel,
+            readonly: props.readonly || false
         }
+        this.cache = {};
     }
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<ScopePanelProps>, nextContext: any): void {
 
@@ -49,6 +58,13 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                 open: nextProps.open
             })
         }
+        
+        if (nextProps.panel != this.state.panel) {
+            this.setState({
+                panel: nextProps.panel
+            })
+        }
+
         if (nextProps.total != this.state.total) {
             this.setState({
                 total: nextProps.total
@@ -71,13 +87,38 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                 value: nextProps.value
             })
         }
+
+        if (nextProps.readonly != this.state.readonly) {
+            this.setState({
+                readonly: nextProps.readonly || false
+            })
+        }
     }
-    private renderBody(name) {
+    private renderBody(name, index, isSelected) {
+        let { onGetDependentParameters } = this.props;
+        if (index == 0) { 
+            if (this.state.panel) {
+                return (
+                    <PanelView 
+                        {...this.state.panel} 
+                        disabled={this.state.disabled}
+                        onGetDependentParameters={()=> onGetDependentParameters && onGetDependentParameters()} 
+                        value={this.state.value}
+                        onClick={(props: any) => {
+                            this.props.scope.addValueIntoScope({
+                                type: 'view',
+                                ...props
+                            })
+                        }} 
+                    />
+                )
+            }
+        }
 
         switch (name) {
             case 'Thinking':
            
-                return (
+                return (!isSelected && this.cache[name] || isSelected) ? this.cache[name] =  (
                     <PanelProcess  
                         disabled={this.state.disabled} 
                         dataType={this.state.dataType} 
@@ -95,13 +136,19 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                                 value: value
                             })
                         }} 
-                />)
+                />): null;
             case 'Data Stores':
                 return <PanelStorges />
             default:
-                return <PanelOther disabled={this.state.disabled} dataType={this.state.dataType} name={name} onClick={(item: any) => {
-                    this.props.scope.addValueIntoScope(item)
-                }} />
+                return (
+                    <PanelOther
+                        disabled={this.state.disabled} 
+                        dataType={this.state.dataType} 
+                        name={name}
+                        onClick={(item: any) => {
+                            this.props.scope.addValueIntoScope(item)
+                        }} 
+                />)
 
         }
     }
@@ -123,10 +170,13 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
     public render() {
         let groupKeys: any = Object.keys(this.groupList);
         let titleKeys: any = ['Thinking', ...this.filterTabs([
-            
             ...groupKeys,
             //'Data Stores'
         ])]
+
+        if (this.state.panel) {
+            titleKeys = [this.state.panel.title, ...titleKeys]
+        }
         
         if (!this.state.open) {
             return null;
@@ -143,7 +193,7 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                     <Avatar icon="VariableUtilityOutlined" color="#4d53e8" />
 
                     <div className='ui-scope-classify'>
-                        {titleKeys.map(it => {
+                        {titleKeys.map((it, index) => {
                             return (
                                 <span
                                     onMouseEnter={() => {
@@ -157,21 +207,21 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                                         */
                                     }}
                                     onClick={() => {
-                                        this.setState({ current: it })
+                                        this.setState({ current: index })
                                     }}
                                     //onMouseLeave={()=> this.timer && clearTimeout(this.timer)}
                                     className={classnames({
-                                        "ui-selected": it == this.state.current
+                                        "ui-selected": index == this.state.current
                                     })}>{it}</span>
                             )
                         })}
                     </div>
                 </div>
                 <div className='ui-scope-panel-body'>
-                    {titleKeys.map(it => {
+                    {titleKeys.map((it, index) => {
                         return (
-                            <div className={classnames({ 'ui-selected': it == this.state.current })}>
-                                {this.renderBody(it)}
+                            <div className={classnames({ 'ui-selected': index == this.state.current })}>
+                                {this.renderBody(it, index, this.state.current == index)}
                             </div>
                         )
                     })}

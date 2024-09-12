@@ -13,7 +13,8 @@ import { Input } from 'antd';
 interface IFormerTextarea extends IFormerBase {
     value: any,
     pre?: boolean;
-    onChangeValue: Function
+    onChangeValue: Function;
+    readonly?: boolean;
 }
 
 class FormerTextareaViewer extends React.Component<IFormerTextarea> {
@@ -63,7 +64,7 @@ export default class FormerTextarea extends React.Component<IFormerTextarea, { v
 
     public render() {
         return (
-            <Input.TextArea rows={3} {...this.props['x-type-props']} disabled={this.props.disabled}  value={this.state.value} onChange={this.onChange} />
+            <Input.TextArea rows={3} {...this.props['x-type-props']} disabled={this.props.readonly || this.props.disabled}  value={this.state.value} onChange={this.onChange} />
         )
     }
 }
