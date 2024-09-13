@@ -1,5 +1,7 @@
 import React from 'react';
+import classnames from 'classnames';
 import { utils } from '@blocksx/core';
+import * as Icons from '../../../../Icons';
 import { Select } from 'antd';
 import Context from '../contexts';
 import FormerScopeFunction from './function';
@@ -21,6 +23,7 @@ interface FormerScopeProps {
     onRemoveValue: Function;
     index: number;
     level: number;
+    prefix?: string;
     parentScope?: any;
     serial: number;
     strict?: boolean;
@@ -74,7 +77,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 originValue: this.getOriginValue(nextProps.value)
             })
         }
-
+        
         if (nextProps.index != this.state.index) {
             this.setState({
                 index: nextProps.index
@@ -333,6 +336,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         onRemoveValue={remove}
                         level={this.state.level - 1}
                         index={parentIndex}
+                        prefix={this.props.prefix}
                         disabled={!this.isCanInput(this.state.value)}
                         strict={this.state.strict}
                         dataType={this.state.dataType} 
@@ -515,6 +519,15 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             this.context.onFocus(currentIndex, cursorPosition)
         }, 0)
     }
+    private renderPrefix() {
+        let IconView: any = Icons[this.props.prefix || '']
+        if (IconView) {
+            return (
+                <IconView />
+            )
+        }
+        return null;
+    }
     public render() {
         let { value, originValue } = this.state;
         //console.log(value.length, 'render value')
@@ -531,11 +544,14 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         } else {
             
             return (
-                <FormerScopeInput readonly={this.state.readonly} dataType={this.state.dataType} strict={this.state.strict} disabled={this.state.disabled} serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any) => {
-                    return this.onRemoveValue(current)
-                }} context={this.context} index={this.state.index} onChangeValue={(val) => {
-                    this.doChangeValue(val)
-                }} value={value as string} />
+                <>
+                    {this.renderPrefix()}
+                    <FormerScopeInput readonly={this.state.readonly} dataType={this.state.dataType} strict={this.state.strict} disabled={this.state.disabled} serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any) => {
+                        return this.onRemoveValue(current)
+                    }} context={this.context} index={this.state.index} onChangeValue={(val) => {
+                        this.doChangeValue(val)
+                    }} value={value as string} />
+                </>
             )
         }
     }

@@ -351,7 +351,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             if (value.length == 1) {
                 return !value[0].value;
             }
-            return false;
+            return value.length == 0;
         }
 
         return !value;
@@ -432,7 +432,10 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                         }
                     }}
                 >
-                    <div className='ui-scope-inner' ref={this.innerRef}>
+                    <div className={classnames({
+                        'ui-scope-inner': true,
+                        'ui-scope-prefix': typeProps.prefix
+                    })} ref={this.innerRef}>
                         {typeProps.placeholder && isEmptyValue && <div className='ui-scope-placeholder'>{typeProps.placeholder}</div>}
                         <Context.Provider value={{
                             findInputIndex: this.findInputIndex,
@@ -458,12 +461,21 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                                 return this.state.value;
                             }
                         }}>
-                            {<FormerScopeValue readonly={this.state.readonly} disabled={disabled} strict={strict} dataType={typeProps.dataType}  onRemoveValue={() => { }} onChangeValue={(val) => {
-                                if (!this.state.readonly) {
-                                    this.doChangeValue(val)
-                                }
-                                
-                            }} value={value && value.length ? value :[{type:'value', value: ''}]} />}
+                            {<FormerScopeValue 
+                                readonly={this.state.readonly} 
+                                prefix={typeProps.prefix} 
+                                disabled={disabled} 
+                                strict={strict} 
+                                dataType={typeProps.dataType}  
+                                onRemoveValue={() => { }} 
+                                onChangeValue={(val) => {
+                                    if (!this.state.readonly) {
+                                        this.doChangeValue(val)
+                                    }
+                                    
+                                }} 
+                                value={value && value.length ? value :[{type:'value', value: ''}]} 
+                            />}
                         </Context.Provider>
                     </div>
                 </div>

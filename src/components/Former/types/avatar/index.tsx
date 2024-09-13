@@ -49,7 +49,6 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
     }
     public renderItem(props: any, icon: string, color: string, tips: string= '', fontColor?: string) {
 
-        
         if (props.text) {
             return (<Tooltip key={icon} title={tips}>
                 <Avatar size={props.size} shape={props.shape} key={icon}  style={{background:color, ...props.style}}>{props.text}</Avatar>
@@ -57,6 +56,7 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
         }
         
         if (icon) { 
+            
             if (icon.match(/[\/\.]/)) {
                 return (<Tooltip  key={icon} title={tips}><Avatar size={props.size} key={icon} shape={props.shape} style={{backgroundColor:color, ...props.style}}  src={icon} /></Tooltip>)
             }

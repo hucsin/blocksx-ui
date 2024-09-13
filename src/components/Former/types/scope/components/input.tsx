@@ -158,6 +158,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 this.resetLastPosition(currentPostion)
             }, 0)
         } else {    
+            
             if (!this.canInput() || e.keyCode == 13) {
                 e.stopPropagation();
                 return e.preventDefault();
@@ -250,7 +251,9 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 onPaste ={(e)=> {
                     e.preventDefault();
                     const text = e.clipboardData.getData('text/plain');
+                    
                     utils.insertTextAtCursor(text)
+                    this.doChangeValue(text);
                     return e.preventDefault();
                 }}
                 onInput={({ target }: any)=>{

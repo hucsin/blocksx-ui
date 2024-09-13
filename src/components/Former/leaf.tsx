@@ -857,15 +857,17 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                     renderTitlePortal={titlePortal.length ? ()=> {
                                         
                                         return titlePortal.map(it=> {
-                                            let { description} = it.leafProps;
-                                            return <Leaf
-                                                {...it.leafProps}
-                                                former={this.props.former}
-                                                //portalMap={propsPortalMap}
-                                                size={'small'}
-                                                tooltip={description}
-                                                popupMatchSelectWidth={false}
-                                            />
+                                            if (it.leafProps) {
+                                                let { description} = it.leafProps;
+                                                return <Leaf
+                                                    {...it.leafProps}
+                                                    former={this.props.former}
+                                                    //portalMap={propsPortalMap}
+                                                    size={'small'}
+                                                    tooltip={description}
+                                                    popupMatchSelectWidth={false}
+                                                />
+                                            }
                                         })
                                     }: null}
                                     size={this.props.size}

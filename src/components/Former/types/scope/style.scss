@@ -55,6 +55,19 @@
         }
     }
 }
+.former-object-item-label {
+    .ui-scope {
+        display: inline-block;
+        vertical-align: middle;
+        height: 24px;
+        .ui-scope-inner  {
+            height: 24px;
+            padding: 0 8px;
+            border: 1px solid var(--main-border-color);
+        }
+        
+    }
+}
 
 .ui-scope {
     line-height: 1.5714285714285714;
@@ -63,6 +76,14 @@
     transition: all .2s;
     position: relative;
     cursor: text;
+    .ui-scope-wrapper {
+        display: inline-block;
+    }
+    .anticon {
+        opacity: .6;
+        margin-left: -2px;
+        margin-right: 2px
+    }
     &.ui-scope-textarea {
         height: 64px;
         .ui-scope-inner {
@@ -72,7 +93,7 @@
     }
     &.ui-scope-visibility {
         .ui-scope-inner {
-            display:None;
+            display:none;
         }
     }
     .ui-scope-inner  {
@@ -125,6 +146,11 @@
             }
             color:#fff;
             background-color: var(--main-bg-color);
+        }
+    }
+    .ui-scope-prefix {
+        .ui-scope-placeholder {
+            left: 24px
         }
     }
     .ui-scope-placeholder {
