@@ -98,7 +98,7 @@ export default class ValueViewForm extends React.Component<{ value: any, column?
             let valueLength: number = String(value).length;
             return {
                 key: key,
-                label: title ? ['',key].join('.') :key,
+                label: title ? ['',key].join('.') :utils.labelName(key),
                 span: valueLength > 25 ?  valueLength < 100 ? 2 : 3 : 1,
                 children: value
             }

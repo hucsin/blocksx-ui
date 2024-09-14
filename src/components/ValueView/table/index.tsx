@@ -48,11 +48,9 @@ export default class ValueViewTable extends React.Component<{ value: any }, { va
                 return <span className='ui-empty'>{index + 1}</span>;
             }
         },...columns.map(it => {
-            let title: string = it.replace(/[A-Z]/g, (_,__)=> {return ' ' + _})
-
             return {
                 key: it,
-                title: utils.upperFirst(title),
+                title: utils.labelName(it),
                 dataIndex: it,
                 render: (_,text,t) => {
                     return this.renderCellItem(_)
@@ -65,7 +63,7 @@ export default class ValueViewTable extends React.Component<{ value: any }, { va
             render: (record: any) => {
                 return this.renderPopover(
                     <span className='ui-valueview-table-button'><Icons.PicRightOutlined /></span>,
-                    <ValueViewForm value={record}/>
+                    <ValueViewForm column ={2} value={record}/>
                 )
             }
         }]
