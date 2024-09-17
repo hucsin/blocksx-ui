@@ -239,6 +239,7 @@
         transition: all .3s;
         display: inline;
         margin-bottom: 1px;
+        max-width: calc(100% - 11px);
         .number {
             padding: 0px;
             border: .5px solid var(--main-border-color);

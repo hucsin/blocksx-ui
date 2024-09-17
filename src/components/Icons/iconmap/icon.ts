@@ -6,6 +6,8 @@ export const map:any = {
         "DbqueryMiniBrandFilled",
         "GmailBrandFilled",
         "GoldendbBrandFilled",
+        "GoogleFormsBrandFilled",
+        "GoogleSheetsBrandFilled",
         "GussdbBrandFilled",
         "KingbaseBrandFilled",
         "OceanbaseBrandFilled",

@@ -55,7 +55,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         this.cavnasId = '#flow'+ new Date().getTime() +'#';
         let nodes: any = this.fixedName(utils.copy(flowMap.nodes || []), currentNode);
         let selected: any = (nodes.find(it=> !it.disabeld) || {})
-        
+                
         this.cacheTree = {};
 
         this.state = {
@@ -389,7 +389,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
     public render () {
         let { selected ={}, starts = [], schema } = this.state;
         
-        let { program, method, description } = selected.props;
+        let { program, method, description } = (selected.props || {});
         let mapheight: number = starts.length ==1 ? 56 : 40 + starts.length * 40;
         
         return (

@@ -107,13 +107,23 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
                     title: utils.upperFirst(title),
                     dataIndex: it,
                     key: it,
-                    fixed: index < 1 ? 'left' : false,
+                   // fixed: index < 1 ? 'left' : false,
                     render: (text: any, record: any, index: number) => {
                         
                         return JSON.stringify(text)
                     }
                 }
+            });
+
+            columns.unshift({
+                title: '#',
+                width: 22,
+                fixed: 'left',
+                render(_,record,index) {
+                    return index + 1
+                } 
             })
+
             return (
                 <Table 
                     size='small'

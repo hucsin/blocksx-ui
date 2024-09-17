@@ -161,6 +161,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         this.emitter.setMaxListeners(1000);
 
     }
+    public removeCache(key: string) {
+        delete this.cache[key];
+    }
     public setCache(key: string, value: any) {
         this.cache[key] = value;
     }

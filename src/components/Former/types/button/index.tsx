@@ -94,13 +94,14 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
         let { props } = this.state;
         if (props.type == 'meta') {
             if (this.viewRequestHelper) {
+
                 let { props } = this.state;
                 let { rowKey = 'id' } = props;
                 let former: any = this.props.former;
 
                 let cache: any = former.getCache(this.getCacheKey());
                 
-                if (cache) {
+                if (cache && cache.value) {
 
                     //this.onSelectedItem(cache.value);
                     this.setState({
@@ -125,6 +126,19 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                 }
             }
         }
+    }
+    private emptyView() {
+        
+        let former: any = this.props.former;
+        former.removeCache(this.getCacheKey());
+        this.setState({
+            value: {},
+            values: []
+        })
+        console.log(this.props.fieldKey, 'fieldKey')
+        this.props.former.resetSafeValue({
+            [`${this.props.fieldKey}`]: ''
+        })
     }
     private updateView(value: string) {
         let former: any = this.props.former;
@@ -248,9 +262,15 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                         //alert(333)
                        // console.log(value)
                         if (value) {
-                            this.updateView(value)
-                            this.loading(false)
+                            if (value ==  '0') {
+                                this.emptyView()
+                            } else {
+                                this.updateView(value)
+                            }
                         }
+                        this.loading(false)
+                    },()=> {
+                        this.loading(false)
                     })
                 } else {
                     this.loading(false)

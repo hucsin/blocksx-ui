@@ -1,5 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
+
+import { GlobalScope, MiniFlow } from '@blocksx/ui';
 import PanelProcess from './process';
 import PanelStorges from './storges';
 import PanelOther from './other';
@@ -37,6 +39,8 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
     private groupList: any = ScopeManger.findGroup();
     private timer: any;
     private cache:any;
+    private upstreamFlowMap: any;
+    private currentNode: any;
     public constructor(props: ScopePanelProps) {
         super(props);
         this.state = {
@@ -50,6 +54,18 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
             readonly: props.readonly || false
         }
         this.cache = {};
+
+        
+        this.currentNode = GlobalScope.getScope(GlobalScope.TYPES.CURRENTFLOW_NODE);
+
+        let flow: MiniFlow = GlobalScope.getContext(GlobalScope.TYPES.CURRENTFLOW_CONTEXT);
+        this.upstreamFlowMap =  flow.findAncestralFlowMap(this.currentNode.value);
+
+    }
+    private canShowProcess() {
+        return !!this.upstreamFlowMap.nodes.find(it => {
+            return it.name != this.currentNode.value
+        })
     }
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<ScopePanelProps>, nextContext: any): void {
 
@@ -169,10 +185,10 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
     }
     public render() {
         let groupKeys: any = Object.keys(this.groupList);
-        let titleKeys: any = ['Thinking', ...this.filterTabs([
+        let titleKeys: any = [this.canShowProcess() ? 'Thinking' : false, ...this.filterTabs([
             ...groupKeys,
             //'Data Stores'
-        ])]
+        ])].filter(Boolean)
 
         if (this.state.panel) {
             titleKeys = [this.state.panel.title, ...titleKeys]
@@ -181,6 +197,7 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
         if (!this.state.open) {
             return null;
         }
+
 
         return (
             <div className='ui-scope-panel-inner'
@@ -229,4 +246,6 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
             </div>
         )
     }
+
+    
 }
