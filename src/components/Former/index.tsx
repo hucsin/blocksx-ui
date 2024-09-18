@@ -24,6 +24,7 @@ export interface ExtraContentType {
 
 export interface FormerProps {
     type?: 'drawer' | 'modal' | 'popover';
+    placement?: any;
     value?: any;
     icon?: any;
     iconType?: string;
@@ -120,7 +121,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         size: 'small',
         viewer: false,
         autoclose: true,
-        column: 'one'
+        column: 'one',
+        placement: 'top'
     };
 
     private timer: any;
@@ -327,8 +329,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     private onChangeValue = (value: any, type?: string) => {
         let trueValue: any = utils.copy(value);
-        
-        if (!type) {
+        // if(!type) {
+        console.log(type, value)
+        if (type =='init') {
             if (this.timer) {
                 clearInterval(this.timer);
             }
@@ -340,12 +343,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                     globalMessage: '',
                     runtimeValue: trueValue
                 });
-
+                this.props.onChangeValue && this.props.onChangeValue(trueValue);
                 this.emitter.emit('changeValue')
-                
-                //if (this.state.type === 'default') {
-               
-                //}
             }, 200);
         } 
         // man 是人工触发的
@@ -678,9 +677,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                     <Popover
                         title={this.renderTitle()}
                         content={this.renderPopoverLeaf()}
-                        placement="right"
+                        placement={this.props.placement || 'topLeft'}
                         trigger={'click'}
                         open={this.state.visible}
+                        arrow={false}
                         autoAdjustOverflow={true}
                         rootClassName='ui-popover-former'
                         onOpenChange={(visible: boolean) => {

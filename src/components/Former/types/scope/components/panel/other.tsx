@@ -41,9 +41,9 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
         
         if (item.parameters){
             item.parameters = item.parameters.map(it => {
-                it.type =  'value';
+                it.$type =  'value';
                 return {
-                    type: 'value',
+                    $type: 'value',
                     value: it.value || ''
                 };
             })

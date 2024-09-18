@@ -133,7 +133,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
 
             delete it.padding;
 
-            if (it.type == 'function') {
+            if (it.$type == 'function') {
                 it.parameters = it.parameters.filter(it => {
                     return !it.value && it.padding ? false : true
                 })
@@ -149,7 +149,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
 
             value.forEach((it: any, index: number) => {
                 
-                if (it.type == 'value') {
+                if (it.$type == 'value') {
                     originValue.push(it)
                 } else {
                     //let preNode: any = originValue[originValue.length - 1];
@@ -157,25 +157,25 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                     //let currentNode: any = originValue [ index ];
                     let nextNode: any = value[index + 1];
                     // 检查前面是否有value
-                    if ((!preNode || preNode.type !== 'value')) {
+                    if ((!preNode || preNode.$type !== 'value')) {
                         originValue.push({
-                            type: 'value',
+                            $type: 'value',
                             padding: true,
                             value: ''
                         })
                     }
 
                     // 调整function的arguments
-                    if (it.type == 'function') {
+                    if (it.$type == 'function') {
                         it.parameters = this.paddingParameters(it)
                     }
 
                     originValue.push(it);
 
 
-                    if ((!nextNode || nextNode.type !== 'value')) {
+                    if ((!nextNode || nextNode.$type !== 'value')) {
                         originValue.push({
-                            type: 'value',
+                            $type: 'value',
                             padding: true,
                             value: ''
                         })
@@ -186,7 +186,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             return originValue;
         } else {
             return [{
-                type: 'value',
+                $type: 'value',
                 value: value
             }]
         }
@@ -205,7 +205,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         if (parameters.length < displayMaxLength) {
             Array.from({ length: displayMaxLength - parameters.length }).map(it => {
                 parameters.push({
-                    type: 'value',
+                    $type: 'value',
                     padding: true,
                     value: ''
                 })
@@ -228,7 +228,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 readonly={this.state.readonly}
                 onAddParam={() => {
                     item.parameters.push({
-                        type: 'value',
+                        $type: 'value',
                         value: ''
                     })
                     this.doChangeValue();
@@ -320,7 +320,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
 
     private renderContent = (item: any, index: number, remove: Function) => {
         let parentIndex: number = (index + 1) * this.getDefaultIndex() + this.state.index;
-        switch (item.type) {
+        switch (item.$type) {
             case 'view':
                 return this.renderView(item, parentIndex);
             case 'function':
@@ -332,7 +332,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             default:
                 return (
                     <FormerScopeValue
-                        key={[item.type, this.state.reflush, index].join('.')}
+                        key={[item.$type, this.state.reflush, index].join('.')}
                         onRemoveValue={remove}
                         level={this.state.level - 1}
                         index={parentIndex}
@@ -375,7 +375,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 // 前面部分截取
                 if (range.end < inputValue.length) {
                     originValue.splice(serial, 1, scopeValue, {
-                        type: 'value',
+                        $type: 'value',
                         value: inputValue.substring(range.end, inputValue.length)
                     })
                 } else {
@@ -386,16 +386,16 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 // 中间解决
                 if (range.end < inputValue.length) {
                     originValue.splice(serial, 1, {
-                        type: 'value',
+                        $type: 'value',
                         value: inputValue.substring(0, range.start)
                     }, scopeValue, {
-                        type: 'value',
+                        $type: 'value',
                         value: inputValue.substring(range.end, inputValue.length)
                     });
                 } else {
                     // 后面截取
                     originValue.splice(serial, 1, {
-                        type: 'value',
+                        $type: 'value',
                         value: inputValue.substring(0, range.start)
                     }, scopeValue)
                 }
@@ -417,11 +417,11 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                     let beforeText: string = inputValue.substring(0, cursorPosition);
                     originValue.splice(serial, 1,
                         {
-                            type: 'value', value: beforeText
+                            $type: 'value', value: beforeText
                         },
                         scopeValue,
                         {
-                            type: 'value',
+                            $type: 'value',
                             value: inputValue.substring(cursorPosition, inputValue.length)
                         }
                     );
@@ -445,7 +445,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 length += 1;
             }
         }
-        if (item.type == 'value') {
+        if (item.$type == 'value') {
             if (Array.isArray(item.value)) {
                 item.value.forEach(item => {
                     length += this.calculateParametersLength(item)
@@ -468,7 +468,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         let currentCusorposition: number = -1;
         
 
-        if (prevScpoe.type == 'value') {
+        if (prevScpoe.$type == 'value') {
             if (this.isSampleScopeValue(prevScpoe) && prevScpoe.value.length > 0) {
 
                 // 当值大于零的时候，焦点
@@ -510,7 +510,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         return false;
     }
     private isSampleScopeValue(scope: any) {
-        if (scope && scope.type == 'value') {
+        if (scope && scope.$type == 'value') {
             return !Array.isArray(scope.value)
         }
     }

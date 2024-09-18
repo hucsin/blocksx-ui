@@ -124,7 +124,7 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                         value={this.state.value}
                         onClick={(props: any) => {
                             this.props.scope.addValueIntoScope({
-                                type: 'view',
+                                $type: 'view',
                                 ...props
                             })
                         }} 
@@ -147,7 +147,7 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                         
                         onClick={(value, keypath: string, { source, node }) => {
                             this.props.scope.addValueIntoScope({
-                                type: 'scope',
+                                $type: 'scope',
                                 dataType: node.type,
                                 source, 
                                 keypath: keypath,

@@ -7,7 +7,7 @@ interface PanelTooltipProps {
     name: string;
     title?: string,
     subtitle?: string;
-    type?: string;
+    $type?: string;
     description: string;
     parameters?: any[]; 
     returns ?: any;
@@ -122,7 +122,7 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
             return this.props.icon;
         }
 
-        switch(this.props.type) {
+        switch(this.props.$type) {
             case 'function':
                 return <Icons.FunctionOutlined/> 
             case 'scope':

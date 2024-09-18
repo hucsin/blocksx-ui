@@ -4,7 +4,7 @@ import ScopeTooltip from './panel/tooltip';
 import { upperFirst } from 'lodash';
 
 interface FormerScopeProps {
-    type: string;
+    $type: string;
     value: any;
     source?: any;
     dataType?: string;

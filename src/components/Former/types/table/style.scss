@@ -1,6 +1,13 @@
 .former-table {
     border-top: 1px solid #f2f2f2;
     position: relative;
+    .table-former-footer {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        text-indent: -100000;
+        color:transparent;
+    }
     pre {
         margin: 0;
     }

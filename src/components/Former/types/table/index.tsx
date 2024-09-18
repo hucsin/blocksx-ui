@@ -547,12 +547,16 @@ export default class FormerTable extends React.Component<IFormerTable, {
         }
     }
     private getFormerKey() {
+        
         let key: string = this.state.record && this.state.record['id'];
-        return key; 
+        return [this.state.actionType, key].join('_'); 
     }
     public render() {
-        let { extendsFor = {} } = this.props;
+        let { extendsFor = {}} = this.props;
+        let { props = {} } = this.state;
+        let formerType = props['formerType'] || 'drawer';
         let pageMeta = extendsFor.meta || {};
+
 
         return (
             <div className="former-table" >
@@ -577,15 +581,22 @@ export default class FormerTable extends React.Component<IFormerTable, {
                     footer={this.renderSummary}
                 />
                 <Former
-                    type="drawer"
+                    type={formerType}
                     title={this.getDefaultTitle()}
+                    icon="GoogleSheetsBrandFilled"
                     value={this.state.record || {}}
                     visible={this.state.visible}
+                    onVisible={(visible)=> {
+                        this.setState({
+                            visible
+                        })
+                    }}
                     schema={this.getDefaultSchema()}
                     viewer={this.state.formerViewer}
                     column={'two'}
+                    placement={'rightTop'}
                     key={this.getFormerKey()}
-                    width={700}
+                    width={formerType == 'popover' ? 450 : 700}
                     groupType={pageMeta.props && pageMeta.props.groupType}
                     groupMeta={pageMeta.props && pageMeta.props.groupMeta}
                     canmodify={this.state.record && !!this.state.record['id']}
@@ -617,7 +628,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
                         })
                     }}
 
-                />
+                ><span className='table-former-footer' >1</span></Former>
             </div>
         )
     }

@@ -8,6 +8,7 @@ import FormerScopeValue from './components/value';
 import ScopePanel from './components/panel';
 import Context from './contexts';
 import { ScopeType } from './types';
+import ScopeLabel from './components/scope';
 
 
 import './testmang';// TODO remove
@@ -73,7 +74,32 @@ interface FormerScopeState {
     disabledBlur?: boolean;
 }
 
+class FormerScopeViewer extends React.Component<FormerScopeProps, FormerScopeState> {
+    public renderScope(scope: any) {
+        switch(scope.$type) {
+            case 'value':
+                return (
+                    <span>{scope.value}</span>
+                )
+            case 'scope':
+                return (
+                    <ScopeLabel {...scope} />
+                )
+        }
+    }
+    public render() {
+        let { value =  [] } = this.props;
+        
+        return (
+            <>
+                {value.map(it => this.renderScope(it))}
+            </>
+        )
+    }
+}
+
 export default class FormerScope extends React.Component<FormerScopeProps, FormerScopeState> {
+    public static Viewer = FormerScopeViewer;
     private inputList: any;
     private inputScopeMap: any;
     private focusInput: any;
@@ -489,7 +515,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                                     }
                                     
                                 }} 
-                                value={value && value.length ? value :[{type:'value', value: ''}]} 
+                                value={value && value.length ? value :[{$type:'value', value: ''}]} 
                             />}
                         
                     </div>

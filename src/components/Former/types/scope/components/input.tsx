@@ -198,7 +198,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 return true;
             } else {
                
-                return (value.length == 1 && value[0].type == 'value')
+                return (value.length == 1 && value[0].$type == 'value')
             }
         }
 
