@@ -166,12 +166,12 @@ class SmartRequest {
     public makeGetRequest(url: string,  fields?: any) {
         return (request: any) => {
             let params = this.getRequestParams(request, fields);
-            let query: string = this.getValidParmas(params);
+            let query: any = this.getValidParmas(params);
             
 
             return new Promise((resolve, reject) => {
                 Request.get(this.getRequestURI(url)
-                    , {
+                    , location.href.match(/__debug__/) ?{...query, __debug__: true } : {
                         _: Encode.encode(JSON.stringify(query))
                     }
                     , this.getHeaders() 

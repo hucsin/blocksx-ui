@@ -70,6 +70,7 @@ interface FormerScopeState {
     currentDataType: any;
     disabled?: boolean;
     readonly?: boolean;
+    disabledBlur?: boolean;
 }
 
 export default class FormerScope extends React.Component<FormerScopeProps, FormerScopeState> {
@@ -97,7 +98,8 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             openTotal: 1,
             currentDataType: null,
             disabled: false,
-            readonly: props.readonly || false
+            readonly: props.readonly || false,
+            disabledBlur: false
         }
 
         this.innerRef = React.createRef();
@@ -284,8 +286,15 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             this.lastFocus = current;
         }
     }
+    private onDisabledBlur = (disabled: boolean = true) => {
+       
+        this.setState({
+            disabledBlur: disabled
+        })
+        this.onFoucs(this.focusInput)
+    }
     private onBlur = (current) => {
-        if (this.state.readonly) {
+        if (this.state.readonly || this.state.disabledBlur) {
             return;
         }
         
@@ -379,6 +388,32 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         // dataType
         // 第一个节点
         return (
+            <Context.Provider value={{
+                findInputIndex: this.findInputIndex,
+                registerInput: this.registerInput,
+                removeInput: this.removeInput,
+                onDisabledBlur: this.onDisabledBlur,
+
+                onForwardCursor: this.onForwardCursor,
+                onBackwardCursor: this.onBackwardCursor,
+                onFocus: this.onFoucs,
+                onBlur: this.onBlur,
+                findInputRange: this.findInputRange,
+                setDisabled: (disabled:boolean) => {
+                    
+                    this.setState({
+                        disabled: !!disabled
+                    })
+                },
+                setCurrentDataType: (dataType: any)=> {
+                    this.setState({
+                        currentDataType: dataType
+                    })
+                },
+                getCurrentValue: () => {
+                    return this.state.value;
+                }
+            }}>
             <Popover
                 overlayClassName="ui-scope-panel"
 
@@ -393,6 +428,9 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                         total={this.state.openTotal} 
                         scope={this}
                         value = {value}
+                        getFormerValue={()=> {
+                            return this.props.former.getValue() 
+                        }}
                         onGetDependentParameters={()=> this.onGetDependentParameters()}
                       />
                     : null
@@ -437,30 +475,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                         'ui-scope-prefix': typeProps.prefix
                     })} ref={this.innerRef}>
                         {typeProps.placeholder && isEmptyValue && <div className='ui-scope-placeholder'>{typeProps.placeholder}</div>}
-                        <Context.Provider value={{
-                            findInputIndex: this.findInputIndex,
-                            registerInput: this.registerInput,
-                            removeInput: this.removeInput,
-                            onForwardCursor: this.onForwardCursor,
-                            onBackwardCursor: this.onBackwardCursor,
-                            onFocus: this.onFoucs,
-                            onBlur: this.onBlur,
-                            findInputRange: this.findInputRange,
-                            setDisabled: (disabled:boolean) => {
-                                
-                                this.setState({
-                                    disabled: !!disabled
-                                })
-                            },
-                            setCurrentDataType: (dataType: any)=> {
-                                this.setState({
-                                    currentDataType: dataType
-                                })
-                            },
-                            getCurrentValue: () => {
-                                return this.state.value;
-                            }
-                        }}>
+                        
                             {<FormerScopeValue 
                                 readonly={this.state.readonly} 
                                 prefix={typeProps.prefix} 
@@ -476,10 +491,11 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                                 }} 
                                 value={value && value.length ? value :[{type:'value', value: ''}]} 
                             />}
-                        </Context.Provider>
+                        
                     </div>
                 </div>
             </Popover>
+            </Context.Provider>
         )
     }
 }

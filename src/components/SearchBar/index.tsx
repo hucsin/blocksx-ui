@@ -38,6 +38,10 @@ export interface SearchBarProps {
     value?: string;
     query?: string;
     defaultValue?: any;
+    onSearch?: Function;
+    onMouseDown?: Function;
+    onMouseEnter?: Function;
+    onMouseLeave?: Function;
 }
 
 interface SearchBarState {
@@ -71,7 +75,8 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
             value[this.props.quick.field || 'quick'] = this.state.value;
         }
 
-        this.props.onChange && this.props.onChange(value)
+        this.props.onChange && this.props.onChange(value);
+        this.props.onSearch && this.props.onSearch(value);
     }
     private onChangeQuickValue =(event: any)=> {
         let quickValue: any = (event && event.target) ? event.target.value : event;
@@ -82,10 +87,16 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
         }, this.onChangeValue)
     }
     private onChange = (event: any)=> {
-        this.onChangeQueryValue(event);
+        this.onChangeQueryValue(event, false);
     }
-    public onChangeQueryValue =(event: any) => {
+    public onChangeQueryValue =(event: any, isSearch: boolean = true) => {
         
+        if (this.props.onSearch) {
+            if (!isSearch) {
+                return ;
+            }
+            
+        }
         let value: any = event && event.target ? event.target.value : event;
         
         this.setState({
@@ -161,8 +172,17 @@ export default class SearchBar extends React.Component<SearchBarProps, SearchBar
             allowClear
             placeholder={this.props.placeholder}
             defaultValue={this.state.query}
-            onSearch={this.onChangeQueryValue}
+            onSearch={(event)=> this.onChangeQueryValue(event, true)}
             disabled={this.state.disabled}
+            onMouseDown={()=> {
+                this.props.onMouseDown && this.props.onMouseDown()
+            }}
+            onMouseEnter={()=> {
+                this.props.onMouseEnter && this.props.onMouseEnter()
+            }}
+            onMouseLeave={()=> {
+                this.props.onMouseLeave && this.props.onMouseLeave()
+            }}
             onChange={debounce(300,this.onChange)}
         ></Input.Search>
     }

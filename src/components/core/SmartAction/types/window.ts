@@ -38,14 +38,11 @@ class SmartActionWindow {
         this.bindFocus(errorBack);
 
         let timer = setInterval((message) => {
+            console.log(this.getSelfCookie(),33332)
             if (message = this.getSelfCookie()) {
+                
                 clearInterval(timer);
                 this.deleteSelfCookie()
-                if (message == '0') {
-                    if (errorBack) {
-                       return  errorBack()
-                    }
-                }
                 callback(message);
             }
         }, 200)

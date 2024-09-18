@@ -302,7 +302,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     }
     private renderView(item: any, parentIndex: number) {
         return (
-            <FormerView readonly={this.state.readonly} {...item} />
+            <FormerView readonly={this.state.readonly} {...item} context={this.context} />
         )
     }
     private isCanInput(value: any) {

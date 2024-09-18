@@ -92,6 +92,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
 
     public componentDidMount(): void {
         let { props } = this.state;
+        
         if (props.type == 'meta') {
             if (this.viewRequestHelper) {
 
@@ -132,10 +133,9 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
         let former: any = this.props.former;
         former.removeCache(this.getCacheKey());
         this.setState({
-            value: {},
+            value: '',
             values: []
         })
-        console.log(this.props.fieldKey, 'fieldKey')
         this.props.former.resetSafeValue({
             [`${this.props.fieldKey}`]: ''
         })
@@ -148,7 +148,9 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             actionType: 'init',
             value: value
         })).then(({current, values = []}: any) => {
-
+            if (!current && !values.length) {
+                return this.emptyView()
+            }
             if (Array.isArray(values)) {
                 // 只有一条的时候绑定
                 if (!current && (values.length == 1)) {
@@ -260,7 +262,6 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                 if (data.smartaction) {
                     SmartAction.doAction(data, (value: any)=> {
                         //alert(333)
-                       // console.log(value)
                         if (value) {
                             if (value ==  '0') {
                                 this.emptyView()

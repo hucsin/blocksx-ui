@@ -6,7 +6,7 @@ interface FormerViewProps {
     value: string;
     icon: string;
     name: string;
-    
+    context: any;
     description: string;
 }
 

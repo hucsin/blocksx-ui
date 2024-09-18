@@ -611,7 +611,6 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                     let { batchAction }  = this.state;
     
                     let callback: any = () => {
-                        console.log(3333333,3333, batchAction, params)
                         // 跳转到router
                         if (batchAction && batchAction.router && this.props.router) {
                                 this.props.router.utils.goPath(batchAction.router, val);

@@ -22,6 +22,7 @@ interface ScopePanelProps {
     iterator?: boolean;
     panel: any;
     onGetDependentParameters?: Function;
+    getFormerValue?: Function;
     readonly?: boolean;
 }
 interface ScopePanelState {
@@ -119,6 +120,7 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                         {...this.state.panel} 
                         disabled={this.state.disabled}
                         onGetDependentParameters={()=> onGetDependentParameters && onGetDependentParameters()} 
+                        getFormerValue={()=> this.props.getFormerValue && this.props.getFormerValue()}
                         value={this.state.value}
                         onClick={(props: any) => {
                             this.props.scope.addValueIntoScope({

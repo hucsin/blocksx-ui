@@ -95,6 +95,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         let fields: any = props.fields || props.schema && props.schema.fields;
         let columnKeys:any = TablerUtils.getFieldKeysByColumnOnly(fields);
         let isStepOne: boolean = !this.isFistMustValue(this.splitStepField(fields, true), props.value);
+        
         let isStepMode: boolean = this.isStepFormer(fields);
         this.state = {
             visible: !!props.action,
@@ -133,7 +134,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         for(let i=0, l=fistFields.length;i<l;i++) {
             let field: any = fistFields[i];
             
-            if (utils.isUndefined(value[field.fieldKey]) && field.isRequired) {
+            if ((utils.isUndefined(value[field.fieldKey]) || value[field.fieldKey] === '') && field.isRequired) {
                //alert(3333)
                 return false;
             }
@@ -621,8 +622,14 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         let ofirstvalue: any = pick(value, pickKeys);
         let nfirstvalue: any = pick(newValue, pickKeys);
         let allkeys: any = [...Object.keys(ofirstvalue), ...Object.keys(nfirstvalue)]
-
+        
         return allkeys.some(it => {
+            if (!utils.isValidValue(ofirstvalue[it]) && !utils.isValidValue(nfirstvalue[it])) {
+                return false;
+            }
+            if (!utils.isValidValue(nfirstvalue[it])) {
+                return false;
+            }
             return ofirstvalue[it] !== nfirstvalue[it]
         })
     } 
@@ -696,7 +703,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                     }
                 }}
                 onChangeValue={(value, type)=> {
-                   
+                    
                     if (this.state.isStepMode 
                             && this.state.isStepOne) 
                     {
@@ -715,6 +722,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                             },
                         })
 
+
                         if (this.isFistValueHasChanged(value)) {
 
                             if (this.isStepDynamicFormer()) {
@@ -727,6 +735,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                         }
                        // }
                     }
+
 
                     this.onChangeValue({
                         ...this.state.value,
