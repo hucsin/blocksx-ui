@@ -29,6 +29,7 @@ interface FormerScopeProps {
     strict?: boolean;
     iterator?: boolean
     readonly?: boolean;
+    addValueIntoScope: Function;
 }
 
 interface FormerScopeState {
@@ -265,6 +266,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         readonly={this.state.readonly}
                         strict={this.state.strict}
                         disabled={!this.isCanInput(it.value)}
+                        addValueIntoScope={this.props.addValueIntoScope}
                         index={index + this.getDefaultIndex(this.state.level - 1) * (idx + 1)}
                         context={this.context}
                         onRemoveValue={(currentIndex) => {
@@ -337,6 +339,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         level={this.state.level - 1}
                         index={parentIndex}
                         prefix={this.props.prefix}
+                        addValueIntoScope={this.props.addValueIntoScope}
                         disabled={!this.isCanInput(this.state.value)}
                         strict={this.state.strict}
                         dataType={this.state.dataType} 
@@ -368,6 +371,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         let focusPosition: number = 0;
         // 有选取的时候
 
+
         if (range && range.length > 0) {
 
             // 需要替换掉 选取的文字
@@ -376,7 +380,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 if (range.end < inputValue.length) {
                     originValue.splice(serial, 1, scopeValue, {
                         $type: 'value',
-                        value: inputValue.substring(range.end, inputValue.length)
+                        value: this.clearValue(inputValue.substring(range.end, inputValue.length))
                     })
                 } else {
                     // 全部截取
@@ -387,16 +391,16 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 if (range.end < inputValue.length) {
                     originValue.splice(serial, 1, {
                         $type: 'value',
-                        value: inputValue.substring(0, range.start)
+                        value: this.clearValue(inputValue.substring(0, range.start))
                     }, scopeValue, {
                         $type: 'value',
-                        value: inputValue.substring(range.end, inputValue.length)
+                        value: this.clearValue(inputValue.substring(range.end, inputValue.length))
                     });
                 } else {
                     // 后面截取
                     originValue.splice(serial, 1, {
                         $type: 'value',
-                        value: inputValue.substring(0, range.start)
+                        value: this.clearValue(inputValue.substring(0, range.start))
                     }, scopeValue)
                 }
             }
@@ -414,7 +418,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                     originValue.splice(serial + 1, 0, scopeValue);
                 } else {
                     // 中间拆分
-                    let beforeText: string = inputValue.substring(0, cursorPosition);
+                    let beforeText: string = this.clearValue(inputValue.substring(0, cursorPosition));
                     originValue.splice(serial, 1,
                         {
                             $type: 'value', value: beforeText
@@ -422,7 +426,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         scopeValue,
                         {
                             $type: 'value',
-                            value: inputValue.substring(cursorPosition, inputValue.length)
+                            value: this.clearValue(inputValue.substring(cursorPosition, inputValue.length))
                         }
                     );
 
@@ -432,6 +436,9 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
 
         this.doChangeValue();
         this.doFocus(currentIndex + 1, focusPosition)
+    }
+    private clearValue(val: string) {
+        return val.replace(/\[,，]/ig, '').trimEnd().trimStart();
     }
     private calculateParametersLength(item: any) {
         let length: number = 0;
@@ -546,11 +553,24 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             return (
                 <>
                     {this.renderPrefix()}
-                    <FormerScopeInput readonly={this.state.readonly} dataType={this.state.dataType} strict={this.state.strict} disabled={this.state.disabled} serial={this.props.serial} parentScope={this.props.parentScope || this} onRemoveValue={(current: any) => {
-                        return this.onRemoveValue(current)
-                    }} context={this.context} index={this.state.index} onChangeValue={(val) => {
-                        this.doChangeValue(val)
-                    }} value={value as string} />
+                    <FormerScopeInput 
+                        readonly={this.state.readonly} 
+                        dataType={this.state.dataType} 
+                        strict={this.state.strict} 
+                        disabled={this.state.disabled} 
+                        serial={this.props.serial} 
+                        parentScope={this.props.parentScope || this} 
+                        onRemoveValue={(current: any) => {
+                            return this.onRemoveValue(current)
+                        }} 
+                        context={this.context} 
+                        index={this.state.index} 
+                        onChangeValue={(val) => {
+                            this.doChangeValue(val)
+                        }} 
+                        value={value as string} 
+                        addValueIntoScope={this.props.addValueIntoScope}
+                    />
                 </>
             )
         }

@@ -149,6 +149,7 @@ export { default as SwitchOnUtilityOutlined } from './SwitchOnUtilityOutlined';
 export { default as SystemsUtilityOutlined } from './SystemsUtilityOutlined';
 export { default as TableColumnUtilityOutlined } from './TableColumnUtilityOutlined';
 export { default as TableDataOutlined } from './TableDataOutlined';
+export { default as TableRowCommonOutlined } from './TableRowCommonOutlined';
 export { default as TableUtilityOutlined } from './TableUtilityOutlined';
 export { default as TemplateUtilityOutlined } from './TemplateUtilityOutlined';
 export { default as ThinkingUtilityOutlined } from './ThinkingUtilityOutlined';

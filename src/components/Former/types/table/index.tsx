@@ -549,7 +549,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
     private getFormerKey() {
         
         let key: string = this.state.record && this.state.record['id'];
-        return [this.state.actionType, key].join('_'); 
+        return [this.state.actionType, this.state.recordIndex, key].join('_'); 
     }
     public render() {
         let { extendsFor = {}} = this.props;

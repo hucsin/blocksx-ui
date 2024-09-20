@@ -165,7 +165,6 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             ? this.props.former.props.onGetDependentParameters(params) : {}
     }
     private clearValue(val: any) {
-        
         return Array.isArray(val) ? val.filter(it => {
             return !!it.value
         }) : val;
@@ -198,7 +197,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         delete this.inputScopeMap[inputUniq];
     }
     // 添加value到当前的scope
-    public addValueIntoScope(scopeValue: any) {
+    public addValueIntoScope =  (scopeValue: any) => {
         let currentInput: any = this.lastFocus;
 
         if (currentInput) {
@@ -450,6 +449,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                         readonly={this.state.readonly}
                         dataType={this.state.currentDataType} 
                         open={opened} 
+                        strict={strict} 
                         panel={typeProps.panel}
                         total={this.state.openTotal} 
                         scope={this}
@@ -467,6 +467,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                 <div
                     className={classnames('ui-scope', {
                         'ui-scope-focus':this.state.focusopen,
+                        'ui-scope-more': !strict,
                         'ui-scope-visibility': this.state.width === 0,
                         'ui-scope-textarea': typeProps.type == 'textarea'
                     })}
@@ -507,7 +508,8 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                                 prefix={typeProps.prefix} 
                                 disabled={disabled} 
                                 strict={strict} 
-                                dataType={typeProps.dataType}  
+                                dataType={typeProps.dataType}
+                                addValueIntoScope={this.addValueIntoScope}
                                 onRemoveValue={() => { }} 
                                 onChangeValue={(val) => {
                                     if (!this.state.readonly) {

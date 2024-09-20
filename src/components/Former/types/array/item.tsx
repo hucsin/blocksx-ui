@@ -9,6 +9,7 @@ import { pick } from 'lodash'
 
 interface IFormerArrayItem extends IFormerBase {
     index: number;
+    size: string;
     isLastItem: boolean;
     onArrayItemRemove: Function;
     onArrayItemMove: Function;
@@ -36,13 +37,20 @@ export default class FormerArrayItem extends React.Component<IFormerArrayItem, {
             this.props.onArrayItemMove(this.props.index, step);
         }
     }
+    private renderChilderen() {
+       return  React.Children.map(this.props.children, (it:any, index:number) => {
+            return React.cloneElement(it, Object.assign({}, it.props, {
+                size: this.props.size
+            }))
+        })
+    }
     public render() {
         let moreItemfields: any = this.props.moreItems && this.props.moreItems.fields && this.props.moreItems.fields.map(it=> it.fieldKey);
         
         
         return (
             <div className="former-array-item" data-index={this.props.index +1}>
-                {this.props.children}
+                {this.renderChilderen()}
                 <div className='fomre-array-item-toolbar'>
                     {!this.props.isLastItem &&<Tooltip placement="left" title="Move down one line"><Icons.MoveDownDirectivityOutlined  onClick={()=> this.onArrayItemMove(1)} /></Tooltip>}
                     {this.props.index !==0 &&<Tooltip placement="left" title="Move up one line"><Icons.MoveUpDirectivityOutlined onClick={()=> this.onArrayItemMove(-1)} /></Tooltip>}
@@ -56,7 +64,7 @@ export default class FormerArrayItem extends React.Component<IFormerArrayItem, {
                     readonly={this.props.disabled}
                     width={500}
                     pageMeta={{
-                        icon: 'SettingUtilityOutlined'
+                        icon: 'RecordUtilityOutlined'
                     }}
                     okText='Save'
                     iconType='icon'

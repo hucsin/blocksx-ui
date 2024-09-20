@@ -24,7 +24,6 @@ interface PanelProcessState {
     total: number;
     dataType: any;
     disabled?:boolean;
-
     value?: any;
     selectedKeypath?: string;
 }
@@ -35,6 +34,8 @@ interface PanelProcessProps {
     disabled?:boolean;
     value?: any;
     iterator?: boolean;
+
+    strict?: boolean;
 }
 
 export default class PanelProcess extends React.Component<PanelProcessProps, PanelProcessState> {
@@ -313,7 +314,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         let treeExpandedKeys: any = expandedKeys[index] || this.getExpandedKeys(treeDisplay);
         
         let currentSource: string = treeDisplay[0] ? treeDisplay[0].source : selected.originalName;
-
+        
         return (<Tree
             multiple
             blockNode
@@ -326,7 +327,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
                     { ...info, source: selected.originalName !== currentSource ?  currentSource : '' }
                 )
             }}
-            selectedKeys={this.state.selectedKeypath ? [this.state.selectedKeypath as string] : undefined}
+            selectedKeys={!this.props.strict ? undefined : this.state.selectedKeypath ? [this.state.selectedKeypath as string] : undefined}
             key={[this.state.page, index].join('_')}
             expandedKeys ={treeExpandedKeys}
             autoExpandParent={false}

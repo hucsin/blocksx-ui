@@ -123,6 +123,9 @@ export default class FormerArray extends React.Component<IFormerArrays, { disabl
         }, 0)
     }
     private getChildren() {
+        let { props = {  } } = this.props;
+        let defaultSize: string = props.size || 'default';
+        
         let value: any = this.state.value || [];
         return React.Children.map(this.props.children, (it:any, index:number) => {
             
@@ -133,6 +136,7 @@ export default class FormerArray extends React.Component<IFormerArrays, { disabl
                 index: index,
                 moreItems: this.props.moreItems,
                 value: value[index],
+                size: defaultSize,
                 disabled: this.state.disabled,
                 isLastItem: index === value.length -1,
                 onArrayItemRemove: (index: number) => {

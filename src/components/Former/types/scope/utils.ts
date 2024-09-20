@@ -65,17 +65,19 @@ export default class Utils {
         };
     }
     public static getCursorPosition(containerEl: any) {
-        let doc = containerEl.ownerDocument || containerEl.document;
-        let win = doc.defaultView || doc.parentWindow;
-        let sel = win.getSelection();
-        
-        if (sel.rangeCount > 0) {
-            let range = sel.getRangeAt(0);
-            let preCaretRange = range.cloneRange();
-            preCaretRange.selectNodeContents(containerEl);
-            preCaretRange.setEnd(range.startContainer, range.startOffset);
-            let cursorPos = preCaretRange.toString().length;
-            return cursorPos;
+        if (containerEl) {
+            let doc = containerEl.ownerDocument || containerEl.document;
+            let win = doc.defaultView || doc.parentWindow;
+            let sel = win.getSelection();
+            
+            if (sel.rangeCount > 0) {
+                let range = sel.getRangeAt(0);
+                let preCaretRange = range.cloneRange();
+                preCaretRange.selectNodeContents(containerEl);
+                preCaretRange.setEnd(range.startContainer, range.startOffset);
+                let cursorPos = preCaretRange.toString().length;
+                return cursorPos;
+            }
         }
         return 0;
     }

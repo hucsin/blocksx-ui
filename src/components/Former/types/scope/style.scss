@@ -33,7 +33,26 @@
         }
     }
 }
-
+.ant-space-horizontal{
+    .ant-space-item:first-child {
+        .ui-scope {
+            margin-right: -1px;
+            .ui-scope-inner {
+                border-radius: 6px 0 0 6px;
+                
+            }
+        }
+    }
+    .ant-space-item:last-child {
+        .ui-scope {
+            margin-right: -1px;
+            .ui-scope-inner {
+                border-radius: 0px 6px 6px 0px;
+                
+            }
+        }
+    }
+}
 .ant-space-compact {
     .ui-scope {
         .ui-scope-inner {
@@ -115,6 +134,29 @@
         .ui-scope-input:first-child {
             margin-left: -3px;
         }
+
+        >.ui-scope-input:not(:empty) {
+            &::after{
+                content: ',';
+                display: inline-block;
+                margin-right: 4px;
+            }
+        }
+        >.ui-scope-scope {
+            margin-right: 4px;
+            &::after{
+                content: ',';
+                display: inline-block;
+                margin-left: 4px;
+                position: absolute;
+            }
+        }
+        >*:last-child {
+            
+            &::after{
+                display: none !important;
+            }
+        }
     }
     
     &.ui-scope-focus {
@@ -139,6 +181,8 @@
     .ui-scope-scope,
     .ui-scope-vaiable {
         display: inline-block;
+        word-break: break-all;
+        line-height: 16px;
         &:hover,
         &.ant-popover-open {
             span {
@@ -195,19 +239,19 @@
     }
 
     .ui-scope-input {
-        padding: 0;
+        padding: 1px 0;
         border: none;
         display: inline-block;
 
         border-radius: 0;
         outline: none;
-        margin-bottom: 1px;
         min-width: 3px;
         
         width: auto;
         height: 16px;
         position: relative;
         line-height: 16px;
+        word-break: break-all;
         &:focus{
             outline: none;
         }
@@ -235,10 +279,10 @@
     .ui-scope-keyword {
         background:var(--main-background-color);
         border-radius: 3px;
-        padding: 0 4px;
+        padding: 1px 4px;
         transition: all .3s;
         display: inline;
-        margin-bottom: 1px;
+        margin-bottom: 4px;
         max-width: calc(100% - 11px);
         .number {
             padding: 0px;

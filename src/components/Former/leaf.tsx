@@ -631,7 +631,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                 if (utils.isArray(when) || utils.isBoolean(when)) {
                     // 当存在值的时候
                     // 简单判断值是否存在，不做模糊匹配
-                    let matchValue: boolean = utils.isBoolean(when) ? !!value : when.indexOf(value) > -1;
+                    let matchValue: boolean = utils.isBoolean(when) ? utils.isValidValue(value) : when.indexOf(value) > -1;
                     
                     if (matchValue) {
                         showList = showList.concat(show);

@@ -9,7 +9,7 @@
 import React from 'react';
 import { IFormerBase } from '../../typings';
 import * as Icons from '../../../Icons';
-import { Input } from 'antd';
+import { InputNumber, Space } from 'antd';
 
 import './style.scss';
 
@@ -23,7 +23,7 @@ interface IFormerInput extends IFormerBase {
     onBlur?: Function;
     readonly?: boolean;
 }
-export default class FormerInput extends React.Component<IFormerInput, {readonly: boolean, value: any }> {
+export default class FormerRange extends React.Component<IFormerInput, {readonly: boolean, value: any }> {
     public constructor(props: IFormerInput) {
         super(props);
         this.state = {
@@ -59,25 +59,11 @@ export default class FormerInput extends React.Component<IFormerInput, {readonly
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
         let disabled: boolean = props.disabled || this.props.disabled;
 
-
-        if (props.prefix) {
-            if (Icons[props.prefix]) {
-                let IconView: any = Icons[props.prefix];
-                props.prefix = <IconView/>
-            }
-
-        }
-        
-        console.log(props.size,this.props, this.props.size, 3333)
-        
-        if (props.type && props.type == 'password') {
-            return (
-                <Input.Password size={this.props.size} {...props} disabled={this.state.readonly || disabled} value={this.state.value} onChange={this.onChange} />
-            )
-        } else {
-            return (
-                <Input size={this.props.size}  {...props} onFocus={this.props.onFocus} onBlur={this.props.onBlur} style={{width: props.width}} disabled={this.state.readonly || disabled} value={this.state.value} onChange={this.onChange} />
-            )
-        }
+        return (
+            <Space.Compact>
+                <InputNumber/>
+                <InputNumber/>
+            </Space.Compact>
+        )
     }
 }

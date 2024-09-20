@@ -18,6 +18,7 @@ interface ScopePanelProps {
     total: number;
     dataType: any;
     disabled?: boolean;
+    strict?: boolean;
     value: any;
     iterator?: boolean;
     panel: any;
@@ -142,7 +143,7 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                         dataType={this.state.dataType} 
                         total={this.state.total}
                         iterator={this.props.iterator}
-
+                        strict={this.props.strict}
                         value={this.state.value}
                         
                         onClick={(value, keypath: string, { source, node }) => {

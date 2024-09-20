@@ -220,3 +220,18 @@
         }
     }
 }
+.ant-spin-container {
+    >.former-object:last-child {
+        >.former-group:last-child {
+            >.former-group-item:last-child {
+                margin-bottom: 0;
+                >.former-group-item-content {
+                    >.former-object-item:last-child {
+                        margin-bottom: 0;
+                      //  padding-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -15,6 +15,7 @@ interface FormerScopeInputProps {
     disabled?: boolean;
     strict?: boolean;
     readonly?: boolean;
+    addValueIntoScope: Function;
 }
 interface FormerScopeInputState {
     defaultValue: string;
@@ -133,7 +134,16 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
     public resetCursorPosition =(e)=> {
         
         let innerHTML: string = this.ref.current.innerText;
-        
+
+        // 非严格模式下，不支持输入，只支持删除
+        if (false ==this.props.strict) {
+            if ([188].indexOf(e.keyCode) > -1) {
+                e.stopPropagation();
+                e.preventDefault();
+                this.props.addValueIntoScope({$type: 'value', value: utils.getCursorPosition(this.ref.current) == innerHTML.length ? ' ': '',padding: true})
+                return;
+            }
+        }
         
         if ([8,37,39].indexOf(e.keyCode) > -1) {
             
@@ -181,7 +191,6 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
     public canInput(ig: boolean = false) {
         let { dataType } = this.state;
         
-
         if (!ig && dataType ) {
             if (!Array.isArray(dataType)) {
                 dataType = [dataType]
@@ -211,7 +220,6 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
     }
     
     public render() {
-        
         return (
             <span 
                 ref={this.ref} 

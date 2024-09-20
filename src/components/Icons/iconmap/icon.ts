@@ -170,7 +170,8 @@ export const map:any = {
         "PagesCommonOutlined",
         "PaymentCommonOutlined",
         "PaymentPlatformCommonOutlined",
-        "ProfessionalCommonOutlined"
+        "ProfessionalCommonOutlined",
+        "TableRowCommonOutlined"
     ],
     "suggestion": [
         "DotSuggestionOutlined",

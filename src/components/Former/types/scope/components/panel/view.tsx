@@ -11,6 +11,7 @@ import { SearchBar } from '@blocksx/ui';
 interface PanelViewProps {
     icon: string;
     path: string;
+    params?: any;
     selectKey: string;
     selectNameKey?: string;
     selectDescriptionKey?: string;
@@ -28,7 +29,7 @@ interface PanelViewState {
     value: any;
     search: string;
     current?: any;
-
+    description?: string;
     disabled?: string;
     loading?: boolean;
 }
@@ -46,7 +47,7 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
 
         this.state = {
             search: '',
-            
+            description: props.description,
             value: [],
             disabled: props.disabled,
             current: this.getValue(props.value),
@@ -80,8 +81,8 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
         this.request();
     }
 
-    private request(params:any = {}) {
-
+    private request(data:any = {}) {
+        let { params = {} } = this.props;
         let flow = GlobalScope.getContext(GlobalScope.TYPES.CURRENTFLOW_CONTEXT);
         let node: any = {props: {}};
         let formerValue: any = this.props.getFormerValue && this.props.getFormerValue() || {};
@@ -90,16 +91,27 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
             node = flow.getNodeByName(currentNode.value)
         }
 
+        let paramsKeys = Object.keys(params);
+        if (paramsKeys.length) {
+            params = utils.pick(formerValue, paramsKeys)
+        }
+
         this.setState({ loading: true })
         this.requestHelper({
             view: this.props.view,
             connection: node.props.connection || formerValue.$connection,
             componentName: node.props.componentName,
             ...(this.props.onGetDependentParameters && this.props.onGetDependentParameters()),
+            ...data,
             ...params
         }).then((res: any) => {
-            
+            console.log(res)
+            let description: string = this.props.description;
+            if (res.properties) {
+                description = utils.template(description, res.properties)
+            }
             this.setState({ 
+                description,
                 value: Array.isArray(res) ? res :res.data ,
                 loading: false
             })
@@ -176,8 +188,8 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
                                 })
                                 if (this.props.onClick) {
                                     this.props.onClick({ 
-                                        value: record[selectKey], 
-                                        name: record[selectNameKey],
+                                        value: `${record[selectKey]}`, 
+                                        name: `${record[selectNameKey]}`,
                                         icon: this.props.icon,
                                         //description: record[selectDescriptionKey] || this.props.description
                                     })
@@ -201,7 +213,7 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
         return (
             <Spin spinning={this.state.loading} tip='Loading...'>
                 <div className={classnames('ui-panel-view', this.state.disabled ? 'ui-panel-view-disabled' : '')}>
-                    <Notice icon={this.props.icon} value={this.props.description} />
+                    <Notice icon={this.props.icon} value={this.state.description} />
                     {this.renderContent()}
                 </div>
             </Spin>
