@@ -193,13 +193,39 @@
         }
     }
     .ui-scope-prefix {
+        padding-left: 24px;
+        span.anticon{
+            position: absolute;
+            top: 8px;
+            left: 6px;
+        }
         .ui-scope-placeholder {
             left: 24px
         }
+        .ui-scope-content {
+            
+            width: calc(100% - 30px);
+        }
     }
+    .ui-scope-content {
+        box-sizing: border-box;
+        display:inline-block;
+    }
+    .ui-scope-bind {
+        .ui-scope-content {
+            padding-right: 30px;
+        }
+        button {
+            position: absolute;
+            right: 3px;
+            top: 3px;
+        }
+    }
+
     .ui-scope-placeholder {
         position: absolute;
         height: 32px;
+        top: 4px;
         width: 100%;
         overflow: hidden;
         pointer-events: none;

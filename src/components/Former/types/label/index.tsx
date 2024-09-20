@@ -9,7 +9,7 @@
 
 
 import React from 'react';
-import { Tag } from 'antd';
+import { Tag, Tooltip } from 'antd';
 import { utils } from '@blocksx/core';
 
 
@@ -35,7 +35,6 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
     public constructor(props: IFormerLabel) {
         super(props);
 
-        
         this.state = {
             value: props.value,
             dataSource: null
@@ -120,6 +119,6 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
                     return <Tag key={it} >{it}</Tag>
                 })}
             </span>
-        ) : <span className="former-label"> {value} {this.renderSuffix()}</span>
+        ) : <Tooltip title={this.props.tooltip}><span className="former-label"> {value} {this.renderSuffix()}</span></Tooltip>
     }
 }

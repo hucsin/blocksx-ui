@@ -168,7 +168,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             })
             former.loading(false);
 
-            this.onSelectedItem(current)
+            this.onSelectedItem(current, 'init')
         }).catch(()=> {
             former.loading(false);
         })
@@ -282,7 +282,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             })
         }
     }
-    private onSelectedItem(value: any) {
+    private onSelectedItem(value: any, type: string = 'man') {
         let { props } = this.state;
         let { rowKey = 'id' } = props;
         
@@ -300,7 +300,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                 this.props.former.resetSafeValue({
                     ...value,
                     [`${this.props.fieldKey}`]: value[rowKey]
-                })
+                }, type)
             }
         }
     }

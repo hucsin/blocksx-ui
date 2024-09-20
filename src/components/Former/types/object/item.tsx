@@ -119,11 +119,13 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
         
         let descriptionText: any = this.getDescriptionText();
         let tooltip: string = this.props.tooltip || this.props.notice;
-        
+
         return (
             <div 
                 className={classnames('former-object-item', {
                     [`former-object-${this.props.size}`]: true,
+                    [`former-object-item-float-${this.props['x-float']}`]: this.props['x-float'],
+                    [`former-object-item-clear`]: this.props['x-clear'],
                     'former-object-collapse': this.props['x-model-collapse'],
                     // 'former-object-half-width': this.props['x-half-width'],
                     [`former-object-colspan-${this.state.colspan}`]: this.state.colspan,

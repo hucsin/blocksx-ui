@@ -525,7 +525,14 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 let pagename:string = this.getPageName()
                 return (
                     <SmartPage
-                        onGetDependentParameters ={()=> {
+                        onGetDependentParameters ={(val, type)=> {
+                            
+                            if (type == 'next') {
+                                let { props = {}} = this.props;
+                                return {
+                                    componentName: props.componentName
+                                }
+                            }
                             return {
                                 workflowId: this.props.workflowId,
                                 nodeName: this.props.name

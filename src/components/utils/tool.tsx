@@ -252,6 +252,7 @@ export default class TablerUtils {
     public static getDefaultFieldSchema(it:any, index) {
         //console.log(it.type, it, it.column, 111)
         let props: any = Object.assign({}, it.props, it.meta && it.meta.props);
+        
         return {
             ...it,
             type: it.type || 'string', // 统一当string处理
@@ -263,6 +264,8 @@ export default class TablerUtils {
             'x-modify': it.modify || it['x-modify'],
             'x-group': it.group,
             'x-classify': it.group,
+            'x-float': it.meta.float,
+            'x-clear': it.meta.clear,
             'x-half-width': false,
             'x-portal': it.portal,
 

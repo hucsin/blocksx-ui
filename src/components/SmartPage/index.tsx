@@ -98,6 +98,7 @@ export interface SmartPageProps {
 }
 
 export interface SmartPageState {
+    meta?: any;
     pageMeta: PageMeta;
     metaKey: string;
     uiType: string;
@@ -345,8 +346,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     data.value = utils.merge(this.state.value || {}, data.value);
                     this.onChangeValue(data.value)
                 }
-
                 Object.assign(data, {
+                    meta: meta,
                     title: meta.title || this.state.title,
                     metaKey: this.getMetaKey(data.pageMeta),
                     //reflush: this.props.reflush + 1,
@@ -484,7 +485,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             reflush: isint ? this.state.reflush : +new Date
         })
     }
-    private getQueryParams = (v?: any) => {
+    private getQueryParams = (v?: any, type?: any) => {
         let { folderQuery, classifyQuery, defaultClassify, defaultFolder } = this.state;
         let classifyName: string = classifyQuery || defaultClassify;
         let folderName: any = folderQuery || defaultFolder;
@@ -502,7 +503,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             }
         }
         if (this.props.onGetDependentParameters) {
-            Object.assign(params, this.props.onGetDependentParameters(v))
+            Object.assign(params, this.props.onGetDependentParameters(v, type))
         }
 
         return params;
@@ -523,12 +524,14 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         }
     }
     public renderContentView() {
-        let { pageMeta } = this.state;
+        let { pageMeta, meta = {} } = this.state;
+        let pageInfo: any = meta.page || {};
+        
         return SmartPageUtils.renderPageType(this.state.uiType, {
             id: this.state.id,
             key: this.state.id,
             schema: this.state.schema,
-            pageMeta: this.state.pageMeta,
+            pageMeta: {...this.state.pageMeta, ...pageInfo},
             autoInit: !this.state.folderField,
             router: this.props.router,
             viewer: this.props.isViewer,

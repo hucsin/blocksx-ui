@@ -1,8 +1,9 @@
 import React from 'react';
 import classnames from 'classnames';
 import { utils } from '@blocksx/core';
-import { Popover } from 'antd';
+import { Popover, Button } from 'antd';
 
+import * as Icons from '../../../Icons';
 import ScopeUtils from './utils'
 import FormerScopeValue from './components/value';
 import ScopePanel from './components/panel';
@@ -381,6 +382,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
     }
 
     private isEmptyValue(value: any) {
+        
         if (Array.isArray(value)) {
             if (value.length == 1) {
                 return !value[0].value;
@@ -400,7 +402,15 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
 
         return true;
     }
-
+    private renderPrefix(icon: string) {
+        let IconView: any = Icons[icon]
+        if (IconView) {
+            return (
+                <IconView />
+            )
+        }
+        return null;
+    }
     public render() {
         let { value } = this.state;
         let typeProps: any = this.state.props || this.state.props || this.props['x-type-props'] || {};
@@ -499,8 +509,11 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                 >
                     <div className={classnames({
                         'ui-scope-inner': true,
-                        'ui-scope-prefix': typeProps.prefix
+                        'ui-scope-prefix': typeProps.prefix,
+                        'ui-scope-bind': typeProps.bind
                     })} ref={this.innerRef}>
+                        {this.renderPrefix(typeProps.prefix)}
+                        <div className='ui-scope-content'>
                         {typeProps.placeholder && isEmptyValue && <div className='ui-scope-placeholder'>{typeProps.placeholder}</div>}
                         
                             {<FormerScopeValue 
@@ -519,7 +532,8 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                                 }} 
                                 value={value && value.length ? value :[{$type:'value', value: ''}]} 
                             />}
-                        
+                        </div>
+                        {typeProps.bind && <Button size='small' disabled={isEmptyValue} type='primary'>{typeProps.bind.text || 'Bind'}</Button>}
                     </div>
                 </div>
             </Popover>

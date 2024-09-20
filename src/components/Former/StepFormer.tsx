@@ -134,12 +134,12 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         for(let i=0, l=fistFields.length;i<l;i++) {
             let field: any = fistFields[i];
             
-            if ((utils.isUndefined(value[field.fieldKey]) || value[field.fieldKey] === '') && field.isRequired) {
+
+            if (!utils.isValidValue(value[field.fieldKey]) && field.isRequired) {
                //alert(3333)
                 return false;
             }
         }
-
         return true;
     }
     public componentDidMount(): void {
@@ -149,8 +149,8 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
     private getStepDynamicFormer() {
         
         let { pageMeta = {}}  = this.props;
-        let stepnext: any = pageMeta && pageMeta.props && pageMeta.props.stepnext;
-
+        let stepnext: any = pageMeta &&( pageMeta.stepnext || (pageMeta.props && pageMeta.props.stepnext) );
+        
         if (stepnext) {
 
             return pageMeta.path ? pageMeta.path + '/' + stepnext : stepnext;
@@ -203,22 +203,58 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
 
     }
     private onDynamicStepChange(value: any) {
-        this.setState({loading: true})
-        
-        this.nextDyamicRequest(value).then((result) => {
+
+        let { pageMeta = {}}  = this.props;
+        // 如果依赖值有变化，则不请求
+        if (pageMeta.stepnextrelyValue) {
+            let relyKeys: any = Object.keys(pageMeta.stepnextrelyValue);
             
+            let existKeys: any = relyKeys.filter(it => {
+                return utils.isValidValue(value[it])
+            })
+            if (existKeys.length == relyKeys.length) {
+                return this.setState({
+                    isStepOne: false
+                });
+            }
+            
+        }
+
+        this.setState({loading: true})
+
+        let params: any = {
+            ...value,
+            ...this.props.onGetRequestParams && this.props.onGetRequestParams(value, 'next')
+        };
+
+        
+        this.nextDyamicRequest(params).then((result) => {
             let trueValue: any =  {
                 ...this.state.setpOneValue,
                 ...result.value
             };
+            if (result.schema) {
+                
+                this.setState({
+                    loading:false,
+                    dynamicSchema: this.getDynamicSchema(result.schema),
+                    setpOneValue: utils.copy(trueValue),
+                    value: trueValue,
+                    id: this.state.id + 1,
+                    isStepOne: false,
+                    iconType: 'icon'
+                })
+            } else {
+                this.setState({
+                    loading:false,
+                    //setpOneValue: utils.copy(trueValue),
+                    value: trueValue,
+                    isStepOne: false
+                })
+            }
+        }).catch(e => {
             this.setState({
-                loading:false,
-                dynamicSchema: this.getDynamicSchema(result.schema),
-                setpOneValue: utils.copy(trueValue),
-                value: trueValue,
-                id: this.state.id + 1,
-                isStepOne: false,
-                iconType: 'icon'
+                loading: false
             })
         })
     }
@@ -466,8 +502,13 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                             'ui-disabeld': this.state.isStepOne
                         })}
                         onClick={()=> {
-                            
-                            hasfirtready && this.setStepOne(false)
+                            if (this.isFistMustValue(this.splitStepField(this.state.fields, true), value)) {
+                                if (this.isStepDynamicFormer()) {
+                                    this.onDynamicStepChange(this.state.setpOneValue)
+                                } else {
+                                    hasfirtready && this.setStepOne(false)
+                                }
+                            }
                         }}
                     ><span style={{color:'#ccc'}}>2. </span>{this.stepActionMap[type as any] ||  'Complete'} the {(pageMeta.title ||'record')} {hasfirtready && <Button  size='small'>Next</Button>}</span >
                 </Space>
@@ -662,7 +703,6 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             // 如果return 当为popover这种模式的时候没办法显示了
            // return null;
         }
-        
         return (
             <Former
                 groupType ={groupType}
@@ -721,16 +761,15 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                                 ...utils.copy(value)
                             },
                         })
-
-
+                        
                         if (this.isFistValueHasChanged(value)) {
+                            if (this.isFistValueHasChanged(this.state.setpOneValue)) {
+                                if (this.isStepDynamicFormer()) {
 
-                            if (this.isStepDynamicFormer()) {
-
-                                this.onDynamicStepChange(value);
-                            } else {
-                            
-                                this.setStepOne(false)
+                                    this.onDynamicStepChange(value);
+                                } else {    
+                                    this.setStepOne(false)
+                                }
                             }
                         }
                        // }

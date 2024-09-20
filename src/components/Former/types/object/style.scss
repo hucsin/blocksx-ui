@@ -46,9 +46,19 @@
                 line-height: 24px;
             }
         }
-
+        &.former-object-item-clear {
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
         &.former-object-half-width {
             width: 50%;
+        }
+        &.former-object-item-float-right {
+            .former-object-item-content {
+                >div {
+                    float:right;
+                }
+            }
         }
 
         padding-bottom: 16px;

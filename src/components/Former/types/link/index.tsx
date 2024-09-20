@@ -21,6 +21,7 @@ import './style.scss'
 
 export interface IFormerLabel extends IFormerBase {
     value: any;
+    former?: any;
 }
 
 export interface SFormerLabel {
@@ -38,12 +39,16 @@ export default class FormerLink extends React.Component<IFormerLabel, SFormerLab
     public render() {
         // @ts-ignore
         let defaultOrigin: any = window.location.origin;
+        let { value = '' } = this.state;
         let props: any = this.props['props'] || this.props['x-type-props'];
         let { icon, dir,  name, notice,  origin = defaultOrigin, path = '/', target='_blank', params = {}} = props;
+        let formerValue: any = {...(this.props.former.getSafeValue() ||  {}), ...this.state};
 
-        let url: string = origin + path + encodeURIComponent(this.state.value);
+        let url: string = utils.template(String(value).match(/^https?:\/\//) ? value : origin + path + encodeURIComponent(value), formerValue);
+
         let tips: string = notice || url;
-        let display: string = name ? utils.template(name, this.state) : url;
+
+        let display: string = name ? utils.template(name, formerValue) : url;
         let IconView: any = Icons[icon] || Icons['OpenWindowUtilityOutlined'];
 
         Object.entries(params).forEach((([key, value]:any)=> {

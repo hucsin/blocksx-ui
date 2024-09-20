@@ -187,6 +187,9 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             
             this.setState({
                 value: newProps.value
+            }, ()=> {
+                // console.log('this.state.value', this.state.value)
+                // dealControl
             })
         }
 

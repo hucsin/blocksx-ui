@@ -330,7 +330,6 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     private onChangeValue = (value: any, type?: string) => {
         let trueValue: any = utils.copy(value);
         // if(!type) {
-        console.log(type, value)
         if (type =='init') {
             if (this.timer) {
                 clearInterval(this.timer);
@@ -343,14 +342,14 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                     globalMessage: '',
                     runtimeValue: trueValue
                 });
-                this.props.onChangeValue && this.props.onChangeValue(trueValue);
+                this.props.onChangeValue && this.props.onChangeValue(trueValue, type);
                 this.emitter.emit('changeValue')
             }, 200);
         } 
         // man 是人工触发的
         if (this.props.onChangeValue && type =='man') {
             
-            this.props.onChangeValue(trueValue);
+            this.props.onChangeValue(trueValue, type);
         }
         
         this.setState({
@@ -390,7 +389,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             cb(this.getSafeValue())
         }
     }
-    public resetSafeValue(data: any) {
+    public resetSafeValue(data: any, type: string = 'man') {
         let { value } = this.state;
         let safeValue: any = this.getSafeValue(data);
         
@@ -399,7 +398,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 ...value,
                 ...safeValue
             }
-        }, () => this.onChangeValue(this.state.value, 'man'))
+        }, () => this.onChangeValue(this.state.value, type))
         
     }
     public getValue() {
@@ -748,13 +747,15 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 )
             default:
                 return (
-                    <div className='ui-former-content'>
-                        {this.renderTitle()}
+                    <Spin spinning={this.state.loading}>
+                        <div className='ui-former-content'>
+                            {this.renderTitle()}
                         {this.renderLeaf()}
                         {!this.props.hideButtons && <div className='ui-former-buttons'>
                             {this.renderOperateButton()}
-                        </div>}
-                    </div>
+                            </div>}
+                        </div>
+                    </Spin>
                 )
         }
     }
