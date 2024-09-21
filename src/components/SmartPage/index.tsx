@@ -562,7 +562,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             searchRef: this.searchRef,
 
             onGetRequestParams: this.getQueryParams,
-            onOptionalOpen: this.props.optional ? (close) => {
+            onOptionalOpen: this.state.optional ? (close) => {
                 this.setState({
                     optionalOpen: !close ? true : false
                 })

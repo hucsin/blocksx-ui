@@ -222,13 +222,17 @@
                     color: #999;
                 }
                 
-                button {
-                    padding: 0;
-                    
-                    >span+.anticon {
-                        margin-left: 1px;
+            }
+            &:not(:last-child){
+                .ant-space-item {
+                    button {
+                        padding: 0;
+                        
+                        >span+.anticon {
+                            margin-left: 1px;
+                        }
+    
                     }
-
                 }
             }
         }
