@@ -35,7 +35,7 @@ export interface FormerProps {
     extra?: ExtraContentType;
     className?: string;
     classifyType?: 'tabs' | 'step' | 'verticalTabs';
-    
+
     groupType?: 'accordion' | 'more',
     groupMeta?: any;
     schemaClassifySort?: any;
@@ -46,7 +46,7 @@ export interface FormerProps {
     operateContainerRef?: any;
     titleContainerRef?: any;
     onlyButton?: boolean;// 只渲染button
-    
+
     //onRelyParams: Function;
     // 获取 依赖的参数
     onGetDependentParameters?: Function;
@@ -61,7 +61,7 @@ export interface FormerProps {
     title?: any;
     okText?: string;
     okIcon?: string;
-    cancelText?: string; 
+    cancelText?: string;
     width?: number;
     onClose?: Function;
     onVisible?: Function;
@@ -155,7 +155,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             notice: props.notice,
             readonly: props.readonly || false
         };
-        
+
         this.timer = null;
         this.cache = {};
 
@@ -172,10 +172,15 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     public getCache(key: string) {
         return this.cache[key];
     }
-    public refreshCache(key: string, value:any) {
+    public refreshCache(key: string, value: any) {
         if (this.getCache(key)) {
             Object.assign(this.cache[key], value)
         }
+    }
+    public setLoading(loading: boolean) {
+        this.setState({
+            loading
+        })
     }
     public loading(loading: boolean) {
         this.setState({
@@ -189,9 +194,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
     }
     public UNSAFE_componentWillReceiveProps(newProps: FormerProps) {
-        
+
         if (newProps.schema != this.state.schema) {
-            
+
             this.setState({
                 schema: newProps.schema,
                 classify: this.splitClassifySchema(newProps.schema)
@@ -211,12 +216,12 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
 
         if (newProps.canmodify != this.state.canmodify) {
-            
+
             this.setState({
                 canmodify: newProps.canmodify
             })
         }
-        
+
         if (newProps.disabled != this.state.disabled) {
             if (!utils.isUndefined(newProps.disabled)) {
                 this.setState({
@@ -230,7 +235,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 readonly: newProps.readonly || false
             })
         }
-        
+
         if (newProps.loading != this.state.loading) {
             this.setState({
                 loading: newProps.loading
@@ -266,10 +271,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             })
         }
         if (newProps.id != this.state.id) {
-            
+
             this.setState({
                 id: newProps.id,
-                value: newProps.value || {config: {}}
+                value: newProps.value || { config: {} }
             })
         }
     }
@@ -290,7 +295,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         let classifyName: string[] = [];
         let { defaultClassify, schemaClassifySort, classifyType } = this.props;
         let cacheName: any = {};
-        
+
         if (classifyType) {
             let { properties = {} } = schema;
 
@@ -298,7 +303,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 for (let prop in properties) {
                     let item: any = properties[prop];
                     let xclassify = item['x-classify'];
-                    
+
                     if (xclassify) {
                         if (!cacheName[xclassify]) {
                             cacheName[xclassify] = {}
@@ -314,7 +319,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             }
 
             classifyName = schemaClassifySort || Object.keys(cacheName);
-            
+
             if (classifyName && classifyName.length > 1) {
                 return classifyName.map((it: string) => {
                     return {
@@ -330,7 +335,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     private onChangeValue = (value: any, type?: string) => {
         let trueValue: any = utils.copy(value);
         // if(!type) {
-        if (type =='init') {
+        if (type == 'init') {
             if (this.timer) {
                 clearInterval(this.timer);
             }
@@ -345,13 +350,13 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 this.props.onChangeValue && this.props.onChangeValue(trueValue, type);
                 this.emitter.emit('changeValue')
             }, 200);
-        } 
+        }
         // man 是人工触发的
-        if (this.props.onChangeValue && type =='man') {
-            
+        if (this.props.onChangeValue && type == 'man') {
+
             this.props.onChangeValue(trueValue, type);
         }
-        
+
         this.setState({
             disabled: false
         })
@@ -361,7 +366,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         let isBreak: boolean = false;
 
         ConstValue.isValidError = false;
-        
+
         if (count > 0) {
             if (this.helper) {
                 this.emitter.removeListener('checked', this.helper)
@@ -392,32 +397,32 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     public resetSafeValue(data: any, type: string = 'man') {
         let { value } = this.state;
         let safeValue: any = this.getSafeValue(data);
-        
+
         this.setState({
             value: {
                 ...value,
                 ...safeValue
             }
         }, () => this.onChangeValue(this.state.value, type))
-        
+
     }
     public getValue() {
         return this.state.value || {};
     }
     private getSafeValue(_value?: any) {
-        let { schema = {}, value} = this.state;
+        let { schema = {}, value } = this.state;
         let safeKeys: any = Object.keys(schema.properties)
 
         return pick(_value || value, safeKeys)
     }
     private onSave = (e) => {
-        
+
         if (this.props.onBeforeSave) {
             if (this.props.onBeforeSave() === false) {
                 return;
             }
         }
-        
+
         this.validationValue(() => {
             this.doSave()
         })
@@ -439,7 +444,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             let saveresult: any = this.props.onSave(this.state.value, this);
 
             if (BUtils.isPromise(saveresult)) {
-                saveresult.then(()=> {
+                saveresult.then(() => {
                     this.setState({
                         loading: false
                     })
@@ -458,7 +463,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             }
         }
     }
-    
+
 
     private getUniqKey(schema: any) {
         return schema.type + schema.title + this.state.id + schema.name + schema['$$key'];
@@ -494,7 +499,6 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                                         former={this}
                                         canmodify={this.state.canmodify}
                                         rootEmitter={this.emitter}
-                                        xxx="222"
                                         onChangeValue={this.onChangeValue}
                                     ></Leaf>
                                 </Tabs.TabPane>
@@ -513,16 +517,16 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         if (classify) {
             return this.renderClassify();
         }
-        
+
         return (
             <div className={
                 classnames({
                     [`former-column-${column}`]: true
                 })
             }>
-                
+
                 <Spin spinning={this.state.fetching}>
-                    {notice && (utils.isPlainObject(notice) ? <FormerTypes.notice {...notice} value={notice.description || notice.label}/> : <FormerTypes.notice value={notice}/>)}
+                    {notice && (utils.isPlainObject(notice) ? <FormerTypes.notice {...notice} value={notice.description || notice.label} /> : <FormerTypes.notice value={notice} />)}
                     <Leaf
                         key={this.getUniqKey(schema)}
                         size={this.props.size}
@@ -560,8 +564,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             </>
         )
     }
-    public onCloseLayer = (e?:any) => {
-        
+    public onCloseLayer = (e?: any) => {
+
         this.setState({
             visible: true,
             loading: false
@@ -601,59 +605,61 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
 
     public doDisabledButton(disabled?: boolean) {
-        
+
         this.setState({
             disabled: BUtils.isUndefined(disabled) ? true : disabled
         })
     }
     // 渲染功能按钮
-    public renderOperateButton () {
+    public renderOperateButton() {
 
         if (this.props.operateContainerRef && this.props.operateContainerRef.current) {
-            
-            return  this.props.operateContainerRef.current ? ReactDOM.createPortal(this.renderOperateWraper(), this.props.operateContainerRef.current) : null
+
+            return this.props.operateContainerRef.current 
+                ? ReactDOM.createPortal(this.renderOperateWraper(), this.props.operateContainerRef.current) 
+                : null
         }
 
         return this.renderOperateWraper();
     }
     public renderOperateWraper() {
-        
+
         let OkIconView: any = ICONS[this.props.okIcon as any]
         if (this.props.onlyButton) {
             return (
-                !this.state.viewer 
-                    ? <Button 
-                        loading={this.state.loading} 
-                        size={this.props.size} 
-                        disabled={this.state.disabled} 
+                !this.state.viewer
+                    ? <Button
+                        loading={this.state.loading}
+                        size={this.props.size}
+                        disabled={this.state.disabled}
                         onClick={this.onSave} type="primary"
-                        icon={OkIconView && <OkIconView/>}
-                      >
+                        icon={OkIconView && <OkIconView />}
+                    >
                         {this.state.okText || 'Ok'}
-                      </Button>
-                     : null
-                    
+                    </Button>
+                    : null
+
             )
         }
         return (
-            <Space>                       
-                {!this.state.viewer ? <Button icon={OkIconView && <OkIconView/>} loading={this.state.loading} disabled={this.state.disabled} onClick={this.onSave} type="primary">
+            <Space>
+                {!this.state.viewer ? <Button icon={OkIconView && <OkIconView />} loading={this.state.loading} disabled={this.state.disabled} onClick={this.onSave} type="primary">
                     {this.state.okText || 'Ok'}
                 </Button> : null}
 
                 {this.renderExtraContent()}
-                <Button className='ui-former-cancel' onClick={()=> this.onCloseLayer(true)}  style={{ marginRight: 8 }}>
+                <Button className='ui-former-cancel' onClick={() => this.onCloseLayer(true)} style={{ marginRight: 8 }}>
                     {this.state.cancelText || 'Cancel'}
                 </Button>
             </Space>
         )
     }
     public renderIcon() {
-        if (this.props.iconType =='avatar') {
-            return  <FormerTypes.avatar autoColor={false} icon={this.props.icon} size={24}/>;
-        } 
+        if (this.props.iconType == 'avatar') {
+            return <FormerTypes.avatar autoColor={false} icon={this.props.icon} size={24} />;
+        }
         return TablerUtils.renderIconComponent(this.props)
-        
+
     }
     public renderTitle() {
         let RenderContent: any = (
@@ -663,14 +669,14 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             </>
         );
 
-        if (this.props.titleContainerRef ) {
+        if (this.props.titleContainerRef) {
             return this.props.titleContainerRef.current ? ReactDOM.createPortal(RenderContent, this.props.titleContainerRef.current) : null;
         }
         return RenderContent;
     }
     public render() {
         switch (this.state.type) {
-            
+
             case 'popover':
                 return (
                     <Popover
@@ -705,7 +711,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         open={this.state.visible}
                         onOk={this.onSave}
                         closable={false}
-                        onCancel={()=> this.onCloseLayer(true)}
+                        onCancel={() => this.onCloseLayer(true)}
                         width={this.state.width || 500}
                         okText={this.state.okText || 'Ok'}
                         cancelText={this.state.cancelText}
@@ -729,9 +735,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                         })}
 
                         footer={
-                            <Popover 
+                            <Popover
                                 open={!!this.state.globalMessage}
-                                content={<Space><ICONS.CloseCircleOutlined style={{color:'#ff4d4f'}}/>{this.state.globalMessage}</Space>}
+                                content={<Space><ICONS.CloseCircleOutlined style={{ color: '#ff4d4f' }} />{this.state.globalMessage}</Space>}
                                 placement="topLeft"
                                 overlayStyle={{
                                     maxWidth: 300
@@ -750,9 +756,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                     <Spin spinning={this.state.loading}>
                         <div className='ui-former-content'>
                             {this.renderTitle()}
-                        {this.renderLeaf()}
-                        {!this.props.hideButtons && <div className='ui-former-buttons'>
-                            {this.renderOperateButton()}
+                            {this.renderLeaf()}
+                            {!this.props.hideButtons && <div className='ui-former-buttons'>
+                                {this.renderOperateButton()}
                             </div>}
                         </div>
                     </Spin>

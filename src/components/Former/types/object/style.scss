@@ -32,13 +32,18 @@
     .former-group-item-content {
         //margin-right: -8px;
     }
-
+    .former-object-label-bold {
+        .former-object-label-title {
+        font-weight: bold;
+        }
+    }
     .former-object-item {
         display: inline-block;
         width: 100%;
         vertical-align: top;
 
         box-sizing: border-box;
+        
 
         &.former-object-default {
             .former-object-label-title {
@@ -98,6 +103,7 @@
             font-size: 14px;
             padding-bottom: 8px;
             .former-switch,
+            > button,
             > span {
                 display: inline-block;
                 vertical-align: middle;
@@ -158,7 +164,11 @@
         .former-object-label-title {
             display: inline-block;
             vertical-align: middle;
-            padding-right: 8px
+            padding-right: 8px;
+
+            .anticon {
+                margin-right: 4px;
+            }
         }
 
         .former-object-label-menu {

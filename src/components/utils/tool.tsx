@@ -273,7 +273,8 @@ export default class TablerUtils {
             'x-type': it.uiType || 'input',
             'x-colspan': it.colspan,
             //'x-model-switch': true,
-            
+            'x-label-bold': it.meta.labelbold,
+            'x-label-icon': it.meta.labelicon,
 
             'x-index': (it.key || it.fieldKey || '').indexOf('_') == 0 ? -1 : utils.isNullValue(it.index) ? index : it.index,
             'x-control': it.control,

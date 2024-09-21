@@ -12,6 +12,7 @@ import classnames from 'classnames';
 import { Checkbox, Tooltip } from 'antd';
 import { utils } from '@blocksx/core';
 import { DownOutlined, RightOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import TablerUtils from '../../../utils/tool';
 
 
 
@@ -124,6 +125,7 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
             <div 
                 className={classnames('former-object-item', {
                     [`former-object-${this.props.size}`]: true,
+                    [`former-object-label-bold`]: this.props['x-label-bold'],
                     [`former-object-item-float-${this.props['x-float']}`]: this.props['x-float'],
                     [`former-object-item-clear`]: this.props['x-clear'],
                     'former-object-collapse': this.props['x-model-collapse'],
@@ -144,6 +146,7 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
                         onClick={this.onCollapse}
                     >{!this.state.collapse ? <DownOutlined/> : <RightOutlined/>}</span>}
                     <span className="former-object-label-title">
+                        {this.props['x-label-icon'] && TablerUtils.renderIconComponent({icon: this.props['x-label-icon']})}
                         {this.props.title}
                     </span>
                     {this.props.renderTitlePortal && this.props.renderTitlePortal()}

@@ -184,12 +184,15 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     public UNSAFE_componentWillReceiveProps(newProps: any) {
         
         if (newProps.value != this.state.value) {
-            
+           //this.onChangeValue(newProps.value, 'man')
             this.setState({
                 value: newProps.value
             }, ()=> {
                 // console.log('this.state.value', this.state.value)
                 // dealControl
+                if (this.props['x-control']) {
+                    this.dealControl(newProps.value, this.props['x-control']);
+                }
             })
         }
 

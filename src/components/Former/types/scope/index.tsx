@@ -14,6 +14,7 @@ import ScopeLabel from './components/scope';
 
 import './testmang';// TODO remove
 import './style.scss';
+import SmartRequest from '@blocksx/ui/utils/SmartRequest';
 
 
 
@@ -73,6 +74,7 @@ interface FormerScopeState {
     disabled?: boolean;
     readonly?: boolean;
     disabledBlur?: boolean;
+    loading?: boolean;
 }
 
 class FormerScopeViewer extends React.Component<FormerScopeProps, FormerScopeState> {
@@ -126,7 +128,8 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             currentDataType: null,
             disabled: false,
             readonly: props.readonly || false,
-            disabledBlur: false
+            disabledBlur: false,
+            loading: false
         }
 
         this.innerRef = React.createRef();
@@ -411,9 +414,41 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         }
         return null;
     }
+    private getTypeProps() {
+        return this.state.props || this.state.props || this.props['x-type-props'] || {};
+    }
+    public bindStorage = (e) => {
+        let former: any = this.props.former;
+        let typeProps: any = this.getTypeProps();
+        let requetHelper: any = SmartRequest.makePostRequest(typeProps.bind.path)
+
+        if (requetHelper) {
+            this.setState({loading: true});
+            former && former.setLoading(true);
+
+            requetHelper({
+                storageId: this.state.value
+            }).then((res) => {
+                this.setState({loading: false});
+                former && former.resetSafeValue(res)
+                former && former.setLoading(false);
+            }).catch(()=> {
+                this.setState({loading: false})
+                former && former.setLoading(false);
+            })
+        }
+        
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    }
+    private cansomStop(e: any) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
     public render() {
         let { value } = this.state;
-        let typeProps: any = this.state.props || this.state.props || this.props['x-type-props'] || {};
+        let typeProps: any = this.getTypeProps();
         let strict: boolean = utils.isUndefined(typeProps.strict) ? true : typeProps.strict;
         let width: any = this.state.width || typeProps.width;
         let isEmptyValue: boolean = this.isEmptyValue(value);
@@ -451,7 +486,6 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             }}>
             <Popover
                 overlayClassName="ui-scope-panel"
-
                 content={opened 
                     ? <ScopePanel 
                         iterator={typeProps.iterator}
@@ -533,7 +567,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                                 value={value && value.length ? value :[{$type:'value', value: ''}]} 
                             />}
                         </div>
-                        {typeProps.bind && <Button size='small' disabled={isEmptyValue} type='primary'>{typeProps.bind.text || 'Bind'}</Button>}
+                        {typeProps.bind && <Button onMouseDown={this.cansomStop} onMouseUp={this.cansomStop} loading={this.state.loading} onClick={this.bindStorage} size='small' disabled={isEmptyValue} type='primary'>{typeProps.bind.text || 'Bind'}</Button>}
                     </div>
                 </div>
             </Popover>

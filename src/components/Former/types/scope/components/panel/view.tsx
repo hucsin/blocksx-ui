@@ -105,7 +105,7 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
             ...data,
             ...params
         }).then((res: any) => {
-            console.log(res)
+            
             let description: string = this.props.description;
             if (res.properties) {
                 description = utils.template(description, res.properties)

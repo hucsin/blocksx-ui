@@ -36,6 +36,11 @@ export default class FormerLink extends React.Component<IFormerLabel, SFormerLab
             value: props.value,
         }
     }
+    public UNSAFE_componentWillReceiveProps(nextProps: Readonly<IFormerLabel>, nextContext: any): void {
+        if (nextProps.value != this.props.value) {
+            this.setState({ value: nextProps.value })
+        }
+    }
     public render() {
         // @ts-ignore
         let defaultOrigin: any = window.location.origin;

@@ -193,9 +193,29 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
     }
 
     private renderButton() {
-        let { props = {} } = this.props;
+        let { props = {}, former } = this.props;
         return (
-            <Button type='link' icon={this.renderIcon()} onClick={()=> {this.setState({open: true})}} size="small" >{props.text}</Button>
+            <Button 
+                type={props.type || 'default'} 
+                icon={this.renderIcon()} 
+                onClick={()=> {
+                    console.log(props,33)
+                    if (props.resetFormer) {
+
+                        this.props.former.resetSafeValue(props.resetFormer)
+                    } else  if (props.callStepFormer) {
+                        let stepFormer: any = former.stepFormer;
+
+                        console.log(stepFormer, stepFormer[props.callStepFormer.method],222)
+                        if (stepFormer && stepFormer[props.callStepFormer.method]) {
+                            stepFormer[props.callStepFormer.method]()
+                        }
+                    } else {
+                        this.setState({open: true})
+                    }
+                }} 
+                size={props.size} 
+            >{props.text}</Button>
         )
     }
 

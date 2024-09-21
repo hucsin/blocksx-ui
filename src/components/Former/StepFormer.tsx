@@ -212,6 +212,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             let existKeys: any = relyKeys.filter(it => {
                 return utils.isValidValue(value[it])
             })
+
             if (existKeys.length == relyKeys.length) {
                 return this.setState({
                     isStepOne: false
@@ -316,7 +317,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         }
     }
     
-    private resetValue() {
+    public resetValue() {
         let former: any = this.former;
 
         if (this.props.onView && this.state.value) {
@@ -646,6 +647,19 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             }
         }
     }
+
+    public goNext() {
+        this.former.validationValue((value: any)=> {
+            
+            if (this.isStepDynamicFormer()) {
+
+                this.onDynamicStepChange(this.state.value);
+            } else {    
+                this.setStepOne(false)
+            }
+        })
+
+    }
     private isFistValueHasChanged(newValue: any) {
         let { schema, value } = this.state;
         let { firstFields } = schema;
@@ -797,7 +811,8 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                 }}
                 onInit = {(former: any) => {
                     this.former = former;
-                    
+
+                    this.former.stepFormer = this;
                 }}
                 autoclose = {false}
                 column = {this.props.column ? this.props.column as any : 'two'}
