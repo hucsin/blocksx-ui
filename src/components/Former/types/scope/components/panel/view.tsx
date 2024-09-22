@@ -93,7 +93,8 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
 
         let paramsKeys = Object.keys(params);
         if (paramsKeys.length) {
-            params = utils.pick(formerValue, paramsKeys)
+            params = {...params, ...utils.pick(formerValue, paramsKeys)}
+            
         }
 
         this.setState({ loading: true })

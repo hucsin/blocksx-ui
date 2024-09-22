@@ -113,6 +113,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
         let value = utils.isUndefined(props.value) ? this.getDefaultValue() : props.value;
         
+        
         this.state = {
             value: value,
             properties: props.properties,
@@ -125,7 +126,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             parentHooksControl: {},
             oneOfCache: {},
             viewer: props.viewer,
-            originValue: this.getMapOriginValue(value || {}),
+            originValue: this.getMapOriginValue(value || this.getDefaultValue()),
             canmodify: props.canmodify,
             readonly: props.readonly || false
         }
@@ -297,7 +298,10 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         })
     }
 
-    private getMapOriginValue(value: object) {
+    private getMapOriginValue(value: any) {
+        if (Array.isArray(value)) {
+            return value;
+        }
         let originValue: any = [];
         for (let p in value) {
             originValue.push({
@@ -314,10 +318,12 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
         let { defaultValue } = props || this.leafProps;
         let { type } = props || this.state || this;
-
+        
+        
         if (utils.isUndefined(defaultValue)) {
             switch (type) {
                 case 'map':
+                    return this.isArrayMap() ? [] : {};
                 case 'object':
                 
                     return {};
@@ -384,6 +390,10 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         //return target ? JSON.parse(JSON.stringify(target)) : target;
     }
     private getObjectByKeyValue(originValue: any[]) {
+
+        if (this.isArrayMap()) {
+            return originValue
+        }
         let object = {};
 
         originValue.forEach((it: any) => {
@@ -936,11 +946,12 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         // case\3 map
         let keyProperties = this.clone(this.properties.key);
         let valueProperties = this.clone(this.properties.value);
-
+        
         if (keyProperties && valueProperties) {
 
             originValue.forEach((it: any, index: number) => {
-                let prop = it.key;
+                
+                let prop = this.isArrayMap() ? it[0] :it.key;
                 let origin = originValue[index];
 
                 children.push(
@@ -953,16 +964,25 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             path: 'key',
                             value: prop,
                             onChangeValue:(keyVal: any, type?: string) => {
-                                origin.key = keyVal;
+                                if (this.isArrayMap()) {
+                                    origin[0] = keyVal;
+                                } else {
+                                    origin.key = keyVal;
+                                }
+
                                 this.onChangeValue(this.getObjectByKeyValue(originValue), type);
                             }
                         })}
                         {this.renderLeaf({
                             ...valueProperties,
                             path: 'value',
-                            value: this.getValueByProps(value[prop], valueProperties, value, prop),
+                            value: this.isArrayMap() ? it[1] :this.getValueByProps(value[prop], valueProperties, value, prop),
                             onChangeValue: (valVal: any, type?: string) => {
-                                origin.value = valVal;
+                                if (this.isArrayMap()) {
+                                    origin[1] = valVal;
+                                } else {
+                                    origin.value = valVal;
+                                }
                                 this.onChangeValue(this.getObjectByKeyValue(originValue), type);
                             }
                         })}
@@ -1057,6 +1077,10 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                     } else {
                         this.renderMapNode(children, Child);
                     }
+                } else {
+                    if (utils.isArray(value) &&this.isArrayMap() ) {
+                        this.renderMapNode(children, Child)
+                    }
                 }
                 break;
             default: 
@@ -1064,6 +1088,10 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
 
         return this.renderFeaturesNode(children);
+    }
+    private isArrayMap() {
+        let typeProps = this.props['x-type-props'] || {}
+        return typeProps.mode == 'array'
     }
     // 判断是否允许修改
     private isAllowModify() {

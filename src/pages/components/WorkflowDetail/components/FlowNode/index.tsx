@@ -408,7 +408,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                     <p><IconView/> {this.isShowSuccess() ? 'Success' : 'Error'}</p>
                     {this.isShowSuccess() 
                         ? <Output nodeStatus={this.state.nodeStatus} nodesStatus={this.state.nodesStatus} /> 
-                        : <div>{this.state.nodeStatus.message}</div>}
+                        : <div>{JSON.stringify(this.state.nodeStatus.message)}</div>}
                 </div>
             )
             

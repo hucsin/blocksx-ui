@@ -16,21 +16,25 @@ interface IFormerMap extends IFormerArray {
     readonly?: boolean;
 }
 
-export default class FormerMap extends React.Component<IFormerMap, { value: any, originValue: any, readonly: boolean }> {
+export default class FormerMap extends React.Component<IFormerMap, { arrayMode: boolean,value: any, originValue: any, readonly: boolean }> {
 
     static Item = FormerMapItem;
 
     public constructor(props: IFormerMap) {
         super(props);
         let value = props.value || {};
+        let typeProps:any  = props ['x-type-props'] || {};
+        
         
         this.state = {
             value: value,
-            originValue: this.getKeyValueArray(value),
-            readonly: props.readonly || false
+            originValue: this.getKeyValueArray(value, typeProps.mode == 'array'),
+            readonly: props.readonly || false,
+            arrayMode: typeProps.mode == 'array'
         };
     }
     public UNSAFE_componentWillReceiveProps(newProps:any) {
+
         if (newProps.originValue !== this.state.originValue) {
             this.setState({
                 originValue: newProps.originValue || []
@@ -42,9 +46,13 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
             })
         }
     }
-    private getKeyValueArray(value: any) {
-        let originValue:any = [];
+    private getKeyValueArray(value: any, arrayMode) {
 
+        if (arrayMode) {
+            return value;
+        }
+
+        let originValue:any = [];
         for(let p in value) {
             originValue.push({
                 key: p,
@@ -66,9 +74,16 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
     }
     private onMapItemRemove(index: number) {
         let originValue = this.state.originValue;
+        let value = this.state.value;
             originValue.splice(index, 1);
 
-        let value = this.getValueByOriginValue(originValue);
+        if (!this.state.arrayMode) {
+        
+            value = this.getValueByOriginValue(originValue);
+        } else {
+            value = originValue;
+        }
+
         this.setState({
             originValue: originValue,
             value: value
@@ -82,14 +97,25 @@ export default class FormerMap extends React.Component<IFormerMap, { value: any,
             return;
         }
         let originValue = this.state.originValue;
+        let value:any = originValue;
+
+        if (this.state.arrayMode) {
+            
+            originValue.push([
+                '',
+                ''
+            ]);
+            value = originValue;
+        } else {
+            
+            originValue.push({
+                key: '',
+                value: ''
+            })
+            value = this.getValueByOriginValue(originValue);
+
+        }
         
-        originValue.push({
-            key: '',
-            value: ''
-        })
-
-        let value = this.getValueByOriginValue(originValue);
-
         this.setState({
             originValue: originValue,
             value: value

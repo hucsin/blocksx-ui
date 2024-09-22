@@ -134,27 +134,28 @@
         .ui-scope-input:first-child {
             margin-left: -3px;
         }
-
-        >.ui-scope-input:not(:empty) {
-            &::after{
-                content: ',';
-                display: inline-block;
+        .ui-scope-content {
+            >.ui-scope-input:not(:empty) {
+                &::after{
+                    content: ',';
+                    display: inline-block;
+                    margin-right: 4px;
+                }
+            }
+            >.ui-scope-scope {
                 margin-right: 4px;
+                &::after{
+                    content: ',';
+                    display: inline-block;
+                    margin-left: 4px;
+                    position: absolute;
+                }
             }
-        }
-        >.ui-scope-scope {
-            margin-right: 4px;
-            &::after{
-                content: ',';
-                display: inline-block;
-                margin-left: 4px;
-                position: absolute;
-            }
-        }
-        >*:last-child {
-            
-            &::after{
-                display: none !important;
+            >*:last-child {
+                
+                &::after{
+                    display: none !important;
+                }
             }
         }
     }
@@ -194,7 +195,7 @@
     }
     .ui-scope-prefix {
         padding-left: 24px;
-        span.anticon{
+        >span.anticon{
             position: absolute;
             top: 8px;
             left: 6px;
