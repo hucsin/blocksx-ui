@@ -194,13 +194,16 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
         ])].filter(Boolean)
 
         if (this.state.panel) {
-            titleKeys = [this.state.panel.title, ...titleKeys]
+            if (this.state.panel.only) {
+                titleKeys = [this.state.panel.title]
+            } else {
+                titleKeys = [this.state.panel.title, ...titleKeys]
+            }
         }
         
         if (!this.state.open) {
             return null;
         }
-
 
         return (
             <div className='ui-scope-panel-inner'
@@ -212,10 +215,8 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                 <div className='ui-scope-panel-header'>
                     <Avatar icon="VariableUtilityOutlined" color="#4d53e8" />
 
-                    <div className='ui-scope-classify'>
-                        {titleKeys.map((it, index) => {
-                            return (
-                                <span
+                    <div className='ui-scope-classify'>{titleKeys.map((it, index) => {
+                            return (<span
                                     onMouseEnter={() => {
                                         /*if (this.timer ) {
                                             clearTimeout(this.timer);
@@ -232,10 +233,8 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                                     //onMouseLeave={()=> this.timer && clearTimeout(this.timer)}
                                     className={classnames({
                                         "ui-selected": index == this.state.current
-                                    })}>{it}</span>
-                            )
-                        })}
-                    </div>
+                                    })}>{it}</span>)
+                        })}</div>
                 </div>
                 <div className='ui-scope-panel-body'>
                     {titleKeys.map((it, index) => {

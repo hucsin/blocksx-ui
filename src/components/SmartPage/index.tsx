@@ -348,7 +348,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 }
                 data.pageMeta.title = meta.title || this.state.title;
                 //data.title = meta.title;
-                console.log(meta.title, data.pageMeta.title, data.title, 333)
+                
                 Object.assign(data, {
                     meta: meta,
                     title: meta.title || this.state.title,
@@ -589,7 +589,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             let dictmap: any = classifyField.meta.classify == 'noall' ? [] : [{ value: 'all', label: 'All' }];
 
             classifyField.dict && (dictmap = dictmap.concat(classifyField.dict))
-
+            
             return (
                 <>
                     <div className={classnames({

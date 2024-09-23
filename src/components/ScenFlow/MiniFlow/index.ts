@@ -467,13 +467,13 @@ export default class MiniFlow extends EventEmitter {
         return tempRouteNode.name;
     }
 
-    private getUniqName() {
-        return 'U' + String(this.getNextMaxSerial()).padStart(2,'0')
-        //return utils.uniq(this.uniq);
+    private getUniqName(uniqNumber: number = 0) {
+        
+        return 'U' + String(this.getNextMaxSerial() + uniqNumber).padStart(2,'0');
     }
 
-    private getRouterNodeConfig(nodeConfig: any, isTemporary:boolean = true) {
-        let routerNodeName: string =  this.getUniqName();
+    private getRouterNodeConfig(nodeConfig: any, isTemporary:boolean = true, uniqNumber?: number) {
+        let routerNodeName: string =  this.getUniqName(uniqNumber);
         return Object.assign({
             name: routerNodeName,
             isTemporary: isTemporary,
@@ -1683,7 +1683,7 @@ export default class MiniFlow extends EventEmitter {
                         newRouterNode = this.insertAfterNode(sourceNode, this.getRouterNodeConfig({
                             left: sourceNode.left + this.size + this.temporaryRouterOffset ,
                             top: sourceNode.top
-                        }), linkRef)
+                        }, true, 1), linkRef)
                     }
                 }
             }

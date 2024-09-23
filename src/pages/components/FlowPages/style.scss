@@ -28,7 +28,15 @@
         border: 1px solid var(--main-border-color);
         border-radius: 18px;
         overflow: hidden;
-       
+        .ui-smartpage-wrapper {
+            >.ant-spin-nested-loading {
+                min-height: 420px;
+            }
+            min-height: 420px;
+            .ant-empty-image {
+                margin-top: 150px;
+            }
+        }
     }
     .ui-classify-content-left {
         background-color: #fff;

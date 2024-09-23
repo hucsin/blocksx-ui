@@ -142,6 +142,11 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         }
         return true;
     }
+    private isFistValueRequired(value: any) {
+        let firstFields: any = this.splitStepField(this.state.fields, true);
+
+        return this.isFistMustValue(firstFields, value)
+    }
     public componentDidMount(): void {
 
       
@@ -774,15 +779,18 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                                 ...utils.copy(value)
                             },
                         })
-                        
+                        console.log(this.isFistValueHasChanged(value), value, this.isFistValueHasChanged(this.state.setpOneValue), this.state.setpOneValue, 3333)
                         if (this.isFistValueHasChanged(value)) {
-                            if (this.isFistValueHasChanged(this.state.setpOneValue)) {
+                            if (this.isFistValueRequired(value)) {
+                             
+                           // if (this.isFistValueHasChanged(this.state.setpOneValue)) {
                                 if (this.isStepDynamicFormer()) {
 
                                     this.onDynamicStepChange(value);
                                 } else {    
                                     this.setStepOne(false)
                                 }
+                            //}
                             }
                         }
                        // }

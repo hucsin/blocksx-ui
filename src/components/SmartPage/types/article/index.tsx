@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { utils } from '@blocksx/core'
+import { utils,keypath } from '@blocksx/core'
 
 
 import { Typography, Button, Space, Tooltip } from "antd";
@@ -48,6 +48,7 @@ interface SmartPageActicleState {
     dataSource: any;
     optional?: any;
     createdAt?: boolean;
+    storagelink?: string;
 }
 
 export default class SmartPageArticle extends React.Component<SmartPageActicleProps, SmartPageActicleState> {
@@ -69,7 +70,8 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
 
         }
         this.requestMap = {};
-        this.operateContainerRef = React.createRef()
+        this.operateContainerRef = React.createRef();
+
     }
 
     public componentDidMount(): void {
@@ -91,6 +93,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
             this.setState({
                 loading: true
             })
+
             
             this.findRequst('record.init')({
                 ...pick(this.state.value, ['id'])
@@ -112,8 +115,6 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                 })
             }).catch(e=>{})
         }
-
-        
 
     }
     // TODO 先写死，后续加上SLOT
@@ -183,9 +184,9 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
         let { value = {}} = this.state;
         let { pageMeta ={} } = this.props;
         
-
-        let title: any = this.filterFields(place);
         
+        let title: any = this.filterFields(place);
+        let iconstring: string =  this.state.icon || pageMeta.icon;
         
         return title.map((it, index) => {
 
@@ -193,9 +194,9 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
 
             if (place == 'avatar') {
                 // 先看pageMEta
-                if (pageMeta.icon || this.state.icon) {
+                if (iconstring) {
                     return (
-                        <FormerTypes.avatar autoColor={false}  key={'a'+index} icon={pageMeta.icon|| this.state.icon} />
+                        <FormerTypes.avatar autoColor={false}  key={'a'+index} icon={iconstring} />
                     )
                 } else if (it.dict) {
                     let matchitem: any = it.dict.find(it=> it.value == trueValue);
@@ -247,14 +248,26 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
         }
 
     }
+    private renderStorageLink() {
+        let link: string = this.state.storagelink || '';
+        if (!link.match(/https?:/)) {
+            link = keypath.get(this.props.value, this.state.storagelink || '')
+        }
+        
+        return (
+            <Tooltip title={link}>
+                <a target="_blank" href={link}>{utils.shortenString(link, 80)}</a>
+            </Tooltip>
+        )
+    }
     private renderTitle() {
         let { value = {} } = this.state;
-        
         return (
             <div className='ui-smartpage-article-title'>
                 <Typography.Title level={3}>{this.renderByPlace('avatar')}{this.state.title || this.renderByPlace('title')}</Typography.Title>
                 <div className='ui-smartpage-article-des'>
                     {this.state.summary || this.renderByPlace('summary')}
+                    {this.state.storagelink && this.renderStorageLink()}
                     {this.state.createdAt && value.createdAt && 
                         <Tooltip title={'Created: ' + Util.formatDate( value.createdAt, 'YYYY/MM/DD HH:mm:ss ddd')}>
                             <span className='ui-sp-des-ct'>{Util.formatDate( value.createdAt)}</span>
@@ -302,7 +315,9 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                             onInitPage={(data)=> {
                                 
                                 let {pageMeta = {}} = data;
+                                
                                 this.setState({
+                                    storagelink: pageMeta.storagelink,
                                     title: pageMeta.title,
                                     summary: pageMeta.summary,
                                     icon: pageMeta.icon

@@ -287,6 +287,11 @@
         opacity: .2;
         
     }
+    &:not(.ui-mircoflow-type-go) {
+        .ui-adder-router {
+            display: none;
+        }
+    }
     .ui-adder-router {
         right: auto;
         top: -20px;

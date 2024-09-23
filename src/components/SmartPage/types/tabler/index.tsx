@@ -105,6 +105,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                 mode: newProps.mode
             })
         }
+        
     }
     private initRequset() {
         this.ListRequest = SmartRequst.makeGetRequest(this.props.path + '/list');

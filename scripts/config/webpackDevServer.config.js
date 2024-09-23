@@ -109,7 +109,10 @@ module.exports = function (proxy, allowedHost) {
     // `proxy` is run between `before` and `after` `webpack-dev-server` hooks
     proxy: {
       ...proxy,
-
+      '/api': {
+        target: 'http://127.0.0.1:9001',
+        changeOrigin: true
+      },
       '/oauth': {
         target: 'http://127.0.0.1:9001',
         changeOrigin: true

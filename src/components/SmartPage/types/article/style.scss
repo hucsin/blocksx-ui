@@ -16,6 +16,12 @@
         color:#ccc;
         padding-top: 4px;
         padding-right: 16px;
+        a {
+            display: block;
+            &:hover {
+                text-decoration: underline;
+            }
+        }
         .anticon {
             margin-right: 2px;
         }

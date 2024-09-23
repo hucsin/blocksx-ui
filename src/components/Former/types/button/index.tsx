@@ -199,14 +199,11 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                 type={props.type || 'default'} 
                 icon={this.renderIcon()} 
                 onClick={()=> {
-                    console.log(props,33)
                     if (props.resetFormer) {
 
                         this.props.former.resetSafeValue(props.resetFormer)
                     } else  if (props.callStepFormer) {
                         let stepFormer: any = former.stepFormer;
-
-                        console.log(stepFormer, stepFormer[props.callStepFormer.method],222)
                         if (stepFormer && stepFormer[props.callStepFormer.method]) {
                             stepFormer[props.callStepFormer.method]()
                         }

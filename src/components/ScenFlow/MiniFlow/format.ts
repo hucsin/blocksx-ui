@@ -246,7 +246,7 @@ export default class CanvasFormat {
 
 
     public format(noRepatin?: boolean, noZoom?: boolean) {
-        
+
         if (this.needReset()) {
 
             this.reset();
