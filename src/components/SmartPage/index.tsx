@@ -346,6 +346,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     data.value = utils.merge(this.state.value || {}, data.value);
                     this.onChangeValue(data.value)
                 }
+                data.pageMeta.title = meta.title || this.state.title;
+                //data.title = meta.title;
+                console.log(meta.title, data.pageMeta.title, data.title, 333)
                 Object.assign(data, {
                     meta: meta,
                     title: meta.title || this.state.title,
@@ -526,12 +529,11 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     public renderContentView() {
         let { pageMeta, meta = {} } = this.state;
         let pageInfo: any = meta.page || {};
-        
         return SmartPageUtils.renderPageType(this.state.uiType, {
             id: this.state.id,
             key: this.state.id,
             schema: this.state.schema,
-            pageMeta: {...this.state.pageMeta, ...pageInfo},
+            pageMeta: {...this.state.pageMeta, ...pageInfo, title: meta.title},
             autoInit: !this.state.folderField,
             router: this.props.router,
             viewer: this.props.isViewer,

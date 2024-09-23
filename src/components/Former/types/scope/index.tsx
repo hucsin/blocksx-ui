@@ -430,8 +430,14 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                 storageId: this.state.value
             }).then((res) => {
                 this.setState({loading: false});
-                former && former.resetSafeValue(res)
-                former && former.setLoading(false);
+                if (former) {
+                    former.resetSafeValue(res, undefined, (value) => {
+                        former.stepFormer.setStepOne(false);
+                    })
+                    former.setLoading(false);
+                    console.log(res,222)
+                    //
+                }
             }).catch(()=> {
                 this.setState({loading: false})
                 former && former.setLoading(false);

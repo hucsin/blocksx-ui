@@ -214,9 +214,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             })
 
             if (existKeys.length == relyKeys.length) {
-                return this.setState({
-                    isStepOne: false
-                });
+                return this.setStepOne(false)
             }
             
         }
@@ -250,7 +248,8 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                     loading:false,
                     //setpOneValue: utils.copy(trueValue),
                     value: trueValue,
-                    isStepOne: false
+                    isStepOne: false,
+                    iconType: 'avatar'
                 })
             }
         }).catch(e => {
@@ -500,7 +499,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                     <span className={classnames({
                             'ui-steptwo': true,
                             'ui-choose': hasfirtready,
-                            'ui-disabeld': this.state.isStepOne
+                            'ui-disabeld': !hasfirtready && this.state.isStepOne
                         })}
                         onClick={()=> {
                             if (this.isFistMustValue(this.splitStepField(this.state.fields, true), value)) {
@@ -511,7 +510,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                                 }
                             }
                         }}
-                    ><span style={{color:'#ccc'}}>2. </span>{this.stepActionMap[type as any] ||  'Complete'} the {(pageMeta.title ||'record')} {hasfirtready && <Button  size='small'>Next</Button>}</span >
+                    ><span style={{color:'#ccc'}}>2. </span>{this.stepActionMap[type as any] ||  'Complete'} {(pageMeta.title ||'record')} {hasfirtready && <Button  size='small'>Next</Button>}</span >
                 </Space>
             </div>
         )
@@ -538,7 +537,6 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
     
     private getDefaultIcon() {
         let { pageMeta = {} } = this.props;
-        
         
         return !this.state.isStepOne && this.state.isStepMode 
             ? 'LeftCircleDirectivityOutlined': pageMeta.icon;
@@ -717,6 +715,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             // 如果return 当为popover这种模式的时候没办法显示了
            // return null;
         }
+        
         return (
             <Former
                 groupType ={groupType}

@@ -105,6 +105,8 @@ interface FormerState {
     globalMessage?: string;
     notice?: any;
     readonly?: boolean;
+    icon: string;
+    iconType?: string;
 }
 /**
  * 三种模式
@@ -153,7 +155,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             fetching: false,
             canmodify: props.canmodify,
             notice: props.notice,
-            readonly: props.readonly || false
+            readonly: props.readonly || false,
+            icon: props.icon,
+            iconType: props.iconType
         };
 
         this.timer = null;
@@ -277,6 +281,18 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 value: newProps.value || { config: {} }
             })
         }
+
+        if (newProps.icon != this.state.icon) {
+            this.setState({
+                icon: newProps.icon
+            })
+        }
+
+        if(newProps.iconType != this.state.iconType) {
+            this.setState({
+                iconType: newProps.iconType
+            })
+        }   
     }
     private getDefaultColumn(column: any) {
         let defaultColumn: any = {
@@ -394,7 +410,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             cb(this.getSafeValue())
         }
     }
-    public resetSafeValue(data: any, type: string = 'man') {
+    public resetSafeValue(data: any, type: string = 'man', callback?: Function) {
         let { value } = this.state;
         let safeValue: any = this.getSafeValue(data);
 
@@ -403,7 +419,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 ...value,
                 ...safeValue
             }
-        }, () => this.onChangeValue(this.state.value, type))
+        }, () => {
+            this.onChangeValue(this.state.value, type);
+            callback && callback(this.state.value);
+        })
 
     }
     public getValue() {
@@ -655,8 +674,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         )
     }
     public renderIcon() {
-        if (this.props.iconType == 'avatar') {
-            return <FormerTypes.avatar autoColor={false} icon={this.props.icon} size={24} />;
+        if (this.state.iconType == 'avatar') {
+            return <FormerTypes.avatar autoColor={false} icon={this.state.icon} size={24} />;
         }
         return TablerUtils.renderIconComponent(this.props)
 
@@ -664,7 +683,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     public renderTitle() {
         let RenderContent: any = (
             <>
-                {this.props.icon && this.renderIcon()}
+                {this.state.icon && this.renderIcon()}
                 {this.state.title || 'Edit record'}
             </>
         );

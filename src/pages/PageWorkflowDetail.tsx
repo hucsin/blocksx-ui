@@ -164,7 +164,7 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                    
                     return this.developmentRequest({
                         removeConnector: type == 'removeNode' ? value.filter(it => it.props.connection).map(it=> {
-                            console.log(it)
+                            
                             let { props = {} } = it;
                             let input = props.input || {};
                             let componentName = it.componentName || props.componentName;

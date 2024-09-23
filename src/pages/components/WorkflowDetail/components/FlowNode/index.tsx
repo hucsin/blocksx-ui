@@ -523,6 +523,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 
                 let value: any  = this.state.value || (isInputValue ? { ...propsvalue[inputKey], $connection: propsvalue.connection } : propsvalue) || {};
                 let pagename:string = this.getPageName()
+                
                 return (
                     <SmartPage
                         onGetDependentParameters ={(val, type)=> {
