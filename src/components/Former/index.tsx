@@ -682,10 +682,10 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     public renderTitle() {
         let RenderContent: any = (
-            <>
+            <div className='ui-former-header'>
                 {this.state.icon && this.renderIcon()}
                 {this.state.title || 'Edit record'}
-            </>
+            </div>
         );
 
         if (this.props.titleContainerRef) {

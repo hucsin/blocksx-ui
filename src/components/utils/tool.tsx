@@ -257,7 +257,7 @@ export default class TablerUtils {
             ...it,
             type: it.type || 'string', // 统一当string处理
             defaultValue: it.defaultValue,
-            title: it.name,
+            title: utils.labelName(it.name || it.fieldName),
             description: it.description,
             column: it.column,
 

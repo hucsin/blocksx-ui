@@ -4,14 +4,19 @@ import { SmartPage } from '@blocksx/ui';
 import dayjs from 'dayjs';
 import classnames from 'classnames';
 import { StructuralMiniFlow } from '@blocksx/structural';
-import { Space, message, Segmented, Button, Tooltip, Tag, Radio, DatePicker } from 'antd';
+import { Space, message, Segmented, Button, Tooltip, Popover, Tag, Radio, DatePicker } from 'antd';
 import { Icons, Tabler } from '@blocksx/ui';
 import { FetchMap } from '../../typing';
+
+import InputParams from './InputParams';
+import MoreStarts from './MoreStarts';
+
 import './style.scss';
 
 
 export interface IRuntTest {
     router: any;
+    classify: string;
     openType: string;
     fetchMap: FetchMap;
     historyType: string;
@@ -36,6 +41,7 @@ export interface SRuntTest {
     historyEndDate: any;
     runId: string;
     disabled: any;
+    open: boolean;
 }
 
 export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
@@ -60,7 +66,8 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
             runId: props.runId,
             loading: false,
             disabled: props.disabled,
-            forceReflush: props.reflush
+            forceReflush: props.reflush,
+            open: false
         }
         this.router = props.router;
     }
@@ -205,7 +212,38 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
         this.props.switchRunStatus('miss', map)
     }
     public runTest = ()=> {
+        
+        console.log(this.props)
+        this.setState({
+            open: true
+        })
+        
+    }
+    private getStartNodes() {
+
         let schema: any = this.props.getSchema();
+        return StructuralMiniFlow.findStartNode(schema.nodes);
+    }
+    private renderPopoverContent() {
+        return this.props.classify == 'function' 
+            ? <InputParams 
+                startNodes={this.getStartNodes()}
+                onSubmit={() => {
+
+                }}
+              />
+            : <MoreStarts/>
+    }
+    private getPopoverTitle() {
+        return this.props.classify == 'function'
+            ? 'Process input parameters'
+            : ''
+    }
+    public runProcessTest =()=> {
+
+        let schema: any = this.props.getSchema();
+        let startsNode: any = StructuralMiniFlow.findStartNode(schema.nodes);
+        
 
         StructuralMiniFlow.validateFlowConfiguration(schema).then(e=> {
             this.setState({loading: true})
@@ -237,9 +275,6 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
         }).catch(e=> {
             // tishi
         }) 
-
-        
-        
     }
     public render() {
        
@@ -249,8 +284,10 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
                 'ui-body-hidden': !this.state.openType
             })}>
                 <div className='ui-header'>
-                    <div className='ui-runtest-bar' >
-                        <Button disabled={this.state.disabled} size='large' loading={this.state.loading} onClick={this.runTest} icon={<Icons.CaretRightFilled/>}>{i18n.t('Run test')}</Button>
+                    <div className='ui-runtest-bar'>
+                        <Popover rootClassName='ui-runtest-popover' placement='topLeft' title={this.getPopoverTitle()} open={this.state.open}  content={this.renderPopoverContent()}>
+                            <Button disabled={this.state.disabled} size='large' loading={this.state.loading} onClick={this.runTest} icon={<Icons.CaretRightFilled/>}>{i18n.t('Run test')}</Button>
+                        </Popover>
                     </div>
                     <div className='ui-runtest-action'>
                         <Space size='large'>

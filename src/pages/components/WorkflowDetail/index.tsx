@@ -1056,6 +1056,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         {!this.props.isViewer && <MircoRunTest 
                             fetchMap={this.props.fetchMap} 
                             router={this.router} 
+                            classify={this.state.classify}
                             disabled={this.isDisabeld()}
                             onOpenLogPanel={(logId)=> {
                                 //

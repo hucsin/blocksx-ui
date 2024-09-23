@@ -1,3 +1,10 @@
+.ui-runtest-popover {
+    .ant-popover-title {
+        padding: 0 4px;
+        padding-bottom: 4px;
+        border-bottom: 1px dashed var(--main-border-color);
+    }
+}
 .ui-runtest-toolbar {
     position: absolute;
     bottom: 16px;
@@ -196,12 +203,14 @@
         cursor: pointer;
         display: inline-block;
         pointer-events: auto;
+        padding-left: 8px;
         button {
             border: none;
             background-color: transparent;
             box-shadow: none;
             outline: none !important;
             padding: 8px;
+            padding-left: 0px;
             > span:not(.ant-btn-icon) {
                 font-size: 24px;
             }
