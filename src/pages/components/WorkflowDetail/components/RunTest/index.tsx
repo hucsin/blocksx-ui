@@ -4,7 +4,7 @@ import { SmartPage } from '@blocksx/ui';
 import dayjs from 'dayjs';
 import classnames from 'classnames';
 import { StructuralMiniFlow } from '@blocksx/structural';
-import { Space, message, Segmented, Button, Tooltip, Popover, Tag, Radio, DatePicker } from 'antd';
+import { Space, message, Segmented, Button, Tooltip, Popover, Alert, Radio, DatePicker } from 'antd';
 import { Icons, Tabler } from '@blocksx/ui';
 import { FetchMap } from '../../typing';
 
@@ -12,11 +12,12 @@ import InputParams from './InputParams';
 import MoreStarts from './MoreStarts';
 
 import './style.scss';
+import Icon from '@ant-design/icons/lib/components/Icon';
 
 
 export interface IRuntTest {
     router: any;
-    classify: string;
+    classify: any;
     openType: string;
     fetchMap: FetchMap;
     historyType: string;
@@ -28,6 +29,7 @@ export interface IRuntTest {
     reflush: any;
     disabled: any;
     onOpenLogPanel?: Function;
+    errorStatusMap: any;
 }
 
 export interface SRuntTest {
@@ -42,6 +44,8 @@ export interface SRuntTest {
     runId: string;
     disabled: any;
     open: boolean;
+    errorStatusMap: any;
+    error: boolean;
 }
 
 export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
@@ -67,7 +71,9 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
             loading: false,
             disabled: props.disabled,
             forceReflush: props.reflush,
-            open: false
+            open: false,
+            errorStatusMap: props.errorStatusMap,
+            error: false
         }
         this.router = props.router;
     }
@@ -113,6 +119,11 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
         if (newProps.runId != this.state.runId) {
             this.setState({
                 runId: newProps.runId
+            })
+        }
+        if (newProps.errorStatusMap != this.state.errorStatusMap) {
+            this.setState({
+                errorStatusMap: newProps.errorStatusMap
             })
         }
     }
@@ -212,10 +223,11 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
         this.props.switchRunStatus('miss', map)
     }
     public runTest = ()=> {
-        
-        console.log(this.props)
+        let { errorStatusMap = {} } = this.state;
+        // 检查错误内容
         this.setState({
-            open: true
+            open: true,
+            error: Object.keys(errorStatusMap).length > 0
         })
         
     }
@@ -225,33 +237,47 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
         return StructuralMiniFlow.findStartNode(schema.nodes);
     }
     private renderPopoverContent() {
+        if (this.state.error) {
+            return (
+                <Alert
+                    message="Please check the node parameters first."
+                    type="error"
+                    showIcon
+                />
+            )
+        }
         return this.props.classify == 'function' 
             ? <InputParams 
                 startNodes={this.getStartNodes()}
-                onSubmit={() => {
-
+                onSubmit={(nodeName: string, value: any) => {
+                    this.runProcessTest(nodeName, value)
+                    this.setState({open: false})
                 }}
               />
             : <MoreStarts/>
     }
     private getPopoverTitle() {
-        return this.props.classify == 'function'
-            ? 'Process input parameters'
-            : ''
+
+        return (
+            <>
+                <Icons.ConfigurationUtilityOutlined/>
+                <span style={{marginLeft: 8}}>{this.props.classify == 'function' ? 'Process input parameters': ''}</span>
+            </>
+        )
     }
-    public runProcessTest =()=> {
+    public runProcessTest =(startNodeName: any, startValue: any)=> {
 
         let schema: any = this.props.getSchema();
-        let startsNode: any = StructuralMiniFlow.findStartNode(schema.nodes);
-        
 
         StructuralMiniFlow.validateFlowConfiguration(schema).then(e=> {
             this.setState({loading: true})
-
+            
             this.props.switchRunStatus('running')
             this.props.fetchMap.runtest({
                 id: this.props.router.params.id,
-                ...this.props.getSchema(),
+                version: schema.version,
+                ...StructuralMiniFlow.findStartNodeSchema(startNodeName, schema),
+                startValue
             }).then((result: any)=> {
                 
                 switch(result.type) {
@@ -285,7 +311,15 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
             })}>
                 <div className='ui-header'>
                     <div className='ui-runtest-bar'>
-                        <Popover rootClassName='ui-runtest-popover' placement='topLeft' title={this.getPopoverTitle()} open={this.state.open}  content={this.renderPopoverContent()}>
+                        <Popover 
+                            rootClassName='ui-runtest-popover' 
+                            placement='topLeft' 
+                            trigger='click'
+                            title={this.getPopoverTitle()} 
+                            open={this.state.open}  
+                            content={this.renderPopoverContent()}
+                            onOpenChange={(open)=>this.setState({open})}
+                        >
                             <Button disabled={this.state.disabled} size='large' loading={this.state.loading} onClick={this.runTest} icon={<Icons.CaretRightFilled/>}>{i18n.t('Run test')}</Button>
                         </Popover>
                     </div>

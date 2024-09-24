@@ -60,6 +60,8 @@ export interface IFormerType {
     iconType?: string;
     width?: number;
     reflush?: any;
+    mandatoryValidation?: boolean;
+    onInit?: Function;
 }
 export interface SFormerType {
     visible: boolean;
@@ -80,6 +82,7 @@ export interface SFormerType {
     iconType?: string;
     readonly?: boolean;
     reflush?: any;
+    mandatoryValidation?: boolean;
 }
 
 export default class StepFormer extends React.Component<IFormerType, SFormerType>  {
@@ -113,7 +116,8 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             id: 0,
             reflush: props.reflush || 'default' ,
             iconType:  (isStepMode ?  isStepOne ? 'avatar' : 'icon' : props.iconType || 'avatar'),
-            readonly: props.readonly
+            readonly: props.readonly,
+            mandatoryValidation: props.mandatoryValidation
         }
 
 
@@ -317,6 +321,11 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         if (newProps.readonly != this.state.readonly) {
             this.setState({
                 readonly: newProps.readonly
+            })
+        }
+        if (newProps.mandatoryValidation != this.state.mandatoryValidation) {
+            this.setState({
+                mandatoryValidation: newProps.mandatoryValidation
             })
         }
     }
@@ -635,6 +644,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
     private onSave(value: any) {
         let saveback: Function  = this.props.onSave || this.props.onChangeValue;
         let truevalue: any = this.cleanLabelValueToValue(value);
+        
         if (saveback) {
             let msg: any = saveback(truevalue);
 
@@ -732,7 +742,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                 size={this.props.size}
                 notice={notice}
                 loading={this.state.loading}
-                
+                mandatoryValidation={this.state.mandatoryValidation}
                 className="ui-tabler-former"
                 rowKey={this.props.rowKey}
                 onVisible={(visible)=> {
@@ -779,7 +789,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                                 ...utils.copy(value)
                             },
                         })
-                        console.log(this.isFistValueHasChanged(value), value, this.isFistValueHasChanged(this.state.setpOneValue), this.state.setpOneValue, 3333)
+                        
                         if (this.isFistValueHasChanged(value)) {
                             if (this.isFistValueRequired(value)) {
                              
@@ -820,6 +830,8 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                     this.former = former;
 
                     this.former.stepFormer = this;
+
+                    this.props.onInit && this.props.onInit(former);
                 }}
                 autoclose = {false}
                 column = {this.props.column ? this.props.column as any : 'two'}
@@ -834,6 +846,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                     this.setState({
                         visible: false
                     })
+                    
                     this.props.onClose && this.props.onClose(this.state.value);
                 
                 }}

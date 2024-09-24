@@ -49,6 +49,7 @@ interface IMircoFlowNode {
     onMouseEnter: Function;
     
     getFormerSchema(type: string):any;
+    onResetErrorStatus: Function;
     onChangeProps(value: any):any;
     onRemoveNode(name: string):any;
     activateList: any;
@@ -75,6 +76,9 @@ interface SMircoFlowNode {
     value?: any;
     activateList: any;
     componentName: any;
+
+    errorMessage?: any;
+    errorStatus?: any;
 }
 
 export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMircoFlowNode> {
@@ -238,9 +242,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
             componentName,
             status: '',
             nodeStatus: props.nodeStatus,
-            nodesStatus: props.nodesStatus
+            nodesStatus: props.nodesStatus,
+            errorMessage: cprops.errorMessage,
+            errorStatus: cprops.errorMessage ? 'miss' : ''
         };
-
+        
         this.mircoFlow = props.mircoFlow;
     }
 
@@ -374,8 +380,12 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         miss: 'SettingFilled'
     };
     private isShowError() {
-        let { nodeStatus = {}, status } = this.state;
+        let { nodeStatus = {}, status, errorMessage } = this.state;
         
+        if (errorMessage) {
+            return true;
+        }
+
         if (nodeStatus.code == 'miss') {
             return !!nodeStatus.message;
         }
@@ -395,10 +405,13 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         return this.isShowError() || this.isShowSuccess();
     }
     public renderStatusPopover() {
-        let status: string = this.state.status; // running, success, faild, miss
+        let { errorMessage, status, errorStatus } = this.state;
+        //let status: string = this.state.status; // running, success, faild, miss
         
-        let IconView: any = Icons[this.statusIconMap[status]]
+        let IconView: any = Icons[this.statusIconMap[errorStatus || status]]
+        
         if (this.canShowPopover()) {
+            
             let type: string = this.isShowSuccess() ? 'success': 'error';
             return (
                 <div className={classnames({
@@ -408,7 +421,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                     <p><IconView/> {this.isShowSuccess() ? 'Success' : 'Error'}</p>
                     {this.isShowSuccess() 
                         ? <Output nodeStatus={this.state.nodeStatus} nodesStatus={this.state.nodesStatus} /> 
-                        : <div>{JSON.stringify(this.state.nodeStatus.message)}</div>}
+                        : <div>{JSON.stringify(errorMessage ||this.state.nodeStatus.message)}</div>}
                 </div>
             )
             
@@ -418,11 +431,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     }
     public renderStatus() {
 
-        let status: string = this.state.status; // running, success, faild, miss
-        
+        let status: string = this.state.errorStatus || this.state.status; // running, success, faild, miss
         let IconView: any = Icons[this.statusIconMap[status]]
         
         //let statusIcon: 
+        
         if (status && IconView) {
             return (
                 <div
@@ -430,11 +443,13 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         e.stopPropagation();
                         //e.preventDefault();
                     }}
+                    key={23}
                     className={classnames({
-                    'ui-node-status': true,
-                    [`ui-node-status-${status}`]: status,
-                    'ui-node-status-errorMessage': this.isShowError()
-                })}>
+                        'ui-node-status': true,
+                        [`ui-node-status-${status}`]: status,
+                        'ui-node-status-errorMessage': this.isShowError()
+                    })}
+                >
                     <Popover align={{offset: [-12,-10]}} placement='topLeft' overlayClassName="ui-tooltip" content={this.renderStatusPopover()}>
                         {<IconView/>}
                     </Popover>
@@ -446,6 +461,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         let { props = {}} = this.state;
         
         //let startNodes: any = this.mircoFlow.miniFlow.getNodes();
+        
         return (
             <>
                 {this.renderStatus()}
@@ -469,7 +485,6 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
     private canShowTrigerAdd() {
         
         if (this.props.classify == 'function') {
-
 
             return !(this.hasPagesNode() && this.hasOpenAPINode());
 
@@ -519,13 +534,29 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 let propsvalue = this.state.props || {}
                 let isInputValue: boolean = this.state.settingMode !== 'setting';
                 let inputKey: string =  this.state.settingMode == 'timer' ? 'timer' : 'input';
-                let noInputKey: string = this.state.settingMode == 'timer' ? 'input': 'timer';
+                //let noInputKey: string = this.state.settingMode == 'timer' ? 'input': 'timer';
                 
                 let value: any  = this.state.value || (isInputValue ? { ...propsvalue[inputKey], $connection: propsvalue.connection } : propsvalue) || {};
                 let pagename:string = this.getPageName()
                 
                 return (
                     <SmartPage
+                        onValidationFailed={(message: any)=> {
+                            this.setState({
+                                errorMessage: message,
+                                errorStatus: 'miss',
+                                hasChanged: true
+                            })
+                            this.props.onResetErrorStatus(true)
+                        }}
+                        onValidationSuccess={()=> {
+                            this.setState({
+                                errorStatus: '',
+                                errorMessage: '',
+                                hasChanged: true
+                            })
+                            this.props.onResetErrorStatus(false)
+                        }}
                         onGetDependentParameters ={(val, type)=> {
                             
                             if (type == 'next') {
@@ -551,7 +582,8 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                             {
                                 defaultFirstTitle: 'Connection',
                                 action: 'setting',
-                                hideButtons: true
+                                hideButtons: true,
+                                mandatoryValidation: true,
                             }
                         }
                         params={()=> {
@@ -578,6 +610,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                             this.setState({value: val});
                         }}
                         onClose={(props: any = {}, changed?: boolean)=> {
+                            
                             if (changed) {
                                 
                                 if (isInputValue) {
@@ -679,10 +712,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         });
     }
     private onCloseLayer() {
+        
         if (this.state.hasChanged) {
            
             this.props.onUpdateNode && this.props.onUpdateNode(this.props.name, {
-                props: {...this.state.props}
+                props: {...this.state.props, errorMessage: this.state.errorMessage}
             }, true)
         }
 
@@ -748,7 +782,6 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         
         let color: string = this.getColor();
         let icon: any = this.getIcon();
-
         // 
         return (
             <div 

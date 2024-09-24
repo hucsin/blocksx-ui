@@ -46,12 +46,16 @@ export default class InputParams extends React.Component<InputParamsProps, Input
         if (schema) {
             return (
                 <div className='ui-runtest-input'>
-                    <FormerTypes.notice icon={startNode.icon} color={startNode.color} value="Enter test data to run the test. The system will execute the test based on the data you provide and complete the process flow."/>
+                    <FormerTypes.notice icon={startNode.icon} color={startNode.color} value="Enter test input data to run the workflow test. The system will execute the test based on the data you provide and complete the process flow."/>
                     <Former 
                         schema={schema}
                         size="default"
                         okText='Run test'
-                        okIcon="CaretRightFilled"
+                        okIcon="PlaySquareOutlined"
+                        loading={false}
+                        onSave={(value) => {
+                            this.props.onSubmit(startNode.name, value)
+                        }}
                     />
                 </div>
             )

@@ -78,6 +78,7 @@ export interface FormerProps {
     notice?: any;
     hideButtons?: boolean;
     readonly?: boolean;
+    mandatoryValidation?: boolean;
 }
 
 interface FormerState {
@@ -105,6 +106,7 @@ interface FormerState {
     globalMessage?: string;
     notice?: any;
     readonly?: boolean;
+    mandatoryValidation?: boolean;
     icon: string;
     iconType?: string;
 }
@@ -130,6 +132,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     private timer: any;
     private emitter: EventEmitter;
     private helper: any;
+    private helperError: any;
     private cache: any;
 
     public constructor(props: FormerProps) {
@@ -157,7 +160,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             notice: props.notice,
             readonly: props.readonly || false,
             icon: props.icon,
-            iconType: props.iconType
+            iconType: props.iconType,
+            mandatoryValidation: props.mandatoryValidation
         };
 
         this.timer = null;
@@ -293,6 +297,11 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 iconType: newProps.iconType
             })
         }   
+        if (newProps.mandatoryValidation != this.state.mandatoryValidation) {
+            this.setState({
+                mandatoryValidation: newProps.mandatoryValidation
+            })
+        }
     }
     private getDefaultColumn(column: any) {
         let defaultColumn: any = {
@@ -377,9 +386,16 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             disabled: false
         })
     }
-    public validationValue(cb: Function, parmas?: any) {
+    private clearEmitter() {
+        this.emitter.removeListener('checked', this.helper)
+        this.helper = null;
+        this.emitter.removeListener('error', this.helperError)
+        this.helperError = null;
+    }
+    public validationValue(cb: Function, parmas?: any, errorBack?: Function) {
         let count: number = this.emitter.listenerCount('validation');
         let isBreak: boolean = false;
+        let errorMessage: string[] = [];
 
         ConstValue.isValidError = false;
 
@@ -390,19 +406,29 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
             this.emitter.on('checked', this.helper = (e) => {
 
-
                 if (!e) {
                     isBreak = true;
                 }
 
                 if (--count <= 0) {
-                    if (!isBreak) {
+                    
+                    if (!isBreak && errorMessage.length == 0) {
                         cb(this.getSafeValue())
+                    } else {
+                        errorBack && errorBack(errorMessage)
                     }
-                    this.emitter.removeListener('checked', this.helper)
-                    this.helper = null;
+                    this.clearEmitter();
+                } 
+            });
+            this.emitter.on('error', this.helperError = (e) => {
+                errorMessage.push(e);
+
+                if (--count <= 0) {
+                    errorBack && errorBack(errorMessage);
+                    this.clearEmitter();
                 }
             });
+
             this.emitter.emit('validation', parmas);
 
         } else {
@@ -585,11 +611,16 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     public onCloseLayer = (e?: any) => {
 
+        
+        if (this.props.onClose) {
+            
+            this.props.onClose(e === true);
+        }
         this.setState({
             visible: true,
             loading: false
         });
-        this.props.onClose && this.props.onClose(e === true);
+        
     }
 
     private renderExtraLogo() {

@@ -94,7 +94,10 @@ export interface SmartPageProps {
     triggerMap?: {
         [key: string]: Function;
     };
-    onMouseLeave?: Function
+    onMouseLeave?: Function;
+
+    onValidationSuccess?: Function;
+    onValidationFailed?: Function;
 }
 
 export interface SmartPageState {
@@ -142,7 +145,7 @@ export interface SmartPageState {
     defaultFolder?: string;
     layout?: string;
     id?: string;
-    
+
     changed: boolean;
     pageMete?: any;
 
@@ -178,6 +181,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     private searchRef: any;
     private toolbarRef: any;
     private isLoading: boolean;
+    private instance: any;
 
     private operateContainerRef: any;
     private titleContainerRef: any;
@@ -348,7 +352,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 }
                 data.pageMeta.title = meta.title || this.state.title;
                 //data.title = meta.title;
-                
+
                 Object.assign(data, {
                     meta: meta,
                     title: meta.title || this.state.title,
@@ -421,7 +425,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         }
 
         if (!utils.isUndefined(newProps.reflush) && newProps.reflush !== this.state.reflush) {
-            
+
             this.setState({
                 reflush: newProps.reflush,
                 value: newProps.value
@@ -533,7 +537,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             id: this.state.id,
             key: this.state.id,
             schema: this.state.schema,
-            pageMeta: {...this.state.pageMeta, ...pageInfo, title: meta.title},
+            pageMeta: { ...this.state.pageMeta, ...pageInfo, title: meta.title },
             autoInit: !this.state.folderField,
             router: this.props.router,
             viewer: this.props.isViewer,
@@ -562,6 +566,10 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             onSelectedValue: this.onSelectedValue,
             mode: this.state.mode,
             searchRef: this.searchRef,
+            onInit: (instance: any) => {
+
+                this.instance = instance;
+            },
 
             onGetRequestParams: this.getQueryParams,
             onOptionalOpen: this.state.optional ? (close) => {
@@ -589,7 +597,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             let dictmap: any = classifyField.meta.classify == 'noall' ? [] : [{ value: 'all', label: 'All' }];
 
             classifyField.dict && (dictmap = dictmap.concat(classifyField.dict))
-            
+
             return (
                 <>
                     <div className={classnames({
@@ -736,9 +744,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 [`ui-smartpage-layout-${this.state.layout}`]: this.state.layout
             })}
 
-            onMouseLeave={()=> {
-                this.props.onMouseLeave && this.props.onMouseLeave()
-            }}
+                onMouseLeave={() => {
+                    this.props.onMouseLeave && this.props.onMouseLeave()
+                }}
             >
                 <Spin spinning={this.state.loading}>
 
@@ -771,6 +779,24 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     }
     private toggleOpenStatus = (open: boolean) => {
 
+        if (this.props.onClose) {
+            if (this.instance && this.instance.validationValue && !open) {
+
+                return this.instance.validationValue((value: any) => {
+                    console.log(value, this.instance.stepFormer.state,222)
+                    this.setShowStatus(open)
+                    this.props.onValidationSuccess && this.props.onValidationSuccess(value);
+                }, null, (errorMessage: any) => {
+                    this.setShowStatus(open);
+                    this.props.onValidationFailed && this.props.onValidationFailed(errorMessage);
+                })
+
+            }
+        }
+
+        this.setShowStatus(open)
+    }
+    private setShowStatus(open: boolean) {
         if (open) {
             this.setState({
                 open: this.canShow || false

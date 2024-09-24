@@ -16,6 +16,7 @@ import * as Icons from '../Icons'
 
 export interface ILeaf {
     fieldKey: string;
+    fieldName: string;
     former: any;
     path: string;
     portalMap?: any;
@@ -174,8 +175,13 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                     }
                     // 开始值校验
                     this.verification((isThouth, message) => {
+                        
+                        if (message) {
+                            rootEmitter && rootEmitter.emit('error', message.replace('The field', '['+ utils.labelName(this.props.fieldName)+']'));
 
-                        thouth(isThouth)
+                        } else { 
+                            thouth(isThouth) 
+                        }
                     })
                 })
             }

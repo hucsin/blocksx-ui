@@ -131,6 +131,7 @@ interface MircoFlowState {
     activateList: any;
 
     removeNodeCountMap: any;
+    errorStatusMap: any;
     
 }
 
@@ -183,7 +184,8 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             openhelper: false,
             connectProps: {},
             activateList: [],
-            removeNodeCountMap: {}
+            removeNodeCountMap: {},
+            errorStatusMap: {}
         }
 
         this.cavnasId = utils.uniq('MircoFlow');
@@ -191,7 +193,15 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         this.canvasRef = React.createRef();
 
     }
-    
+    private getErrorStatusMap(nodes: any) {
+        let map: any = {};
+        nodes.forEach(it => {
+            if (it.props.errorMessage) {
+                map[it.name] = true;
+            }
+        })
+        return map;
+    }
     public componentDidMount() {
         if (this.state.openLog) {
             this.fetchTaskHistory();
@@ -266,7 +276,8 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                 status: data.status,
                 version: data.version || '0.0.1',
                 reflush: +new Date,
-                workflowType: data.classify
+                workflowType: data.classify,
+                errorStatusMap: this.getErrorStatusMap(data.nodes || [])
             }, ()=> {
 
                 if (this.miniFlow) {
@@ -836,6 +847,19 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         onRemoveNode={(name)=> {
                             this.onRemoveNode(name)
                         }}
+                        onResetErrorStatus={(status)=> {
+                            let errorStatusMap: any = { ...this.state.errorStatusMap };
+
+                            if (status) {
+                                errorStatusMap[node.name] = status;
+                            } else {
+                                delete errorStatusMap[node.name];
+                            }
+
+                            this.setState({
+                                errorStatusMap
+                            })
+                        }}
                         onUpdateNode={(id,nodeInfo,isPatch)=> {
 
                             if (this.state.runStatus !=='miss') {   
@@ -956,7 +980,6 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
     private onCloseLayer = ()=> {
 
         if (this.state.connectPropsHasChanged ) {
-            console.log(333,23, this.state.connectProps)
             // save
             this.miniFlow.updateHighlightConnectProps(this.state.connectProps || {})
             
@@ -1058,6 +1081,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                             router={this.router} 
                             classify={this.state.classify}
                             disabled={this.isDisabeld()}
+                            errorStatusMap={this.state.errorStatusMap}
                             onOpenLogPanel={(logId)=> {
                                 //
                                 this.fetchTaskHistory(logId)
