@@ -252,7 +252,7 @@ export default class TablerUtils {
     public static getDefaultFieldSchema(it:any, index) {
         //console.log(it.type, it, it.column, 111)
         let props: any = Object.assign({}, it.props, it.meta && it.meta.props);
-        
+        let meta: any = it.meta || {};
         return {
             ...it,
             type: it.type || 'string', // 统一当string处理
@@ -264,8 +264,8 @@ export default class TablerUtils {
             'x-modify': it.modify || it['x-modify'],
             'x-group': it.group,
             'x-classify': it.group,
-            'x-float': it.meta.float,
-            'x-clear': it.meta.clear,
+            'x-float': meta.float,
+            'x-clear': meta.clear,
             'x-half-width': false,
             'x-portal': it.portal,
 
@@ -273,8 +273,8 @@ export default class TablerUtils {
             'x-type': it.uiType || 'input',
             'x-colspan': it.colspan,
             //'x-model-switch': true,
-            'x-label-bold': it.meta.labelbold,
-            'x-label-icon': it.meta.labelicon,
+            'x-label-bold': meta.labelbold,
+            'x-label-icon': meta.labelicon,
 
             'x-index': (it.key || it.fieldKey || '').indexOf('_') == 0 ? -1 : utils.isNullValue(it.index) ? index : it.index,
             'x-control': it.control,

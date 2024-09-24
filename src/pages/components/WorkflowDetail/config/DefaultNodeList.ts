@@ -10,12 +10,11 @@ export default class DefaultNodeList {
             serial: 1,
             icon: 'IdeaSuggestionOutlined',
             color: '#de8a00',
-            componentName: 'Thinking.idea',
             
             type: 'go',
             props: {
                 icon: 'IdeaCloudUtilityOutlined',
-
+                componentName: 'Thinking.idea',
                 program: 'Thinking',
                 method: 'Decision rules'
             },
@@ -60,10 +59,11 @@ export default class DefaultNodeList {
                 isNew: false,
                 icon: 'PagesCommonOutlined',
                 color: '#1EAEDB',
-                componentName: 'Thinking.pages',
+                
                 ...props,
                 type: 'go',
                 props: {
+                    componentName: 'Thinking.pages',
                     icon: 'AutoCloudUtilityOutlined',
                     dynamic: true,
                     program: 'Pages',
@@ -78,10 +78,11 @@ export default class DefaultNodeList {
                 isNew: false,
                 icon: 'FieldTimeOutlined',
                 color: '#B400C9',
-                componentName: 'Thinking.timer',
                 ...props,
                 type: 'go',
                 props: {
+
+                componentName: 'Thinking.timer',
                     icon: 'SyncOutlined',
                     
                 },
@@ -95,10 +96,11 @@ export default class DefaultNodeList {
                 isNew: false,
                 icon: 'ApiOutlined',
                 color: '#6DB33F',
-                componentName: 'Thinking.openapi',
                 ...props,
                 type: 'go',
                 props: {
+
+                    componentName: 'Thinking.openapi',
                     icon: 'AutoCloudUtilityOutlined',
                     dynamic: true,
                     program: 'OpenAPI',
@@ -126,7 +128,6 @@ export default class DefaultNodeList {
                     this.getIdeaNode({left: 40, top: 162}),
                     {
                         name: 'U02',
-                        componentName: 'Thinking.think',
                         type: 'router',
                         isNew: false,
                         icon: 'ThinkingUtilityOutlined',
@@ -135,6 +136,8 @@ export default class DefaultNodeList {
                         top: 162,
                         serial: 2,
                         props: {
+                            noinp: true,
+                            componentName: 'Thinking.think',
                             icon: 'AiUtilityOutlined',
                             program: 'Thinking',
                             method: 'Decision-based routing'
@@ -171,9 +174,10 @@ export default class DefaultNodeList {
                         isNew: false,
                         icon: 'StartCircleUtilityFilled',
                         color: '#FF7B15',
-                        componentName: 'Thinking.start',
                         left: 40,
                         props: {
+
+                            componentName: 'Thinking.start',
                             icon: 'ConfigurationUtilityOutlined',
                             program: 'Start',
                             method: 'Input Parameters'
@@ -186,9 +190,10 @@ export default class DefaultNodeList {
                         name: 'U02',
                         type: 'router',
                         icon: 'DatasourceMiniDataOutlined',
-                        componentName: 'FlowControl.buffer',
                         color: window['__main_bg_color'],
                         props: {
+
+                            componentName: 'FlowControl.buffer',
                             icon: 'DatasourceDefaultDataOutlined',
                             program: 'Buffer',
                             method: 'Conditional Buffer'
@@ -242,9 +247,10 @@ export default class DefaultNodeList {
                         name: 'U02',
                         type: 'router',
                         icon: 'DatasourceMiniDataOutlined',
-                        componentName: 'FlowControl.buffer',
                         color: window['__main_bg_color'],
                         props: {
+
+                            componentName: 'FlowControl.buffer',
                             icon: 'DatasourceDefaultDataOutlined',
                             program: 'Buffer',
                             method: 'Conditional Buffer'

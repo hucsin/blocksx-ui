@@ -1,4 +1,5 @@
 import React from 'react';
+import { utils } from '@blocksx/core';
 import { Popover, Tag, Space, Tooltip } from 'antd';
 import './style.scss';
 
@@ -174,11 +175,10 @@ export default class NodeConfigure extends React.Component<NodeConfigureProps, N
             })
         } else {
 
-
-            this.props.onClassifyClick && this.props.onClassifyClick({
+            this.props.onClassifyClick && this.props.onClassifyClick(utils.omit({
                 ...rowItem,
                 ...rowItem.props
-            });
+            }, ['description', 'displayType', 'name', 'id', 'type']));
             this.hidePopover();
         }
     }

@@ -143,7 +143,7 @@ export default class FormerMap extends React.Component<IFormerMap, {errorMessage
                 index: index,
                 key: index,
                 properties: this.props['properties'],
-                viewer: this.props.viewer,
+                viewer: this.props.viewer || this.state.readonly,
                 onMapItemRemove: (index: number) => {
                     this.onMapItemRemove(index);
                 }

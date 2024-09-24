@@ -308,6 +308,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
         }
     }
     private coverConnectors(connectors: any) {
+        
         return connectors.map(conn => {
             if (conn.name) {
                 
@@ -433,6 +434,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                     color: '#4d53e8',
                     icon: 'RouterUtilityOutlined',
                     props: {
+                        noinp: true,
                         program: 'Router',
                         method: 'Branch Routing'
                     }
@@ -564,7 +566,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                     
                         <span className='ui-text'>
                             {this.isDisabeld() ? <span>{value.title}</span> :<FormerTypes.text 
-                                value={value.title} 
+                                value={value.title ||'-'} 
                                 onBlur={this.onBlurTitle}
                                 onChangeValue={(val) => {
                                     this.onChangeTitle({ target: {value:val}})
@@ -852,7 +854,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         ...runNodeStatus[node.name],
                         ...nodeStatus
                     }
-                    //console.log([this.state.reflush,node.name, removeNodeCountMap[node.name]].join(''), node.name)
+                    
                     return <MircoFlowNode 
                         fetchMap={this.props.fetchMap} 
                         key={[this.state.reflush,node.name, removeNodeCountMap[node.name]].join('')} 
@@ -1027,8 +1029,7 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                 onChangeValue={(props)=> {
                     
                 // let pickvalue: any = pick(this.state.props, ['icon', 'color'])
-                    //console.log(pickvalue, props, 222, this.state.props)
-                   
+                  
                     this.setState({
                         //  props: props,
                         connectProps: props,

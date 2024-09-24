@@ -225,9 +225,10 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
     public runTest = ()=> {
         let { errorStatusMap = {} } = this.state;
         let startNodes: any = this.getStartNodes();
-        console.log(startNodes, 22)
-        if (startNodes.length >1) {
-            return this.setState({open: true, error: Object.keys(errorStatusMap).length > 0});
+        
+        let isError: boolean = Object.keys(errorStatusMap).length > 0;
+        if (startNodes.length >1 || isError) {
+            return this.setState({open: true, error: isError});
         }  else {
             this.runProcessTest()
         }
@@ -240,6 +241,7 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
     private renderPopoverContent() {
 
         let startNodes: any = this.getStartNodes();
+        
         if (this.state.error) {
             return (
                 <Alert
@@ -293,7 +295,16 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
 
         let schema: any = this.props.getSchema();
 
-        StructuralMiniFlow.validateFlowConfiguration(schema).then(e=> {
+        StructuralMiniFlow.validateFlowConfiguration(schema).then(errorMssage=> {
+
+            if (Array.isArray(errorMssage)) {
+                this.setState({
+                    open: true,
+                    error: true
+                })
+                return this.dealMiss(errorMssage);
+            }
+
             this.setState({loading: true})
             
             this.props.switchRunStatus('running')

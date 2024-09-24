@@ -75,8 +75,20 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
         //this.freshNodeRequest = SmartRequest.makePostRequest(`${path}/fresh`);
 
     }
-    
-    public render() {
+
+    private clearData(data: any) {
+        return data.map(it => {
+            return utils.omit(it, [
+                'isTemporary',
+                'paddingNumber',
+                'childrenNumber',
+                'icon',
+                'color',
+                'isNew'
+            ])
+        })
+    }
+     public render() {
 
         return (
             
@@ -101,11 +113,11 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                 onFetchValue={()  => {
                     
                     return this.fetchViewRequest({id: this.props.router.params.id}).then((result => {
-                        
+                        console.log(utils.decompress(result.nodes), utils.decompress(result.connectors))
                         return {
                             ...result,
-                            nodes: utils.decompress(result.nodes) || [],
-                            connectors: utils.decompress(result.connectors) || []
+                            nodes: result.nodes ? utils.decompress(result.nodes) : [],
+                            connectors: result.connectors ? utils.decompress(result.connectors) : []
                         }
                     }))
                 }}
@@ -130,11 +142,12 @@ class PageWorkflowDetail extends React.Component<IFlowEdit, FlowEditState> {
                     })
                 }}
                 onPublishValue={(value) => {
-                    
+                    // 对参数过滤
+                    console.log(value.nodes, 333)
                     return this.fetchPublishRequest({
                         ...value,
-                        nodes: utils.compress(value.nodes),
-                        connectors: utils.compress(value.connectors)
+                        nodes: utils.compress(this.clearData(value.nodes)),
+                        connectors: utils.compress(this.clearData(value.connectors))
                     })
                 }}
                 onEditorNode= {(type: string, { value, diff, nodes, connector} : any)=> {

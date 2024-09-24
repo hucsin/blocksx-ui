@@ -1,4 +1,5 @@
 import React from 'react';
+import { utils } from '@blocksx/core'
 import { IFormerBase } from '../../typings';
 
 import { CloseCircleOutlined } from '@ant-design/icons';
@@ -29,19 +30,22 @@ export default class FormerMapItem extends React.Component<IMapItem, {}> {
     }
     public render() {
         let  children: any = this.props.children;
-        let { viewer, properties } = this.props;
-
+        let { viewer, properties, index } = this.props;
+        let keyProps: any = properties.key || {};
+        let keyTitle: string = utils.labelName(keyProps.fieldName || keyProps.fieldKey || "Key");
+        let valueProps: any = properties.value || {};
+        let valueTitle: string = utils.labelName(valueProps.fieldName || valueProps.fieldName || 'Value')
         if (children && children.length == 2 ) {
             return (
                 <div className="former-map-item">
                     <span className='number'>#{this.props.index+1}</span>
                     <div className="former-map-item-left">
-                        {viewer && <span>{properties.key.fieldKey}:</span>}
+                        {viewer && index == 0 && <span>{keyTitle}:</span>}
                         {this.renderChildren(children[0])}
                     </div>
                     
                     <div className="former-map-item-right">
-                        {viewer && <span>{properties.value.fieldKey}:</span>}
+                        {viewer && index == 0 && <span>{valueTitle}:</span>}
                         {this.renderChildren(children[1])}
                     </div>
 

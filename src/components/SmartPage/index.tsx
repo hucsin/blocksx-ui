@@ -784,7 +784,6 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
                 return this.instance.validationValue((value: any) => {
                     this.setShowStatus(open)
-                    console.log(3333,2, 'open', open)
                     let messg: any = this.instance.stepFormer.validationValue();
                     
                     if (messg && messg.length) {
@@ -794,7 +793,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     }
                 }, null, (errorMessage: any) => {
                     this.setShowStatus(open);
-                    console.log(3333,2, 'error', errorMessage, open)
+                    
                     this.props.onValidationFailed && this.props.onValidationFailed(errorMessage);
                 })
 

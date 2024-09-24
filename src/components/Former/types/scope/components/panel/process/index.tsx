@@ -340,7 +340,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
             }}
             treeData={treeDisplay}
             style={{
-                maxHeight: `calc( 100vh - ${mapheight + 360}px)`
+                height: `calc( 100vh - ${mapheight + 300}px)`
             }}
             titleRender={(item: any)=> {
                 return (

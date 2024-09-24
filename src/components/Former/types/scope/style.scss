@@ -140,6 +140,7 @@
         .ui-scope-input:first-child {
             margin-left: -3px;
         }
+        
         .ui-scope-content {
             >.ui-scope-input:not(:empty) {
                 &::after{
@@ -161,6 +162,21 @@
                 
                 &::after{
                     display: none !important;
+                }
+            }
+        }
+    }
+
+    &:not(.ui-scope-more) {
+        .ui-scope-content {
+            >.ui-scope-input:not(:empty) {
+                &::after{
+                    display: none !important;
+                }
+            }
+            >.ui-scope-scope {
+                &::after{
+                   display: none !important;
                 }
             }
         }
@@ -206,17 +222,17 @@
             top: 8px;
             left: 6px;
         }
-        .ui-scope-placeholder {
-            left: 24px
-        }
         .ui-scope-content {
             
             width: calc(100% - 30px);
         }
     }
     .ui-scope-content {
+        position: relative;
         box-sizing: border-box;
         display:inline-block;
+        width: 100%;
+
     }
     .ui-scope-bind {
         .ui-scope-content {
@@ -231,9 +247,11 @@
 
     .ui-scope-placeholder {
         position: absolute;
-        height: 32px;
-        top: 2px;
+        height: 24px;
+        top: 50%;
         width: 100%;
+        left: 0px;
+        margin-top: -12px;
         overflow: hidden;
         pointer-events: none;
         opacity: .2;

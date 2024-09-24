@@ -25,6 +25,7 @@ interface IMircoFlowNode {
     classify: any;
     mircoFlow: any;
     floating?: boolean;
+    noinp?: boolean;
     status?: any;
     //statusMessage?: any;
     nodeStatus?: any;
@@ -174,7 +175,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 type: 'timer',
                 icon: 'FieldTimeOutlined'
             },
-            {
+            !this.isNoInput() && {
                 name: i18n.t('Configuration'),
                 type: 'configuration',
                 icon: 'ConfigurationUtilityOutlined'
@@ -436,7 +437,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 <ul>
                     {message.map((it, index) => {
                         return (
-                            <li key={index}>{JSON.stringify(it)}</li>
+                            <li key={index}>{utils.isString(it) ? it : JSON.stringify(it)}</li>
                         )
                     })}
                 </ul>
@@ -556,7 +557,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 let pagename:string = this.getPageName()
                 
                 return (
-                    <SmartPage
+                     !this.isNoInput() ? <SmartPage
                         onValidationFailed={(message: any)=> {
                             this.setState({
                                 errorMessage: message,
@@ -660,7 +661,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                         onShow={this.onShowLayer}
                     >
                         {this.renderDefaultNodeContent(icon, color)}
-                    </SmartPage>
+                    </SmartPage>: <div className='ui-smartpage-popover-wrapper'>{this.renderDefaultNodeContent(icon, color)}</div>
                 )
         }
         
@@ -714,7 +715,12 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
         }
     }
     private onShowLayer =()=> {
-    
+
+
+        if (this.isNoInput()) {
+            return true;
+        }
+
         this.patchValue();
         this.setState({openSetting: true});
        
@@ -794,6 +800,11 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 })
         }
     }
+    private isNoInput() {
+
+        let typeProps: any = this.props.props || {};
+        return typeProps.noinp;
+    }
     public render () {
         
         let color: string = this.getColor();
@@ -804,6 +815,7 @@ export default class MircoFlowNode extends React.Component<IMircoFlowNode, SMirc
                 className={classnames({
                     //'node-new': this.state.isNew,
                     'ui-mircoflow-node': true,
+                    'ui-mircoflow-deny': this.isNoInput(),
                     'ui-mircoflow-activate': this.state.activateList && this.state.activateList.indexOf(this.props.name) > -1,
                     'ui-mircoflow-node-floating': this.props.floating,
                     [`ui-mircoflow-type-${this.state.type}`] : this.state.type
