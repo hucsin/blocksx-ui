@@ -4,6 +4,12 @@
     
     min-height: 30px;
     border-radius: 6px;
+    &.former-map-error {
+        border-color: #ff4d4f;
+        &:hover {
+            border-color: #ff4d4f !important;
+        }
+    }
     &:not(.former-map-disabled):Hover {
 
         > .former-map-add {

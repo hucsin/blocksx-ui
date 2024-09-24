@@ -815,6 +815,19 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
             removeNodeCountMap
         })
     }
+    private resetStatusMap(name: string, status: boolean) {
+        let errorStatusMap: any = { ...this.state.errorStatusMap };
+
+        if (status) {
+            errorStatusMap[name] = status;
+        } else {
+            delete errorStatusMap[name];
+        }
+
+        this.setState({
+            errorStatusMap
+        })
+    }
     public renderFlowList() {
         let { runNodeStatus = {}, removeNodeCountMap={} } = this.state;
         if (this.state.loading) {
@@ -846,19 +859,10 @@ class PageWorkflowDetail extends React.Component<MircoFlowProps, MircoFlowState>
                         {...node} 
                         onRemoveNode={(name)=> {
                             this.onRemoveNode(name)
+                            this.resetStatusMap(node.name, false)
                         }}
                         onResetErrorStatus={(status)=> {
-                            let errorStatusMap: any = { ...this.state.errorStatusMap };
-
-                            if (status) {
-                                errorStatusMap[node.name] = status;
-                            } else {
-                                delete errorStatusMap[node.name];
-                            }
-
-                            this.setState({
-                                errorStatusMap
-                            })
+                            this.resetStatusMap(node.name, status)
                         }}
                         onUpdateNode={(id,nodeInfo,isPatch)=> {
 

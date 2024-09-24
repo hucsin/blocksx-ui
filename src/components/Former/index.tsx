@@ -9,6 +9,8 @@ import { utils as BUtils } from '@blocksx/core';
 import * as ICONS from '../Icons';
 import * as FormerTypes from './types';
 
+import Context from './context';
+
 import ConstValue from './const';
 
 import './style.scss';
@@ -128,7 +130,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         column: 'one',
         placement: 'top'
     };
-
+    private leafInstance: any;
     private timer: any;
     private emitter: EventEmitter;
     private helper: any;
@@ -166,6 +168,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
         this.timer = null;
         this.cache = {};
+        this.leafInstance = [];
 
         this.emitter = new EventEmitter();
         this.emitter.setMaxListeners(1000);
@@ -386,54 +389,24 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             disabled: false
         })
     }
-    private clearEmitter() {
-        this.emitter.removeListener('checked', this.helper)
-        this.helper = null;
-        this.emitter.removeListener('error', this.helperError)
-        this.helperError = null;
-    }
+    
     public validationValue(cb: Function, parmas?: any, errorBack?: Function) {
-        let count: number = this.emitter.listenerCount('validation');
-        let isBreak: boolean = false;
+
         let errorMessage: string[] = [];
+        this.leafInstance.forEach((it: any) => {
 
-        ConstValue.isValidError = false;
+            let result:any = it.validation(parmas);
+            
 
-        if (count > 0) {
-            if (this.helper) {
-                this.emitter.removeListener('checked', this.helper)
+            if (result !== true && result) {
+                errorMessage.push(result);   
             }
-
-            this.emitter.on('checked', this.helper = (e) => {
-
-                if (!e) {
-                    isBreak = true;
-                }
-
-                if (--count <= 0) {
-                    
-                    if (!isBreak && errorMessage.length == 0) {
-                        cb(this.getSafeValue())
-                    } else {
-                        errorBack && errorBack(errorMessage)
-                    }
-                    this.clearEmitter();
-                } 
-            });
-            this.emitter.on('error', this.helperError = (e) => {
-                errorMessage.push(e);
-
-                if (--count <= 0) {
-                    errorBack && errorBack(errorMessage);
-                    this.clearEmitter();
-                }
-            });
-
-            this.emitter.emit('validation', parmas);
-
+        })
+        
+        if (errorMessage.length > 0) {
+            errorBack && errorBack(errorMessage);
         } else {
-
-            cb(this.getSafeValue())
+            cb && cb(this.getSafeValue())
         }
     }
     public resetSafeValue(data: any, type: string = 'man', callback?: Function) {
@@ -724,7 +697,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
         return RenderContent;
     }
-    public render() {
+    public renderContent() {
         switch (this.state.type) {
 
             case 'popover':
@@ -814,5 +787,21 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                     </Spin>
                 )
         }
+    }
+    public registerLeafInstance = (instance: any) =>{
+        this.leafInstance.push(instance);
+    }
+    public removeLeafInstance =(instance: any) => {
+        this.leafInstance = this.leafInstance.filter((it: any) => it != instance);
+    }
+    public render() {
+        return (
+            <Context.Provider value={{
+                registerLeafInstance: this.registerLeafInstance,
+                removeLeafInstance: this.removeLeafInstance
+            }}>
+                {this.renderContent()}
+            </Context.Provider> 
+        )
     }
 }

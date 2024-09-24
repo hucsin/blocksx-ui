@@ -95,6 +95,7 @@
     transition: all .2s;
     position: relative;
     cursor: text;
+
     .ui-scope-wrapper {
         display: inline-block;
     }
@@ -113,6 +114,11 @@
     &.ui-scope-visibility {
         .ui-scope-inner {
             display:none;
+        }
+    }
+    &.ui-scope-error {
+        .ui-scope-inner {
+            border-color: #ff4d4f;
         }
     }
     .ui-scope-inner  {
@@ -226,7 +232,7 @@
     .ui-scope-placeholder {
         position: absolute;
         height: 32px;
-        top: 4px;
+        top: 2px;
         width: 100%;
         overflow: hidden;
         pointer-events: none;

@@ -53,7 +53,7 @@ export default class FormerLink extends React.Component<IFormerLabel, SFormerLab
 
         let tips: string = notice || url;
 
-        let display: string = name ? utils.template(name, formerValue) : url;
+        let display: string = utils.shortenString(name ? utils.template(name, formerValue) : url, 65);
         let IconView: any = Icons[icon] || Icons['OpenWindowUtilityOutlined'];
 
         Object.entries(params).forEach((([key, value]:any)=> {

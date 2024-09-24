@@ -1,6 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import i18n from '@blocksx/i18n';
+import { StructuralSchemaFields } from '@blocksx/structural';
 import { utils } from '@blocksx/core';
 import { Space, Button } from 'antd';
 
@@ -214,7 +215,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
     private onDynamicStepChange(value: any) {
 
         let { pageMeta = {}}  = this.props;
-        // 如果依赖值有变化，则不请求
+        // 如果依赖值有变化，则不请
         if (pageMeta.stepnextrelyValue) {
             let relyKeys: any = Object.keys(pageMeta.stepnextrelyValue);
             
@@ -612,6 +613,13 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         })
         return value;
     }
+    public validationValue() {
+        let validator: any = new StructuralSchemaFields([]);
+        return validator.validateOne(
+            this.props.schema.fields,
+            this.state.value
+        )
+    }
     private onChangeValue(value: any) {
         // 清洗下labelvalue
         //console.log(value, former, 3333)
@@ -795,7 +803,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                              
                            // if (this.isFistValueHasChanged(this.state.setpOneValue)) {
                                 if (this.isStepDynamicFormer()) {
-
+                                    
                                     this.onDynamicStepChange(value);
                                 } else {    
                                     this.setStepOne(false)

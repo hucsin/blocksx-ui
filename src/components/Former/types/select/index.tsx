@@ -14,7 +14,7 @@ import { IFormerBase } from '../../typings';
 import UtilsDatasource from '../../../utils/datasource';
 import * as Icons from '../../../Icons';
 import { utils } from '@blocksx/core';
-import { Select,Tooltip } from 'antd';
+import { Select, Tooltip } from 'antd';
 
 import './style.scss';
 
@@ -34,6 +34,7 @@ export interface FormerSelectProps extends IFormerBase {
     autoClear?: any;
     popupMatchSelectWidth?: boolean;
     readonly?: boolean;
+    errorMessage?: string;
 }
 
 
@@ -50,6 +51,7 @@ export interface FormerSelectState {
     search?: string;
     query?: string;
     readonly?: boolean;
+    errorMessage?: string;
 }
 
 
@@ -71,7 +73,8 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
             loading: false,
             multiple: isMultiple,
             runtimeValue: props.runtimeValue,
-            readonly: props.readonly || false
+            readonly: props.readonly || false,
+            errorMessage: props.errorMessage || ''
         };
 
     }
@@ -148,6 +151,12 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         if (newProps.readonly != this.state.readonly) {
             this.setState({
                 readonly: newProps.readonly || false
+            })
+        }
+
+        if (newProps.errorMessage != this.state.errorMessage) {
+            this.setState({
+                errorMessage: newProps.errorMessage
             })
         }
 
@@ -238,7 +247,9 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
     private findCurrentLabel() {
         return this.state.originSource.find(it=> it.value == this.state.value) || {}
     }
-
+    private getStatus() {
+        return this.state.errorMessage ? 'error' : ''
+    }
    
     public render() {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
@@ -250,11 +261,11 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         
         
         return (
-            <Tooltip title={tooltip}>
+            <Tooltip title={this.state.errorMessage || tooltip} placement='topLeft'>
                 <Select
                     allowClear={this.props.autoClear}    
                     placeholder={this.props.placeholder}
-                    
+                    status={this.getStatus()}
                     {...this.props['x-type-props']}
                     onFocus={() => {
                         if (this.isLazyLoader()) {

@@ -9,7 +9,7 @@
 import React from 'react';
 import { IFormerBase } from '../../typings';
 import * as Icons from '../../../Icons';
-import { Input } from 'antd';
+import { Input,Tooltip } from 'antd';
 
 import './style.scss';
 
@@ -21,14 +21,16 @@ interface IFormerInput extends IFormerBase {
     onChangeValue: Function;
     onFocus?: Function;
     onBlur?: Function;
+    errorMessage?: string;
     readonly?: boolean;
 }
-export default class FormerInput extends React.Component<IFormerInput, {readonly: boolean, value: any }> {
+export default class FormerInput extends React.Component<IFormerInput, {readonly: boolean, value: any, errorMessage: string }> {
     public constructor(props: IFormerInput) {
         super(props);
         this.state = {
             value: props.value,
-            readonly: props.readonly || false
+            readonly: props.readonly || false,
+            errorMessage: props.errorMessage || ''
         };
         
     }
@@ -44,6 +46,11 @@ export default class FormerInput extends React.Component<IFormerInput, {readonly
                 readonly: newProps.readonly || false
             })
         }
+        if (newProps.errorMessage != this.state.errorMessage) {
+            this.setState({
+                errorMessage: newProps.errorMessage || ''
+            })
+        }
     }
     private onChange =(e: any)=> {
         const { value } = e.target;
@@ -54,29 +61,34 @@ export default class FormerInput extends React.Component<IFormerInput, {readonly
         
         this.props.onChangeValue(value);
     }
-
-    public render() {
+    private getStatus() {
+        return this.state.errorMessage ? 'error' : ''
+    }
+    public renderContext() {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
         let disabled: boolean = props.disabled || this.props.disabled;
-
 
         if (props.prefix) {
             if (Icons[props.prefix]) {
                 let IconView: any = Icons[props.prefix];
                 props.prefix = <IconView/>
             }
-
         }
         
         
         if (props.type && props.type == 'password') {
             return (
-                <Input.Password size={this.props.size} {...props} disabled={this.state.readonly || disabled} value={this.state.value} onChange={this.onChange} />
+                <Input.Password status={this.getStatus()} size={this.props.size} {...props} disabled={this.state.readonly || disabled} value={this.state.value} onChange={this.onChange} />
             )
         } else {
             return (
-                <Input size={this.props.size}  {...props} onFocus={this.props.onFocus} onBlur={this.props.onBlur} style={{width: props.width}} disabled={this.state.readonly || disabled} value={this.state.value} onChange={this.onChange} />
+                <Input size={this.props.size} status={this.getStatus()} {...props} onFocus={this.props.onFocus} onBlur={this.props.onBlur} style={{width: props.width}} disabled={this.state.readonly || disabled} value={this.state.value} onChange={this.onChange} />
             )
         }
+    }
+    public render() {
+        return (<Tooltip title={this.state.errorMessage} placement='topLeft'>
+            {this.renderContext()}
+        </Tooltip>)
     }
 }

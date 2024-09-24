@@ -5,6 +5,13 @@
     min-height: 30px;
     border-radius: 12px;
     padding:16px 8px ;
+                        
+    &.former-array-error {
+        border-color: #ff4d4f;
+        &:hover {
+            border-color: #ff4d4f !important;
+        }
+    }
     .former-array-content {
         max-height: 227px;
         overflow-y: auto;

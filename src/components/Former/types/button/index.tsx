@@ -360,8 +360,9 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
         })
     }
     private doAction() {
-        
+        console.log(233233, 1)
         this.props.former.validationValue((val) => {
+            console.log(3333, val, 233)
             this.doMetaAction(val);
         }, {
             noValidationField: this.props.fieldKey
@@ -375,9 +376,10 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                     'ui-meta-empty': !this.state.value
                 })}
                 onClick={() => {
-                    if (!this.state.value) {
+                   // console.log(this.state.value, 333)
+                   // if (!this.state.value) {
                         this.doAction()
-                    }
+                    //}
                 }}
                 onMouseEnter={()=> {
                     if (!this.state.value) {
@@ -403,7 +405,8 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                     }
                 }} 
                 onClick={() => {
-                    if (!this.state.readonly && this.state.value) {
+                    
+                    if (!this.state.readonly/* && this.state.value*/) {
                         this.doAction()
                     }
                 }}

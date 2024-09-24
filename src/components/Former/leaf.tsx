@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { clone } from 'lodash';
-import { Popover, Space,Tooltip } from 'antd';
+import { Popover, Space, Tooltip } from 'antd';
 
 import OneOf from './oneOf';
 import * as FormerTypes from './types';
@@ -12,18 +12,22 @@ import Validation from './validation';
 import ConstValue from './const';
 import { utils, keypath } from '@blocksx/core';
 import * as Icons from '../Icons'
+import Context from './context';
 
 
 export interface ILeaf {
+    fields: any;
     fieldKey: string;
     fieldName: string;
     former: any;
     path: string;
     portalMap?: any;
+    
     parentPath?: string;
+    parentPathName?: string;
     value: string;
     runtimeValue?: any;
-    
+
     defaultValue: any;
     groupType?: string;
     groupMeta?: any;
@@ -35,13 +39,14 @@ export interface ILeaf {
 
     "x-type"?: string;
     type: string;
+    index?: number;
 
     properties?: any;
     items?: any;
     moreItems?: any;
     size?: string;
     dataSource?: any;
-    canmodify?:boolean;
+    canmodify?: boolean;
     viewer?: boolean;
     onGetDependentParameters?: Function
 }
@@ -64,11 +69,12 @@ interface TLeaf {
     type: string;
 
     viewer?: boolean;
-    canmodify?:boolean;
+    canmodify?: boolean;
 
     validationState?: any; // 验证状态
     validationMessage?: any;
     readonly?: boolean;
+    index?: number;
 }
 
 interface IControl {
@@ -86,14 +92,16 @@ interface IControlInfo {
 }
 
 export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
+    public static contextType = Context;
+    public context: any;
 
     private path: string;
     private parentPath?: string;
+    private parentPathName?: string;
     private type: string;
     private leafProps: any;
     private properties?: any;
     private items?: any;
-    private emitterHelper: any;
     private wrapperRef: any;
 
     public constructor(props: ILeaf) {
@@ -101,10 +109,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
         this.path = props.path || '$';
         this.parentPath = props.parentPath || '';
+        this.parentPathName = props.parentPathName || '';
 
         this.leafProps = props;
         this.type = props['x-type'] || props.type;
-        
+
         // case object,map,
         this.properties = props.properties;
 
@@ -113,8 +122,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
 
         let value = utils.isUndefined(props.value) ? this.getDefaultValue() : props.value;
-        
-        
+
+
         this.state = {
             value: value,
             properties: props.properties,
@@ -129,7 +138,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             viewer: props.viewer,
             originValue: this.getMapOriginValue(value || this.getDefaultValue()),
             canmodify: props.canmodify,
-            readonly: props.readonly || false
+            readonly: props.readonly || false,
+            index: props.index
         }
 
         this.wrapperRef = React.createRef();
@@ -139,8 +149,6 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
     public componentDidMount() {
 
-        let { rootEmitter } = this.props;
-
         // 初始化的时候把初始值 上报
         //this.props.onChangeValue && this.props.onChangeValue(this.state.value, 'init');
         this.onChange(this.state.value, 'init')
@@ -149,52 +157,22 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             this.dealControl(this.state.value, this.props['x-control']);
         }
 
-        function thouth(isThouth) {
-            rootEmitter && rootEmitter.emit('checked', isThouth);
-        }
-
         // 设置验证事件
 
-        if (rootEmitter) {
-            if (this.props['x-validation']) {
-                // 启动校验
-                rootEmitter.on('validation', this.emitterHelper = (data: any) => {
-                    
-                    if (data && data.noValidationField) {
-                        let { fieldKey } = this.props;
-                        if (utils.isArray(data.noValidationField)) {
-                            if (data.noValidationField.indexOf(fieldKey) > -1) {
-                                return thouth(true);
-                            }
-                        } else {
-                            if (fieldKey == data.noValidationField) {
-                                return thouth(true);
-                            }
-                        }
-                        
-                    }
-                    // 开始值校验
-                    this.verification((isThouth, message) => {
-                        
-                        if (message) {
-                            rootEmitter && rootEmitter.emit('error', message.replace('The field', '['+ utils.labelName(this.props.fieldName)+']'));
+        if (this.props['x-validation']) {
 
-                        } else { 
-                            thouth(isThouth) 
-                        }
-                    })
-                })
-            }
+            this.context.registerLeafInstance(this);
         }
+
     }
-    
+
     public UNSAFE_componentWillReceiveProps(newProps: any) {
-        
+
         if (newProps.value != this.state.value) {
-           //this.onChangeValue(newProps.value, 'man')
+            //this.onChangeValue(newProps.value, 'man')
             this.setState({
                 value: newProps.value
-            }, ()=> {
+            }, () => {
                 // console.log('this.state.value', this.state.value)
                 // dealControl
                 if (this.props['x-control']) {
@@ -222,9 +200,9 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                 })
             }
         }
-        
+
         if (newProps.canmodify != this.state.canmodify) {
-            
+
             this.setState({
                 canmodify: newProps.canmodify
             })
@@ -249,6 +227,12 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             })
         }
 
+        if (newProps.index != this.state.index) {
+            this.setState({
+                index: newProps.index
+            })
+        }
+
         this.leafProps = newProps;//Object.assign(this.leafProps, newProps)
     }
     private getTrueType(prop: any) {
@@ -256,52 +240,68 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     }
     public componentWillUnmount() {
 
-        let { rootEmitter } = this.props;
-        if (rootEmitter) {
-            if (this.emitterHelper) {
-                // 删除校验
-                rootEmitter.removeListener('validation', this.emitterHelper);
-            }
+        if (this.props['x-validation']) {
+            this.context.removeLeafInstance(this);
         }
-        /*
-        // 清空control的影响
-        if (this.props['x-control']) {
-          this.dealControl(undefined, this.props['x-control']);
-        }
-    
-        
-        */
+
     }
     private getTrueStringType() {
-        if (['select','radio'].indexOf(this.props['x-type'] as any) > -1) {
+        if (['select', 'radio'].indexOf(this.props['x-type'] as any) > -1) {
             return 'xstring'
         }
         return this.props.type;
     }
-    private verification(cb: Function) {
-       
-        Validation.valid(this.state.value, {...this.props['x-validation'], type: this.getTrueStringType()}, (msg) => {
 
-            this.setState({
-                validationState: msg,
-                validationMessage: msg
-            });
-            // 定时隐藏
-            setTimeout(() => {
-                this.setState({
-                    validationState: false
-                })
-            }, 4000)
+    // 校验函数
+    public validation(data: any) {
+        let { value } = this.state;
 
-            if (msg && this.wrapperRef.current && !ConstValue.isValidError ) {
-                ConstValue.isValidError  = true;
-                let domwrapper: any = ReactDOM.findDOMNode(this.wrapperRef.current);
-                
-                domwrapper && domwrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (data && data.noValidationField) {
+            let { fieldKey } = this.props;
+            if (utils.isArray(data.noValidationField)) {
+                if (data.noValidationField.indexOf(fieldKey) > -1) {
+                    return true;
+                }
+            } else {
+                if (fieldKey == data.noValidationField) {
+                    return true;
+                }
             }
+        }
 
-            cb(!msg, msg);
-        })
+
+        return this.doValidtion(Validation.quickValid(value, {
+            ...this.props['x-validation'], type: this.getTrueStringType()
+        }, this.getDefaultParentPathName()));
+    }
+
+
+    private doValidtion(msg: any) {
+        let { index } = this.state;
+        let message: string = msg === true ? '' : msg;
+
+        this.setState({
+            validationState: msg,
+            validationMessage: message
+        });
+        // 定时隐藏
+        setTimeout(() => {
+            this.setState({
+                validationState: false
+            })
+        }, 4000)
+
+        if (message && this.wrapperRef.current && !ConstValue.isValidError) {
+            ConstValue.isValidError = true;
+            let domwrapper: any = ReactDOM.findDOMNode(this.wrapperRef.current);
+            domwrapper && domwrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        return utils.isString(message)  && message
+            ? !utils.isUndefined(index) 
+                ? (this.parentPathName || 'Array') + ' item(' +((index || 0) + 1)+') ' + message 
+                : message 
+            : '';
     }
 
     private getMapOriginValue(value: any) {
@@ -324,14 +324,13 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
         let { defaultValue } = props || this.leafProps;
         let { type } = props || this.state || this;
-        
-        
+
         if (utils.isUndefined(defaultValue)) {
             switch (type) {
                 case 'map':
                     return this.isArrayMap() ? [] : {};
                 case 'object':
-                
+
                     return {};
                 case 'condition':
                     return {
@@ -342,7 +341,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                 type: 'tuple',
                                 value: {
                                     operator: '='
-                                } 
+                                }
                             }
                         ]
                     }
@@ -357,7 +356,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         return ['array', 'object', 'map', 'condition'].indexOf(this.state.type) == -1;
     }
     private isCanViewerType(type: string) {
-        return ['array', 'group', 'map', 'object','pickmore', 'table'].indexOf(type) == -1;
+        return ['array', 'group', 'map', 'object', 'pickmore', 'table'].indexOf(type) == -1;
     }
     private getNodeByType(type?: string) {
         let _type: string = type || this.state.type;
@@ -408,33 +407,33 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
         return object;
     }
-    
-    private getValueByProps(value: any, props: any, allValue?: any,  prop?: string) {
+
+    private getValueByProps(value: any, props: any, allValue?: any, prop?: string) {
 
         if (utils.isString(prop)) {
             let dotProp: any = prop?.split('.');
-            
+
             if (dotProp.length == 2) {
                 return keypath.get(allValue, prop as string)
             }
         }
-        
+
         if (utils.isUndefined(value) || utils.isNull(value)) {
 
             // 处理两个特殊的情况，带$开头的数据，可以从不带$的符号前面去获取
             // TODO 临时处理, 后面加入别名
             if (prop) {
-                let hasdoner: boolean = prop .indexOf('$') > -1; 
+                let hasdoner: boolean = prop.indexOf('$') > -1;
                 if (hasdoner) {
-                    return allValue[prop.replace(/^\$/,'')];
+                    return allValue[prop.replace(/^\$/, '')];
                 } else {
-                    return allValue['$'+prop]
+                    return allValue['$' + prop]
                 }
             }
 
             return utils.isUndefined(props.defaultValue) ? props.value || this.getDefaultValue(props) : props.defaultValue;
         }
-        
+
         return value;
     }
     private onChangeValue(value: any, type?: string, originValue?: any[]) {
@@ -451,12 +450,12 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             }
         }
 
-        
+
         // TODO 修改点分属性的值
         // 后续看下高效的方法
-       // this.updateDotpropValue(value)
-        
-       
+        // this.updateDotpropValue(value)
+
+
 
         this.setState({
             value: value,
@@ -468,7 +467,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         if (this.props.onChangeValue) {
             this.props.onChangeValue(value, type, originValue);
         }*/
-       
+
         this.onChange(value, type, originValue)
 
         if (this.props['x-control']) {
@@ -476,7 +475,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
     }
     private onChange(value: any, type?: string, originValue?: any) {
-        
+
         let { path = '' } = this.props;
         // 屏蔽 掉 点分路径值
         // 名称中带点的 为只显示
@@ -535,7 +534,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
     }
     private onDealControl(control: IControl) {
-        
+
         let { hide = [], show = [], patch = {} } = control;
 
         let controlHideInfo = this.getControlInfo(hide);
@@ -630,7 +629,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
     }
     private getTrueHotPatch(patch: any) {
-        for(let prop in patch) {
+        for (let prop in patch) {
             let hotPatch: any = patch[prop];
 
             if (hotPatch.uiType) {
@@ -654,7 +653,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                     // 当存在值的时候
                     // 简单判断值是否存在，不做模糊匹配
                     let matchValue: boolean = utils.isBoolean(when) ? utils.isValidValue(value) : when.indexOf(value) > -1;
-                    
+
                     if (matchValue) {
                         showList = showList.concat(show);
                         hideList = hideList.concat(hide);
@@ -664,11 +663,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             let hotPatch: any = this.getTrueHotPatch(control.patch);
                             Object.assign(
                                 patchList, {
-                                    ...hotPatch
-                                }
+                                ...hotPatch
+                            }
                             )
                         }
-                        
+
 
                         // 不存在值的时候
                     } else {
@@ -691,7 +690,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         let propertiesKey = Object.keys(this.properties);
         let defaultGroup: any = [];
         let portalMap: any = {};
-        let portalField:any  = {};
+        let portalField: any = {};
         let group: any = {};
         let groupList: any[] = [];
 
@@ -711,9 +710,9 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                     }
                 }
                 let portalValue: any = {
-                    slot:  portalSplit[1] || 'content'
+                    slot: portalSplit[1] || 'content'
                 }
-                
+
                 portalMap[portalTarget].cache[props.key] = portalValue;
                 portalMap[portalTarget].map.push(portalValue);
 
@@ -758,7 +757,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         if (controlPatch[prop]) {
             return Object.assign(this.clone(props), controlPatch[prop]);
         }
-        
+
 
         // 多选情况
         if (props.type == 'oneOf') {
@@ -799,18 +798,24 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     }
     private isShowObjectKeyByProp(prop: string) {
         let { controlHide } = this.state;
-        
+
         return controlHide.indexOf(prop) == -1;
+    }
+    private getDefaultParentPathName() {
+        
+        let parentName: string = this.props.fieldName || this.props.fieldKey || this.props.parentPathName || '';
+        
+        return utils.labelName(parentName);
     }
     private renderObjectNode(children: any[], Child: any) {
         let { value } = this.state;
         let { groupList, portalMap, portalField } = this.traversalProperties();
         let Group = this.getNodeByType('group');
         let GroupItem = this.getSubNodeByType('group');
-        
+
         children.push(
             <Group key={children.length}>
-                {groupList.map((it: { title: string; group: any[] }, index: number) => {
+                {groupList.map((it: { title: string; group: any[] }, rownumber: number) => {
 
                     let GroupChildren: any = it.group.sort((a: any, b: any) => {
 
@@ -820,51 +825,52 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         return prevItem['x-index'] > nextItem['x-index'] ? 1 : -1;
                     }).map((prop: any, index: number) => {
                         // 不存在隐藏的情况
-                        
+
                         if (this.isShowObjectKeyByProp(prop)) {
                             let properties: any = this.getObjectItemProperties(prop);//this.clone(this.properties[prop]);
                             let childrenControl: any = this.state.childrenControl ? this.state.childrenControl[prop] : null;
                             // 计算oneOf
                             let props: any = this.properties[prop];
                             let hidden: boolean = props['x-type'] == 'hidden';
-                            
-                            
+
+
                             let itemvalue: any = this.getValueByProps(value[prop], properties, value, prop);
                             
                             let leafProps: any = {
                                 ...properties,
-                                path:prop,
-
-                                former:this.props.former,
-                                parentPath:this.path,
-                                runtimeValue:this.state.runtimeValue,
-                                value:itemvalue,
-                                onDealControl:(control: IControl) => {
+                                path: prop,
+                                index: this.state.index,
+                                former: this.props.former,
+                                parentPath: this.path,
+                                parentPathName:this.getDefaultParentPathName(),
+                                runtimeValue: this.state.runtimeValue,
+                                value: itemvalue,
+                                onDealControl: (control: IControl) => {
                                     this.onDealControl(control)
                                 },
-                                key:[this.path, prop, index, 'leaf'].join('.'),
-                                viewer:this.state.viewer,
+                                key: [this.path, prop, index, 'leaf'].join('.'),
+                                viewer: this.state.viewer,
                                 readonly: this.state.readonly,
-                                canmodify:this.state.canmodify,
+                                canmodify: this.state.canmodify,
 
-                                size:this.props.size,
-                                rootEmitter:this.props.rootEmitter,
-                                childrenControl:childrenControl,
-                                onGetDependentParameters:this.props.onGetDependentParameters,
-                                onChangeValue:(val: any, type?: string) => {
+                                size: this.props.size,
+                                rootEmitter: this.props.rootEmitter,
+                                childrenControl: childrenControl,
+                                onGetDependentParameters: this.props.onGetDependentParameters,
+                                onChangeValue: (val: any, type?: string) => {
                                     value[prop] = val;
                                     this.onChangeValue(value, type);
                                     //
                                 }
                             };
-                            
+
                             if (portalField[prop]) {
                                 portalMap[portalField[prop].target].cache[prop].leafProps = leafProps;
                                 return false;
                             }
                             let propsPortalMap = portalMap[prop] && portalMap[prop].map;
-                            let titlePortal: any = this.getPortalBySlot(propsPortalMap,'title')
-                            
+                            let titlePortal: any = this.getPortalBySlot(propsPortalMap, 'title')
+
                             return (
                                 <Child
                                     hidden={hidden}
@@ -876,11 +882,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                         value[prop] = val;
                                         this.onChangeValue(value, type);
                                     }}
-                                    renderTitlePortal={titlePortal.length ? ()=> {
-                                        
-                                        return titlePortal.map(it=> {
+                                    renderTitlePortal={titlePortal.length ? () => {
+
+                                        return titlePortal.map(it => {
                                             if (it.leafProps) {
-                                                let { description} = it.leafProps;
+                                                let { description } = it.leafProps;
                                                 return <Leaf
                                                     {...it.leafProps}
                                                     former={this.props.former}
@@ -891,20 +897,20 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                                 />
                                             }
                                         })
-                                    }: null}
+                                    } : null}
                                     size={this.props.size}
                                     value={itemvalue}
                                     defaultValue={this.getDefaultValue({
                                         type: properties.type
                                     })}
                                     oneOf={this.getObjectItemOneOfNode(prop)}
-                                    key={[this.path,prop, index].join('.')}
+                                    key={[this.path, prop, index].join('.')}
                                     //需要
                                     onGetDependentParameters={this.props.onGetDependentParameters}
                                 ><Leaf
-                                    {...leafProps}
-                                    portalMap={propsPortalMap}
-                                />
+                                        {...leafProps}
+                                        portalMap={propsPortalMap}
+                                    />
                                 </Child>
                             );
                         }
@@ -912,10 +918,10 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                     }).filter(Boolean);
                     return GroupChildren && GroupChildren.length > 0 ? (
                         <GroupItem
-                            key={index}
+                            key={rownumber}
                             title={it.title}
                             size={this.props.size}
-                            index={index}
+                            //index={rownumber}
 
                             former={this.props.former}
                             groupType={this.props.groupType}
@@ -934,6 +940,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
                 key={props.path}
                 parentPath={this.path}
+                parentPathName={this.getDefaultParentPathName()}
                 runtimeValue={this.state.runtimeValue}
 
                 former={this.props.former}
@@ -952,12 +959,12 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         // case\3 map
         let keyProperties = this.clone(this.properties.key);
         let valueProperties = this.clone(this.properties.value);
-        
+
         if (keyProperties && valueProperties) {
 
             originValue.forEach((it: any, index: number) => {
-                
-                let prop = this.isArrayMap() ? it[0] :it.key;
+
+                let prop = this.isArrayMap() ? it[0] : it.key;
                 let origin = originValue[index];
 
                 children.push(
@@ -969,7 +976,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             ...keyProperties,
                             path: 'key',
                             value: prop,
-                            onChangeValue:(keyVal: any, type?: string) => {
+                            onChangeValue: (keyVal: any, type?: string) => {
                                 if (this.isArrayMap()) {
                                     origin[0] = keyVal;
                                 } else {
@@ -982,7 +989,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         {this.renderLeaf({
                             ...valueProperties,
                             path: 'value',
-                            value: this.isArrayMap() ? it[1] :this.getValueByProps(value[prop], valueProperties, value, prop),
+                            value: this.isArrayMap() ? it[1] : this.getValueByProps(value[prop], valueProperties, value, prop),
                             onChangeValue: (valVal: any, type?: string) => {
                                 if (this.isArrayMap()) {
                                     origin[1] = valVal;
@@ -1035,24 +1042,26 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             case 'array':
                 // case 2 array array
                 // case 4 group array
-                
+
                 if (utils.isArray(value)) {
                     value.forEach((it: any, index: number) => {
                         let items = this.clone(this.items);
-                        
+
                         children.push(
                             <Child
                                 key={index + '_child'}
                                 size={this.props.size}
+                               // index={index}
                             >
                                 <Leaf
                                     key={index}
                                     {...items}
-                                    path={''+index}
+                                    path={'' + index}
                                     parentPath={this.path}
+                                    parentPathName={this.getDefaultParentPathName()}
                                     size={this.props.size}
-
-                                    moreItems= {this.props.moreItems}
+                                    //index={index}
+                                    moreItems={this.props.moreItems}
 
                                     former={this.props.former}
                                     viewer={this.state.viewer}
@@ -1084,12 +1093,12 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         this.renderMapNode(children, Child);
                     }
                 } else {
-                    if (utils.isArray(value) &&this.isArrayMap() ) {
+                    if (utils.isArray(value) && this.isArrayMap()) {
                         this.renderMapNode(children, Child)
                     }
                 }
                 break;
-            default: 
+            default:
                 this.renderAssembleDefaultNode(children)
         }
 
@@ -1102,53 +1111,50 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     // 判断是否允许修改
     private isAllowModify() {
         // ['x-modify’]J:'deny'
-       
+
         return !(utils.isValidValue(this.state.value) && this.state.canmodify && this.leafProps['x-modify'] && ['deny', 'false', false].indexOf(this.leafProps['x-modify']) > -1);
     }
 
     private renderFeaturesNode(children: any = null, type?: string) {
         let View = this.getNodeByType();
-        let ContentPortal: any = this.getPortalBySlot(this.props.portalMap,'content')
+        let ContentPortal: any = this.getPortalBySlot(this.props.portalMap, 'content')
 
         if (View) {
-            
-            let viewProps: any = {
-                key:this.leafProps.path || this.leafProps.index || this.leafProps['x-index'],
-                ...this.leafProps,
-                children:children,
-                size:this.props.size,
 
-                former:this.props.former,
-                value:this.getValueByProps(this.state.value, { value: this.getDefaultValue() }),
-                originValue:this.state.originValue,
-                runtimeValue:this.state.runtimeValue,
-                disabled:!this.isAllowModify(),
-                onChangeValue:(val: any, type?: string, originValue?: any) => this.onChangeValue(val, type || 'man', originValue)
+            let viewProps: any = {
+                key: this.leafProps.path || this.leafProps.index || this.leafProps['x-index'],
+                ...this.leafProps,
+                children: children,
+                size: this.props.size,
+                errorMessage: this.state.validationMessage,
+                former: this.props.former,
+                value: this.getValueByProps(this.state.value, { value: this.getDefaultValue() }),
+                originValue: this.state.originValue,
+                runtimeValue: this.state.runtimeValue,
+                disabled: !this.isAllowModify(),
+                onChangeValue: (val: any, type?: string, originValue?: any) => this.onChangeValue(val, type || 'man', originValue)
             }
-            return (
-               <>
-                        {this.renderCompactPortal(View, viewProps,ContentPortal)}
-                        
-                        {this.state.validationMessage &&  <span className='former-error-message'><Icons.InfoCircleOutlined/> {this.state.validationMessage}</span>}
-                        </> 
-               
-            )
+
+            return <>
+                {<span className='ui-leaf-error' ref={this.wrapperRef}></span>}
+                {this.renderCompactPortal(View, viewProps, ContentPortal)}
+            </>
         }
         return null;
     }
-    
-    private renderCompactPortal(View: any , viewProps: any, Portal: any) {
-        
+
+    private renderCompactPortal(View: any, viewProps: any, Portal: any) {
+
         if (Portal.length > 0) {
             // 遍历找出input， select 这种可以组合在一起的
-           //let 
+            //let 
             let Compactwrap: any = [];
             let noCompact: any = [];
-            
-            Portal.forEach((it)=> {
-                
-                let {leafProps} = it;
-                if (['input','select', 'date', 'datetime'].indexOf(leafProps.uiType) > -1) {
+
+            Portal.forEach((it) => {
+
+                let { leafProps } = it;
+                if (['input', 'select', 'date', 'datetime'].indexOf(leafProps.uiType) > -1) {
                     Compactwrap.push(it)
                 } else {
                     noCompact.push(it)
@@ -1168,30 +1174,30 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             } else {
 
                 if (noCompact.length > 0) {
-                    return <Space><View {...viewProps} ref={this.wrapperRef}/>{this.renderPortal(noCompact)}</Space>
+                    return <Space><View {...viewProps} ref={this.wrapperRef} />{this.renderPortal(noCompact)}</Space>
                 }
             }
 
         }
-        
-        
-        return <View {...viewProps} ref={this.wrapperRef}/>
+
+
+        return <View {...viewProps} ref={this.wrapperRef} />
 
     }
-    private getPortalBySlot(portalMap:any,slot:string) {
+    private getPortalBySlot(portalMap: any, slot: string) {
         let _portalMap: any = portalMap || this.props.portalMap;
         if (_portalMap) {
-            return _portalMap.filter(it=> it.slot == slot)
+            return _portalMap.filter(it => it.slot == slot)
         }
         return []
     }
     private renderPortal(portalMap) {
         if (portalMap) {
             return portalMap.map(it => {
-                
+
                 if (it.leafProps) {
-                    let { description} = it.leafProps;
-                    return <Leaf {...it.leafProps} former={this.props.former} tooltip ={description} popupMatchSelectWidth={false}/>
+                    let { description } = it.leafProps;
+                    return <Leaf {...it.leafProps} former={this.props.former} tooltip={description} popupMatchSelectWidth={false} />
                 }
             })
         }

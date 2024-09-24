@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { utils } from '@blocksx/core';
-import { Popover, Button } from 'antd';
+import { Popover, Button, Tooltip } from 'antd';
 
 import * as Icons from '../../../Icons';
 import ScopeUtils from './utils'
@@ -61,6 +61,7 @@ interface FormerScopeProps {
     former: any;
     onBlur?: Function;
     readonly?: boolean;
+    errorMessage?: string;
 }
 interface FormerScopeState {
     value: ScopeType[],
@@ -75,6 +76,7 @@ interface FormerScopeState {
     readonly?: boolean;
     disabledBlur?: boolean;
     loading?: boolean;
+    errorMessage?: string;
 }
 
 class FormerScopeViewer extends React.Component<FormerScopeProps, FormerScopeState> {
@@ -159,6 +161,11 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         if (nextProps.readonly != this.state.readonly) {
             this.setState({
                 readonly: nextProps.readonly
+            })
+        }
+        if (nextProps.errorMessage != this.state.errorMessage) {
+            this.setState({
+                errorMessage: nextProps.errorMessage
             })
         }
 
@@ -431,7 +438,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             }).then((res) => {
                 this.setState({loading: false});
                 if (former) {
-                    former.resetSafeValue(res, undefined, (value) => {
+                    former.resetSafeValue(res, 'man', (value) => {
                         former.stepFormer.setStepOne(false);
                     })
                     former.setLoading(false);
@@ -514,68 +521,71 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                 open={opened}
                 placement={'left'}
             >
-                <div
-                    className={classnames('ui-scope', {
-                        'ui-scope-focus':this.state.focusopen,
-                        'ui-scope-more': !strict,
-                        'ui-scope-visibility': this.state.width === 0,
-                        'ui-scope-textarea': typeProps.type == 'textarea'
-                    })}
-                    style={{
-                        width: width
-                    }}
-                    onMouseDown={(e: any) => {
+                <Tooltip title={this.state.errorMessage} placement='topLeft'>
+                    <div
+                        className={classnames('ui-scope', {
+                            'ui-scope-focus':this.state.focusopen,
+                            'ui-scope-more': !strict,
+                            'ui-scope-error': !!this.state.errorMessage,
+                            'ui-scope-visibility': this.state.width === 0,
+                            'ui-scope-textarea': typeProps.type == 'textarea'
+                        })}
+                        style={{
+                            width: width
+                        }}
+                        onMouseDown={(e: any) => {
 
-                        if (e.target.getAttribute('contenteditable') !== 'true') {
-                            this.autoFocusByEvent(e)
-                            e.preventDefault();
-                        }
-                    }}
-                    onMouseUp={(e: any) => {
-                        if (!this.focusInput) {
-                            this.onFoucs();
-                        } else {
-
-                            // 动态计算
-
-                            if (!e.target.getAttribute('contenteditable')) {
+                            if (e.target.getAttribute('contenteditable') !== 'true') {
                                 this.autoFocusByEvent(e)
+                                e.preventDefault();
                             }
-                            // 
-                            //  this.lastFocus.focus();
-                            //  ScopeUtils.setCursorPosition(this.lastFocus, this.lastFocusIndex);
-                        }
-                    }}
-                >
-                    <div className={classnames({
-                        'ui-scope-inner': true,
-                        'ui-scope-prefix': typeProps.prefix,
-                        'ui-scope-bind': typeProps.bind
-                    })} ref={this.innerRef}>
-                        {this.renderPrefix(typeProps.prefix)}
-                        <div className='ui-scope-content'>
-                        {typeProps.placeholder && isEmptyValue && <div className='ui-scope-placeholder'>{typeProps.placeholder}</div>}
-                        
-                            {<FormerScopeValue 
-                                readonly={this.state.readonly} 
-                                prefix={typeProps.prefix} 
-                                disabled={disabled} 
-                                strict={strict} 
-                                dataType={typeProps.dataType}
-                                addValueIntoScope={this.addValueIntoScope}
-                                onRemoveValue={() => { }} 
-                                onChangeValue={(val) => {
-                                    if (!this.state.readonly) {
-                                        this.doChangeValue(val)
-                                    }
-                                    
-                                }} 
-                                value={value && value.length ? value :[{$type:'value', value: ''}]} 
-                            />}
+                        }}
+                        onMouseUp={(e: any) => {
+                            if (!this.focusInput) {
+                                this.onFoucs();
+                            } else {
+
+                                // 动态计算
+
+                                if (!e.target.getAttribute('contenteditable')) {
+                                    this.autoFocusByEvent(e)
+                                }
+                                // 
+                                //  this.lastFocus.focus();
+                                //  ScopeUtils.setCursorPosition(this.lastFocus, this.lastFocusIndex);
+                            }
+                        }}
+                    >
+                        <div className={classnames({
+                            'ui-scope-inner': true,
+                            'ui-scope-prefix': typeProps.prefix,
+                            'ui-scope-bind': typeProps.bind
+                        })} ref={this.innerRef}>
+                            {this.renderPrefix(typeProps.prefix)}
+                            <div className='ui-scope-content'>
+                            {typeProps.placeholder && isEmptyValue && <div className='ui-scope-placeholder'>{typeProps.placeholder}</div>}
+                            
+                                {<FormerScopeValue 
+                                    readonly={this.state.readonly} 
+                                    prefix={typeProps.prefix} 
+                                    disabled={disabled} 
+                                    strict={strict} 
+                                    dataType={typeProps.dataType}
+                                    addValueIntoScope={this.addValueIntoScope}
+                                    onRemoveValue={() => { }} 
+                                    onChangeValue={(val) => {
+                                        if (!this.state.readonly) {
+                                            this.doChangeValue(val)
+                                        }
+                                        
+                                    }} 
+                                    value={value && value.length ? value :[{$type:'value', value: ''}]} 
+                                />}
+                            </div>
+                            {typeProps.bind && <Button onMouseDown={this.cansomStop} onMouseUp={this.cansomStop} loading={this.state.loading} onClick={this.bindStorage} size='small' disabled={isEmptyValue} type='primary'>{typeProps.bind.text || 'Bind'}</Button>}
                         </div>
-                        {typeProps.bind && <Button onMouseDown={this.cansomStop} onMouseUp={this.cansomStop} loading={this.state.loading} onClick={this.bindStorage} size='small' disabled={isEmptyValue} type='primary'>{typeProps.bind.text || 'Bind'}</Button>}
                     </div>
-                </div>
+                </Tooltip>
             </Popover>
             </Context.Provider>
         )

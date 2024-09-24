@@ -224,12 +224,13 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
     }
     public runTest = ()=> {
         let { errorStatusMap = {} } = this.state;
-        // 检查错误内容
-        this.setState({
-            open: true,
-            error: Object.keys(errorStatusMap).length > 0
-        })
-        
+        let startNodes: any = this.getStartNodes();
+        console.log(startNodes, 22)
+        if (startNodes.length >1) {
+            return this.setState({open: true, error: Object.keys(errorStatusMap).length > 0});
+        }  else {
+            this.runProcessTest()
+        }
     }
     private getStartNodes() {
 
@@ -237,6 +238,8 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
         return StructuralMiniFlow.findStartNode(schema.nodes);
     }
     private renderPopoverContent() {
+
+        let startNodes: any = this.getStartNodes();
         if (this.state.error) {
             return (
                 <Alert
@@ -248,24 +251,45 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
         }
         return this.props.classify == 'function' 
             ? <InputParams 
-                startNodes={this.getStartNodes()}
+                startNodes={startNodes}
                 onSubmit={(nodeName: string, value: any) => {
                     this.runProcessTest(nodeName, value)
                     this.setState({open: false})
                 }}
+                onCancel={()=>this.setState({open: false})}
               />
-            : <MoreStarts/>
+            : startNodes.length > 0 ? <MoreStarts 
+                startNodes={startNodes}
+                onSubmit={(nodeName: string, value: any) => {
+                    this.runProcessTest(nodeName, value)
+                    this.setState({open: false})
+                }}
+                onCancel={()=>this.setState({open: false})}
+             /> : null
     }
     private getPopoverTitle() {
-
+        
         return (
             <>
                 <Icons.ConfigurationUtilityOutlined/>
-                <span style={{marginLeft: 8}}>{this.props.classify == 'function' ? 'Process input parameters': ''}</span>
+                <span style={{marginLeft: 8}}>{this.getPopoverTitleText()}</span>
             </>
         )
     }
-    public runProcessTest =(startNodeName: any, startValue: any)=> {
+    private onOpenChange = (open: boolean) => {
+        
+        !open &&this.setState({
+            open: open
+        })
+        
+    }
+    private getPopoverTitleText() {
+        if (Object.keys(this.state.errorStatusMap).length > 0) {
+            return 'Workflow confirmation'
+        }
+        return this.props.classify == 'function' ? 'Process input parameters': 'Select the starting node';
+    }
+    public runProcessTest =(startNodeName?: any, startValue?: any)=> {
 
         let schema: any = this.props.getSchema();
 
@@ -276,7 +300,7 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
             this.props.fetchMap.runtest({
                 id: this.props.router.params.id,
                 version: schema.version,
-                ...StructuralMiniFlow.findStartNodeSchema(startNodeName, schema),
+                ...(startNodeName ? StructuralMiniFlow.findStartNodeSchema(startNodeName, schema): schema ),
                 startValue
             }).then((result: any)=> {
                 
@@ -318,7 +342,7 @@ export default class RunTest extends React.Component<IRuntTest, SRuntTest> {
                             title={this.getPopoverTitle()} 
                             open={this.state.open}  
                             content={this.renderPopoverContent()}
-                            onOpenChange={(open)=>this.setState({open})}
+                            onOpenChange={this.onOpenChange}
                         >
                             <Button disabled={this.state.disabled} size='large' loading={this.state.loading} onClick={this.runTest} icon={<Icons.CaretRightFilled/>}>{i18n.t('Run test')}</Button>
                         </Popover>

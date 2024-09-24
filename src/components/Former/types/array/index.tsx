@@ -10,9 +10,10 @@ import React from 'react';
 import classnames from 'classnames';
 
 import { PlusOutlined } from '@ant-design/icons';
-
 import FormerArrayItem from './item';
 import { IFormerArray } from '../../typings';
+
+import { Tooltip } from 'antd'; 
 
 import "./style.scss";
 
@@ -27,9 +28,11 @@ interface IFormerArrays extends IFormerArray {
     props?: any;
     fieldName?: string;
     readonly?: boolean;
+
+    errorMessage?: string;
 }
 
-export default class FormerArray extends React.Component<IFormerArrays, { disabled: boolean, value: any, readonly: boolean }> {
+export default class FormerArray extends React.Component<IFormerArrays, { errorMessage?: string, disabled: boolean, value: any, readonly: boolean }> {
 
     static Item = FormerArrayItem;
     private contextRef: any ;
@@ -39,7 +42,8 @@ export default class FormerArray extends React.Component<IFormerArrays, { disabl
         this.state = {
             value: props.value,
             disabled: this.getDisabled(props),
-            readonly: props.readonly || false
+            readonly: props.readonly || false,
+            errorMessage: props.errorMessage || ''
         };
         
         this.contextRef = React.createRef();
@@ -58,6 +62,11 @@ export default class FormerArray extends React.Component<IFormerArrays, { disabl
         if (nextProps.readonly !== this.state.readonly) {
             this.setState({
                 readonly: nextProps.readonly || false
+            })
+        }
+        if (nextProps.errorMessage !== this.state.errorMessage) {
+            this.setState({
+                errorMessage: nextProps.errorMessage || ''
             })
         }
     }
@@ -176,18 +185,21 @@ export default class FormerArray extends React.Component<IFormerArrays, { disabl
         let children: any = this.props.children;
         let hasChildren = children && children.length > 0;
         return (
-            <div className={
-                classnames("former-array", {
-                    'former-array-nochildren': !hasChildren,
-                    'former-array-disabled': this.state.disabled
-                })
-            }>
-                <div className='former-array-content'>
-                    {this.getChildren()}
-                    <span  ref={this.contextRef}></span>
+            <Tooltip title={this.state.errorMessage}>
+                <div className={
+                    classnames("former-array", {
+                        'former-array-error': !!this.state.errorMessage,
+                        'former-array-nochildren': !hasChildren,
+                        'former-array-disabled': this.state.disabled
+                    })
+                }>
+                    <div className='former-array-content'>
+                        {this.getChildren()}
+                        <span  ref={this.contextRef}></span>
+                    </div>
+                    {this.renderFooter()}    
                 </div>
-                {this.renderFooter()}    
-            </div>
+            </Tooltip>
         )
     }
 }

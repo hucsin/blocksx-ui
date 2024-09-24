@@ -8,16 +8,17 @@
  */
 import React from 'react';
 import { IFormerBase } from '../../typings';
-import { Input } from 'antd';
+import { Input,Tooltip } from 'antd';
 
 interface IFormerTextarea extends IFormerBase {
     value: any,
     pre?: boolean;
     onChangeValue: Function;
     readonly?: boolean;
+    errorMessage?: string;
 }
 
-class FormerTextareaViewer extends React.Component<IFormerTextarea> {
+class FormerTextareaViewer extends React.Component<IFormerTextarea, {errorMessage : string}> {
     public constructor(props:any) {
         super(props)
     }
@@ -39,14 +40,15 @@ class FormerTextareaViewer extends React.Component<IFormerTextarea> {
     }
 }
 
-export default class FormerTextarea extends React.Component<IFormerTextarea, { value: any }> {
+export default class FormerTextarea extends React.Component<IFormerTextarea, { value: any, errorMessage: string }> {
 
     public static Viewer: any = FormerTextareaViewer;
     public constructor(props: IFormerTextarea) {
         super(props);
 
         this.state = {
-            value: props.value || ''
+            value: props.value || '',
+            errorMessage: props.errorMessage || ''
         };
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
@@ -55,16 +57,26 @@ export default class FormerTextarea extends React.Component<IFormerTextarea, { v
                 value: newProps.value || ''
             })
         }
+        if (newProps.errorMessage != this.state.errorMessage) {
+            this.setState({
+                errorMessage: newProps.errorMessage
+            })
+        }
     }
     private onChange =(e: any)=> {
         const { value } = e.target;
         
         this.props.onChangeValue(value);
     }
+    private getStatus() {
+        return this.state.errorMessage ? 'error' : ''
+    }
 
     public render() {
         return (
-            <Input.TextArea rows={3} {...this.props['x-type-props']} disabled={this.props.readonly || this.props.disabled}  value={this.state.value} onChange={this.onChange} />
+            <Tooltip title={this.state.errorMessage} placement='topLeft'>
+                <Input.TextArea status={this.getStatus()} rows={3} {...this.props['x-type-props']} disabled={this.props.readonly || this.props.disabled}  value={this.state.value} onChange={this.onChange} />
+            </Tooltip>
         )
     }
 }

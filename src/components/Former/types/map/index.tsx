@@ -1,5 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
+import { Tooltip } from 'antd';
 import { PlusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 import FormerMapItem from './item';
@@ -14,9 +15,10 @@ interface IFormerMap extends IFormerArray {
     children?:any;
     fieldName?: any;
     readonly?: boolean;
+    errorMessage?: string;
 }
 
-export default class FormerMap extends React.Component<IFormerMap, { arrayMode: boolean,value: any, originValue: any, readonly: boolean }> {
+export default class FormerMap extends React.Component<IFormerMap, {errorMessage?: string, arrayMode: boolean,value: any, originValue: any, readonly: boolean }> {
 
     static Item = FormerMapItem;
 
@@ -30,7 +32,8 @@ export default class FormerMap extends React.Component<IFormerMap, { arrayMode: 
             value: value,
             originValue: this.getKeyValueArray(value, typeProps.mode == 'array'),
             readonly: props.readonly || false,
-            arrayMode: typeProps.mode == 'array'
+            arrayMode: typeProps.mode == 'array',
+            errorMessage: props.errorMessage || ''
         };
     }
     public UNSAFE_componentWillReceiveProps(newProps:any) {
@@ -43,6 +46,11 @@ export default class FormerMap extends React.Component<IFormerMap, { arrayMode: 
         if (newProps.readonly !== this.state.readonly) {
             this.setState({
                 readonly: newProps.readonly || false
+            })
+        }
+        if (newProps.errorMessage !== this.state.errorMessage) {
+            this.setState({
+                errorMessage: newProps.errorMessage || ''
             })
         }
     }
@@ -159,15 +167,17 @@ export default class FormerMap extends React.Component<IFormerMap, { arrayMode: 
         let hasChildren = children && children.length > 0;
 
         return (
-            <div className={
-                classnames("former-map", {
-
-                    'former-map-disabled': this.props.viewer || this.state.readonly
-                })
-            }>
-                {hasChildren && !this.props.viewer && <div className="former-map-add" onClick={this.onMapItemAdd}><PlusCircleOutlined/></div>}
-                {hasChildren ? this.getChildren(): this.getEmptyChildren()}
-            </div>
+            <Tooltip title={this.state.errorMessage} placement='topLeft'>
+                <div className={
+                    classnames("former-map", {
+                        'former-map-error': !!this.state.errorMessage,
+                        'former-map-disabled': this.props.viewer || this.state.readonly
+                    })
+                }>
+                    {hasChildren && !this.props.viewer && <div className="former-map-add" onClick={this.onMapItemAdd}><PlusCircleOutlined/></div>}
+                    {hasChildren ? this.getChildren(): this.getEmptyChildren()}
+                </div>
+            </Tooltip>
         )
     }
 }

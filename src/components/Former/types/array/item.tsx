@@ -39,13 +39,17 @@ export default class FormerArrayItem extends React.Component<IFormerArrayItem, {
     }
     private renderChilderen() {
        return  React.Children.map(this.props.children, (it:any, index:number) => {
+            
             return React.cloneElement(it, Object.assign({}, it.props, {
-                size: this.props.size
+                size: this.props.size,
+                index: this.props.index
             }))
         })
     }
     public render() {
-        let moreItemfields: any = this.props.moreItems && this.props.moreItems.fields && this.props.moreItems.fields.map(it=> it.fieldKey);
+        let moreItemfields: any = this.props.moreItems 
+                && this.props.moreItems.fields
+                && this.props.moreItems.fields.map(it=> it.fieldKey);
         
         
         return (

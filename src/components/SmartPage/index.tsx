@@ -778,16 +778,23 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         this.setState({ open: false })
     }
     private toggleOpenStatus = (open: boolean) => {
-
+        
         if (this.props.onClose) {
             if (this.instance && this.instance.validationValue && !open) {
 
                 return this.instance.validationValue((value: any) => {
-                    console.log(value, this.instance.stepFormer.state,222)
                     this.setShowStatus(open)
-                    this.props.onValidationSuccess && this.props.onValidationSuccess(value);
+                    console.log(3333,2, 'open', open)
+                    let messg: any = this.instance.stepFormer.validationValue();
+                    
+                    if (messg && messg.length) {
+                        this.props.onValidationFailed && this.props.onValidationFailed(messg);
+                    } else {
+                        this.props.onValidationSuccess && this.props.onValidationSuccess(value);
+                    }
                 }, null, (errorMessage: any) => {
                     this.setShowStatus(open);
+                    console.log(3333,2, 'error', errorMessage, open)
                     this.props.onValidationFailed && this.props.onValidationFailed(errorMessage);
                 })
 

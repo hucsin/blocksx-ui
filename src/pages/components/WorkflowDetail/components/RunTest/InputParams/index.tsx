@@ -8,6 +8,7 @@ import './style.scss';
 interface InputParamsProps {
     startNodes: any;
     onSubmit: Function;
+    onCancel: Function;
 }
 interface InputParamsState {
     startNodes: any;
@@ -56,13 +57,11 @@ export default class InputParams extends React.Component<InputParamsProps, Input
                         onSave={(value) => {
                             this.props.onSubmit(startNode.name, value)
                         }}
+                        onClose={()=>this.props.onCancel()}
                     />
                 </div>
             )
         }
 
-        return (
-            <p>d</p>
-        )
     }
 }
