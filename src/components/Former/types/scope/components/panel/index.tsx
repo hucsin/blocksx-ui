@@ -166,6 +166,7 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                         dataType={this.state.dataType} 
                         name={name}
                         onClick={(item: any) => {
+                            
                             this.props.scope.addValueIntoScope(item)
                         }} 
                 />)

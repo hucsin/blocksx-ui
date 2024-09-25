@@ -11,6 +11,7 @@ import FormerVariable from './variable';
 import FormerView from './view';
 //import FormerScope from '..';
 import { ScopeType } from '../types'
+import ScopeUtils from '../utils'
 
 interface FormerScopeProps {
     context?: any;
@@ -18,6 +19,7 @@ interface FormerScopeProps {
     disabled?: boolean;
     value: any;
     onChangeValue: Function;
+    getScopeValue?: Function;
     onRemoveValue: Function;
     index: number;
     level: number;
@@ -126,17 +128,20 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     private cleanOriginValue(value: any) {
         // 清理padding
         return value.filter(it => {
-            if (!it.value && (it.padding || value.length>1)) {
-                return false;
-            }
-
+           
             delete it.padding;
 
             if (it.$type == 'function') {
                 it.parameters = it.parameters.filter(it => {
-                    return !it.value && it.padding ? false : true
+                    return (it.$type == 'value' && !it.value) && it.padding ? false : true
                 })
+                return true;
             }
+
+            if (!it.value && (it.padding || value.length>1)) {
+                return false;
+            }
+
             return true;
         })
     }
@@ -214,14 +219,14 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         return parameters;
     }
     private renderFunction(item: any, index: number) {
-        let schema: any = FunctionManger.get(item.name);
+        let schema: any = FunctionManger.get(item.name || item.value);
         let parameters: any = schema.parameters || [];
         
         
         return (
             <FormerScopeFunction
-                name={item.name}
-                key={[item.name, this.state.reflush, index].join('.')}
+                value={item.value}
+                key={[item.value, this.state.reflush, index].join('.')}
                 parameters={item.parameters}
                 strict={this.props.strict}
                 readonly={this.state.readonly}
@@ -263,6 +268,9 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         dataType={dataType}
                         readonly={this.state.readonly}
                         strict={this.state.strict}
+                        getScopeValue={()=> {
+                            return it.value;
+                        }}
                         disabled={!this.isCanInput(it.value)}
                         addValueIntoScope={this.props.addValueIntoScope}
                         index={index + this.getDefaultIndex(this.state.level - 1) * (idx + 1)}
@@ -308,18 +316,18 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     private isCanInput(value: any) {
 
         if (this.state.strict) {
-            
             if (Array.isArray(value)) {
-                return value.length < 1 || value[0].value == '';
+                return value.length < 1 || ScopeUtils.isEmptyValue(value);
             }
-
         }
 
         return true;
     }
+    
 
     private renderContent = (item: any, index: number, remove: Function) => {
         let parentIndex: number = (index + 1) * this.getDefaultIndex() + this.state.index;
+        
         switch (item.$type) {
             case 'view':
                 return this.renderView(item, parentIndex);
@@ -342,6 +350,9 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         strict={this.state.strict}
                         dataType={this.state.dataType} 
                         serial={index}
+                        getScopeValue={()=> {
+                            return this.state.value;
+                        }}
                         readonly={this.state.readonly}
                         context={this.context}
                         value={item.value}
@@ -369,7 +380,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         let focusPosition: number = 0;
         // 有选取的时候
 
-
+        
         if (range && range.length > 0) {
 
             // 需要替换掉 选取的文字
@@ -409,7 +420,6 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             if (cursorPosition == 0) {
 
                 originValue.splice(serial, 0, scopeValue);
-
             } else {
                 // 在后面加
                 if (cursorPosition == inputValue.length) {
@@ -533,6 +543,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 <>
                     {originValue.map((it, index) => {
                         return this.renderContent(it, index, (currentIndex: any) => {
+                            
                             return this.doRemoveScopeValue(originValue, index, currentIndex)
                         })
                     })}
@@ -547,10 +558,11 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                     strict={this.state.strict} 
                     disabled={this.state.disabled} 
                     serial={this.props.serial} 
+                    getScopeValue={this.props.getScopeValue}
                     parentScope={this.props.parentScope || this} 
                     onRemoveValue={(current: any) => {
                         return this.onRemoveValue(current)
-                    }} 
+                    }}
                     context={this.context} 
                     index={this.state.index} 
                     onChangeValue={(val) => {

@@ -28,6 +28,8 @@
         border-radius: 10px;;
     }
 
+
+
     .ui-panel-view {
         .ant-empty {
             margin-top: 42px;
@@ -66,10 +68,32 @@
 }
 .ui-function-tips-inner {
     max-width: 500px;
+    .ui-scope-tooltip {
+    
+        
+        dd {
+            padding: 8px;
+            margin-left: 0;
+            border-radius: 8px;
+            border: 1px dashed var(--main-border-color);
+            
+            ol {
+                padding: 0;
+                margin: 0;
+                margin-left: 12px;
+                margin-bottom: 8px;
+                li {
+                    margin-left: 0;
+                    padding-left: 0px;
+                    font-size:12px;
+                }
+            }
+        }
+    }
     .ui-function-info {
         p {
-            border: 1px dashed var(--main-border-color);
-            border-radius: 12px;
+            background-color: var(--main-background-color);
+            border-radius: 8px;
             padding: 8px;
         }
     }
@@ -178,6 +202,8 @@
                     background-color: #fff !important;
                     cursor: default;
                     display:inline-block;
+                    line-height: 14px;
+                    opacity: .6;
                     max-width: calc(100% - 57px);
                     vertical-align: middle;
                 }

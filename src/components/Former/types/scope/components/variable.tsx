@@ -1,9 +1,11 @@
 import React from 'react';
 import ScopeTooltip from './panel/tooltip';
+
+import { ScopeManger as FunctionManger } from '@blocksx/eos';
 import * as Icons from '../../../../Icons';
 
 interface FormerVariableProps {
-    name: string;
+    value: string;
     
     description: string;
 }
@@ -11,13 +13,17 @@ interface FormerVariableProps {
 export default class FormerVariable extends React.Component<FormerVariableProps> {
     
     public render() {
+        let schema: any = FunctionManger.get(this.props.value);
+        let truename: string[] = (this.props.value||'').split('.')
         return (
             <ScopeTooltip 
-                {...this.props}
-         
+                name={this.props.value}
+                title={truename[0]}
+                subtitle={this.props.value}
+                description={schema.description}
             >
                 <span className='ui-scope-vaiable'>
-                   <Icons.VariableUtilityOutlined/> {this.props.name}
+                   <Icons.VariableUtilityOutlined/> {this.props.value}
                 </span>
             </ScopeTooltip>
         )

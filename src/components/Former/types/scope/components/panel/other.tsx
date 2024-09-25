@@ -45,7 +45,12 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
                 };
             })
         }
-        this.props.onClick(item)
+        this.props.onClick({
+            $type: item.type,
+            //name: item.name,
+            parameters: item.parameters,
+            value: item.name
+        })
     }
 
     public matchTypes(type: any) {
@@ -90,7 +95,7 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
                                 {this.scopeList[it].map(it => {
                                     let matchType:boolean = this.matchTypes(it.returns.dataType);
                                     return (<dd>
-                                        <Tooltip {...it} message={!matchType ? this.getmessage(it.dataType): ''}><span className={!matchType ? 'ui-disabled': ''} onClick={()=> this.onSelectedItem(utils.copy(it))}><Icons.VariableUtilityOutlined/>{it.method}</span></Tooltip>
+                                        <Tooltip {...it} message={!matchType ? this.getmessage(it.dataType): ''}><span className={!matchType ? 'ui-disabled': ''} onClick={()=> this.onSelectedItem(utils.copy(it))}><Icons.VariableUtilityOutlined/>{it.name}</span></Tooltip>
                                         <span className='o'>{it.description}</span>
                                     </dd>)
                                 })}

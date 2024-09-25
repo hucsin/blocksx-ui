@@ -1,4 +1,6 @@
 import React from 'react';
+import { ScopeManger } from '@blocksx/eos';
+import { utils } from '@blocksx/core';
 import { Popover,Alert } from 'antd';
 import { Icons } from '@blocksx/ui';
 
@@ -9,6 +11,7 @@ interface PanelTooltipProps {
     subtitle?: string;
     $type?: string;
     description: string;
+    examples?: any[];
     parameters?: any[]; 
     returns ?: any;
     value?: any;
@@ -37,10 +40,10 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
         }
     }
     public renderBody() {
-        let { description , parameters, returns = {}, other } = this.props;
+        let { description , parameters, examples, returns = {}, other } = this.props;
 
-        
         if (returns.dataType && !Array.isArray(returns.dataType)) {
+
             returns.dataType = [returns.dataType || returns.type]
         }
         
@@ -56,7 +59,17 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                     {this.getDefaultTitle()}
                 </div>
                 <div className='ui-function-info'>
-                    <p>{this.state.message ? <Alert showIcon message={this.state.message} type="warning" /> :description}</p>
+                    <p>{description}</p>
+
+                    {examples && examples.length>0 && <dl className='ui-scope-tooltip'>
+                        <dt>Examples</dt>
+                        <dd><ol>{examples.map((it, index)=> {
+                            return (
+                                <li>{this.props.name}(<span style={{opacity: .6}}>{it.map(it=> JSON.stringify(it)).join(',')}</span>) : {JSON.stringify(ScopeManger.callScope(this.props.name,it))}</li>
+                            )
+                        })}</ol></dd>
+                    </dl>}
+
                     {parameters && parameters.length>0 && <dl>
                         <dt>Parameters</dt>
                         {parameters.map((it, index)=> {
@@ -67,7 +80,7 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                             } else {
                                 return (
                                     <dd>
-                                    {index+1}.  <span>{it.name}</span> <span>{"<"+it.dataType+">"}</span> <span>{it.description}</span>
+                                    {index+1}.  <span>{it.name}</span> <span>{"<"+it.dataType+">"}</span> <span>{utils.labelName(it.description)}</span>
                                     </dd>
                                 )
                             }
@@ -76,12 +89,12 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                     {returns && returns.dataType &&<dl>
                         <dt>Returns</dt>
                         <dd>{'<'+returns.dataType.join('|')+'>'}</dd>
-                        {returns.description  &&<dd>{returns.description}</dd>}
+                        {returns.description  &&<dd>{utils.labelName(returns.description)}</dd>}
                     </dl>}
 
                     { other && other.map(it => {
                         return (
-                            <dl><dt>{it.name}{it.subname&&<span>{it.subname}</span>}</dt><dd>{it.description}</dd></dl>
+                            <dl><dt>{it.name}{it.subname&&<span>{it.subname}</span>}</dt><dd>{utils.labelName(it.description)}</dd></dl>
                         )
                     })}
 
@@ -92,9 +105,8 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
     }
     private getPopTitle = ()=> {
         let { parameters, name = "" } = this.props;
-        
+        let tname: any = (name || "").split('.');
         if (parameters) {
-            let tname: any = (name || "").split('.');
             
             return (<div className='ui-tooltip-title'>
                 <p>{tname[0]}</p>
@@ -110,7 +122,7 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
             </div>)
         }
         return <div className='ui-tooltip-title'>
-            <p>{this.props.title}</p>
+            <p>{this.props.title || tname[0]}</p>
             <p>{this.props.subtitle}</p>
         </div>
     }
@@ -133,8 +145,6 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
         
     }
     private getDefaultTitle() {
-        
-
         return (
             <>
                 {this.getTitleIcon()}

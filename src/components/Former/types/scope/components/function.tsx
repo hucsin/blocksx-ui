@@ -8,7 +8,7 @@ import ScopeTooltip from './panel/tooltip'
 interface FormerScopeFunctionProps {
     children: any;
     //index: number;
-    name: string;
+    value: string;
     parameters: any[]
     onAddParam: Function;
     strict?: boolean;
@@ -17,7 +17,7 @@ interface FormerScopeFunctionProps {
 
 interface FormerScopeFunctionState {
     //index: number;
-    name: string;
+    value: string;
     parameters: any[]
     hight: boolean;
     open:boolean;
@@ -31,16 +31,15 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
 
         this.state = {
             //index: props.index,
-            name: props.name,
+            value: props.value,
             parameters: props.parameters,
             hight: false,
             open: false,
             readonly: props.readonly || false
         }
-        
-        this.schema = FunctionManger.get(props.name)
+        this.schema = FunctionManger.get(props.value)
     }
-
+    
     private getDisplayName(name: string) {
         let split: any[] = name.split('.');
         split.shift();
@@ -48,11 +47,11 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
     }
 
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<FormerScopeFunctionProps>, nextContext: any): void {
-        if (nextProps.name != this.state.name) {
+        if (nextProps.value != this.state.value) {
             this.setState({
-                name: nextProps.name
+                value: nextProps.value
             })
-            this.schema = FunctionManger.get(nextProps.name)
+            this.schema = FunctionManger.get(nextProps.value)
         }
 
         if (nextProps.parameters != this.state.parameters) {
@@ -79,11 +78,11 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
     }
     public render() {
         let { children } = this.props;
-        let { parameters, name} = this.state;
+        let { parameters, value} = this.state;
         let funcmeta: any = this.schema;
 
 
-        let displayName: string = funcmeta.displayName || this.getDisplayName(name);
+        let displayName: string = funcmeta.displayName || this.getDisplayName(value);
         let paramsmeta: any = funcmeta.parameters;
         let restParams: any = paramsmeta && paramsmeta[paramsmeta.length -1];
         let maxParams: number = restParams ? restParams.maxLength || paramsmeta.length : paramsmeta.length;
@@ -120,7 +119,7 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
                     )
 
                 })}
-                {hasAdd && <Tooltip title={`More parameter for ${funcmeta.name}`}><Button tabIndex={-1} size='small' onClick={()=> this.props.onAddParam()} type="text"><Icons.EllipsisSuggestionOutlined/></Button></Tooltip>}
+                {hasAdd && <Tooltip title={`More parameter for ${funcmeta.value}`}><Button tabIndex={-1} size='small' onClick={()=> this.props.onAddParam()} type="text"><Icons.EllipsisSuggestionOutlined/></Button></Tooltip>}
                 {paramsmeta.length >0 &&<span 
                     className='ui-scope-keyword'
                     onMouseEnter={this.highlight}

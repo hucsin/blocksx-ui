@@ -218,7 +218,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                 let value: string = currentInput.innerText;
                 let cursorPosition: number = ScopeUtils.getCursorPosition(currentInput);
                 let serial: number = Math.max(0, parseInt(currentInput.dataset.serial, 10));
-
+                
                 scope.addValueIntoScope(cursorPosition, value, serial, scopeValue, this.findInputIndex(currentInput))
             }
         }
@@ -390,17 +390,6 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         }
     }
 
-    private isEmptyValue(value: any) {
-        
-        if (Array.isArray(value)) {
-            if (value.length == 1) {
-                return !value[0].value;
-            }
-            return value.length == 0;
-        }
-
-        return !value;
-    }
 
     private isOneValue(value: any) {
 
@@ -463,7 +452,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
         let typeProps: any = this.getTypeProps();
         let strict: boolean = utils.isUndefined(typeProps.strict) ? true : typeProps.strict;
         let width: any = this.state.width || typeProps.width;
-        let isEmptyValue: boolean = this.isEmptyValue(value);
+        let isEmptyValue: boolean = ScopeUtils.isEmptyValue(value);
         let disabled: boolean = typeProps.struct ? !this.isOneValue(value) : false;
         let opened: any = this.state.disabled ? this.state.open : this.state.open;
         
