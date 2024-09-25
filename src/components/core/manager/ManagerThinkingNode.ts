@@ -31,7 +31,7 @@ export default class ThinkingNodeManager {
      * @param key 
      */
     public static getOutputSchema(key: string, nodeId: string, schema?: any) {
-        console.log(schema,nodeId,key, 333)
+        
         if (this.has(key)) {
             if (schema = this.get(key)?.getOutputSchema(nodeId)) {
                 return Promise.resolve(schema);

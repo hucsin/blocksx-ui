@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { Button, Popover, Tooltip } from 'antd';
 import * as Icons from '../../../../Icons';
-import FunctionManger from '../core/ScopeManger';
+import { ScopeManger as FunctionManger } from '@blocksx/eos';
 import ScopeTooltip from './panel/tooltip'
 
 interface FormerScopeFunctionProps {
@@ -37,6 +37,7 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
             open: false,
             readonly: props.readonly || false
         }
+        
         this.schema = FunctionManger.get(props.name)
     }
 

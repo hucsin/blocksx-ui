@@ -12,7 +12,6 @@ import { ScopeType } from './types';
 import ScopeLabel from './components/scope';
 
 
-import './testmang';// TODO remove
 import './style.scss';
 import SmartRequest from '@blocksx/ui/utils/SmartRequest';
 

@@ -1,12 +1,13 @@
 import React from 'react';
 import classnames from 'classnames';
-
+import { ScopeManger } from '@blocksx/eos';
 import { GlobalScope, MiniFlow } from '@blocksx/ui';
 import PanelProcess from './process';
 import PanelStorges from './storges';
 import PanelOther from './other';
 import PanelView from './view';
-import ScopeManger from '../../core/ScopeManger';
+
+
 import Avatar from '../../../avatar';
 
 
@@ -57,7 +58,7 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
         }
         this.cache = {};
 
-        
+        console.log(this.groupList, 333)
         this.currentNode = GlobalScope.getScope(GlobalScope.TYPES.CURRENTFLOW_NODE);
 
         let flow: MiniFlow = GlobalScope.getContext(GlobalScope.TYPES.CURRENTFLOW_CONTEXT);

@@ -177,6 +177,9 @@
                 &.o {
                     background-color: #fff !important;
                     cursor: default;
+                    display:inline-block;
+                    max-width: calc(100% - 57px);
+                    vertical-align: middle;
                 }
             }
             dd {

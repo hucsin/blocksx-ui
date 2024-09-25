@@ -1,11 +1,10 @@
 import React from 'react';
-import classnames from 'classnames';
 import { utils } from '@blocksx/core';
 import { Button, Select } from 'antd';
 import Context from '../contexts';
 import FormerScopeFunction from './function';
+import { ScopeManger as FunctionManger } from '@blocksx/eos';
 
-import FunctionManger from '../core/ScopeManger';
 import FormerScopeInput from './input';
 import FormerScopeLabel from './scope';
 import FormerVariable from './variable';

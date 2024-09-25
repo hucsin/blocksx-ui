@@ -1,6 +1,6 @@
 import React from 'react';
 import { utils } from '@blocksx/core';
-import ScopeManger from '../../core/ScopeManger';
+import { ScopeManger } from '@blocksx/eos';
 import * as Icons from '../../../../../Icons';
 import Notice from '../../../notice';
 import Tooltip from './tooltip';
@@ -9,16 +9,13 @@ import { upperFirst, emit } from 'lodash';
 
 export default class PanelOther extends React.Component<{name: string, onClick: Function, dataType: any, disabled?: boolean}, {dataType: any, disabled?: boolean}>{
     private scopeList: any;
-    private noticeMap: any = {
-        'Math': 'Some mathematical functions for performing numerical calculations. [Know more]()',
-        'String': 'String manipulation functions for common operations such as concatenation and slicing.',
-        'Object': 'Object manipulation functions for iterating over objects and performing some specific operations.',
-        'Array': 'Array utility functions for performing operations on array values, used to modify array-type values in a process.'
-    }
+    private noticeMap: any;
     
     public constructor(props: any){
         super(props)
-        this.scopeList = ScopeManger.findGroup(props.name)
+        this.scopeList = ScopeManger.findGroup(props.name);
+        this.noticeMap = ScopeManger.findClassifyMap();
+
         this.state = {
             dataType: props.dataType,
             disabled: props.disabled
@@ -51,7 +48,7 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
         this.props.onClick(item)
     }
 
-    public matchTypes(type: string) {
+    public matchTypes(type: any) {
         let { dataType } = this.state;
 
         if (this.state.disabled) {
@@ -62,7 +59,11 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
             if (!Array.isArray(dataType)) {
                 dataType = [dataType]
             }
-
+            
+            if (Array.isArray(type)) {
+                
+                return type.some(it => dataType.includes(upperFirst(it)))
+            }
             return dataType.includes(upperFirst(type))
         }
 
@@ -79,7 +80,7 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
         let groupKeys: any = Object.keys(this.scopeList);
         return (
             <div  className='ui-scope-function-list'> 
-                <Notice value={this.noticeMap[this.props.name]}/>
+                <Notice value={this.noticeMap[this.props.name].description}/>
 
                 {groupKeys.map(it => {
                     if (['variable', 'scope'].includes(it)) {
@@ -87,8 +88,7 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
                             <dl>
                                 <dt>variable</dt>
                                 {this.scopeList[it].map(it => {
-                                    
-                                    let matchType:boolean = this.matchTypes(it.dataType);
+                                    let matchType:boolean = this.matchTypes(it.returns.dataType);
                                     return (<dd>
                                         <Tooltip {...it} message={!matchType ? this.getmessage(it.dataType): ''}><span className={!matchType ? 'ui-disabled': ''} onClick={()=> this.onSelectedItem(utils.copy(it))}><Icons.VariableUtilityOutlined/>{it.method}</span></Tooltip>
                                         <span className='o'>{it.description}</span>

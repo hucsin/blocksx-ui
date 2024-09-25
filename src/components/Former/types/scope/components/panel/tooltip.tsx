@@ -62,7 +62,7 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                         {parameters.map((it, index)=> {
                             if (it.type =='rest') {
                                 return (
-                                    <dd>... {it.maxLength - index} rest parameters</dd>
+                                    <dd>... optional({it.maxLength - index}) parameters  {"<" + it.dataType +">"}</dd>
                                 )
                             } else {
                                 return (
@@ -74,7 +74,8 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                         })}
                     </dl>}
                     {returns && returns.dataType &&<dl>
-                        <dt>Returns {'<'+returns.dataType.join('|')+'>'}</dt>
+                        <dt>Returns</dt>
+                        <dd>{'<'+returns.dataType.join('|')+'>'}</dd>
                         {returns.description  &&<dd>{returns.description}</dd>}
                     </dl>}
 
@@ -90,25 +91,23 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
         );
     }
     private getPopTitle = ()=> {
-        let { parameters } = this.props;
+        let { parameters, name = "" } = this.props;
+        
         if (parameters) {
+            let tname: any = (name || "").split('.');
             
-            if (parameters.length==0) {
-                return this.props.name
-            }
-
-            return (<>
-                {this.props.name}
-                {'('}
-                {parameters.map(it=> {
-                    if (it.type !=='rest') {
-                        return it.name;
-                    } else {
-                        return '...'
-                    }
-                }).join(',')}
-                {')'}
-            </>)
+            return (<div className='ui-tooltip-title'>
+                <p>{tname[0]}</p>
+                {parameters.length==0 ?<p>{name}</p> : <p>{name}
+                    {'(' +parameters.map(it=> {
+                        if (it.type !=='rest') {
+                            return it.name;
+                        } else {
+                            return '...'
+                        }
+                    }).join(',') + ')'}
+                </p>}
+            </div>)
         }
         return <div className='ui-tooltip-title'>
             <p>{this.props.title}</p>
