@@ -63,11 +63,11 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
 
                     {examples && examples.length>0 && <dl className='ui-scope-tooltip'>
                         <dt>Examples</dt>
-                        <dd><ol>{examples.map((it, index)=> {
+                        <dd><ul>{examples.map((it, index)=> {
                             return (
-                                <li>{this.props.name}(<span style={{opacity: .6}}>{it.map(it=> JSON.stringify(it)).join(',')}</span>) : {JSON.stringify(ScopeManger.callScope(this.props.name,it))}</li>
+                                <li>{this.props.name}(<span style={{opacity: .6}}>{it.map(it=> JSON.stringify(it)).join(' , ')}</span>) <div>{JSON.stringify(ScopeManger.callScope(this.props.name,it))}</div></li>
                             )
-                        })}</ol></dd>
+                        })}</ul></dd>
                     </dl>}
 
                     {parameters && parameters.length>0 && <dl>

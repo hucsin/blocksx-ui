@@ -132,9 +132,11 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             delete it.padding;
 
             if (it.$type == 'function') {
-                it.parameters = it.parameters.filter(it => {
-                    return (it.$type == 'value' && !it.value) && it.padding ? false : true
-                })
+                if(it.parameters) {
+                    it.parameters = it.parameters.filter(it => {
+                        return (it.$type == 'value' && !it.value) && it.padding ? false : true
+                    })
+                } 
                 return true;
             }
 
@@ -239,7 +241,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                     this.doFocus()
                 }}
             >
-                {item.parameters.map((it, idx) => {
+                {item.parameters && item.parameters.map((it, idx) => {
                     let parameterMeta : any = parameters[idx] || parameters[parameters.length - 1];
                     let dataType: any = parameterMeta.dataType;
                     
