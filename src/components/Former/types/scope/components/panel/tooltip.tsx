@@ -1,8 +1,10 @@
 import React from 'react';
+import classnames from 'classnames';
 import { ScopeManger } from '@blocksx/eos';
 import { utils } from '@blocksx/core';
 import { Popover,Alert } from 'antd';
 import { Icons } from '@blocksx/ui';
+
 
 interface PanelTooltipProps {
     children: any;
@@ -24,12 +26,14 @@ interface PanelTooltipProps {
 }
 interface PanelTooltipState {
     message?: any;
+    currentIndex: number;
 }
 export default class PanelTooltip extends React.Component<PanelTooltipProps, PanelTooltipState> {
     public constructor(props: any) {
         super(props);
         this.state = {
-            message: props.message
+            message: props.message,
+            currentIndex: -1
         }
     }
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<PanelTooltipProps>, nextContext: any): void {
@@ -63,9 +67,13 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
 
                     {examples && examples.length>0 && <dl className='ui-scope-tooltip'>
                         <dt>Examples</dt>
-                        <dd><ul>{examples.map((it, index)=> {
+                        <dd className='ui-scope-examples'><ul>{examples.map((item, index)=> {
                             return (
-                                <li>{this.props.name}(<span style={{opacity: .6}}>{it.map(it=> JSON.stringify(it)).join(' , ')}</span>) <div>{JSON.stringify(ScopeManger.callScope(this.props.name,it))}</div></li>
+                                <li><div title={`Call ${this.props.name}() function `}>{this.props.name}({item.map((it, index)=> {
+                                    return <span className={classnames({
+                                        'ui-selected': index == Math.min(this.state.currentIndex, item.length - 1)
+                                    })}>{JSON.stringify(it)}</span>
+                                })})</div><div title="Return values." className='rv'>{JSON.stringify(ScopeManger.callScope(this.props.name,item))}</div></li>
                             )
                         })}</ul></dd>
                     </dl>}
@@ -75,12 +83,16 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                         {parameters.map((it, index)=> {
                             if (it.type =='rest') {
                                 return (
-                                    <dd>... optional({it.maxLength - index}) parameters  {"<" + it.dataType +">"}</dd>
+                                    <dd  className={classnames({
+                                        'ui-selected': index == Math.min(this.state.currentIndex, parameters.length - 1)
+                                    })} onMouseEnter={()=>{this.setState({currentIndex: index})}} onMouseLeave={()=> {this.setState({currentIndex: -1})}}>... optional({it.maxLength - index}) parameters  {"<" + it.dataType +">"}</dd>
                                 )
                             } else {
                                 return (
-                                    <dd>
-                                    {index+1}.  <span>{it.name}</span> <span>{"<"+it.dataType+">"}</span> <span>{utils.labelName(it.description)}</span>
+                                    <dd className={classnames({
+                                        'ui-selected': index == Math.min(this.state.currentIndex, parameters.length - 1)
+                                    })} onMouseEnter={()=>{this.setState({currentIndex: index})}} onMouseLeave={()=> {this.setState({currentIndex: -1})}}>
+                                        {index+1}.  <span>{it.name}</span> <span>{"<"+it.dataType+">"}</span> <span>{utils.labelName(it.description)}</span>
                                     </dd>
                                 )
                             }
@@ -160,6 +172,7 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                 mouseEnterDelay={.5}
                 title={''} 
                 content={this.renderBody()}
+                placement='left'
                 onOpenChange={(v)=> this.props.onOpenChange && this.props.onOpenChange(v)}
             >
                 {this.props.children}

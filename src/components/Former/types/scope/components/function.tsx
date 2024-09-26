@@ -119,7 +119,7 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
                     )
 
                 })}
-                {hasAdd && <Tooltip title={`More parameter for ${funcmeta.value}`}><Button tabIndex={-1} size='small' onClick={()=> this.props.onAddParam()} type="text"><Icons.EllipsisSuggestionOutlined/></Button></Tooltip>}
+                {hasAdd && <Tooltip title={`Add more rest parameters`}><Button tabIndex={-1} size='small' onClick={()=> this.props.onAddParam()} type="text"><Icons.EllipsisSuggestionOutlined/></Button></Tooltip>}
                 {paramsmeta.length >0 &&<span 
                     className='ui-scope-keyword'
                     onMouseEnter={this.highlight}

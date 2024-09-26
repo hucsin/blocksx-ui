@@ -57,13 +57,10 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
             readonly: props.readonly || false
         }
         this.cache = {};
-
-        console.log(this.groupList, 333)
         this.currentNode = GlobalScope.getScope(GlobalScope.TYPES.CURRENTFLOW_NODE);
 
         let flow: MiniFlow = GlobalScope.getContext(GlobalScope.TYPES.CURRENTFLOW_CONTEXT);
         this.upstreamFlowMap =  flow.findAncestralFlowMap(this.currentNode.value);
-
     }
     private canShowProcess() {
         return !!this.upstreamFlowMap.nodes.find(it => {
@@ -179,14 +176,16 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
     private filterTabs(tabs: any) {
         let { dataType = [] } = this.state;
 
+        return tabs;
+        /*
         return dataType ? tabs.filter(it => {
             let trueType: string = this.typeMaps[it] || it;
             
             if (['Array','Object'].includes(trueType)) {
-                return dataType.join(',').indexOf(trueType) > -1;
+                return JSON.stringify(dataType).includes(trueType);
             }
             return dataType.includes(trueType)
-        }): tabs;
+        }): tabs;*/
     }
     public render() {
         let groupKeys: any = Object.keys(this.groupList);

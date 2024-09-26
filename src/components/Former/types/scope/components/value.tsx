@@ -5,6 +5,7 @@ import Context from '../contexts';
 import FormerScopeFunction from './function';
 import { ScopeManger as FunctionManger } from '@blocksx/eos';
 
+import FunctionTooltip from './functionTooltip';
 import FormerScopeInput from './input';
 import FormerScopeLabel from './scope';
 import FormerVariable from './variable';
@@ -12,12 +13,15 @@ import FormerView from './view';
 //import FormerScope from '..';
 import { ScopeType } from '../types'
 import ScopeUtils from '../utils'
+import Utils from '../utils';
 
 interface FormerScopeProps {
     context?: any;
     dataType?: any;
     disabled?: boolean;
     value: any;
+    className?: string;
+    padding?: any;
     onChangeValue: Function;
     getScopeValue?: Function;
     onRemoveValue: Function;
@@ -248,53 +252,59 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                     if (Array.isArray(parameterMeta.enum) && parameterMeta.enum.length) {
                         
                         return (
-                            <Select 
-                                popupMatchSelectWidth={false}
-                                defaultActiveFirstOption
-                                disabled={this.state.readonly}
-                                value={it.value || parameterMeta.enum[0].value}
-                                onChange={(v)=> {
-                                    it.value = v;
-                                    this.doChangeValue();
-                                }}
-                                variant="borderless"
-                                size="small"
-                                options={parameterMeta.enum}
-                            ></Select>
+                            <FunctionTooltip schema={schema} index={idx}>
+                                <Select 
+                                    popupMatchSelectWidth={false}
+                                    defaultActiveFirstOption
+                                    disabled={this.state.readonly}
+                                    value={it.value || parameterMeta.enum[0].value}
+                                    onChange={(v)=> {
+                                        it.value = v;
+                                        this.doChangeValue();
+                                    }}
+                                    variant="borderless"
+                                    size="small"
+                                    options={parameterMeta.enum}
+                                ></Select>
+                            </FunctionTooltip>
                         )
                     }
 
-                    return (<FormerScopeValue
-                        key={[item.name, this.state.reflush, idx].join('.')}
-                        level={this.state.level - 2}
-                        dataType={dataType}
-                        readonly={this.state.readonly}
-                        strict={this.state.strict}
-                        getScopeValue={()=> {
-                            return it.value;
-                        }}
-                        disabled={!this.isCanInput(it.value)}
-                        addValueIntoScope={this.props.addValueIntoScope}
-                        index={index + this.getDefaultIndex(this.state.level - 1) * (idx + 1)}
-                        context={this.context}
-                        onRemoveValue={(currentIndex) => {
-                            // 参数不能删除只能让光标往前
-                            // console.log(currentIndex, 33)
-                            // return this.doRemoveScopeValue(item.parameters, idx, currentIndex)
-                            /*  if (idx == 0) {
-                                return false
-                            }
-                            item.parameters.splice(Math.max(0,idx-1), 1);
-                            
-                            this.doChangeValue(undefined, true);*/
-                        }}
-                        onChangeValue={(value: any) => {
-                            it.value = value;
-                            this.doChangeValue();
-                        }}
-                        value={it.value}
-                        parentScope={null}
-                    />)
+                    return (
+                        <FunctionTooltip schema={schema} index={idx}>
+                            <FormerScopeValue
+                                key={[item.name, this.state.reflush, idx].join('.')}
+                                level={this.state.level - 2}
+                                dataType={dataType}
+                                readonly={this.state.readonly}
+                                strict={this.state.strict}
+                                getScopeValue={()=> {
+                                    return it.value;
+                                }}
+                                className={this.props.className}
+                                disabled={!this.isCanInput(it.value)}
+                                addValueIntoScope={this.props.addValueIntoScope}
+                                index={index + this.getDefaultIndex(this.state.level - 1) * (idx + 1)}
+                                context={this.context}
+                                onRemoveValue={(currentIndex) => {
+                                    // 参数不能删除只能让光标往前
+                                    // console.log(currentIndex, 33)
+                                    // return this.doRemoveScopeValue(item.parameters, idx, currentIndex)
+                                    /*  if (idx == 0) {
+                                        return false
+                                    }
+                                    item.parameters.splice(Math.max(0,idx-1), 1);
+                                    
+                                    this.doChangeValue(undefined, true);*/
+                                }}
+                                onChangeValue={(value: any) => {
+                                    it.value = value;
+                                    this.doChangeValue();
+                                }}
+                                value={it.value}
+                                parentScope={null}
+                            />
+                    </FunctionTooltip>)
                 })}
             </FormerScopeFunction>
         )
@@ -351,10 +361,14 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         disabled={!this.isCanInput(this.state.value)}
                         strict={this.state.strict}
                         dataType={this.state.dataType} 
+                        className={this.props.className}
                         serial={index}
+
+                        padding={this.props.padding}
                         getScopeValue={()=> {
                             return this.state.value;
                         }}
+                        {...this.getOnEventProps()}
                         readonly={this.state.readonly}
                         context={this.context}
                         value={item.value}
@@ -536,9 +550,12 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
             this.context.onFocus(currentIndex, cursorPosition)
         }, 0)
     }
-    
+    private getOnEventProps() {
+        return Utils.getOnEventProps(this.props)
+    }
     public render() {
         let { value, originValue } = this.state;
+        
         //console.log(value.length, 'render value')
         if (Array.isArray(value)) {
             return (
@@ -561,10 +578,13 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                     disabled={this.state.disabled} 
                     serial={this.props.serial} 
                     getScopeValue={this.props.getScopeValue}
-                    parentScope={this.props.parentScope || this} 
+                    parentScope={this.props.parentScope || this}
+                    className={this.props.className}
                     onRemoveValue={(current: any) => {
                         return this.onRemoveValue(current)
                     }}
+                    padding={this.props.padding}
+                    {...this.getOnEventProps()}
                     context={this.context} 
                     index={this.state.index} 
                     onChangeValue={(val) => {

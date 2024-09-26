@@ -85,13 +85,26 @@
                 li {
                     margin-left: 0;
                     padding-left: 0px;
-                    font-size:13px;
+                    font-size:12px;
                     padding-bottom: 8px;
                     span {
                         font-style: italic;
                     }
                     div{
+                        position: relative;
+
                         padding-top: 3px;
+                        &::before {
+                            content: " ";
+                            border: 1px solid #ccc;
+                            width: 3px;
+                            height: 3px;
+                            border-radius: 4px;
+                            display: block;
+                            position: absolute;
+                            left: -11px;
+                            top: 9px;
+                        }
                     }
                     &:last-child {
                         padding-bottom: 0;
@@ -110,7 +123,8 @@
 }
 .ui-scope-panel-tooltip {
     .ant-popover-title {
-        border-bottom: 1px solid var(--main-border-color);
+        border-bottom: 1px solid var(--main-inverse-border-color, rgba(5, 5, 5, 0.06));
+        
         padding-bottom: 8px;
         .anticon {
             font-size:42px;
@@ -125,6 +139,9 @@
                 &:last-child {
                     opacity: .5;
                     font-weight: 400;
+                }
+                &:nth-child(2) {
+                    font-size:12px;
                 }
             }
         }

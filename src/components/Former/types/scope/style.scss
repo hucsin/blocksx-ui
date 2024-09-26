@@ -3,8 +3,69 @@
         margin-right: 8px;
     }
 }
+.ui-function-tooltip {
+    width: 350px;
+}
+.ui-function-tooltip-wrapper {
+    font-size:12px;
+    p {
+        max-width: 350px;
+        background-color: var(--main-background-color);
+        border-radius: 12px;
+        padding: 8px;
+        opacity: .7;
+    }
+    dl {
+        dt{
+            font-size: 14px;
+        }
+        dd {
+            font-size: 12px;
+            padding-left: 0 !important;
+            margin-left: 0;
+            word-break: break-all; 
+            ul {
+                padding-left: 16px;
+                margin: 0;
+                word-wrap: break-word;
+            }
+            .rv {
+                position: relative;
+                &::before {
+                    content: " ";
+                    border: 1px solid #ccc;
+                    width: 3px;
+                    height: 3px;
+                    border-radius: 4px;
+                    display: block;
+                    position: absolute;
+                    left: -11px;
+                    top: 9px;
+                }
+            }
+            span {
+                &::after{
+                    content: ",";
+                    display: inline-block;
+                    width: 8px;
+                    
+                }
+                opacity: .5;
+                &.ui-selected {
+                    opacity: 1;
+                    color:var(--main-bg-color)
+                }
+                &:last-child {
+                    &:after {
+                        display:none;
+                    }
+                }
+            }
+        }
+    }
+}
 .ui-function-info {
-    max-width: 350px;
+    max-width: 450px;
     
     dt {
         font-weight: bold;;
@@ -19,17 +80,40 @@
     }
     p {
         line-height: 1.25;
+        font-size: 12px;
     }
 
     dd {
         margin-inline-start: 1.2em;
         line-height: 1.25;
-        padding-bottom: 8px;
+        padding-bottom: 4px;
+        font-size:12px;
+
+        word-break: break-all; 
+        &.ui-selected span,
+        span.ui-selected {
+            opacity: 1 !important;
+            color: var(--main-bg-color)
+        }
         &:last-child {
             padding-bottom: 0;
         }
-        span:last-child {
-            opacity: .5;
+        &.ui-scope-examples {
+            span {
+                opacity: .5;
+
+                &::after{
+                    content: ",";
+                    display: inline-block;
+                    width: 8px;
+                    
+                }
+                &:last-child {
+                    &:after {
+                        display:none;
+                    }
+                }
+            }
         }
     }
 }
@@ -142,6 +226,7 @@
         }
         
         .ui-scope-content {
+            >.ui-scope-function,
             >.ui-scope-input:not(:empty) {
                 &::after{
                     content: ',';
@@ -174,6 +259,11 @@
                     display: none !important;
                 }
             }
+            > .ui-scope-function {
+                &::after {
+                    display: none !important;
+                }
+            }
             >.ui-scope-scope {
                 &::after{
                    display: none !important;
@@ -188,7 +278,7 @@
             display: none;
         }
         .ui-scope-inner {
-            height: auto;
+            height: auto !important;
             z-index: 1111;
 
             border-color:var(--main-bg-color);
@@ -260,6 +350,9 @@
         .ui-scope-keyword {
             display: inline-block;
         }
+        .ui-scope-input {
+            min-width: 8px;
+        }
         &.ui-scope-function-hight {
             > .ui-scope-keyword {
                 background-color: var(--main-bg-color) !important;
@@ -303,6 +396,10 @@
         position: relative;
         line-height: 16px;
         word-break: break-all;
+        &.ant-popover-open {
+            background-color: var(--main-background-color);
+        }
+
         &:focus{
             outline: none;
         }

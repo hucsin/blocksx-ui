@@ -8,6 +8,7 @@ interface FormerScopeInputProps {
     //focus?: boolean;
     index: number;
     onRemoveValue: Function;
+    padding?: any;
     onChangeValue: Function;
     parentScope: any;
     serial: number;
@@ -17,6 +18,7 @@ interface FormerScopeInputProps {
     readonly?: boolean;
     addValueIntoScope: Function;
     getScopeValue?: Function;
+    className?: string;
 }
 interface FormerScopeInputState {
     defaultValue: string;
@@ -252,13 +254,15 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
     }
 
     public render() {
+        
         return (
             <span
                 ref={this.ref}
                 data-index={this.state.index}
                 data-serial={this.state.serial}
-                className="ui-scope-input"
+                className={`ui-scope-input ${this.props.className}`}
                 contentEditable={this.state.readonly ? false : true}
+                {...utils.getOnEventProps(this.props)}
                 onBlur={() => {
                     if (this.state.readonly) {
                         return;

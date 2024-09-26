@@ -11,6 +11,17 @@ export default class Utils {
         }
         return !value;
     }
+    public static getOnEventProps(props: any) {
+        
+        let eventProps: any = {};
+
+        Object.keys(props).forEach(it => {
+            if (it.match(/^on/)) {
+                eventProps[it] = props[it]
+            }
+        })
+        return eventProps;
+    }
     public static insertTextAtCursor(text) {
         const sel: any = window.getSelection();
         if (sel.rangeCount > 0) {
