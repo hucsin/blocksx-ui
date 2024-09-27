@@ -14,8 +14,22 @@ class FlowControlIteratorNode extends IThinkingNode {
         if (currentFlow && currentNode) {
             let { props = {}} = currentNode;
             
-            
+
+
+
+
+
             if (props.input && utils.isValidArray(props.input.target)) {
+
+                console.log(this.getNodeInScope(props.input.target))
+
+                let output: any = ThinkingNodeManager.getOutputSchemas(this.getNodeInScope(props.input.target));
+                output.then(data=> {
+                    console.log(data, 32332)
+                })
+
+                return ;
+                console.log(props.input.target)
                 if (props.input.target[0].value) {
                     target = props.input.target[0];
                     nodeId = target.keypath.replace(/^\$flow\./, '')

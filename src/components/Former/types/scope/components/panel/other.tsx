@@ -61,10 +61,15 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
         }
         
         if (dataType) {
+            
             if (!Array.isArray(dataType)) {
                 dataType = [dataType]
             }
             
+            if (dataType.includes('Any')) {
+                return type;
+            }
+
             if (Array.isArray(type)) {
                 
                 return type.some(it => dataType.includes(upperFirst(it)))

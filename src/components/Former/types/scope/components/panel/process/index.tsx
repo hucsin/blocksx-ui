@@ -150,7 +150,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
 
     public componentWillUnmount() {
         
-        this.miniFlow.destory();
+        this.miniFlow && this.miniFlow.destory();
     }
     private getSelectedKeyPath(value:any) {
         if (Array.isArray(value) && value[0]) {
@@ -199,6 +199,8 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         this.setState({
             loading: false,
             schema:result
+        }, () => {
+            this.miniFlow && this.initMiniFlow();
         })
 
         this.resetTreeData(result, cache)
@@ -208,6 +210,8 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
             schema: result,
             treeData: this.treeData
         })
+
+
     }
     private initMiniFlow() {
         this.miniFlow = new MiniFlow({
@@ -234,9 +238,15 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         let { dataType } = this.state;
         let trueType: string = subtype ? [upperFirst(type), upperFirst(subtype)].join('') : upperFirst(type)
         
+        
         if (dataType) {
             if (!Array.isArray(dataType)) {
                 dataType = [dataType]
+            }
+            // 如果是ANY
+            
+            if (dataType.includes('Any')) {
+                return false;
             }
 
             return !dataType.includes(upperFirst(trueType))
@@ -320,9 +330,11 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
             blockNode
             disabled={this.state.disabled}
             onSelect={(item:any, info: any)=> {
+                let pop: any = item.pop();
 //                let 
-                item[0] && this.props.onClick(
-                    item[0].replace(/\.\./,'.'), 
+                console.log(pop, selected,333, info)
+                pop && this.props.onClick(
+                    pop.replace(/\.\./,'.'), 
                     ['$flow', selected.originalName].join('.'),
                     { ...info, source: selected.originalName !== currentSource ?  currentSource : '' }
                 )

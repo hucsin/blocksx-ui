@@ -92,7 +92,7 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                                     <dd className={classnames({
                                         'ui-selected': index == Math.min(this.state.currentIndex, parameters.length - 1)
                                     })} onMouseEnter={()=>{this.setState({currentIndex: index})}} onMouseLeave={()=> {this.setState({currentIndex: -1})}}>
-                                        {index+1}.  <span>{it.name}</span> <span>{"<"+it.dataType+">"}</span> <span>{utils.labelName(it.description)}</span>
+                                        {index+1}.  <span>{it.name}</span> <span>{"<"+it.dataType+">"}</span> <span>{ it.description && utils.labelName(it.description)}</span>
                                     </dd>
                                 )
                             }
@@ -101,12 +101,12 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
                     {returns && returns.dataType &&<dl>
                         <dt>Returns</dt>
                         <dd>{'<'+returns.dataType.join('|')+'>'}</dd>
-                        {returns.description  &&<dd>{utils.labelName(returns.description)}</dd>}
+                        {utils.isString(returns.description)  &&<dd>{utils.labelName(returns.description)}</dd>}
                     </dl>}
 
                     { other && other.map(it => {
                         return (
-                            <dl><dt>{it.name}{it.subname&&<span>{it.subname}</span>}</dt><dd>{utils.labelName(it.description)}</dd></dl>
+                            <dl><dt>{it.name}{it.subname&&<span>{it.subname}</span>}</dt><dd>{utils.isString(it.description) ? utils.labelName(it.description) : it.description}</dd></dl>
                         )
                     })}
 

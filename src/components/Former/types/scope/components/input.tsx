@@ -232,7 +232,8 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             if (!Array.isArray(dataType)) {
                 dataType = [dataType]
             }
-            if (!dataType.find(type => ['string', 'boolean', "number", 'date', 'datetime'].includes(type.toLowerCase()))) {
+            
+            if (!dataType.find(type => ['string', 'boolean', "number", 'date', 'datetime', 'any'].includes(type.toLowerCase()))) {
 
                 return false;
             }
