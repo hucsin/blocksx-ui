@@ -3,7 +3,7 @@ import { utils } from '@blocksx/core';
 import { Button, Select } from 'antd';
 import Context from '../contexts';
 import FormerScopeFunction from './function';
-import { ScopeManger as FunctionManger } from '@blocksx/eos';
+import { ScopeManger as FunctionManger } from '@blocksx/scope';
 
 import FunctionTooltip from './functionTooltip';
 import FormerScopeInput from './input';
@@ -281,21 +281,23 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                                 getScopeValue={()=> {
                                     return it.value;
                                 }}
+                                padding={true}
                                 className={this.props.className}
                                 disabled={!this.isCanInput(it.value)}
                                 addValueIntoScope={this.props.addValueIntoScope}
                                 index={index + this.getDefaultIndex(this.state.level - 1) * (idx + 1)}
                                 context={this.context}
                                 onRemoveValue={(currentIndex) => {
+                                    //console.log(currentIndex , 333333)
                                     // 参数不能删除只能让光标往前
-                                    // console.log(currentIndex, 33)
-                                    // return this.doRemoveScopeValue(item.parameters, idx, currentIndex)
-                                    /*  if (idx == 0) {
+                                     console.log(currentIndex, 33)
+                                     return this.doRemoveScopeValue(item.parameters, idx, currentIndex)
+                                      if (idx == 0) {
                                         return false
                                     }
                                     item.parameters.splice(Math.max(0,idx-1), 1);
                                     
-                                    this.doChangeValue(undefined, true);*/
+                                    this.doChangeValue(undefined, true);
                                 }}
                                 onChangeValue={(value: any) => {
                                     it.value = value;
@@ -364,7 +366,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                         className={this.props.className}
                         serial={index}
 
-                        padding={this.props.padding}
+                        padding={item.padding}
                         getScopeValue={()=> {
                             return this.state.value;
                         }}
@@ -488,25 +490,25 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         return length;
     }
     private doRemoveScopeValue(originValue: any, index: number, currentIndex: number) {
-
+        
         if (index == 0) {
             return this.doFocus(currentIndex - 1), false;
         }
-
         
         // 需要判断上一个值是否是是value
         let prevScpoe: any = originValue[index - 1];
         let currentCusorposition: number = -1;
-        
-
         if (prevScpoe.$type == 'value') {
+            
             if (this.isSampleScopeValue(prevScpoe) && prevScpoe.value.length > 0) {
-
+                console.log(index, currentIndex,111)
                 // 当值大于零的时候，焦点
-                prevScpoe.value = prevScpoe.value.substring(0, prevScpoe.value.length - 2)
+                prevScpoe.value = prevScpoe.value.substring(0, prevScpoe.value.length);
                 currentIndex--;
+                
+                originValue.splice(index, 1);
             } else {
-                originValue.splice(index - 1, 1);
+                originValue.splice(index, 1);
             }
 
         } else {
@@ -538,6 +540,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
 
         this.doChangeValue(undefined, true);
         this.doFocus(currentIndex, currentCusorposition);
+
         return false;
     }
     private isSampleScopeValue(scope: any) {
@@ -551,18 +554,19 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         }, 0)
     }
     private getOnEventProps() {
-        return Utils.getOnEventProps(this.props)
+        return utils.omit(Utils.getOnEventProps(this.props), ['onRemoveValue'])
     }
     public render() {
         let { value, originValue } = this.state;
         
         //console.log(value.length, 'render value')
         if (Array.isArray(value)) {
+            
             return (
                 <>
                     {originValue.map((it, index) => {
                         return this.renderContent(it, index, (currentIndex: any) => {
-                            
+                            console.log(index, currentIndex,33331121)
                             return this.doRemoveScopeValue(originValue, index, currentIndex)
                         })
                     })}
@@ -580,11 +584,12 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                     getScopeValue={this.props.getScopeValue}
                     parentScope={this.props.parentScope || this}
                     className={this.props.className}
-                    onRemoveValue={(current: any) => {
-                        return this.onRemoveValue(current)
-                    }}
+                    
                     padding={this.props.padding}
                     {...this.getOnEventProps()}
+                    onRemoveValue={(current: any,index) => {
+                        return this.onRemoveValue(current)
+                    }}
                     context={this.context} 
                     index={this.state.index} 
                     onChangeValue={(val) => {

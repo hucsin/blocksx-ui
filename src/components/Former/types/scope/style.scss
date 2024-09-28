@@ -227,11 +227,13 @@
         
         .ui-scope-content {
             >.ui-scope-function,
-            >.ui-scope-input:not(:empty) {
+            >.ui-scope-input:not(.ui-scope-input-padding) {
                 &::after{
                     content: ',';
                     display: inline-block;
                     margin-right: 4px;
+
+                    opacity: .5;
                 }
             }
             >.ui-scope-scope {
@@ -241,6 +243,7 @@
                     display: inline-block;
                     margin-left: 4px;
                     position: absolute;
+                    opacity: .5;
                 }
             }
             >*:last-child {
@@ -346,6 +349,27 @@
         pointer-events: none;
         opacity: .2;
     }
+
+    .ui-scope-function-keyword {
+        &.ui-scope-function-hight {
+            background-color: var(--main-bg-color) !important;
+            color:#fff;
+            span {
+                opacity: .9;
+            }
+        }
+    }
+    .ui-scope-function-button {
+       
+        height: 16px;
+        width: 16px;
+        margin-top: -3px;
+        font-size: 12px;
+        line-height: 1.5714285714285714;
+        vertical-align: middle;
+        padding: 0;
+        
+    }
     .ui-scope-function {
         .ui-scope-keyword {
             display: inline-block;
@@ -353,16 +377,7 @@
         .ui-scope-input {
             min-width: 8px;
         }
-        &.ui-scope-function-hight {
-            > .ui-scope-keyword {
-                background-color: var(--main-bg-color) !important;
-                color:#fff;
-                span {
-                    opacity: .9;
-                }
-            }
-            
-        }
+        
         &:Hover {
            > .ui-scope-keyword {
                 background-color: #d9d9d9;
@@ -370,15 +385,6 @@
         }
         &:first-child {
             margin-left: 0
-        }
-        button {
-            height: 16px;
-            width: 16px;
-            margin-top: -3px;
-            font-size: 12px;
-            line-height: 1.5714285714285714;
-            vertical-align: middle;
-            padding: 0;
         }
     }
 
@@ -404,7 +410,9 @@
             outline: none;
         }
         &:empty {
-            content: "d"
+            &::before{
+                content: " "
+            }
         }
     }
     .ui-scope-keyword-one {
@@ -424,7 +432,7 @@
     }
     .ui-scope-scope,
     .ui-scope-vaiable,
-    .ui-scope-keyword {
+    .ui-scope-function-keyword {
         background:var(--main-background-color);
         border-radius: 3px;
         padding: 1px 4px;

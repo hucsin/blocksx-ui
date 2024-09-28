@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { ScopeManger } from '@blocksx/eos';
+import { ScopeManger } from '@blocksx/scope';
 import { GlobalScope, MiniFlow } from '@blocksx/ui';
 import PanelProcess from './process';
 import PanelStorges from './storges';

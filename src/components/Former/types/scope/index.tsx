@@ -108,7 +108,9 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
     private inputScopeMap: any;
     private focusInput: any;
     private lastFocus: any;
+    
     private lastFocusIndex: number;
+    private focusIndex: number;
 
     private timer: any;
     private innerRef: any;
@@ -203,7 +205,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
     private removeInput = (inputRef: any) => {
         let inputUniq: any = inputRef.dataset.index;
         this.inputList = this.inputList.filter(it => it != inputRef);
-
+        console.log('removeinput,3')
         delete this.inputScopeMap[inputUniq];
     }
     // 添加value到当前的scope
@@ -313,7 +315,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
 
                 let position: number = utils.isUndefined(isAct) || isAct == -1 ? current.innerText.length : isAct;
 
-                ScopeUtils.setCursorPosition(current, position)
+                ScopeUtils.setCursorPosition(current, this.focusIndex  = position)
             }
             this.lastFocusIndex = ScopeUtils.getCursorPosition(current);
             this.focusInput = current;
@@ -373,19 +375,25 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
             }
         }
     }
-
+    private getFocusIndex =() => {
+        return this.focusIndex;
+    }
     private onForwardCursor = (current: any) => {
         let forwardInput = this.getAfterBeforeInput(current);
         if (forwardInput) {
+            this.focusIndex = forwardInput.innerText.length
             forwardInput.focus();
             if (forwardInput.innerText.length) {
-                ScopeUtils.setCursorPosition(forwardInput, forwardInput.innerText.length)
+                ScopeUtils.setCursorPosition(forwardInput, this.focusIndex = forwardInput.innerText.length);
+                
             }
         }
     }
     private onBackwardCursor = (current) => {
         let forwardInput = this.getAfterBeforeInput(current, 'after');
+        
         if (forwardInput) {
+            ScopeUtils.setCursorPosition(forwardInput, this.focusIndex = 0);
             forwardInput.focus();
         }
     }
@@ -470,6 +478,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                 onFocus: this.onFoucs,
                 onBlur: this.onBlur,
                 findInputRange: this.findInputRange,
+                getFocusIndex:this.getFocusIndex,
                 setDisabled: (disabled:boolean) => {
                     
                     this.setState({
@@ -512,7 +521,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                 <Tooltip title={this.state.errorMessage} placement='topLeft'>
                     <div
                         className={classnames('ui-scope', {
-                            'ui-scope-focus':this.state.focusopen,
+                            'ui-scope-focus': this.state.focusopen,
                             'ui-scope-more': !strict,
                             'ui-scope-error': !!this.state.errorMessage,
                             'ui-scope-visibility': this.state.width === 0,

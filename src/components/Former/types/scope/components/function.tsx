@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { Button, Popover, Tooltip } from 'antd';
 import * as Icons from '../../../../Icons';
-import { ScopeManger as FunctionManger } from '@blocksx/eos';
+import { ScopeManger as FunctionManger } from '@blocksx/scope';
 import ScopeTooltip from './panel/tooltip'
 
 interface FormerScopeFunctionProps {
@@ -41,6 +41,7 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
     }
     
     private getDisplayName(name: string) {
+        //return name;
         let split: any[] = name.split('.');
         split.shift();
         return split.join('.')
@@ -89,20 +90,21 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
         let hasAdd: boolean = restParams && restParams.type =='rest' && maxParams > parameters.length
         let number: number = children.length;
 
-
+/*
+        className={classnames({
+            'ui-scope-function': true,
+            'ui-scope-function-hight': this.state.open || this.state.hight
+        })}*/
         return (
-            <span 
-                className={classnames({
-                    'ui-scope-function': true,
-                    'ui-scope-function-hight': this.state.open || this.state.hight
-                })}
-            >   
+            <>   
                 <ScopeTooltip 
                     {...this.schema}
                     onOpenChange={(open)=>this.setState({open})}
                 >
                     <span 
-                        className='ui-scope-keyword'
+                        className={classnames('ui-scope-function-keyword', {
+                            'ui-scope-function-hight': this.state.open || this.state.hight
+                        })}
                         onMouseEnter={this.highlight}
                         onMouseLeave={this.unhighlight}
                     >
@@ -113,19 +115,36 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
                 {React.Children.map(children, (children: any, index: number) => {
                     return (
                         <>
-                            <Tooltip title={(paramsmeta[index]||restParams).description}>{React.cloneElement(children, {})}</Tooltip>
-                            {index< number -1 &&  <span>{hasAdd && (index == number -1) ? ':':','}</span>} 
+                            <Tooltip 
+                                title={(paramsmeta[index]||restParams).description}
+                            >{React.cloneElement(children, {
+                                onMouseEnter: this.highlight,
+                                padding: true,
+                                onMouseLeave: this.unhighlight
+                            })}</Tooltip>
+                            {index< number -1 &&  <span style={{opacity: .5}}>{hasAdd && (index == number -1) ? ':':','}</span>} 
                         </>
                     )
 
                 })}
-                {hasAdd && <Tooltip title={`Add more rest parameters`}><Button tabIndex={-1} size='small' onClick={()=> this.props.onAddParam()} type="text"><Icons.EllipsisSuggestionOutlined/></Button></Tooltip>}
+                {hasAdd && <Tooltip title={`Add more rest parameters`}>
+                    <Button 
+                        className='ui-scope-function-button'
+                        onMouseEnter={this.highlight}
+                        onMouseLeave={this.unhighlight} 
+                        tabIndex={-1} size='small' 
+                        onClick={()=> this.props.onAddParam()} type="text"><Icons.EllipsisSuggestionOutlined/>
+                    </Button>
+                </Tooltip>}
                 {paramsmeta.length >0 &&<span 
-                    className='ui-scope-keyword'
+                    className={classnames('ui-scope-function-keyword', {
+                        'ui-scope-function-hight': this.state.open || this.state.hight
+                    })}
                     onMouseEnter={this.highlight}
                     onMouseLeave={this.unhighlight}
                 >{')'}</span>}
-            </span>
+                <span className='ui-scope-function'></span>
+            </>
         )
     }
 

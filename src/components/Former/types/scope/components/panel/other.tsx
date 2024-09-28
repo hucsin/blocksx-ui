@@ -1,6 +1,6 @@
 import React from 'react';
 import { utils } from '@blocksx/core';
-import { ScopeManger } from '@blocksx/eos';
+import { ScopeManger } from '@blocksx/scope';
 import * as Icons from '../../../../../Icons';
 import Notice from '../../../notice';
 import Tooltip from './tooltip';

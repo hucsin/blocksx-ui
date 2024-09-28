@@ -1,6 +1,6 @@
 import React from 'react';
 import classname from 'classnames';
-import { ScopeManger } from '@blocksx/eos';
+import { ScopeManger } from '@blocksx/scope';
 import { Icons, FormerTypes } from '@blocksx/ui';
 import { Popover } from 'antd'
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames'
 import Context from '../contexts';
 import utils from '../utils'
 
@@ -39,6 +40,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
     public ref: any;
     private timer: any;
     private lastPostion: number;
+    private beforehold: number;
     public constructor(props: FormerScopeInputProps) {
         super(props);
 
@@ -53,8 +55,10 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             strict: props.strict,
             readonly: props.readonly || false
         }
-
+        this.beforehold = 0;
         this.ref = React.createRef();
+
+        console.log(props.padding,332232)
     }
 
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<FormerScopeInputProps>, nextContext: any): void {
@@ -118,9 +122,13 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             this.props.onChangeValue(this.state.value)
         })
     }
+    private setValue(val: string) {
+        this.ref.current.innerHTML =val;
+        this.doChangeValue(val);
+    }
     private doRemoveCursor() {
         let index: number = this.context.findInputIndex(this.ref.current);
-
+        
         if (false !== this.props.onRemoveValue(index)) {
             setTimeout(() => {
                 this.context.onFocus(Math.max(0, index - 1))
@@ -128,9 +136,11 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
         }
     }
     private doForwardCursor() {
+        this.beforehold = 0;
         this.context.onForwardCursor(this.ref.current)
     }
     private doBackwardCursor() {
+        this.beforehold = 0;
         this.context.onBackwardCursor(this.ref.current)
     }
     public stop(e) {
@@ -140,6 +150,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
     public resetCursorPosition = (e) => {
         let { dataType = [] } = this.props;
         let innerHTML: string = this.ref.current.innerText;
+
 
         // 非严格模式下，不支持输入，只支持删除
         if (false == this.props.strict) {
@@ -174,29 +185,62 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
 
             }
         }
+        
 
-        if ([8, 37, 39].indexOf(e.keyCode) > -1) {
+        if ([8, 37, 39].includes(e.keyCode)) {
 
             setTimeout(() => {
 
                 //let spFirst: boolean = innerHTML.charCodeAt(0) === 8203;
+                let valueLength: number = innerHTML.length ;
                 let currentPostion: number = utils.getCursorPosition(this.ref.current);
+                let lastPostion: number = this.lastPostion;
 
-                if ((innerHTML.length == 0 || currentPostion < 1 && this.lastPostion == currentPostion)) {
+                //if ((innerHTML.length == 0 || currentPostion < 1 && this.lastPostion == currentPostion)) {
+                // 光标从后到当前
+                console.log(currentPostion, lastPostion, 233333322)
+                if (currentPostion == 0 && (lastPostion < 1 )) {
                     if (37 == e.keyCode) {
-                        this.doForwardCursor();
-                    } else if (8 == e.keyCode) {
-                        this.doRemoveCursor();
-                    } else if (39 == e.keyCode) {
-                        this.doBackwardCursor()
-                    }
-                } else {
-                    if (innerHTML.length <= currentPostion && this.lastPostion == currentPostion && 39 == e.keyCode) {
-                        this.doBackwardCursor()
+                           
+                            this.doForwardCursor();
+                        
+                    } 
+                } 
+                
+                if (valueLength == currentPostion && e.keyCode == 39) {
+                    if (lastPostion >= valueLength) {
+                        this.doBackwardCursor();
                     }
                 }
+                
+                if (8 == e.keyCode) {
+
+                    console.log(currentPostion, valueLength, 32323)
+                    
+                    if (currentPostion == 0 && valueLength >=1) {
+                        this.doForwardCursor();
+                    } else {
+
+                        if (valueLength ==1) {
+                            this.setValue(' ')
+                            this.ref.current.focus();
+                        } else if (valueLength < 1) {
+                            this.doRemoveCursor();
+                        }
+                    }
+                }
+
+                console.log(valueLength,"currentPostion:", currentPostion,"lastPostion:", lastPostion,888999)
+
                 this.resetLastPosition(currentPostion)
             }, 0)
+
+
+            if (8 == e.keyCode && innerHTML.length <= 1) {
+                return this.stop(e);
+            }
+            
+
         } else {
 
             if (!this.canInput() || e.keyCode == 13) {
@@ -206,6 +250,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             this.resetLastPosition()
         }
     }
+    
     private resetLastPosition(postion?: number) {
         this.lastPostion = typeof postion == 'number' ? postion : utils.getCursorPosition(this.ref.current)
     }
@@ -246,22 +291,21 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             return !Array.isArray(value) ? true : value.length == 1 && value[0].$type == 'value';
         }
 
-
-        if (this.state.disabled) {
-            return false;
-        }
-
-        return true
+        return this.state.disabled ? false : true;
     }
 
     public render() {
+        let defaultValue: any = (this.state.defaultValue || "").trim();
         
         return (
             <span
                 ref={this.ref}
                 data-index={this.state.index}
                 data-serial={this.state.serial}
-                className={`ui-scope-input ${this.props.className}`}
+                className={classnames('ui-scope-input', {
+                    [`${this.props.className}`]: this.props.className,
+                    'ui-scope-input-padding': this.props.padding
+                })}
                 contentEditable={this.state.readonly ? false : true}
                 {...utils.getOnEventProps(this.props)}
                 onBlur={() => {
@@ -287,7 +331,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                     this.context.onFocus(this.ref.current, true);
                     this.context.setCurrentDataType(this.state.dataType);
 
-                    this.resetLastPosition();
+                    this.resetLastPosition(this.context.getFocusIndex());
                 }}
                 //onKeyDown={this.resetCursorPosition}
                 onMouseUp={this.resetCursorPosition}
@@ -304,7 +348,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 onInput={({ target }: any) => {
                     let originValue: any = target.innerText.trim().replace(/\<[^\>]+\>/ig, '');
                     if (!originValue) {
-                        //this.ref.current.innerHTML = '&#8203;';
+                       // this.ref.current.innerHTML = '&#8203;';
                         // this.doFocus();
                     }
 
@@ -317,7 +361,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                             this.context.setDisabled(originValue)
                         }
                     }
-                }}>{this.state.defaultValue}</span>
+                }}>{defaultValue}</span>
         )
     }
 }

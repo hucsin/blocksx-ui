@@ -171,7 +171,8 @@ class SmartRequest {
 
             return new Promise((resolve, reject) => {
                 Request.get(this.getRequestURI(url)
-                    , location.href.match(/__debug__/) ?{...query, __debug__: true } : {
+                // @ts-ignore
+                    , (location as any).href.match(/__debug__/) ?{...query, __debug__: true } : {
                         _: Encode.encode(JSON.stringify(query))
                     }
                     , this.getHeaders() 

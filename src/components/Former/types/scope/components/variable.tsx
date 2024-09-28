@@ -1,7 +1,7 @@
 import React from 'react';
 import ScopeTooltip from './panel/tooltip';
 
-import { ScopeManger as FunctionManger } from '@blocksx/eos';
+import { ScopeManger as FunctionManger } from '@blocksx/scope';
 import * as Icons from '../../../../Icons';
 
 interface FormerVariableProps {

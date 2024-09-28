@@ -55,15 +55,14 @@ export default class ThinkingNodeManager {
             let currentNode: any = this.getNodeByName(it.nodeId);
             let storage: any = keypath.get(currentNode, 'props.input.$storage');
             let storageKey: string = [it.name, it.nodeId, storage].join('.');
-            console.log(it, 333,storageKey, this.hasCache(storageKey), this.name)
+            
             if (this.hasCache(storageKey)) {
                 return cacheMap[it.nodeId] = this.getCache(storageKey)
             }
 
             if (this.has(it.name)) {
-                console.log(2232323, this.get(it.name)?.getOutputSchema(it.nodeId),9999990)
                 if (schema = this.get(it.name)?.getOutputSchema(it.nodeId)) {
-                    console.log(schema, 3232332)
+                    
                     return cacheMap[it.nodeId] = this.clearResult(it.name, it.nodeId, it.name,schema);
                 }
             }

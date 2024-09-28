@@ -1,5 +1,7 @@
 import { utils } from '@blocksx/core';
-import { StructuralMiniFlow } from '@blocksx/structural';
+import CoreScope from '@blocksx/scope';
+
+import { StructuralMiniFlow, StructuralJSON } from '@blocksx/structural';
 import { IThinkingNode, ThinkingNodeManager, MiniFlow } from "@blocksx/ui";
 
 import FlowUtils from '../utils';
@@ -15,25 +17,22 @@ class FlowControlIteratorNode extends IThinkingNode {
             let { props = {}} = currentNode;
             
 
-
-
-
-
             if (props.input && utils.isValidArray(props.input.target)) {
 
-                console.log(this.getNodeInScope(props.input.target))
+                return new Promise((resolve, reject) => {
+                    let output: any = ThinkingNodeManager.getOutputSchemas(this.getNodeInScope(props.input.target));
+                    
+                    output.then(data=> {
+                        let input: any = CoreScope.getValue('connector', {
+                            getScopeValue(name: string) {
+                                return StructuralJSON.toValues(data[name]);
+                            }
+                        }, props.input.target[0]);
+                        resolve(StructuralJSON.toSchema(input))
+                    })
 
-                let output: any = ThinkingNodeManager.getOutputSchemas(this.getNodeInScope(props.input.target));
-                output.then(data=> {
-                    console.log(data, 32332)
                 })
-
-                return ;
-                console.log(props.input.target)
-                if (props.input.target[0].value) {
-                    target = props.input.target[0];
-                    nodeId = target.keypath.replace(/^\$flow\./, '')
-                }
+                
             }
 
             let node: any = currentFlow.getSourceNodeByName(nodeId);

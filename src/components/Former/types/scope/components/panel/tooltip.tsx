@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { ScopeManger } from '@blocksx/eos';
+import { ScopeManger } from '@blocksx/scope';
 import { utils } from '@blocksx/core';
 import { Popover,Alert } from 'antd';
 import { Icons } from '@blocksx/ui';
@@ -44,7 +44,7 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
         }
     }
     public renderBody() {
-        let { description , parameters, examples, returns = {}, other } = this.props;
+        let { description , parameters = [], examples, returns = {}, other } = this.props;
 
         if (returns.dataType && !Array.isArray(returns.dataType)) {
 
@@ -80,7 +80,7 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
 
                     {parameters && parameters.length>0 && <dl>
                         <dt>Parameters</dt>
-                        {parameters.map((it, index)=> {
+                        {parameters && parameters.map((it, index)=> {
                             if (it.type =='rest') {
                                 return (
                                     <dd  className={classnames({

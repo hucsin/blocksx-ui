@@ -332,7 +332,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
             onSelect={(item:any, info: any)=> {
                 let pop: any = item.pop();
 //                let 
-                console.log(pop, selected,333, info)
+                //console.log(pop, selected,333, info)
                 pop && this.props.onClick(
                     pop.replace(/\.\./,'.'), 
                     ['$flow', selected.originalName].join('.'),
