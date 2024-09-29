@@ -1132,6 +1132,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                 originValue: this.state.originValue,
                 runtimeValue: this.state.runtimeValue,
                 disabled: !this.isAllowModify(),
+                readonly: !this.isAllowModify(),
                 onChangeValue: (val: any, type?: string, originValue?: any) => this.onChangeValue(val, type || 'man', originValue)
             }
 

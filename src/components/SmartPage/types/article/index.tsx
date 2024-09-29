@@ -44,11 +44,14 @@ interface SmartPageActicleState {
     summary?: string;
     icon?: string;
     value: any;
+    articleValue?: string;
     loading?: boolean;
     dataSource: any;
     optional?: any;
     createdAt?: boolean;
     storagelink?: string;
+    pageMeta?: any;
+    reflush?:any;
 }
 
 export default class SmartPageArticle extends React.Component<SmartPageActicleProps, SmartPageActicleState> {
@@ -63,11 +66,12 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
         this.state = {
             loading: false,
             value: props.value || {},
+            articleValue: '',
             dataSource: props.dataSource,
             title: props.title,
             optional: pageMeta ? pageMeta.optional : null,
-            createdAt: pageMeta && pageMeta.optional ? utils.isUndefined(pageMeta.optional.createdAt) ? true : pageMeta.optional.createdAt : true
-
+            createdAt: pageMeta && pageMeta.optional ? utils.isUndefined(pageMeta.optional.createdAt) ? true : pageMeta.optional.createdAt : true,
+            reflush: 0
         }
         this.requestMap = {};
         this.operateContainerRef = React.createRef();
@@ -169,8 +173,11 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
     }
     private createRequst(mode: string, path:string) {
         if (!this.requestMap[mode]) {
-            this.requestMap[mode] = SmartRequst.makePostRequest(this.props.path +'/' + path)
+            let urlstring: string = path.match(/\/(api|eos)\//) ? path : (this.props.path + '/' + path);
+            this.requestMap[mode] = SmartRequst.makePostRequest(urlstring)
         }
+
+        return this.requestMap[mode];
     }
 
     private filterFields(place: string) {
@@ -220,6 +227,34 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
     private onRowAction(operate: any, rowdata: any) {
         if (this.props.onRowAction) {
             this.props.onRowAction(operate, rowdata)
+        }
+    }
+    private getParmas() {
+        let { pageMeta = {} } = this.state;
+
+        return pageMeta.params || {};
+    }
+    private initDataValue() {
+        let initRequest: any = this.findRequst('former.init');
+        if (initRequest) {
+            initRequest(this.getParmas()).then((result) => {
+                this.setState({
+                    reflush: +new Date,
+                    articleValue: result
+                })
+            })
+        }
+
+    }
+    private onSave(val: any) {
+        let saveRequest: any = this.findRequst('former.save');
+        if (saveRequest) {
+            let value: any = {
+                ...val,
+                ...(this.getParmas())
+            }
+            
+            return saveRequest(value)
         }
     }
     private renderButtons = ()=> {
@@ -295,7 +330,12 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                             noToolbar={false}
                             rowSelection={true}
                             noSearcher={true}
-                            size={'small'}
+                            value={this.state.articleValue}
+                            reflush={this.state.reflush}
+                            //size={'default'}
+                            onSave={(val: any)=> {
+                               return this.onSave(val)
+                            }}
                             operateContainerRef={this.operateContainerRef}
                             onGetDependentParameters={()=> {
                                 let { value } = this.state;
@@ -314,14 +354,17 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                             }}
                             onInitPage={(data)=> {
                                 
-                                let {pageMeta = {}} = data;
-                                
+                                let {pageMeta = {}, uiType} = data;
+                                console.log(data,2222)
                                 this.setState({
                                     storagelink: pageMeta.storagelink,
                                     title: pageMeta.title,
                                     summary: pageMeta.summary,
-                                    icon: pageMeta.icon
-                                })
+                                    icon: pageMeta.icon,
+                                    pageMeta
+                                }, () => uiType == 'former' && this.initDataValue())
+
+                                
                             }}
                         />
                     )

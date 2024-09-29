@@ -97,12 +97,15 @@
       if (!datasource.length) {
         datasource = this.props.dict || [];
       }
+
+    
+
       // 过滤 视图前面
       if (this.props.viewer) {
         return datasource.filter(it => it.value === this.state.value)
       }
 
-      return datasource;
+      return datasource.filter(it => !it.hide);
     }
     private renderButton() {
         let dataSource: any = this.getDatasource();

@@ -122,7 +122,7 @@ export default class FormerScopeFunction extends React.Component<FormerScopeFunc
                                 padding: true,
                                 onMouseLeave: this.unhighlight
                             })}</Tooltip>
-                            {index< number -1 &&  <span style={{opacity: .5}}>{hasAdd && (index == number -1) ? ':':','}</span>} 
+                            {index< number -1 &&  <span className='ui-scope-comma'></span>} 
                         </>
                     )
 

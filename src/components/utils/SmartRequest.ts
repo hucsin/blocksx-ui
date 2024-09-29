@@ -194,7 +194,7 @@ class SmartRequest {
                         }
                     }
                 }).catch((e: any,) => {
-                    MessageFor.error(e.message || e || 'system error');
+                    MessageFor.error(JSON.stringify(e.message || e || 'system error'));
                   //  reject(e)
                 })
             })

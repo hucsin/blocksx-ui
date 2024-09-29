@@ -25,11 +25,6 @@ import SmartPageUtils from './core/utils';
 import { cloudTexture, mainTexture } from './core/texture';
 
 
-
-
-
-
-
 const svgbgstring = cloudTexture;
 
 
@@ -46,6 +41,7 @@ export interface SmartPageProps {
     typeProps: any;
     props: any;
     open: boolean;
+    onSave?: Function;
     onShow?: Function;
     onClose?: Function;
 
@@ -366,7 +362,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 })
 
                 if (this.props.onInitPage) {
-                    this.props.onInitPage(data)
+                    this.props.onInitPage(data, this)
                 }
 
                 this.setState(data)
@@ -516,11 +512,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         return params;
     }
     private onChangeValue = (value: any) => {
-        //console.log('onchangevalue-smart', value)
+        
         this.setState({
             value,
             changed: true
         })
+
         if (this.props.onChangeValue) {
             return this.props.onChangeValue(value)
         }
@@ -533,6 +530,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     public renderContentView() {
         let { pageMeta, meta = {} } = this.state;
         let pageInfo: any = meta.page || {};
+        
         return SmartPageUtils.renderPageType(this.state.uiType, {
             id: this.state.id,
             key: this.state.id,
@@ -563,6 +561,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             size: this.props.size,
             ...this.state.props,
             onChangeValue: this.onChangeValue,
+            onSave: (v)=> {
+                return this.onSave(v)
+            },
             onSelectedValue: this.onSelectedValue,
             mode: this.state.mode,
             searchRef: this.searchRef,
@@ -617,7 +618,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                             defaultActiveKey={this.state.defaultClassify}
                             renderContent={() => null}
                         >{dictmap.map(dict => {
-                            return <ClassifyPanel.Panel key={dict.value} label={dict.label} value={dict.value}></ClassifyPanel.Panel>
+                            return <ClassifyPanel.Panel key={dict.value} icon={dict.icon} label={dict.label} value={dict.value}></ClassifyPanel.Panel>
                         })}
                         </ClassifyPanel>
                         <div className={classnames({
@@ -771,11 +772,17 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         return defaultWidth || 600;
     }
     private onClose = (value?: any) => {
+        
         if (this.props.onClose) {
-            this.props.onClose(value, this.state.changed)
+           return this.props.onClose(value, this.state.changed)
         }
 
         this.setState({ open: false })
+    }
+    private onSave = (value) => {
+        if (this.props.onSave) {
+            return this.props.onSave(value, this.state.changed)
+        }
     }
     private toggleOpenStatus = (open: boolean) => {
         
