@@ -1,5 +1,4 @@
-import SmartRequest from "@blocksx/ui/utils/SmartRequest";
-
+import { SmartRequest } from "@blocksx/ui";
 import { Encode, Decode} from '@blocksx/encrypt';
 
 

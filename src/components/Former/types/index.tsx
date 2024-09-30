@@ -21,7 +21,7 @@ export { default as number } from './number';
 export { default as radio } from './radio';
 export { default as map } from './map';
 export { default as table } from './table';
-export { default as image } from './image';
+//export { default as image } from './image';
 export { default as condition } from './condition';
 
 export { default as textarea } from './textarea';

@@ -77,10 +77,11 @@ function buildPackage(packagesDir, dirPath, isBuildEs) {
           ...tsconfig.compilerOptions,
           outDir: outDir,
           declaration: true,
-          declarationDir: outDir
+          declarationDir: outDir,
+          paths: null
         },
         files.filter(it => {
-          if (it.match(/(\.ts|\.tsx|\.svg)$/)) {
+          if (it.match(/(\.ts|\.tsx|\.json)$/)) {
             return true;
           }
         })
@@ -123,8 +124,9 @@ function buildFile(packagesDir, dirPath, file, isBuildEs, esDir) {
   if (isBuildEs) {
     babelOptions = getBabelConfig(true);
   } else {
-    babelOptions = getBabelConfig();
+    babelOptions = getBabelConfig(true);
   }
+  
   spawnSync('mkdir', ['-p', path.dirname(destPath)]);
   if (!minimatch(file, IGNORE_PATTERN)) {
 

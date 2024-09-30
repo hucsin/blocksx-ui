@@ -354,8 +354,8 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                             }}
                             onInitPage={(data)=> {
                                 
-                                let {pageMeta = {}, uiType} = data;
-                                console.log(data,2222)
+                                let { pageMeta = {}, uiType } = data;
+                                
                                 this.setState({
                                     storagelink: pageMeta.storagelink,
                                     title: pageMeta.title,
@@ -363,8 +363,6 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                                     icon: pageMeta.icon,
                                     pageMeta
                                 }, () => uiType == 'former' && this.initDataValue())
-
-                                
                             }}
                         />
                     )
