@@ -2,6 +2,7 @@
 export { StateComponent, StateModel, StateX } from './StateX';
 export * from './core';
 
+export { default as Box } from './Box'
 export { default as Sidebar } from './Sidebar';
 export { default as SearchBar } from './SearchBar';
 export { default as SmartPage } from './SmartPage';
@@ -15,7 +16,8 @@ export { default as LoginForm } from './LoginForm';
 export { default as ErrorMessage } from './ErrorMessage';
 export { default as Tabler } from './Tabler';
 export { default as Former } from './Former';
-export { default as ValueView } from './ValueView'
+export { default as ValueView } from './ValueView';
+export { default as Markdown } from './Markdown';
 
 //export { default as EditorCore } from '../pages/components/EditorCore';
 export { default as SmartRequest } from './utils/SmartRequest';
