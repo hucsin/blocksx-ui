@@ -91,7 +91,7 @@ export default class Outline extends React.Component<BoxItem, any> {
     }
     private getTitleLevel() {
         if (this.props.size == 'large') {
-            return 1
+          // return 1
         }
         return 2;
     }

@@ -116,7 +116,7 @@ export default class Card extends React.Component<BoxItem,{}> {
                     [`block-card-theme-${theme}`]: theme
                 })}
             >
-                <Typography.Title level={1}>{this.renderTitleIcon()}{this.props.title}</Typography.Title>
+                <Typography.Title level={2}>{this.renderTitleIcon()}{this.props.title}</Typography.Title>
 
                 {this.props.description && <Typography.Paragraph className='block-subtitle'>{this.props.description}</Typography.Paragraph>}
 

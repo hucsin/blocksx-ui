@@ -1,0 +1,60 @@
+.box-swap {
+    > h2 {
+        font-size: 50px;
+        margin-top: 0;
+        margin-bottom: 32px;
+    }
+    > p {
+        font-size: 18px;
+        max-width: 60%;
+    }
+    .box-swap-scrollBar {
+        min-height: 258px;
+        padding-top: 32px;
+        .box-swap-inner {
+            margin-left: -128px;
+            margin-right: -128px;
+            padding:42px 128px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            overflow-x: scroll;
+            -webkit-mask-image: linear-gradient(90deg, transparent, rgba(0, 0, 0, .2) 4rem, #000 8rem, #000 calc(100% - 8rem), rgba(0, 0, 0, .2) calc(100% - 4rem), transparent);
+            mask-image: linear-gradient(90deg, transparent, rgba(0, 0, 0, .2) 4rem, #000 8rem, #000 calc(100% - 8rem), rgba(0, 0, 0, .2) calc(100% - 4rem), transparent);
+            -webkit-mask-image: linear-gradient(270deg, transparent, rgba(0, 0, 0, .2) 4rem, #000 8rem, #000 calc(100% - 8rem), rgba(0, 0, 0, .2) calc(100% - 4rem), transparent);
+            mask-image: linear-gradient(270deg, transparent, rgba(0, 0, 0, .2) 4rem, #000 8rem, #000 calc(100% - 8rem), rgba(0, 0, 0, .2) calc(100% - 4rem), transparent);
+        }
+        .scrollbar-item {
+            flex-shrink: 0;
+            border: 2px solid transparent;
+            width: 250px;
+            margin-bottom: 0;
+            cursor: pointer;
+            display:inline-block;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .16);
+            margin-right: 32px;
+            transition: all .2s;
+            padding: 32px;
+            background-color: hsla(0, 0%, 100%, .1);
+            > div {
+                span.anticon {
+                    font-size: 48px;
+                }
+            }
+            h2 {
+                margin-bottom: 0px;
+            }
+            p {
+                margin-top: 0;
+                font-size: 18px;
+                padding-top: 8px;
+            }
+            
+            &:Hover {
+                transform: scale(1.07);
+                border-color:var(--main-bg-color);
+            }
+        }
+    }
+}

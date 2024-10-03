@@ -22,7 +22,7 @@ export default class BoxIntroduce extends React.Component<BoxItem> {
                 </div>
                 <div className='box-introduce-desc'>
                     <h2>{props.title}</h2>
-                    <p>{props.slogan}</p>
+                    <p>{props.slogan || props.description}</p>
                     {props.actions &&<div className='box-actions'>{props.actions.map(it => {
                     return (
                         <a href={it.action} >{it.text}</a>

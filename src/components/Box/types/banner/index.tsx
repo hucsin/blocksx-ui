@@ -24,7 +24,7 @@ export default class BoxBanner extends React.Component<BoxBannerProps> {
             })}>
                 {props.title && <h1>{props.title}</h1>}
                 {props.subtitle && <h2>{props.subtitle}</h2>}
-                <p>{props.slogan}</p>
+                <p>{props.slogan || props.description}</p>
                 {props.actions &&<div className='box-banner-actions'>{props.actions.map(it => {
                     return (
                         <a href={it.action} >{it.text}</a>
