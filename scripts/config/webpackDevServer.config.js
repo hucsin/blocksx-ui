@@ -15,7 +15,7 @@ const sockPath = process.env.WDS_SOCKET_PATH; // default: '/ws'
 const sockPort = process.env.WDS_SOCKET_PORT;
 
 
-
+console.log(paths, 3333)
 
 module.exports = function (proxy, allowedHost) {
   const disableFirewall =

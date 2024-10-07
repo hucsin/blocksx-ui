@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactJsonView from 'react-json-view';
 
 import FormerCode from '../code';
 import { IFormerBase } from '../../typings';
@@ -18,7 +17,10 @@ interface FormerCodeState {
 class FormerJsonViewer extends React.Component<{value: any}> {
     public render() {
         return (
-            <ReactJsonView name={false} quotesOnKeys={false} displayDataTypes={false} displayObjectSize={false} enableClipboard={false} src={this.props.value} />
+            <pre>
+                {JSON.stringify(this.props.value, null,2)}
+            </pre>
+            
         )
     }
 }
