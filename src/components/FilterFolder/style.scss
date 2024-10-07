@@ -77,10 +77,11 @@
         box-sizing: border-box;
         height:calc(100% - 32px);
         background-color: #fff;
-        border-radius: 12px;
-        margin-left: 24px;
+        //border-radius: 12px;
+        margin-left: 8px;
         margin-top: 16px;
         margin-bottom: 16px;
+        border-right: 1px solid var(--secondary-border-color);
         .ant-input-suffix {
             color:#ddd;
         }
@@ -95,7 +96,7 @@
 
             }
             color:var(--main-front-color);
-            border-bottom: 4px solid var(--main-border-color);
+            border-bottom: 1px solid var(--main-border-color);
             margin-bottom: 16px;
             padding-bottom: 9px;
             padding-top: 0px;
@@ -104,11 +105,11 @@
             &::after {
                 content: " ";
                 position: absolute;
-                height: 4px;
+                height: 2px;
                 width: 24px;
                 background-color: var(--main-bg-color);
                 left: 0;
-                bottom: -4px;
+                bottom: -2px;
             }
         }
 

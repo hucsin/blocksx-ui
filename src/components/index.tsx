@@ -19,6 +19,8 @@ export { default as Former } from './Former';
 export { default as ValueView } from './ValueView';
 export { default as Markdown } from './Markdown';
 
+export { default as Session } from './core/Session';
+
 //export { default as EditorCore } from '../pages/components/EditorCore';
 export { default as SmartRequest } from './utils/SmartRequest';
 export { default as CombineIcon } from './Icons/CombineIcon';

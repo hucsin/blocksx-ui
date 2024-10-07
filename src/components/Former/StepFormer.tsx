@@ -462,7 +462,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         
         let fistName: string = upperFirst(firstField.name);
         let pageinfo: any = pageMeta.page || {};
-        let defaultTitle: string = pageinfo.title || this.props.defaultFirstTitle || ('1. ' + fistName);
+        let defaultTitle: string = pageinfo.title || this.props.defaultFirstTitle || (fistName);
         
         if (this.state.setpOneValue && !this.state.isStepOne) {
             
@@ -525,7 +525,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                                 }
                             }
                         }}
-                    ><span style={{color:'#ccc'}}>2. </span>{this.stepActionMap[type as any] ||  'Complete'} {(pageMeta.title ||'record')} {hasfirtready && <Button  size='small'>Next</Button>}</span >
+                    ><span style={{color:'#ccc'}}></span>{this.stepActionMap[type as any] ||  'Complete'} {(pageMeta.title ||'record')} {hasfirtready && <Button  size='small'>Next</Button>}</span >
                 </Space>
             </div>
         )

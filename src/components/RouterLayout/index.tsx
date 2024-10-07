@@ -87,7 +87,13 @@ export default class RouterLayout extends React.Component<RouterLayoutProps, Rou
                 name: it.label,
                 type: ''
             }
+            console.log(item, 333)
             // 页面菜单
+
+            if (it.pageType == 'Link') {
+                item.type = 'Link';
+                item.href= it.pagePath;
+            }
             if (item.pageMenu) {
                 item.isRoadmap 
                     ? roadmap.push(item) 

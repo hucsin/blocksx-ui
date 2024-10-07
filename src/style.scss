@@ -28,6 +28,13 @@ body,html {padding:0;margin: 0;height: 100%;}
   background-color: red;
   
 }
+.ui-smartpage-wrapper  {
+  .ui-filter-folder {
+      .ui-filter-folder-title {
+        display: none;;
+      }
+  }
+}
 .panel-resize-handle[data-panel-group-direction='horizontal'] {
   height: 100%;
   width: 3px;   

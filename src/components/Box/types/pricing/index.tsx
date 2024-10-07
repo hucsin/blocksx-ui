@@ -14,26 +14,28 @@ import './style.scss';
 
 interface PricingProps extends BoxItem {
     discount: number;
+    features?: any[],
+    plans?: any[],
     toolbarRef: any;
 }
 
-export default class BoxPricing extends React.Component<PricingProps, {selected: string,isCut:boolean, features: any, plans}> {
+export default class BoxPricing extends React.Component<PricingProps, { selected: string, isCut: boolean, features: any, plans }> {
     public static defaultProps = {
         discount: 10
     }
     private requestHelper: any;
     private defaultSelectd: any;
-    
+
     public constructor(props: PricingProps) {
         super(props);
 
         if (Array.isArray(props.items)) {
-            this.defaultSelectd = props.items[1] && props.items[1].value; 
+            this.defaultSelectd = props.items[1] && props.items[1].value;
         }
 
         this.state = {
-            features: [],
-            plans: [],
+            features: props.features || [],
+            plans: this.getGroupPlans(props.plans || []),
             isCut: false,
             selected: this.defaultSelectd
         }
@@ -42,51 +44,52 @@ export default class BoxPricing extends React.Component<PricingProps, {selected:
             this.requestHelper = SmartRequest.makePostRequest(props.motion)
         }
     }
-    public  componentDidMount(): void {
-        this.requestHelper({}).then((result: any) => {
-            let features: any[] = [];
-            let plans: any [] = [];
+    public componentDidMount(): void {
+        if (this.requestHelper) {
+            this.requestHelper({}).then((result: any) => {
+                let features: any[] = [];
+                let plans: any[] = [];
 
-            result.forEach(it=> {
-                if (it.type == 'features') {
-                    features.push(it)
-                } else {
-                    plans.push(it)
-                }
-            })
+                result.forEach(it => {
+                    if (it.type == 'features') {
+                        features.push(it)
+                    } else {
+                        plans.push(it)
+                    }
+                })
 
-            this.setState({
-                features: features.sort((a,b) => a.sortno < b.sortno ? -1 : 1),
-                plans: this.getGroupPlans(plans)
+                this.setState({
+                    features: features.sort((a, b) => a.sortno < b.sortno ? -1 : 1),
+                    plans: this.getGroupPlans(plans)
+                })
             })
-        })
+        }
     }
 
     public getGroupPlans(plans: any) {
         let group: any = [];
         let groupCache: any = {};
-        plans.sort((a,b)=>a.sortno < b.sortno ? -1 : 1).forEach(plan => {
+        plans.sort((a, b) => a.sortno < b.sortno ? -1 : 1).forEach(plan => {
             if (!groupCache[plan.name]) {
                 group.push(groupCache[plan.name] = {
                     name: plan.name,
                     value: [plan]
                 })
-                
+
             } else {
                 groupCache[plan.name].value.push(plan)
             }
         })
-
         return group;
     }
 
     public renderHeader() {
-        let { items =[] } = this.props;
-        
+        let { items = [] } = this.props;
+
         return (
             <>
                 <th>{this.props.subtitle}</th>
-                {items.map(it=> {
+                {items.map(it => {
                     return (
                         <th className={classnames({
                             'plan-item': true,
@@ -98,10 +101,10 @@ export default class BoxPricing extends React.Component<PricingProps, {selected:
         )
     }
     private findMatchPlan(planList: any, key: string) {
-        return planList.find(it=> it.type == key)
+        return planList.find(it => it.type == key)
     }
-    private renderLineCell(cell:any) {
-        
+    private renderLineCell(cell: any) {
+
         if (cell) {
             if (cell.volume) {
                 return cell.volume
@@ -111,20 +114,20 @@ export default class BoxPricing extends React.Component<PricingProps, {selected:
                 }
                 // dui 
                 return (
-                    <Icons.CheckCircleOutlined/>
+                    <Icons.CheckCircleOutlined />
                 )
             }
         }
         return '-'
     }
-    public renderLine(rowdata: any)  {
-        let { items =[] } = this.props;
+    public renderLine(rowdata: any) {
+        let { items = [] } = this.props;
         let plans = rowdata.plans || [];
 
         return (
             <tr>
-                <td>{rowdata.name} { rowdata.description && <Tooltip title={rowdata.description}><Icons.ExclamationCircleOutlined/></Tooltip>}</td>
-                {items.map(it=> {
+                <td>{rowdata.name} {rowdata.description && <Tooltip title={rowdata.description}><Icons.ExclamationCircleOutlined /></Tooltip>}</td>
+                {items.map(it => {
                     let key: string = it.value;
                     let find: any = this.findMatchPlan(plans, key)
 
@@ -159,9 +162,9 @@ export default class BoxPricing extends React.Component<PricingProps, {selected:
         )
     }
     private renderSubmitPrice(it: any) {
-        
+
         if (it.price) {
-            let price: number = this.state.isCut ? it.price * (100-this.props.discount)/100 : it.price;
+            let price: number = this.state.isCut ? it.price * (100 - this.props.discount) / 100 : it.price;
             return (
                 <span className='price'>
                     ${price}
@@ -176,53 +179,46 @@ export default class BoxPricing extends React.Component<PricingProps, {selected:
 
         let value: any[] = rowdata.value || [];
         let matchItem: any = value.map(it => {
-            let item: any = this.findMatchPlan(it.plans||[], type);
+            let item: any = this.findMatchPlan(it.plans || [], type);
             if (item) {
                 item.info = it.description
             }
             return item;
         }).filter(Boolean)
-        let hasChildren: boolean = matchItem.length> 1;
+
+
+        let hasChildren: boolean = matchItem.length > 1;
         let first: any = rowdata.value[0];
-        
-        return (
+
+        return matchItem.length ? (
             <dd>
-                <h3>{rowdata.name} { first.description && !hasChildren && <Tooltip title={first.description}><Icons.ExclamationCircleOutlined/></Tooltip>}</h3>
-                { hasChildren && <ul>
-                   {matchItem.map(item => {
+                <h3>{rowdata.name} {first.description && !hasChildren && <Tooltip title={first.description}><Icons.ExclamationCircleOutlined /></Tooltip>}</h3>
+                {hasChildren && <ul>
+                    {matchItem.map(item => {
+
                         return (
-                            <li>{item.description } <Tooltip title={item.info || item.description}><Icons.ExclamationCircleOutlined/></Tooltip></li>
+                            <li>{item.info} <Tooltip title={item.info || item.description}><Icons.ExclamationCircleOutlined /></Tooltip></li>
                         )
-                   })}
+                    })}
                 </ul>}
             </dd>
-        )
+        ) : null
     }
     public renderPricingSubmit() {
 
-        let { items =[] } = this.props;
+        let { items = [] } = this.props;
+        
         return (
             <div className='ui-pricing-submit'>
-                
+
                 {items.map(it => {
 
                     return (
                         <dl className={classnames({
                             [`ui-pricing-submit-${it.value}`]: it.value,
-                            'ui-selected': it.value == this.state.selected
-                        })}
-                            onMouseEnter={()=> {
-                                this.setState({
-                                    selected: it.value
-                                })
-                            }}
-                            onMouseLeave={()=> {
-                                this.setState({
-                                    selected: this.defaultSelectd
-                                })
-                            }}
+                            'ui-selected': it.main
+                            })}
                         >
-                            <div className='ui-background-dwbg' dangerouslySetInnerHTML={{ __html: mainTexture }}></div>
                             <dt>
                                 <Tag closable={false}>{it.label}</Tag>
                                 <p className='price-wrapper'>
@@ -231,14 +227,15 @@ export default class BoxPricing extends React.Component<PricingProps, {selected:
                                 <p>{it.slogan}</p>
                             </dt>
 
-                            <dd className='ui-price-buy'>
-                                <Button size='large' block type={it.value != this.state.selected ? 'primary' : 'default'}>
-                                    {it.value =='free' ? 'Start for free' : 'Add the plan'}
-                                </Button>
-                            </dd>
                             {
                                 this.state.plans.map(row => this.renderLinePrice(row, it.value))
                             }
+
+                            <dd className='ui-price-buy'>
+                                <Button size='large' block type={it.main? 'primary': 'default'}>
+                                    {it.value == 'free' ? 'Start for free' : 'Add the plan'}
+                                </Button>
+                            </dd>
                         </dl>
                     )
                 })}
@@ -247,31 +244,39 @@ export default class BoxPricing extends React.Component<PricingProps, {selected:
     }
     private renderSwitch() {
         if (this.props.toolbarRef && this.props.toolbarRef.current) {
-           return  ReactDOM.createPortal(
-                    <Space className={classnames({
-                        'ui-box-price-switch': true,
-                        'ui-box-price-cut': this.state.isCut
-                    })}>
-                        Billed monthly
-                        <span className='ui-box-price'>
-                            <span>Save {this.props.discount}%</span>
-                            <Switch size='default' onChange={(e)=> {
-                                this.setState({isCut: e})
-                            }}/>
-                        </span>
-                        Billed yearly
-                    </Space>
-                  ,this.props.toolbarRef.current)
+            return ReactDOM.createPortal(
+                this.renderSwitchContent()
+                , this.props.toolbarRef.current)
+        } else {
+            return this.renderSwitchContent();
         }
     }
+    private renderSwitchContent () {
+        return (
+            <Space className={classnames({
+                'ui-box-price-switch': true,
+                'ui-box-price-cut': this.state.isCut
+            })}>
+                Billed monthly
+                <span className='ui-box-price'>
+                    {this.state.isCut && <span>Save {this.props.discount}%</span>}
+                    <Switch size='default' onChange={(e) => {
+                        this.setState({ isCut: e })
+                    }} />
+                </span>
+                Billed yearly
+            </Space>
+        )
+    }
     public render() {
-        
-       return <div className='ui-box-pricing-inner'>
+
+        return <div className='ui-box-pricing-inner'>
+
             
-            {this.renderSwitch()}
             {this.props.title && <Typography.Title level={1}>{this.props.title}</Typography.Title>}
             {this.props.description && <Typography.Paragraph className='block-subtitle'>{this.props.description}</Typography.Paragraph>}
-            <Typography.Title className='all-features' level={3}> {!this.state.isCut ? 'Billed monthly' : 'Billed yearly (Save up to '+this.props.discount+'%)'}</Typography.Title>
+            <Typography.Title className='all-features' level={3}>{this.renderSwitch()}</Typography.Title>
+            
             {this.renderPricingSubmit()}
             <Typography.Title className='all-features' level={3}> All plan features</Typography.Title>
             {this.renderPricingTable()}

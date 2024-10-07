@@ -81,7 +81,7 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
             this.props.onSubmit({
                 ...va,
                 stay: this.state.stay
-            }).then(() => {
+            }).then((res) => {
                 this.setState({loading: false});
             }).catch(() => {
                 this.setState({loading: false});

@@ -10,6 +10,7 @@ export interface SidebarMenuItem {
 
     autoFold?: boolean;
 
+    href?: string;
     icon: string;
     activeIcon?: string;
     group?: string;

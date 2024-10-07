@@ -627,8 +627,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                         })}>
                             <div className='ui-classify-content-left'>
                                 {this.renderContentView()}
-                                <div className='ui-background-dw' dangerouslySetInnerHTML={{ __html: svgbgstring }}>
-                                </div>
+                                
                             </div>
                             <div className='ui-classify-content-right'>
                                 <div ref={this.optionalContainerRef}></div>

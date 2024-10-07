@@ -31,6 +31,7 @@ export interface BoxItemBase {
     name?: string;
     value?: any;
     label?: string;
+    main?: boolean;
     subtitle?: string;
     title?: string; // 标题
     slogan?: string;
@@ -64,5 +65,9 @@ export interface BoxItem extends BoxItemBase {
     layout?: "left" | "center",
     events?: any;
     motion?: any;
+
+    features?: any;
+    plans?: any;
+    
     items?: BoxItemBase[];
 }

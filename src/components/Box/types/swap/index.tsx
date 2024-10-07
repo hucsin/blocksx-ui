@@ -1,9 +1,6 @@
 import React from 'react';
-import classnames from 'classnames';
-
 
 import { BoxItem } from '../../interface';
-import { utils } from '@blocksx/core';
 import { TablerUtils } from '@blocksx/ui';
 import BoxManger from '../../BoxManger';
 import './style.scss'

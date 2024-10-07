@@ -100,7 +100,7 @@ export default class Outline extends React.Component<BoxItem, any> {
         return (
             <>
                 {this.renderAvatar()}
-                {this.props.title && <Typography.Title level={this.getTitleLevel()}>{this.props.title}</Typography.Title>}
+                {this.props.title && <Typography.Title level={2}>{this.props.title}</Typography.Title>}
                 {this.props.description && <Typography.Paragraph className='block-subtitle'><ReactMarkdown>{this.props.description}</ReactMarkdown></Typography.Paragraph>}
                 {this.renderActions()}
                 {this.renderTags()}

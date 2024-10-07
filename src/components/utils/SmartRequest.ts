@@ -1,7 +1,6 @@
 import { Request } from '@blocksx/swap';
-
 import { Encode, Decode} from '@blocksx/encrypt';
-
+import Session  from '../core/Session';
 import { message as MessageFor } from 'antd';
 import { pick } from 'lodash';
 
@@ -68,9 +67,9 @@ class SmartRequest {
 
 
     private getUserZone() {
-        let zone: any = document.cookie.match(/__zone=([^;]+)/);
         
-        if (zone = Decode.decode(Decode.decode(decodeURIComponent(zone[1])))) {
+        if (Session.hasLogin()) {
+            let { zone } = Session.getUserInfo();
             return zone.split('_')
         } else {
             // 跳转到登陆页
@@ -152,6 +151,7 @@ class SmartRequest {
                             if (message) {
                                 MessageFor.error(message)
                             }
+                            reject(message)
                         }
                     }
                 }).catch((e: any,) => {
@@ -191,6 +191,7 @@ class SmartRequest {
                             if (message) {
                                 MessageFor.error(message)
                             }
+                            reject(message)
                         }
                     }
                 }).catch((e: any,) => {

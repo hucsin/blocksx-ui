@@ -2,7 +2,6 @@
     background-color: #fff;
     border-radius: 32px;
     padding: 8px 16px;
-    font-size: .6em;
     border: .5px solid var(--main-border-color);
     box-shadow: 0 2px 4px 0 rgba(30, 30, 31, 0.0392156863);
 
@@ -10,12 +9,12 @@
         position: relative;
         span {
             position: absolute;
-            top: -22px;
+            top: 0px;
             display: block;
             width: 120px;
             text-align: center;
             
-            left: 32px;
+            left: 142px;
             font-size: .7em;
             color: var(--main-bg-color);
         }
@@ -44,10 +43,10 @@
 
 
         .all-features {
-            opacity: .3;
+            //opacity: .3;
             font-weight:initial;
         }
-        padding: 48px;
+        
         .plan-item-free {
             background:var(--main-background-color);
             color: var(--main-bg-color);
@@ -67,6 +66,8 @@
         }
         .ant-typography {
             text-align: center;
+            z-index: 11;
+            position: relative;
         }
         table {
             display: flex;
@@ -128,17 +129,21 @@
         gap: 24px;
         padding: 0 80px;
         margin-bottom: 64px;
-
+        margin-top: 32px;
 
         dl {
             flex: 1; 
             border-radius: 12px;
-            background-color: var(--main-background-color);
+            background-color: #fff;
             color:var(--main-front-color);
+            border:2px solid transparent;
             transition: all .4s;
             padding-bottom: 32px;
             position: relative;
-            overflow: hidden;
+            border-radius: 24px !important;
+            
+            box-shadow: 2.6px 4px 2.6px rgba(0, 0, 0, 0.017), 7.3px 11px 7.1px rgba(0, 0, 0, 0.025), 17.5px 26.5px 17.2px rgba(0, 0, 0, 0.033), 58px 88px 57px rgba(0, 0, 0, 0.05);
+            background: url(./bg.svg) #fff bottom right;
             .ui-background-dwbg {
                 right: auto;
                 top: auto;
@@ -148,19 +153,31 @@
                 transform: rotate(0deg);
             }
             
+            
+
             &.ui-selected {
-                background-color: var(--main-bg-color);
-                color:#fff;
-                dd {
-                    border-top-color: var(--secondary-bg-color)
+                border-color: var(--main-bg-color);
+                &::before {
+                    display:inline-block;
+                    content: "Most popular";
+                    text-transform: uppercase;
+                    font-size:11px;
+                    background-color: #fff;
+                    border: 2px solid var(--main-bg-color);
+                    padding: 4px 8px;
+                    border-radius: 12px;
+                    position: absolute;
+                    top: -10px;
+                    left: 32px;
+                    background-color: var(--secondary-bg-background-color);
                 }
             }
 
-
-
             dt {
                 text-align: center;
-                padding: 32px;
+                margin: 32px;
+                border-bottom: 1px solid var(--secondary-border-color);
+                padding-bottom: 0;
                 .price-wrapper {
                     padding: 0 16px;
                     margin-block-start: 24px;
@@ -184,13 +201,15 @@
                 text-align: left;
                 margin-inline-start: 0;
                 margin: 0 32px;
-                border-top: 1px solid var(--main-border-color);
+                //border-top: 1px solid var(--secondary-border-color);
                 transition: border-top .2s;
                 &.ui-price-buy {
-                    padding-top: 32px;
+                    padding-top: 16px;
                     bottom: 0;
-                    padding-bottom: 32px;
+                    padding-bottom: 8px;
+
                     button {
+                        height: 48px;
                         transition: all .2s;
                     }
                 }
@@ -200,7 +219,7 @@
                 }
                 h3 {
                     font-size: 1em;
-
+                    font-weight: 400;
                     justify-content: space-between;
                     display: flex;
                     margin: 8px 0;
@@ -209,6 +228,7 @@
                     list-style: none;
                     padding-inline-start: 8px;
                     margin-top: 0;
+                    opacity: .5;
                     li {
                         padding-bottom: 8px;
                         display:flex;
@@ -217,5 +237,10 @@
                 }
             }
         }
+    }
+}
+.ui-box-pricing-inner {
+    h1 {
+        margin-top: 0;
     }
 }

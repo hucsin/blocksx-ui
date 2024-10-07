@@ -112,14 +112,16 @@ export default class SidebarMenu extends React.Component<SiderbarMenuProps, Side
                                     'ui-select': isSelected
                                 })}
                                 onClick={()=> {
-                                    it.onSelect && it.onSelect(it);
-                                    
-                                    this.props.onSelectMenu && this.props.onSelectMenu(it.key, it)
+                                    if (it.type!=='Link') {
+                                        it.onSelect && it.onSelect(it);
+                                        
+                                        this.props.onSelectMenu && this.props.onSelectMenu(it.key, it)
+                                    }
                                 }}
                             >
                                 {IconView && <IconView/>}
                                 {it.type == 'Link' 
-                                  ? <a className='hoofs-sidebar-menu-text'>{it.name}</a>
+                                  ? <a target='_blank' className='hoofs-sidebar-menu-text' href={it.href}>{it.name}</a>
                                   : <span className='hoofs-sidebar-menu-text'>{it.name}</span>
                                 }
 

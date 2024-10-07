@@ -30,9 +30,12 @@ interface TitleMap {
 
 export interface LoginPageFormProps {
     image: string;
-    icon: string;
+    icon?: string;
+    logo?: any;
+    subLogo?: string;
     title: string;
     subTitle: TitleMap;
+    light?: any;
 
     // 第三方登录
     oauths: LoginPageThreeParty[];
@@ -40,6 +43,7 @@ export interface LoginPageFormProps {
     onSingup: Function;
     onLogin: Function;
     onBinding: Function;
+    onGoWelcome: Function;
 }
 
 interface LoginPageFormState {
@@ -108,6 +112,7 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
                 <Space>
                     {UtilsTool.renderIconComponent(oauthInfo)}
                     {oauthInfo.title}
+                    
                     <span className='login-connections'><ConnectionsDirectivityOutlined /></span>
                     
                     {UtilsTool.renderIconComponent(this.props)}
@@ -117,8 +122,7 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
         }
         return (
             <Space>
-                {UtilsTool.renderIconComponent(this.props)}
-                {this.props.title}
+                {this.renderLoginLogo()}
             </Space>
         )
     }
@@ -164,17 +168,35 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
     private onSubmit =(v)=> {
         switch(this.state.type) {
             case 'login':
-                return this.props.onLogin(v);
+                return this.props.onLogin(v).then((value)=> {
+                    this.props.onGoWelcome(value)
+                });
             case 'oauth':
                 return this.props.onBinding(v);
             case 'signup':
-                return this.props.onSingup(v)
+                return this.props.onSingup(v).then((value)=> {
+                    this.props.onGoWelcome(value)
+                })
         }
+    }
+    private renderLoginLogo() {
+        if (this.props.subLogo) {
+            return (
+                <img src={this.props.subLogo}/>
+            )
+        }
+        <>
+            {UtilsTool.renderIconComponent(this.props)}
+            {this.props.title}
+        </>
     }
     public render() {
         let isOauthType: boolean = this.state.orignType =='oauth';
         return (
-            <div className='login-form-wrapper'>
+            <div className={classnames({
+                'login-form-wrapper': true,
+                'login-form-light': this.props.light
+            })}>
                 <div className="login-logo">
                     <Space>
                     {UtilsTool.renderIconComponent(this.props)}

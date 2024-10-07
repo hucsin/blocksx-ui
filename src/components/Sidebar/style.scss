@@ -122,9 +122,11 @@
     transition: all .2s;
     .ui-sidebar-wrapper {
         border-radius: 12px;
-        background:#fff;
+        background: #fff;
+        border: 1px solid var(--secondary-border-color);
         height: 100%;
-        box-shadow: 0 2px 4px 0 rgba(30, 30, 31, 0.0392156863);
+        box-shadow: 0 2px 4px 0 rgba(30, 30, 31, 0.0192156863);
+        
     }
 
     dd {
@@ -136,6 +138,18 @@
         .hoofs-sidebar-menu-text {
             transition: all .2s;
             opacity: 1;
+        }
+        a.hoofs-sidebar-menu-text {
+            display: inline-block;
+            width: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            text-decoration: none;
+            height: 32px;
+            line-height: 32px;
+            text-indent: 28px;
+            color:var(--main-front-color, #333);
         }
         span.anticon{
             font-size: 18px;
