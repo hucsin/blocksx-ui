@@ -54,7 +54,7 @@ export default class SmartPageUtils {
                     } else {
                         reject(`Component type [${trueUiType}] does not exist!`);
                     }
-            }).catch(reject)
+            }, reject).catch(reject)
         })
     }
 

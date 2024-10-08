@@ -78,7 +78,7 @@ interface TLeaf {
 }
 
 interface IControl {
-    when?: string[];
+    when?: string[] | any;
     show?: string[];
     hide?: string[];
     patch?: any;
@@ -639,6 +639,27 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
         return patch;
     }
+    private matchDepend(when: any) {
+        if (utils.isPlainObject(when) && utils.isPlainObject(when.depend)) {
+            let formerValue: any = this.props.former.getSafeValue() || {};
+
+            if (Object.keys(when.depend).some(it => {
+                let dependValue: any = when.depend[it];
+                let value: any =  formerValue[it];
+                return !(utils.isBoolean(dependValue)
+                    ? (
+                        (utils.isValidValue(value)  == false && dependValue == false)
+                         ||(utils.isValidValue(value) == true && dependValue == true) )  
+                    : dependValue.includes(value))
+
+                 
+            })) {
+                return false;
+            }
+        }
+
+        return true;
+    }
     private dealControl(value: any, controlList: IFormerControl) {
         let showList: any[] = [];
         let hideList: any[] = [];
@@ -649,12 +670,19 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             controlList.forEach((control: IControl) => {
 
                 let { when = [], hide = [], show = [] } = control;
-                if (utils.isArray(when) || utils.isBoolean(when)) {
+                // 支持 ['a','b'], true, false, 
+                
+                if (utils.isArray(when) || utils.isBoolean(when) || utils.isPlainObject(when)) {
                     // 当存在值的时候
                     // 简单判断值是否存在，不做模糊匹配
-                    let matchValue: boolean = utils.isBoolean(when) ? utils.isValidValue(value) : when.indexOf(value) > -1;
+                    let dependMatch: boolean = this.matchDepend(when);
+                    if (utils.isPlainObject(when)) {
+                        when = when.value;
+                    }
 
-                    if (matchValue) {
+                    let matchValue: boolean =  utils.isBoolean(when) ? utils.isValidValue(value) : when.indexOf(value) > -1;
+
+                    if (matchValue && dependMatch) {
                         showList = showList.concat(show);
                         hideList = hideList.concat(hide);
 
@@ -663,8 +691,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                             let hotPatch: any = this.getTrueHotPatch(control.patch);
                             Object.assign(
                                 patchList, {
-                                ...hotPatch
-                            }
+                                    ...hotPatch
+                                }
                             )
                         }
 

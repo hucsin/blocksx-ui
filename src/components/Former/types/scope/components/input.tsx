@@ -58,7 +58,6 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
         this.beforehold = 0;
         this.ref = React.createRef();
 
-        console.log(props.padding,332232)
     }
 
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<FormerScopeInputProps>, nextContext: any): void {

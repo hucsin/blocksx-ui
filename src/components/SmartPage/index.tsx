@@ -80,6 +80,7 @@ export interface SmartPageProps {
     rowSelection?: boolean;
     onChangeValue?: Function;
     onSelectedValue?: Function;
+    onFetchError?: Function;
     onInitPage?: Function;
     onSchemaResponse?: Function;
     onGetDependentParameters?: Function;
@@ -148,6 +149,7 @@ export interface SmartPageState {
     props: any;
 
     readonly?: boolean;
+    errorMessage?: string;
 }
 
 
@@ -369,7 +371,15 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 this.setLoading();
 
             }, (e) => {
-                this.setLoading()
+                this.setLoading();
+                this.props.onFetchError && this.props.onFetchError(e)
+                this.setState({
+                    errorMessage: e
+                })
+            }).catch(e=> {
+                this.setState({
+                    errorMessage: e
+                })
             })
         }
     }
@@ -750,7 +760,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             >
                 <Spin spinning={this.state.loading}>
 
-                    {this.state.uiType ? this.renderMainContent() : <Empty />}
+                    {this.state.uiType ? this.renderMainContent() : <Empty description={this.state.errorMessage} />}
                 </Spin>
             </div>
         )

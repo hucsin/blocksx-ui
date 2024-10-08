@@ -28,6 +28,7 @@ class SmartRequest {
     }
     private forceGetMethod = [
         'list',
+        'dict',
         'view',
         'find',
         'all'
@@ -155,7 +156,7 @@ class SmartRequest {
                         }
                     }
                 }).catch((e: any,) => {
-                    MessageFor.error(e.message || e || 'system error');
+                    MessageFor.error(JSON.stringify(e.message || e || 'system error'));
                     reject(e)
                 })
             })
@@ -196,7 +197,7 @@ class SmartRequest {
                     }
                 }).catch((e: any,) => {
                     MessageFor.error(JSON.stringify(e.message || e || 'system error'));
-                  //  reject(e)
+                    reject(e)
                 })
             })
         }

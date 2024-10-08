@@ -38,9 +38,11 @@
             
             span.des {
                 text-transform:none;
-                font-size: 14px;
+                font-size: 18px;
                 vertical-align: bottom;
-                color:#aaa;
+                color: var(--main-front-color);
+                opacity: .4;
+                font-weight: 400;
                 padding-left: 16px;
                 line-height: 16px;
                 p {

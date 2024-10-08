@@ -205,7 +205,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
     private removeInput = (inputRef: any) => {
         let inputUniq: any = inputRef.dataset.index;
         this.inputList = this.inputList.filter(it => it != inputRef);
-        console.log('removeinput,3')
+        
         delete this.inputScopeMap[inputUniq];
     }
     // 添加value到当前的scope
@@ -438,7 +438,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                         former.stepFormer.setStepOne(false);
                     })
                     former.setLoading(false);
-                    console.log(res,222)
+                    
                     //
                 }
             }).catch(()=> {
