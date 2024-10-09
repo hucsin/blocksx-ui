@@ -148,6 +148,8 @@ class SmartRequest {
                         // 302 跳转
                         if (code == 302) {
                             window.location.href = result.url;
+                        } else if (code == 401) {
+                            window.location.href= '/login'
                         } else {
                             if (message) {
                                 MessageFor.error(message)
@@ -188,6 +190,8 @@ class SmartRequest {
                         // 302 跳转
                         if (code == 302) {
                             window.location.href = result.url;
+                        }  else if (code == 401) {
+                            window.location.href= '/login'
                         } else {
                             if (message) {
                                 MessageFor.error(message)

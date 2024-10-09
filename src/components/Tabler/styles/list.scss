@@ -33,7 +33,7 @@
         left: 0;
         background-color: transparent;
         border-bottom: 0.5px solid rgb(240, 240, 245);
-        box-shadow: rgba(0, 0, 0, 0.08) 0px 6px 6px 0px;
+        box-shadow: rgba(0, 0, 0, 0.02) 0px 6px 6px 0px;
     }
 }
 
@@ -54,7 +54,9 @@
     }
 
     .ui-mircotable.ui-mircotable-horizontal .ant-list-items .ant-list-item {
-        border-bottom: 1px dashed var(--secondary-border-color)
+        border:none;
+        border-bottom: 1px dashed var(--secondary-border-color);
+        
     }
 
     .ui-meta-description-wrapper {
