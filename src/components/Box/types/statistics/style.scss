@@ -1,0 +1,59 @@
+.box-statistics {
+    h1 {
+        opacity: .9;
+    }
+    p {
+        opacity: .6;
+        font-size: 16px;
+    }
+    .box-statistics-item {
+        .ant-card {
+            padding: 12px;
+            box-sizing: border-box;
+            width: 100%;
+            border: .5px solid var(--main-border-color);
+            .ant-card-body {
+                padding: 0 8px;
+            }
+            .ant-card-head {
+                border-bottom: none;
+                min-height: 28px;
+                font-weight: normal;
+                text-transform: uppercase;
+                opacity: .5;
+                padding: 0 8px;
+                font-size: 16px;
+                .ant-card-extra {
+                    opacity: .4;
+                }
+            }
+            .card-body {
+                height: 50px;
+                position: relative;
+                text {
+                    position: absolute;
+                    bottom: 0;
+                }
+                .ant-progress {
+                    margin-top:24px;
+                }
+            }
+            .card-value {
+                font-size: 30px;
+                line-height: 38px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                word-break: break-all;
+                overflow: hidden;
+                color: rgba(0, 0, 0, 0.88);
+            }
+            .card-footer {
+                border-top: 1px solid var(--secondary-border-color);
+                padding-top: 12px;
+                margin-top: 12px;
+                font-size:16px;
+                opacity: .8;
+            }
+        }
+    }
+}

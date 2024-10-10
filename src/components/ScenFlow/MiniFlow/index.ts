@@ -1584,6 +1584,8 @@ export default class MiniFlow extends EventEmitter {
 
         this.stopAutoSave();
 
+        console.log(currentNode, 33333)
+
         if (currentNode && currentNode.type == 'go') {
 
             let targetNodes: any[] = this.getConnectorBySourceName(currentNode.name);
@@ -1595,7 +1597,7 @@ export default class MiniFlow extends EventEmitter {
                         let targetNode: any = this.getNodeByName(currentConnectors[0].target);
                         let targetName: string = targetNode.name; 
 
-                        if (targetNode.type != 'router') {
+                        if (!this.isRouterNode(targetNode)) {
                             // 新增加一个router节点
                             this.addNode(newRouterNode = this.getRouterNodeConfig({
                                 isNew: true,
@@ -1669,13 +1671,14 @@ export default class MiniFlow extends EventEmitter {
         this.stopAutoSave();
 
         if (sourceNode) {
-
-            if (sourceNode.type != 'router') {
+            
+            if (!this.isRouterNode(sourceNode)) {
                 let sourceConnectors: any = this.getConnectorBySourceName(sourceNode.name);
                 // 有节点,判断下一个点的类型是否为router
                 if (sourceConnectors.length > 0) {
-                    let targetNode: any = this.getNodeByName(sourceConnectors[0].target)
-                    if (targetNode.type == 'router') {
+                    let targetNode: any = this.getNodeByName(sourceConnectors[0].target);
+                    
+                    if (this.isRouterNode(targetNode)) {
                         // 在router节点后加一个节点
                         sourceNode = targetNode;
                     } else {
@@ -1723,8 +1726,9 @@ export default class MiniFlow extends EventEmitter {
         })
 
         if (targetNodeConnectors.length > 0) {
-
-            if (sourceNode.type != 'router') {
+                
+           // if (sourceNode.type != 'router') {
+           if (!this.isRouterNode(sourceNode)) {
 
                 let connectors: any = this.getConnectorBySourceName(sourceNode.name);
 
@@ -1897,7 +1901,8 @@ export default class MiniFlow extends EventEmitter {
         }
     }
     private isRouterNode(node: any) {
-        return node.type == 'router' && node.componentName == 'FlowControl.router'
+        
+        return (node.type == 'router') || ((node.componentName || node.props.componentName) == 'FlowControl.router')
     }
     // 1\判断该节点关联的router节点,是否有后代节点,如果没有就删除该router节点
     // 2\如果前面有两个以上节点就不删除

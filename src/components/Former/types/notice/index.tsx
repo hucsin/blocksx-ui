@@ -55,11 +55,11 @@ export default class FormerNotice extends React.Component<{value?: any, icon?: a
         }
     }
     private getSize(value: string = '') {
-        if (value.length > 150) {
+        if (value.length > 100) {
             return 48;
         }
 
-        return this.props.icon ? 36 :24
+        return this.props.icon ? 42 : 36
     }
     public render() {
 

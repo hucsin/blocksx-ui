@@ -1,6 +1,6 @@
 import React from 'react';
 import { ConfigProvider } from 'antd';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { WithRouterSmartPage }  from '../SmartPage';
 import { WithRouterSmartPageGroup } from '../SmartPage/group';
 import SmartRequest from '../utils/SmartRequest';
@@ -37,14 +37,21 @@ export default class RouterLayout extends React.Component<RouterLayoutProps, Rou
     }
 
     public componentDidMount() {
-        // 获取
-        if (!window.location.pathname.match(/\/login/)) {
+        let pathname: string = window.location.pathname;
+        // 重定向到welcome
+        if (pathname == '/') {
 
-            this.onFetchPageTree({}).then((result) => {
-                
-                this.setState(this.pretreatment(result))
-                
-            }).catch(() =>{})
+            window.location.href = '/workspace'
+        } else {
+            // 获取
+            if (!pathname.match(/\/login/)) {
+
+                this.onFetchPageTree({}).then((result) => {
+                    
+                    this.setState(this.pretreatment(result))
+                    
+                }).catch(() =>{})
+            }
         }
     }
 
@@ -150,12 +157,11 @@ export default class RouterLayout extends React.Component<RouterLayoutProps, Rou
                         key='more'
                         path="/"
                         element={<PageLayout 
-                                menu={this.state.menu} 
-                                currentKey={this.state.currentPage}
-                                roadmap={this.state.roadmap} 
-                                onChange={() => {}}
-                            />
-                        }
+                            menu={this.state.menu} 
+                            currentKey={this.state.currentPage}
+                            roadmap={this.state.roadmap} 
+                            onChange={() => {}}
+                        />}
                     >
                         {routerMap.map(this.renderRouterItem)}
                         <Route key={'*'} path="*" element={<pageComponentMap.PageNotFound/>}/>

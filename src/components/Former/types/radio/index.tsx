@@ -171,11 +171,11 @@
                             }
                         >   
                             <List.Item.Meta
-                            avatar={<Avatar shape='square' reverseColor color={item.color} size={64} icon={item.icon} />}
+                            avatar={<Avatar shape={item.text ? 'circle' : 'square'} reverseColor color={item.color} size={64} icon={item.icon} text={item.text} />}
                             title={item.label}
                             description={item.description}
                             />
-                             {item.value === value ? <span className="former-radio-block-right"><FormerIcon.CheckOutlined/></span> : null}
+                             <span className="former-radio-block-right">{item.value === value ? <FormerIcon.CheckOutlined/>: null}</span> 
                         </List.Item>
                     )
                 }}

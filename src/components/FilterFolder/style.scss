@@ -82,6 +82,19 @@
         margin-top: 16px;
         margin-bottom: 16px;
         border-right: 1px solid var(--secondary-border-color);
+        position: relative;
+        &::after {
+            content: " ";
+            width: 1px;
+            background: var(--secondary-border-color);
+            height: 100%;
+            right: 0px;
+            top: 0;
+            z-index: 1;
+            position: absolute;
+            display: block;
+            opacity: 0.1;
+        }
         .ant-input-suffix {
             color:#ddd;
         }

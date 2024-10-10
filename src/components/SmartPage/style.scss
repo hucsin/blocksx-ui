@@ -52,15 +52,15 @@
        padding-bottom: 8px;
        font-size: 16px;
        .ui-former-header  {
-         .ui-avatar-merge {
-            margin-right: 8px;
-         }
+        
          > .anticon {
             font-size:24px;
             vertical-align: bottom;
          }
          > .ant-avatar-circle,
-         > .ui-avatar-merge {
+
+         >.ant-space-item:first-child
+         {
             margin-right: 8px;
          }
 
@@ -393,8 +393,8 @@
       border-radius: 16px;
       >.ui-classify-content-left {
          padding-top: 48px;
-         padding-left: 32px; 
-         padding-right: 32px;
+         padding-left: 16px; 
+         padding-right: 16px;
          box-sizing: border-box;
       }
    }
@@ -414,7 +414,7 @@
    }
    .ui-searchbar {
       position: absolute;
-      top: -36px;
+      top: -24px;
       right: 0px;
    }
    .ui-former-notice{

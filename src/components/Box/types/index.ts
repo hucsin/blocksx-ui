@@ -4,4 +4,5 @@ import './card/index';
 import './outline/index';
 import './pricing/index';
 import './swap/index';
-import './question/index'
+import './question/index';
+import './statistics/index';

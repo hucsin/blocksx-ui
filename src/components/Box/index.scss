@@ -11,3 +11,44 @@
         }
     }
 }
+.ui-classify-content-left {
+    .ui-block-item-type-statistics {
+        .ant-typography  {
+            margin-top: 0;
+        }
+    }
+    .ui-block {
+        .ui-block-item:not(.ui-block-item-type-outline) {
+            margin-bottom: 6em;
+            &:last-child {
+                margin-bottom: 0;
+            }
+            div.block-subtitle {
+                opacity: .5;
+                font-size:14px;
+                margin-bottom: 1.5em;
+            }
+
+            .ant-typography{
+                display: inline-block;
+                margin-right: 16px;
+                font-size: 20px;
+                opacity: .8;
+            }
+            + .ui-block-item {
+                position: relative;
+                &::before {
+                    content: " ";
+                    position: absolute;
+                    width: 50%;
+                    height: 1px;
+                    top: -32px;
+                    left: 25%;
+                    border-top: 1px solid var(--main-border-color);
+                    opacity: .4;
+                }
+            }
+        }
+
+    }
+}

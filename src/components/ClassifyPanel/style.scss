@@ -38,11 +38,10 @@
             
             span.des {
                 text-transform:none;
-                font-size: 18px;
+                font-size: 16px;
                 vertical-align: bottom;
                 color: var(--main-front-color);
-                opacity: .4;
-                font-weight: 400;
+                opacity: .6;
                 padding-left: 16px;
                 line-height: 16px;
                 p {
@@ -97,7 +96,7 @@
             }
         
             .ant-tabs-tab-btn {
-                text-transform: uppercase;
+                //text-transform: uppercase;
             }
         }
 
@@ -106,12 +105,14 @@
         }
     }
     .ant-tabs-tab {
-        padding: 2px 12px;
+        padding: 0px 12px;
         border-radius: 6px;
-        background-color: #fff;;
+        background-color: #fff;
+        font-size:16px;
         box-shadow: 0 2px 4px 0 #1e1e1f0a;
         .anticon{
             opacity: .3;
+            margin-left: -4px;
         }
         +.ant-tabs-tab {
             margin-left: 0px;;
