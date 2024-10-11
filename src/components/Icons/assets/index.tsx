@@ -71,6 +71,7 @@ export { default as DatasourceMiniDataOutlined } from './DatasourceMiniDataOutli
 export { default as DatasourceSmallDataOutlined } from './DatasourceSmallDataOutlined';
 export { default as DbqueryBrandOutlined } from './DbqueryBrandOutlined';
 export { default as DestroyUtilityOutlined } from './DestroyUtilityOutlined';
+export { default as DocumentAddUtilityOutlined } from './DocumentAddUtilityOutlined';
 export { default as DocumentUtilityOutlined } from './DocumentUtilityOutlined';
 export { default as DotSuggestionOutlined } from './DotSuggestionOutlined';
 export { default as DownDirectivityOutlined } from './DownDirectivityOutlined';

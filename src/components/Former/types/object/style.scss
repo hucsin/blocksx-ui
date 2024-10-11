@@ -89,7 +89,9 @@
                 display: none
             }
         }
-
+        .former-object-label-menu:empty {
+            display:none;
+        }
         .former-object-label-description {
             display: block;
             padding-bottom: 0px;
@@ -115,6 +117,7 @@
             }
             .former-switch,
             > button,
+            > input,
             > span {
                 display: inline-block;
                 vertical-align: middle;

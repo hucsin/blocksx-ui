@@ -23,6 +23,7 @@ import './style.scss';
 interface IFormerInput extends IFormerBase {
     value: any,
     props: any;
+    
     fieldKey?: string;
     fieldName?:string;
     size: any,
@@ -194,10 +195,12 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
 
     private renderButton() {
         let { props = {}, former } = this.props;
+        
         return (
             <Button 
                 type={props.type || 'default'} 
                 icon={this.renderIcon()} 
+                styles={props.style}
                 onClick={()=> {
                     if (props.resetFormer) {
 
@@ -360,9 +363,9 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
         })
     }
     private doAction() {
-        console.log(233233, 1)
+        
         this.props.former.validationValue((val) => {
-            console.log(3333, val, 233)
+            
             this.doMetaAction(val);
         }, {
             noValidationField: this.props.fieldKey

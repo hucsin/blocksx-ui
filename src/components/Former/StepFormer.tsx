@@ -494,8 +494,8 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         })
     }
     private stepActionMap: any = {
-        'setting': 'Configure',
-        'create': 'Complete',
+        'setting': '',
+        'create': '',
         'edit': 'Edit',
         'view': 'View'
     }
@@ -525,7 +525,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                                 }
                             }
                         }}
-                    ><span style={{color:'#ccc'}}></span>{this.stepActionMap[type as any] ||  'Complete'} {(pageMeta.title ||'record')} {hasfirtready && <Button  size='small'>Next</Button>}</span >
+                    ><span style={{color:'#ccc'}}></span>{this.stepActionMap[type as any] ||  ''} {(pageMeta.title ||'record')} {hasfirtready && <Button  size='small'>Next</Button>}</span >
                 </Space>
             </div>
         )
@@ -779,9 +779,9 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                     }
                 }}
                 onChangeValue={(value, type)=> {
-                    
+                    console.log(value, type, 8899)
                     if (this.state.isStepMode 
-                            && this.state.isStepOne) 
+                            && this.state.isStepOne ) 
                     {
 
                         //let currentField: any = schema.firstField;
@@ -798,14 +798,15 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                             },
                         })
                         
-                        if (this.isFistValueHasChanged(value)) {
-                            if (this.isFistValueRequired(value)) {
+                        if (this.isFistValueHasChanged(value) ) {
+                            if (this.isFistValueRequired(value) && type !=='init') {
                              
                            // if (this.isFistValueHasChanged(this.state.setpOneValue)) {
                                 if (this.isStepDynamicFormer()) {
                                     
                                     this.onDynamicStepChange(value);
                                 } else {    
+                                    
                                     this.setStepOne(false)
                                 }
                             //}

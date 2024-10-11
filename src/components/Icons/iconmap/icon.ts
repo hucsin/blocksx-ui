@@ -67,6 +67,7 @@ export const map:any = {
         "CycleStartUtilityOutlined",
         "CycleUtilityOutlined",
         "DestroyUtilityOutlined",
+        "DocumentAddUtilityOutlined",
         "DocumentUtilityOutlined",
         "EfficiencyUtilityOutlined",
         "EmptyUtilityOutlined",

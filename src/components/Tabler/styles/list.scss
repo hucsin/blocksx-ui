@@ -99,7 +99,11 @@
     .ui-block-item-type-outline {
         border: 1px solid #f4f4f4;
         padding: 48px;
-        height: calc(100% - 98px)
+        height: calc(100% - 136px);
+        padding-top: 86px;
+    }
+    .ui-block .ui-block-item .block-subtitle {
+        margin-bottom: 3em;
     }
 
     .ant-list-item-meta-title {
