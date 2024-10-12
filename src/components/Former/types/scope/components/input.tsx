@@ -163,7 +163,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
             }
         } else {
             // 严格模式下面如果是nubmer
-            if (dataType.includes('Number')) {
+            if (dataType.includes('Number') && !dataType.includes('String')) {
 
                 if (190 == e.keyCode) {
                     if (innerHTML.match(/\./)) {
