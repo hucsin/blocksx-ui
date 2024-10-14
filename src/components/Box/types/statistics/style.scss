@@ -33,6 +33,7 @@
                 text {
                     position: absolute;
                     bottom: 0;
+                    opacity: .5;
                 }
                 .ant-progress {
                     margin-top:24px;
@@ -51,7 +52,7 @@
                 border-top: 1px solid var(--secondary-border-color);
                 padding-top: 12px;
                 margin-top: 12px;
-                font-size:16px;
+                font-size:14px;
                 opacity: .8;
             }
         }

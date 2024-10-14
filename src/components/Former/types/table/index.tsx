@@ -8,7 +8,7 @@ import classnames from 'classnames';
 
 import { IFormerBase } from '../../typings';
 import { UnorderedListOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { Table, Button, Dropdown } from 'antd';
+import { Table, Button, Dropdown, Tooltip } from 'antd';
 import UtilsTool from '../../../utils/tool';
 import Former from '../../index';
 
@@ -27,6 +27,7 @@ interface IFormerTable extends IFormerBase {
     destoryKey: string;
     extendsFor?: any;
     fields?: any[];
+    errorMessage?: string;
     // props['x-type-props']
     /*
         mode: 'local' | 'remote'
@@ -66,6 +67,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
     formerViewer?: boolean;
     dataSource?: any[];
     actionType: string;
+    errorMessage?: string
 }> {
     private requset: {
         onPage: Function;
@@ -106,7 +108,8 @@ export default class FormerTable extends React.Component<IFormerTable, {
             dataSource: _value || [],
             pageSize: this.getDefaultPageSize(_props, remoteMode, _value.length),//_props['pageSize'] || 10,
             currentPage: 1,
-            totalNumber: remoteMode ? 0 : _value.length
+            totalNumber: remoteMode ? 0 : _value.length,
+            errorMessage: props.errorMessage
         };
 
         this.uniquedMap = this.getUniquedMap()
@@ -139,6 +142,11 @@ export default class FormerTable extends React.Component<IFormerTable, {
         if (newProps.viewer != this.state.viewer) {
             this.setState({
                 viewer: newProps.viewer
+            })
+        }
+        if (newProps.errorMessage != this.state.errorMessage) {
+            this.setState({
+                errorMessage: newProps.errorMessage
             })
         }
     }
@@ -559,27 +567,32 @@ export default class FormerTable extends React.Component<IFormerTable, {
 
 
         return (
-            <div className="former-table" >
 
-                <Table
-                    tableLayout="fixed"
-                    scroll={{ x: true }}
-                    pagination={this.getPaginationConfig()}
-                    rowKey={(record)=>  record.id || record.__id}
-                    dataSource={this.getDataSource()}
-                    columns={this.state.columns}
-                    loading={this.state.loading}
-                    size="small"
-                    
-                    onRow={(record, index: number) => {
-                        return {
-                            onDoubleClick: () => {
-                                this.onEditRow(record, index)
+            <Tooltip title={this.state.errorMessage} placement='topLeft'>
+            <div className={classnames({
+                "former-table": true,
+                "former-table-error": this.state.errorMessage
+            })} >
+                    <Table
+                        tableLayout="fixed"
+                        scroll={{ x: true }}
+                        pagination={this.getPaginationConfig()}
+                        rowKey={(record)=>  record.id || record.__id}
+                        dataSource={this.getDataSource()}
+                        columns={this.state.columns}
+                        loading={this.state.loading}
+                        size="small"
+                        
+                        onRow={(record, index: number) => {
+                            return {
+                                onDoubleClick: () => {
+                                    this.onEditRow(record, index)
+                                }
                             }
-                        }
-                    }}
-                    footer={this.renderSummary}
-                />
+                        }}
+                        footer={this.renderSummary}
+                    />
+                
                 <Former
                     type={formerType}
                     title={this.getDefaultTitle()}
@@ -630,6 +643,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
 
                 ><span className='table-former-footer' >1</span></Former>
             </div>
+            </Tooltip>
         )
     }
 }

@@ -8,6 +8,12 @@
         text-indent: -100000;
         color:transparent;
     }
+
+    &.former-table-error {
+        .ant-table {
+            border: 1px solid red;
+        }
+    }
     pre {
         margin: 0;
     }
