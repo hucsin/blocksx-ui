@@ -80,6 +80,18 @@
 .former-radio-button {
     display:inline-block;
     border-radius: 4px;
+    &.former-radio-solid {
+        label {
+            &.ui-selected {
+                background-color: #fff;
+                border-color: var(--main-bg-color);
+                color:var(--main-bg-color);
+            }
+            &:hover {
+                color:var(--main-bg-color);
+            }
+        }
+    }
     label {
         display: inline-block;
         cursor: pointer;

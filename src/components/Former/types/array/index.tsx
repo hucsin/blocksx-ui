@@ -19,6 +19,7 @@ import "./style.scss";
 
 interface IFormerArrays extends IFormerArray {
     value: any[],
+    former: any;
     validation?: any;
     onChangeValue: Function;
 
@@ -146,6 +147,7 @@ export default class FormerArray extends React.Component<IFormerArrays, { errorM
                 moreItems: this.props.moreItems,
                 value: value[index],
                 size: defaultSize,
+                former: this.props.former,
                 disabled: this.state.disabled,
                 isLastItem: index === value.length -1,
                 onArrayItemRemove: (index: number) => {

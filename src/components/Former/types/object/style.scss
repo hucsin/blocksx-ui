@@ -2,6 +2,7 @@
     .former-object-item-hidden {
         display:none !important;
     }
+   
     &.former-object-viewer {
         .former-object-item .former-object-label-description {
             padding-bottom: 0;
@@ -44,6 +45,9 @@
 
         box-sizing: border-box;
         
+        &:has(>.former-object-item-content:empty) {
+            display: none;
+        }
 
         &.former-object-default {
             .former-object-label-title {

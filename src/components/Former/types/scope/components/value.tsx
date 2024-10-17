@@ -290,14 +290,8 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                                 onRemoveValue={(currentIndex) => {
                                     //console.log(currentIndex , 333333)
                                     // 参数不能删除只能让光标往前
-                                     console.log(currentIndex, 33)
                                      return this.doRemoveScopeValue(item.parameters, idx, currentIndex)
-                                      if (idx == 0) {
-                                        return false
-                                    }
-                                    item.parameters.splice(Math.max(0,idx-1), 1);
-                                    
-                                    this.doChangeValue(undefined, true);
+                                      
                                 }}
                                 onChangeValue={(value: any) => {
                                     it.value = value;
@@ -566,7 +560,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                 <>
                     {originValue.map((it, index) => {
                         return this.renderContent(it, index, (currentIndex: any) => {
-                            console.log(index, currentIndex,33331121)
+                            
                             return this.doRemoveScopeValue(originValue, index, currentIndex)
                         })
                     })}

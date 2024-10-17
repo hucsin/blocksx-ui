@@ -197,7 +197,7 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
 
                 //if ((innerHTML.length == 0 || currentPostion < 1 && this.lastPostion == currentPostion)) {
                 // 光标从后到当前
-                console.log(currentPostion, lastPostion, 233333322)
+                
                 if (currentPostion == 0 && (lastPostion < 1 )) {
                     if (37 == e.keyCode) {
                            
@@ -214,7 +214,6 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                 
                 if (8 == e.keyCode) {
 
-                    console.log(currentPostion, valueLength, 32323)
                     
                     if (currentPostion == 0 && valueLength >=1) {
                         this.doForwardCursor();
@@ -228,8 +227,6 @@ export default class FormerScopeInput extends React.Component<FormerScopeInputPr
                         }
                     }
                 }
-
-                console.log(valueLength,"currentPostion:", currentPostion,"lastPostion:", lastPostion,888999)
 
                 this.resetLastPosition(currentPostion)
             }, 0)

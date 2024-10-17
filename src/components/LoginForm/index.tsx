@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import { Space, Divider, Button, message,Tooltip } from 'antd';
+import { Space, Divider, Button, message,Tooltip, Spin } from 'antd';
 
 import querystring from 'querystring';
 import { utils } from '@blocksx/core';
@@ -52,6 +52,8 @@ interface LoginPageFormState {
     orignType: string;
     email: string;
     oauth: string;
+    loading: boolean;
+    code: string;
 }
 
 export default class LoginPageForm extends React.Component<LoginPageFormProps, LoginPageFormState> {
@@ -66,15 +68,28 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
         
         this.state = {
             message: params.message,
+            
+            oauth: params.oauth,
+            code: params.code,
+
             type: this.getDefaultType(oauths, params),
             orignType: this.getDefaultType(oauths, params),
-            oauth: this.getOAuthType(oauths, params.type),
-            email: params.email
+            //oauth: this.getOAuthType(oauths, params.type),
+            email: params.email,
+            loading: false
         }
     }
     public componentDidMount() {
         if (this.state.message) {
             message.error(this.state.message);
+        }
+
+        if (this.state.oauth) {
+            this.setState({loading: true})
+            
+            this.props.onBinding && this.props.onBinding({oauth: this.state.oauth, code: this.state.code}).finally(()=> {
+                this.setState({loading: false})
+            })
         }
     }
     private getOAuthType(oauths: any, type: string){
@@ -166,6 +181,7 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
         
     }
     private onSubmit =(v)=> {
+        
         switch(this.state.type) {
             case 'login':
                 return this.props.onLogin(v).then((value)=> {
@@ -203,11 +219,6 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
                     {this.props.title}
                     </Space>
                 </div>
-                <div className='login-tool'>
-                    <Space>
-                        <Button type="text" onClick={()=> this.setState({type: 'signup'})} >SIGN UP</Button>
-                    </Space>
-                </div>
                 <div className='login-form-bg'>
                     <img src={this.props.image} alt="login background img" />
                 </div>
@@ -218,21 +229,14 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
                     })}>
                         <div className='login-form-front'>
                             <InputForm
+                                oauths={this.props.oauths}
                                 title={this.renderTitle(isOauthType ? 'oauth' : 'login')}
                                 defaultValue={this.state.email}
                                 subTitle={this.getSubtitle(isOauthType ? 'oauth' : 'login')}
                                 actions={isOauthType ? this.renderOAuthActions() : this.renderActions()}
                                 type={isOauthType ? 'oauth' : 'login'}
                                 onSubmit={this.onSubmit}
-                            />
-                        </div>
-                        <div className='login-form-back'>
-                            <InputForm
-                                onSubmit={this.onSubmit}
-                                title={this.renderTitle()}
-                                subTitle={this.getSubtitle(this.state.type)}
-                                actions={this.renderOAuthActions()}
-                                type={this.state.type}
+                                loading={this.state.loading}
                             />
                         </div>
                     </div>

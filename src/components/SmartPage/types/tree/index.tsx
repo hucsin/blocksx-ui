@@ -352,7 +352,6 @@ export default class SmartPageTree extends React.Component<SmartPageTreeProps, S
                             defaultExpandAll
                             onRightClick={(e)=> {
                                 e.event.stopPropagation();
-                                console.log(e.event)
                                 ContextMenu.showContextMenu(this.state.namespace, e.event, e.node)
                             }}
                             titleRender={this.renderTreeItem}

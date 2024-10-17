@@ -155,6 +155,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         // 清空control的影响
         if (this.props['x-control']) {
             this.dealControl(this.state.value, this.props['x-control']);
+            
         }
 
         // 设置验证事件
@@ -165,6 +166,9 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
 
     }
+
+  
+
 
     public UNSAFE_componentWillReceiveProps(newProps: any) {
 
@@ -660,6 +664,45 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
         return true;
     }
+    
+
+    private isMustDependShow(control?: any) {
+        let formerValue: any = this.props.former.getValue() || {};
+        let depend = this.getDependControl(control);
+        
+        if (Array.isArray(depend)) {
+            
+            return depend.some((depend: any) => {
+                
+                return Object.keys(depend).some((it: string) => {
+                    let currentValue: any = formerValue[it];
+                    let dependValue: any = depend[it];
+
+                    if (utils.isArray(dependValue)) {
+                        return !dependValue.includes(currentValue);
+                    }
+                    return dependValue != currentValue;
+                })
+            })
+        }
+        return false;
+    } 
+
+    private getDependControl(_control?: any) {
+        let control = _control || this.props['x-control'];
+        if (Array.isArray(control)) {
+            let dependControl: any = control.map(it => {
+                let { depend, when } = it;
+                if (depend && !when) {
+                    return depend;
+                }
+                return false;
+            }).filter(Boolean);
+
+            return dependControl;
+        }
+        return false;
+    }
     private dealControl(value: any, controlList: IFormerControl) {
         let showList: any[] = [];
         let hideList: any[] = [];
@@ -826,6 +869,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     }
     private isShowObjectKeyByProp(prop: string) {
         let { controlHide } = this.state;
+
+        
 
         return controlHide.indexOf(prop) == -1;
     }
@@ -1232,6 +1277,12 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
     }
     public render() {
+        // 不展示
+        if (this.getDependControl()){
+            if (this.isMustDependShow()) {
+                return null;
+            }
+        }
         if (this.isFeaturesNode()) {
             //if (this.isType('oneOf')) {
             //  return this.renderOneOfFeaturesNode();

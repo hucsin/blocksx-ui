@@ -33,9 +33,11 @@ class SmartActionWindow {
         window.open(SmartRequest.getRequestURI(params.url), params.id, `width=${windowWidth},height=${windowHeight},top=${(screenHeight-windowHeight)/2},left=${(screenWidth-windowWidth)/2},menubar=no,toolbar=no,resizable=no,focus=1`)
 
         let timer = setInterval((message) => {
+            
             if (message = this.getSelfCookie()) {
                 
                 clearInterval(timer);
+                
                 this.deleteSelfCookie()
                 callback(message);
             }

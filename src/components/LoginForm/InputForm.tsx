@@ -1,6 +1,9 @@
 import React from 'react';
-import { Input, Form, Divider, Button, Checkbox } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons'
+import classnames from 'classnames'
+import { Input, Form, Divider, Button, Checkbox, Spin } from 'antd';
+import TablerUtils from '../utils/tool';
+//import { UserOutlined, LockOutlined,GoogleOutlined, GithubOutlined } from '@ant-design/icons'
+import * as Icons from '../Icons'
 
 interface InputFormProps {
     type: string;
@@ -10,6 +13,8 @@ interface InputFormProps {
     subTitle?: any;
     actions?: any;
     onSubmit: Function
+    oauths?: any;
+    loading?: boolean;
 }
 
 interface InputFormState {
@@ -18,8 +23,9 @@ interface InputFormState {
     subTitle?: any;
     actions?: any;
     type: string;
-    loading: boolean;
+    loading?: boolean;
     stay: boolean;
+    agree: boolean;
 }
 
 export default class InputForm extends React.Component<InputFormProps, InputFormState> {
@@ -32,8 +38,9 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
             title: props.title,
             subTitle: props.subTitle,
             actions: props.actions,
-            loading: false,
-            stay: false
+            loading: props.loading,
+            stay: true,
+            agree: true
         }
     }
 
@@ -61,6 +68,11 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
         if (newProps.actions != this.state.actions) {
             this.setState({
                 actions: newProps.actions
+            })
+        }
+        if (newProps.loading != this.state.loading) {
+            this.setState({
+                loading: newProps.loading
             })
         }
     }
@@ -93,7 +105,73 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
             stay: v.target.checked
         })
     }
+    private onChangeAgree =(v)=> {
+        this.setState({
+            agree: v.target.checked
+        })
+    }
+    private renderForm() {
+        return (
+            <Form
+                onFinish={this.onSubmit}
+            >
+                <Form.Item
+                    initialValue={this.props.defaultValue}
+                    name="username"
+                    rules={[
+                        {required: true, message: " "},
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value.match(/[^@]+\@[a-z0-9_\-]{1,}\.[a-z0-9_\-]{1,}/)) {
+                                    return Promise.reject('The username is a valid email address!')
+                                }
+                                return Promise.resolve()
+                            },
+                            })
+                    ]}
+                >
+                    <Input size='large' name="username" placeholder='Please enter your login account' prefix={<Icons.UserOutlined className={'prefixIcon'} />} />
+                </Form.Item>
+                <Form.Item
+                        name="password"
+                        rules={[
+                        {required: true, message: " "},
+                        
+                        ]}
+                >
+                    <Input.Password name="password" size='large' placeholder='Please enter the password' prefix={<Icons.LockOutlined className={'prefixIcon'} />} />
+                </Form.Item>
+                {this.state.type == 'signup' &&<Form.Item
+                        name="repassword"
+                        dependencies={['password']}
+                        rules={[
+                        {required: true, message: " "},
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                            if (!value || getFieldValue('password') === value) {
+                                return Promise.resolve();
+                            }
+                            return Promise.reject(new Error('The new password that you entered do not match!'));
+                            },
+                        }),
+                        ]}
+                >
+                    <Input.Password size='large' name='repassword' placeholder='Please enter verification password' prefix={<Icons.LockOutlined className={'prefixIcon'} />} />
+                </Form.Item>}
+
+                {this.state.type == 'login' && <Form.Item>
+                    
+                    <div className='input-checkbox'>
+                    <Checkbox name="stay" onChange={this.onChangeStay}>Stay logged in</Checkbox>    
+                        <Button type='link' >Forget password</Button>
+                    </div>
+                </Form.Item>}
+                <Button loading={this.state.loading} type='primary' htmlType="submit" size='large' block>{this.getButtonText()}</Button>
+            </Form>
+        )
+    }
     public render() {
+        let login: any = window.location.href.match(/__DEB_DEV__/);
         return (
             <div className='ant-pro-form-login-container '>
                 <div className='ant-pro-form-login-top'>
@@ -108,66 +186,22 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
                     </div>
                 </div>
                 <div className='input-form'>
-                    <Divider >This website account</Divider>
-                    <Form
-                        onFinish={this.onSubmit}
-                    >
-                        <Form.Item
-                            initialValue={this.props.defaultValue}
-                            name="username"
-                            rules={[
-                                {required: true, message: " "},
-                                ({ getFieldValue }) => ({
-                                    validator(_, value) {
-                                        if (!value.match(/[^@]+\@[a-z0-9_\-]{1,}\.[a-z0-9_\-]{1,}/)) {
-                                            return Promise.reject('The username is a valid email address!')
-                                        }
-                                        return Promise.resolve()
-                                    },
-                                  })
-                            ]}
-                        >
-                            <Input size='large' name="username" placeholder='Please enter your login account' prefix={<UserOutlined className={'prefixIcon'} />} />
-                        </Form.Item>
-                        <Form.Item
-                             name="password"
-                             rules={[
-                                {required: true, message: " "},
-                                
-                             ]}
-                        >
-                            <Input.Password name="password" size='large' placeholder='Please enter the password' prefix={<LockOutlined className={'prefixIcon'} />} />
-                        </Form.Item>
-                        {this.state.type == 'signup' &&<Form.Item
-                             name="repassword"
-                             dependencies={['password']}
-                             rules={[
-                                {required: true, message: " "},
-                               ({ getFieldValue }) => ({
-                                 validator(_, value) {
-                                   if (!value || getFieldValue('password') === value) {
-                                     return Promise.resolve();
-                                   }
-                                   return Promise.reject(new Error('The new password that you entered do not match!'));
-                                 },
-                               }),
-                             ]}
-                        >
-                            <Input.Password size='large' name='repassword' placeholder='Please enter verification password' prefix={<LockOutlined className={'prefixIcon'} />} />
-                        </Form.Item>}
-
-                        {this.state.type == 'login' && <Form.Item>
+                    <Spin spinning={this.state.loading}>
+                        <Divider >This third-party  account</Divider>
+                        <div className={classnames({
+                            'input-other': true,
+                            'input-other-disabled': !this.state.agree
+                        })}>
+                            {!login ? this.props.oauths.map(it => {
+                                return <a href={this.state.agree ? it.url : '#'}>{TablerUtils.renderIconComponent(it)} {it.title}</a>
+                            }): this.renderForm()}
                             
-                            <div className='input-checkbox'>
-                            <Checkbox name="stay" onChange={this.onChangeStay}>Stay logged in</Checkbox>    
-                                <Button type='link' >Forget password</Button>
-                            </div>
-                        </Form.Item>}
-                        <Button loading={this.state.loading} type='primary' htmlType="submit" size='large' block>{this.getButtonText()}</Button>
-                    </Form>
-                    <div className='input-other ant-pro-form-login-main-other '>
-                        {this.state.actions}
-                    </div>
+                        </div>
+                        <div className='input-checkbox'>
+                            <Checkbox name="stay" checked={this.state.stay} onChange={this.onChangeStay}>Stay logged in</Checkbox>
+                            <Checkbox name="agree" checked={this.state.agree} onChange={this.onChangeAgree}>Agree <a href="https://www.anyhubs.com/article/privacy">Privacy Policy</a></Checkbox>
+                        </div>
+                    </Spin> 
                 </div>
             </div>
         )

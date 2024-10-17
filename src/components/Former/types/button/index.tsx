@@ -129,16 +129,16 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             }
         }
     }
-    private emptyView() {
+    private emptyView(value: any = '') {
         
         let former: any = this.props.former;
         former.removeCache(this.getCacheKey());
         this.setState({
-            value: '',
+            value: value,
             values: []
         })
         this.props.former.resetSafeValue({
-            [`${this.props.fieldKey}`]: ''
+            [`${this.props.fieldKey}`]: value
         })
     }
     private updateView(value: string) {
@@ -149,8 +149,9 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             actionType: 'init',
             value: value
         })).then(({current, values = []}: any) => {
+            
             if (!current && !values.length) {
-                return this.emptyView()
+                return this.emptyView(value)
             }
             if (Array.isArray(values)) {
                 // 只有一条的时候绑定
@@ -168,8 +169,8 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                 values
             })
             former.loading(false);
-
-            this.onSelectedItem(current, 'init')
+            
+            this.onSelectedItem(current, 'man')
         }).catch(()=> {
             former.loading(false);
         })

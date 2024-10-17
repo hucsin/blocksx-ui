@@ -71,7 +71,9 @@ export default class StatisticsCard extends React.Component<StatisticsCardProps,
                 label: it
             })
         })
-
+        data = data.sort((a,b)=> {
+            return a.label > b.label ? 1 : -1;
+        });
         if (data.length < 30) {
             (new Array(30 - data.length)).fill(0).forEach((it, index) => {
                 data.unshift({

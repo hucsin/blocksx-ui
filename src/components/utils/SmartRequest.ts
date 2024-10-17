@@ -1,4 +1,5 @@
 import { Request } from '@blocksx/swap';
+import { utils } from '@blocksx/core';
 import { Encode, Decode} from '@blocksx/encrypt';
 import Session  from '../core/Session';
 import { message as MessageFor } from 'antd';
@@ -158,13 +159,20 @@ class SmartRequest {
                         }
                     }
                 }).catch((e: any,) => {
-                    MessageFor.error(JSON.stringify(e.message || e || 'system error'));
+                    MessageFor.error(this.getTrueMessage(e.message || e || 'system error'));
                     reject(e)
                 })
             })
         }
     }
 
+    public getTrueMessage(message: any) {
+
+        if (utils.isPlainObject(message)) {
+            return message.message || message.error_description ;
+        }
+        return String(message);
+    }
 
     public makeGetRequest(url: string,  fields?: any) {
         return (request: any) => {
@@ -200,7 +208,7 @@ class SmartRequest {
                         }
                     }
                 }).catch((e: any,) => {
-                    MessageFor.error(JSON.stringify(e.message || e || 'system error'));
+                    MessageFor.error(this.getTrueMessage(e.message || e || 'system error'));
                     reject(e)
                 })
             })

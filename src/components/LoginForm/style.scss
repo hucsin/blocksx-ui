@@ -53,6 +53,40 @@
             }
             .input-other {
                 padding-top: 16px;
+                &.input-other-disabled {
+                    a {
+                        background: var(--main-background-color);
+                        cursor: not-allowed;
+                        color: #ccc;
+                        &:hover {
+                            transform: none;
+                        }
+                    }
+                }
+                a {
+                    display: block;
+                    height: 42px;
+                    line-height: 42px;
+                    border-radius: 12px;
+                    background: var(--main-bg-color);
+                    color: #fff;
+                    margin-bottom: 24px;
+                    transition: all .2s;
+                    text-decoration: none;
+                    span {
+                        margin-right: 8px;
+                    }
+                    &:hover {
+                        transform: scale(1.05);
+                    }
+                }
+                
+            }
+            .input-checkbox {
+                text-align: left;
+                a {
+                    text-decoration: underline;
+                }
             }
             .ant-divider {
                 margin-top: 12px;

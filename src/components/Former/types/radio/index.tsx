@@ -108,6 +108,7 @@
       return datasource.filter(it => !it.hide);
     }
     private renderButton() {
+        let { props = {} } = this.state;
         let dataSource: any = this.getDatasource();
         
         let value: any = this.getLabelValue(this.state.value)
@@ -123,7 +124,9 @@
                 })}
             </Radio.Group>*/
 
-            <div className='former-radio-button'>
+            <div className={classnames('former-radio-button', {
+                [`former-radio-${props.theme}`]: props.theme,
+            })}>
                 {dataSource.map((it: any) => {
                     
                     let VIcon = it.icon ? FormerIcon[`${it.icon}`] : null;

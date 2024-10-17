@@ -63,6 +63,7 @@ export interface IFormerType {
     reflush?: any;
     mandatoryValidation?: boolean;
     onInit?: Function;
+    valueCleaning?: boolean;
 }
 export interface SFormerType {
     visible: boolean;
@@ -89,7 +90,8 @@ export interface SFormerType {
 export default class StepFormer extends React.Component<IFormerType, SFormerType>  {
     public static defaultProps = {
         formerType: 'default',
-        size: 'default'
+        size: 'default',
+        valueCleaning: true
     }
     private former: any;
     private nextDyamicRequest: any;
@@ -106,7 +108,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             schema: this.getSchema(fields),
             columnKeys: columnKeys ,
             action: props.action,
-            value: omit(props.value || {}, columnKeys),
+            value: props.valueCleaning ? omit(props.value || {}, columnKeys) : props.value,
             originValue: props.value,
             fields: fields,
             viewer: props.viewer,
@@ -287,7 +289,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                 schema: this.getSchema(fields || this.state.fields),
                 columnKeys: columnKeys,
                 visible: !!newProps.action,
-                value: omit(newProps.value || {}, columnKeys),
+                value: newProps.valueCleaning ? omit(newProps.value || {}, columnKeys) : newProps.value,
                 fields: fields,
                 isStepOne: newProps.value ? false : true,
                 iconType:  newProps.value? 'icon': 'avatar',
@@ -302,6 +304,14 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
 
             if (!!newProps.action) {
                 //this.resetValue()
+            }
+        }
+
+        if (!newProps.valueCleaning) {
+            if (newProps.value !== this.state.value) {
+                this.setState({
+                    value: newProps.value
+                })
             }
         }
 
@@ -779,7 +789,6 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                     }
                 }}
                 onChangeValue={(value, type)=> {
-                    console.log(value, type, 8899)
                     if (this.state.isStepMode 
                             && this.state.isStepOne ) 
                     {

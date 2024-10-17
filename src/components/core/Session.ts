@@ -25,7 +25,7 @@ class Session {
         }
     }
     public hasLogin() {
-        if (this.session && this.session.user) {
+        if (this.session && this.session.user && this.session.zone) {
             return true;
         }
     }

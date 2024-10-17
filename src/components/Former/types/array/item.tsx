@@ -10,6 +10,7 @@ import { pick } from 'lodash'
 interface IFormerArrayItem extends IFormerBase {
     index: number;
     size: string;
+    former: any;
     isLastItem: boolean;
     onArrayItemRemove: Function;
     onArrayItemMove: Function;
@@ -24,6 +25,13 @@ export default class FormerArrayItem extends React.Component<IFormerArrayItem, {
 
         this.state = {
             value: props.value
+        }
+    }
+    public UNSAFE_componentWillReceiveProps(newProps: any) {
+        if (newProps.value !== this.state.value) {
+            this.setState({
+                value: newProps.value
+            })
         }
     }
     // 删除项
@@ -51,7 +59,7 @@ export default class FormerArrayItem extends React.Component<IFormerArrayItem, {
                 && this.props.moreItems.fields
                 && this.props.moreItems.fields.map(it=> it.fieldKey);
         
-        
+                
         return (
             <div className="former-array-item" data-index={this.props.index +1}>
                 {this.renderChilderen()}
@@ -70,12 +78,13 @@ export default class FormerArrayItem extends React.Component<IFormerArrayItem, {
                     pageMeta={{
                         icon: 'RecordUtilityOutlined'
                     }}
+                    valueCleaning={false}
                     okText='Save'
                     iconType='icon'
                     title="Advanced Setting"
                     size="small"
                     onSave={(value)=> {
-                        let trueValue: any = {...pick(value,moreItemfields)}
+                        let trueValue: any = value// {...pick(value,moreItemfields)}
                         this.setState({
                             value: trueValue
                         })

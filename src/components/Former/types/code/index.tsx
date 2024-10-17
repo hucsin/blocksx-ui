@@ -93,7 +93,7 @@ export default class FormerCode extends React.PureComponent<FormerCodeProps, For
   }
 
   private onSaveEditor =()=> {
-    console.log('save, ddd')
+    
     // json
     if (this.state.language == 'json') {
       try {

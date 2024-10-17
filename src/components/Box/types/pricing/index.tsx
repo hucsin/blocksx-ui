@@ -7,7 +7,6 @@ import * as Icons from '../../../Icons';
 import SmartRequest from '../../../utils/SmartRequest';
 import TablerUtils from '../../../utils/tool'
 import { BoxItem, BoxAction, BoxTag } from '../../interface';
-import { mainTexture } from '../../../SmartPage/core/texture';
 
 import BoxManger from '../../BoxManger';
 import './style.scss';
@@ -235,6 +234,8 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
                                 <Button size='large' block type={it.main? 'primary': 'default'}>
                                     {it.value == 'free' ? 'Start for free' : 'Add the plan'}
                                 </Button>
+                                <div id="paypal-button-container-P-5L978383GP515450CM4HDWQI"></div>
+
                             </dd>
                         </dl>
                     )
@@ -271,8 +272,6 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
     public render() {
 
         return <div className='ui-box-pricing-inner'>
-
-            
             {this.props.title && <Typography.Title level={1}>{this.props.title}</Typography.Title>}
             {this.props.description && <Typography.Paragraph className='block-subtitle'>{this.props.description}</Typography.Paragraph>}
             <Typography.Title className='all-features' level={3}>{this.renderSwitch()}</Typography.Title>
