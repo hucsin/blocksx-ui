@@ -19,6 +19,7 @@ export const map:any = {
         "GbaseBrandOutlined",
         "HiveBrandOutlined",
         "MysqlBrandOutlined",
+        "NotionBrandOutlined",
         "OpengaussBrandOutlined",
         "OracleBrandOutlined",
         "PolardbBrandOutlined",

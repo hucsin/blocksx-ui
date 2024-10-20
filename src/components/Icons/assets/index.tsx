@@ -115,6 +115,7 @@ export { default as NoMatchesPatternUtilityOutlined } from './NoMatchesPatternUt
 export { default as NoStartsWithUtilityOutlined } from './NoStartsWithUtilityOutlined';
 export { default as NotEmptyUtilityOutlined } from './NotEmptyUtilityOutlined';
 export { default as NotEqualtoUtilityOutlined } from './NotEqualtoUtilityOutlined';
+export { default as NotionBrandOutlined } from './NotionBrandOutlined';
 export { default as OneNotOfUtilityOutlined } from './OneNotOfUtilityOutlined';
 export { default as OneOfUtilityOutlined } from './OneOfUtilityOutlined';
 export { default as OpenWindowUtilityOutlined } from './OpenWindowUtilityOutlined';

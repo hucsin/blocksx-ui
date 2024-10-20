@@ -3,9 +3,10 @@ export default class Utils {
     public static isEmptyValue(value: any) {
         
         if (Array.isArray(value)) {
+            
             return value.length == 0 || (value.filter(it => {
                 if (it.$type == 'value') {
-                    return !it.value;
+                    return !it.value.replace(/\s*/g, '');
                 }
             }).length == value.length)
         }
