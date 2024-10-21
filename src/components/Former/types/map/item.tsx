@@ -25,7 +25,8 @@ export default class FormerMapItem extends React.Component<IMapItem, {}> {
     }
     private renderChildren(item: any) {
         return React.cloneElement(item, Object.assign({}, item.props, {
-            index: this.props.index
+            index: this.props.index,
+            key: this.props.index
         }))
     }
     public render() {

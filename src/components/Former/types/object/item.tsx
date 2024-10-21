@@ -10,6 +10,7 @@ import React from 'react';
 import classnames from 'classnames';
 
 import { Checkbox, Tooltip } from 'antd';
+import ReactMarkdown from '../../../Markdown';
 import { utils } from '@blocksx/core';
 import { DownOutlined, RightOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import TablerUtils from '../../../utils/tool';
@@ -155,7 +156,7 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
                     {this.props.oneOf ? <span className="former-object-label-menu">
                         {this.props.oneOf}
                     </span> : null}
-                    {utils.isValidValue(descriptionText) && <span className='former-object-label-description'>{descriptionText}</span>}
+                    {utils.isValidValue(descriptionText) && <span className='former-object-label-description'><ReactMarkdown>{descriptionText}</ReactMarkdown></span>}
                     
                 </div> : null }
                 {this.state.switch && <div className="former-object-item-content">{React.cloneElement(this.props.children, {

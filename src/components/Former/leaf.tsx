@@ -1033,6 +1033,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         let keyProperties = this.clone(this.properties.key);
         let valueProperties = this.clone(this.properties.value);
 
+        
         if (keyProperties && valueProperties) {
 
             originValue.forEach((it: any, index: number) => {

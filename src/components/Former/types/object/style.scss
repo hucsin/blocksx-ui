@@ -105,7 +105,11 @@
 
             line-height: 24px;
             transition: opacity .2s;
-
+            p {
+                margin: 0;
+                padding: 0;
+                display:inline-block
+            }
             &:hover {
                 opacity: .9;
             }

@@ -77,11 +77,19 @@
         translate: all .4s;
         background:#fff;
         border-bottom: 1px dashed #eee;
-        border-radius: 12px;;
+        
         padding-left: 30px;
         margin-bottom: 4px;
         transition: all .2s;
+        .former-object .former-object-item .former-object-item-label {
+            padding-bottom: 0;
+        }
+        .former-object-item:last-child,
+        .former-group-item:last-child {
+            margin-bottom: 0;
+        }
         font-size:14px;
+        .ui-scope.ui-scope-textarea,
         .former-map {
             width: 96%;
         }

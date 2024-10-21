@@ -23,3 +23,13 @@
 .ant-select-outlined.ant-select-disabled:not(.ant-select-customize-input) .ant-select-selector {
   background: rgba(0, 0, 0, 0.01);
 }
+.ant-select-item,
+.ant-select-selection-item {
+  font-size:12px;
+  .ui-label-name {
+    width: 10px;
+    height: 10px;
+    margin-right: 2px;
+    display:inline-block
+  }
+}

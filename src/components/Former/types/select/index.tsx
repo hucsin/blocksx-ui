@@ -15,6 +15,7 @@ import UtilsDatasource from '../../../utils/datasource';
 import * as Icons from '../../../Icons';
 import { utils } from '@blocksx/core';
 import { Select, Tooltip } from 'antd';
+import TablerUtils from '../../../utils/tool';
 
 import './style.scss';
 
@@ -126,6 +127,10 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         }
         if (utils.isArray(props.dataSource)) {
             datasource = datasource.concat(props.dataSource);
+        } else {
+            if (utils.isArray(props.fieldDict)) {
+                datasource = datasource.concat(props.fieldDict);
+            }
         }
         return datasource
     }
@@ -232,7 +237,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                 cache[it.value] = true;
                 return true;
             }
-        }).map (it => ({value: it.value,label: it.label}))
+        }).map (it => ({...it, value: it.value, label: it.label}))
     }
 
     private renderRemarks(remarks: any) {
@@ -250,7 +255,23 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
     private getStatus() {
         return this.state.errorMessage ? 'error' : ''
     }
-   
+    public renderLabel(value: any,label:string) {
+        let { dataSource = [] } = this.state;
+        let find: any = dataSource.find(it => it.value == value);   
+        if (find) {
+            if (find.icon) {
+                return (<>{TablerUtils.renderIconComponent(find)}<span>{find.label}</span></>)
+            } else {
+                if (find.color) {
+                    return (<>
+                        <span className='ui-label-name' style={{backgroundColor: find.color}}></span>
+                        {label}
+                    </>)
+                }
+            }
+        }
+        return label;
+    }
     public render() {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
         let popupMatchSelectWidth = props.popupMatchSelectWidth !== undefined ? props.popupMatchSelectWidth : this.props.popupMatchSelectWidth;
@@ -258,15 +279,16 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
 
         let tooltip: string = props.tooltip =='auto' ? this.findCurrentLabel().label  : props.tooltip || this.props.tooltip;
         let value: any = this.clearValue(this.state.value);
-        
+        let { dataSource = [] } = this.state;
         
         return (
             <Tooltip title={this.state.errorMessage || tooltip} placement='topLeft'>
                 <Select
-                    allowClear={this.props.autoClear}    
-                    placeholder={this.props.placeholder}
+                    allowClear={!utils.isUndefined(props.autoClear) ? props.autoClear : this.props.autoClear}    
+                    
                     status={this.getStatus()}
-                    {...this.props['x-type-props']}
+                    {...props}
+                    placeholder={props.placeholder || this.props.placeholder}
                     onFocus={() => {
                         if (this.isLazyLoader()) {
                             this.fetchData();
@@ -289,7 +311,14 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                     onChange={this.onChange}
                     size={this.props.size}
                     value={value}
-                    options={this.state.dataSource}
+                    options={dataSource}
+                    optionRender={(value:any) => {
+                        console.log(value, 23223333333)
+                        return this.renderLabel(value.value, value.label)
+                    }}
+                    labelRender={({ value, label }: any) => {
+                        return this.renderLabel(value, label)
+                    }}
                 >
                 </Select>
             </Tooltip>

@@ -172,7 +172,6 @@ export default class TablerUtils {
         let fieldMeta: any = field.meta || {
             type: 'input'
         }
-
         return {
             ...field,
             key: field.fieldKey,
@@ -270,7 +269,7 @@ export default class TablerUtils {
             'x-portal': it.portal,
 
             'x-type-props': props,
-            'x-type': it.uiType || 'input',
+            'x-type': it.uiType || meta.type || 'input',
             'x-colspan': it.colspan,
             //'x-model-switch': true,
             'x-label-bold': meta.labelbold,

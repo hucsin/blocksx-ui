@@ -118,14 +118,26 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
             })
         })
     }
+    public getAllFieldsByValue(value: any[]) {
+        let fields: any = [];
+        
+        value.forEach(it => {
+            Object.keys(it).forEach(key => {
+                if (!fields.includes(key)) {
+                    fields.push(key)
+                }
+            })
+        })
 
+        return fields;
+    }
     public renderContent(): React.ReactNode {
         let { value = []} = this.state;
         let selectKey: string = this.props.selectKey || 'id';
         let selectNameKey: string = this.props.selectNameKey || 'name';
         let selectDescriptionKey: string = this.props.selectDescriptionKey || 'description';
         
-        let columns:any = value.length ? Object.keys(value[0]).map((it: any,index: number) => {
+        let columns:any = value.length ? (this.getAllFieldsByValue(value)).map((it: any,index: number) => {
             let title: string = it.replace(/[A-Z]/g, (_,__)=> {return ' ' + _})
             return {
                 title: utils.upperFirst(title),
@@ -190,7 +202,7 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
                                 if (this.props.onClick) {
                                     this.props.onClick({ 
                                         value: `${record[selectKey]}`, 
-                                        name: `${record[selectNameKey]}`,
+                                        name: record[selectNameKey] ? `${record[selectNameKey]}` : '',
                                         icon: this.props.icon,
                                         //description: record[selectDescriptionKey] || this.props.description
                                     })
