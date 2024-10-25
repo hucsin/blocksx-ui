@@ -61,6 +61,7 @@ interface FormerScopeProps {
     onBlur?: Function;
     readonly?: boolean;
     errorMessage?: string;
+    width?: any;
 }
 interface FormerScopeState {
     value: ScopeType[],
@@ -76,6 +77,7 @@ interface FormerScopeState {
     disabledBlur?: boolean;
     loading?: boolean;
     errorMessage?: string;
+    
 }
 
 class FormerScopeViewer extends React.Component<FormerScopeProps, FormerScopeState> {
@@ -159,6 +161,12 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                 ...this.defaultProps
             })
         }   
+
+        if (typeof nextProps.width !== 'undefined') {
+            this.setState({
+                width: nextProps.width
+            })
+        }
         if (nextProps.readonly != this.state.readonly) {
             this.setState({
                 readonly: nextProps.readonly
@@ -504,7 +512,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                         dataType={this.state.currentDataType} 
                         open={opened} 
                         strict={strict} 
-                        panel={typeProps.panel}
+                        panel={typeProps.panel || this.defaultProps.panel}
                         total={this.state.openTotal} 
                         scope={this}
                         value = {value}

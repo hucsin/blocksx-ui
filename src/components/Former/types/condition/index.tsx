@@ -64,6 +64,9 @@ export default class FormerCondition extends React.Component<FormerConditionProp
 
         
     }
+    public isShortMode() {
+        return true;
+    }
     public getSlotChild() {
         let slot: any = {};
         this.props.children.map(it => {
@@ -75,7 +78,7 @@ export default class FormerCondition extends React.Component<FormerConditionProp
         let caseInsensitive: any = TupleSymbol[tuple.value.operator] || {};
         let hideLeft: any = this.state.right == index;
         let hideRight: any = this.state.left == index;
-
+        console.log(tuple.value, 333333)
         return (
             <div className={classnames({
                 'ui-regular-tuple': true,
@@ -90,6 +93,7 @@ export default class FormerCondition extends React.Component<FormerConditionProp
                         props: hideLeft ? {
                             width: 0
                         } : hideRight ? { width: 'calc(100% - 23px)'}: undefined,
+                        
                         onFocus: ()=> {
                             this.setState({left: index})
                         },
@@ -104,6 +108,7 @@ export default class FormerCondition extends React.Component<FormerConditionProp
                     })}
                     {React.cloneElement(slotMap.operator, {
                         value: tuple.value.operator,
+                        dependency: tuple.value.left,
                         onChangeValue: (value) => {
                             tuple.value.operator = value;
                             changeValue(tuple.value)
@@ -242,8 +247,15 @@ export default class FormerCondition extends React.Component<FormerConditionProp
             </Space.Compact>
         )
     }
+    private getLogicMap() {
+        let logicMap: any = this.logicMap;
+        if (this.isShortMode()) {
+            return logicMap.slice(0, 2);
+        }
+        return logicMap;
+    }
     private renderLogicType(value: string, changeValue: Function) {
-       
+       let logicMap: any = this.getLogicMap();
         return (
             <Tooltip title={LogicSymbol[value].label}>
                 <Select 
@@ -252,7 +264,7 @@ export default class FormerCondition extends React.Component<FormerConditionProp
                     value={value}
                     popupMatchSelectWidth={false}
                     onChange={(v)=> changeValue(v)}
-                    options={this.logicMap.map(it => {
+                    options={logicMap.map(it => {
                         let IconView: any = Icons[it[1]];
                         return {
                             value: it[0],
@@ -269,7 +281,6 @@ export default class FormerCondition extends React.Component<FormerConditionProp
     public render() {
         let value: any = this.state.value || {};
         let slotMap: any = this.getSlotChild();
-        
         return (
             <div className='ui-former-condition'>
                 {value.type == 'logic' && this.renderLogic(value, slotMap, undefined, this.index)}

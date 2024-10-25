@@ -58,6 +58,9 @@ export interface TablerState {
     reflush?: any;
 
     mode: any;
+
+    cursor?: string[]
+    next?: string;
 }
 
 interface TablerTableProps extends TablerProps {
@@ -66,6 +69,7 @@ interface TablerTableProps extends TablerProps {
     onSelectedRow?: Function;
     mode: any,
     onClickFistCell?: Function;
+    next?: string;
 }
 
 export default class TablerTable extends React.Component<TablerTableProps, TablerState> {
@@ -97,7 +101,8 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
             loading: false,
             reflush: props.reflush,
             dataSource: this.getDataSource(),
-            mode: props.mode
+            mode: props.mode,
+            next: props.next
         };
 
         this.tableRef = React.createRef();
@@ -140,9 +145,19 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
             })
         }
 
-        if (newProps.pageNumber != this.state.pageNumber) {
+        if (newProps.next != this.state.next) {
+
             this.setState({
-                pageNumber: newProps.pageNumber
+                next: newProps.next
+            })
+        }
+
+        if (newProps.pageNumber != this.state.pageNumber) {
+           
+            this.setState({
+                pageNumber: newProps.pageNumber,
+               // cursor: cursor,
+                
             })
         }
         if (newProps.selectedRowKeys != this.state.selectedRowKeys) {
@@ -551,9 +566,20 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
                                     return originalElement;
                             }
                         },
-                        onChange: (pageNumber, pageSize) => {
+                        onChange: (pageNumber:any, pageSize:any) => {
+                            let { cursor = [''], next }:any = this.state;
 
-                            this.props.onChangePage && this.props.onChangePage({ pageSize, pageNumber })
+                            
+                            if (cursor.length <= pageNumber) {
+                                cursor.push(next || '');
+                            } else {
+                                cursor = cursor.slice(0, pageNumber);
+                            }
+                            this.setState({
+                                cursor
+                            })
+
+                            this.props.onChangePage && this.props.onChangePage({ pageSize, pageNumber, cursor: cursor[pageNumber -1] })
                         }
                     }}
                 ></Table>

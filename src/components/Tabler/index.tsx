@@ -55,7 +55,8 @@ interface TablerState {
     value?: any;
 
     query?: any;
-    
+    next?: string;
+    cursor?: string;
 }
 
 
@@ -79,6 +80,7 @@ interface TablerValueProps extends TablerProps {
     okText?: string;
     formerOkText?: string;
     okIcon?: string;
+    
 }
 
 /**
@@ -311,6 +313,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                         dataSource: dataList,
                         originalDataSource: dataList,
                         total: dataSource.total,
+                        next: dataSource.next,
                         localData: false,
                         loading: false,
                         childrenReflush: +new Date
@@ -329,6 +332,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
                     let value: any = (props.dataSource as Function)({
                         pageNumber: state.pageNumber,
+                        cursor: state.cursor,
                         pageSize: state.pageSize,
                         ...state.searcher,
                         ...params,
@@ -918,6 +922,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                     
                     pageMeta={this.props.pageMeta}
                     pageSize={this.state.pageSize}
+                    next={this.state.next}
                     pageNumber={this.state.pageNumber}
                     total={this.state.total}
                     reflush={this.state.childrenReflush}

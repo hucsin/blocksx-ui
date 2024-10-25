@@ -13,7 +13,7 @@ import { IFormerBase } from '../../typings';
 
 import UtilsDatasource from '../../../utils/datasource';
 import * as Icons from '../../../Icons';
-import { utils } from '@blocksx/core';
+import { utils, keypath } from '@blocksx/core';
 import { Select, Tooltip } from 'antd';
 import TablerUtils from '../../../utils/tool';
 
@@ -36,6 +36,8 @@ export interface FormerSelectProps extends IFormerBase {
     popupMatchSelectWidth?: boolean;
     readonly?: boolean;
     errorMessage?: string;
+
+    dependency?: any;
 }
 
 
@@ -53,6 +55,8 @@ export interface FormerSelectState {
     query?: string;
     readonly?: boolean;
     errorMessage?: string;
+
+    dependency?: any;
 }
 
 
@@ -68,14 +72,15 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         let datasource: any [] = this.getDefaultDatasource(props);
         this.state = {
             value: isMultiple ? this.fixedMultipleValue(props.value) : props.value,
-            dataSource: this.makeGroupDataSource(datasource),
+            dataSource: datasource,
             relyon: props.relyon || {},
             originSource: datasource,
             loading: false,
             multiple: isMultiple,
             runtimeValue: props.runtimeValue,
             readonly: props.readonly || false,
-            errorMessage: props.errorMessage || ''
+            errorMessage: props.errorMessage || '',
+            dependency: props.dependency
         };
 
     }
@@ -165,6 +170,11 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
             })
         }
 
+        if (newProps.dependency != this.state.dependency) {
+            this.setState({
+                dependency: newProps.dependency
+            })
+        }
     }
 
     private fixedMultipleValue(value) {
@@ -221,7 +231,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                 }).then((data: any) => {
                     let datasource: any = isLabelValue ? this.markDataSource([this.state.value, ...data]) :data;
                     this.setState({
-                        dataSource: this.makeGroupDataSource(datasource),
+                        dataSource: datasource,
                         loading: false,
                         originSource: datasource,
                         query: this.state.search
@@ -256,7 +266,8 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         return this.state.errorMessage ? 'error' : ''
     }
     public renderLabel(value: any,label:string) {
-        let { dataSource = [] } = this.state;
+        
+        let dataSource: any = this.getDatasource();
         let find: any = dataSource.find(it => it.value == value);   
         if (find) {
             if (find.icon) {
@@ -272,6 +283,24 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         }
         return label;
     }
+    private getDatasource() {
+        let { dataSource = [], dependency } = this.state;
+
+        if (dependency) {
+            //dataSource = dataSource.filter(it => dependency.includes(it.value));
+            dataSource = dataSource.filter(it => {
+                if (it.dependency) {
+                    return Object.entries(it.dependency).some(([key, value]:any) => {
+                       let dependValue: any = keypath.get(dependency, key);
+                       return value.includes(dependValue);
+                    });
+                }
+                return true;
+            });
+        }
+        
+        return this.makeGroupDataSource(dataSource);
+    }
     public render() {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
         let popupMatchSelectWidth = props.popupMatchSelectWidth !== undefined ? props.popupMatchSelectWidth : this.props.popupMatchSelectWidth;
@@ -279,7 +308,9 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
 
         let tooltip: string = props.tooltip =='auto' ? this.findCurrentLabel().label  : props.tooltip || this.props.tooltip;
         let value: any = this.clearValue(this.state.value);
-        let { dataSource = [] } = this.state;
+        let dataSource: any = this.getDatasource();
+
+        
         
         return (
             <Tooltip title={this.state.errorMessage || tooltip} placement='topLeft'>
@@ -313,7 +344,6 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                     value={value}
                     options={dataSource}
                     optionRender={(value:any) => {
-                        console.log(value, 23223333333)
                         return this.renderLabel(value.value, value.label)
                     }}
                     labelRender={({ value, label }: any) => {
