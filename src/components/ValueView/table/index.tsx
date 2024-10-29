@@ -61,16 +61,18 @@ export default class ValueViewTable extends React.Component<{ value: any }, { va
             width: 25,
             fixed: 'right',
             render: (record: any) => {
+                let column = Object.keys(record).length > 8 ? 2 : 1;
                 return this.renderPopover(
                     <span className='ui-valueview-table-button'><Icons.PicRightOutlined /></span>,
-                    <ValueViewForm column ={2} value={record}/>
+                    <ValueViewForm column ={column} value={record} />,
+                    Math.max(column * 250, 350)
                 )
             }
         }]
     }
-    public renderPopover(children: any, content: any) {
+    public renderPopover(children: any, content: any, width: number = 500) {
         return (
-            <Popover title="Detailed Field(s)" align={{offset: [14,-10]}} placement='topRight' overlayClassName="ui-tooltip-valueview"  content={content}>
+            <Popover overlayStyle={{width: width}} title={<><Icons.FileTextOutlined/> Detailed Fields</>} align={{offset: [14,-10]}} placement='topRight' overlayClassName="ui-tooltip-valueview"  content={content}>
                 {children}
             </Popover>
         )
@@ -104,7 +106,7 @@ export default class ValueViewTable extends React.Component<{ value: any }, { va
             <div className="ui-valueview-table">
                 <Table 
                     size="small"
-                    scroll={{ x: 'max-content' }}
+                    scroll={{ x: 'max-content',y: 26* 8 }}
                     columns={this.getTableRenderColumns(this.state.columns.slice(0, 5))}
                     dataSource={this.state.value}
                     pagination={false}

@@ -16,6 +16,7 @@ export { default as LoginForm } from './LoginForm';
 export { default as ErrorMessage } from './ErrorMessage';
 export { default as Tabler } from './Tabler';
 export { default as Former } from './Former';
+export { default as Agent } from './Agent';
 export { default as ValueView } from './ValueView';
 export { default as Markdown } from './Markdown';
 

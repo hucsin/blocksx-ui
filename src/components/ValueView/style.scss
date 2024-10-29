@@ -1,7 +1,11 @@
 .ui-tooltip-valueview {
     min-width: 200px;
-    max-width: 400px;
+    max-width: 550px;
     max-height: 400px;
+    .ant-popover-title {
+        opacity: .5;
+        font-weight: 400;
+    }
 }
 .ui-valueview-table-button {
     cursor: pointer;
@@ -10,7 +14,9 @@
     }
 }
 .ui-valueview {
- 
+    .ant-descriptions .ant-descriptions-item-container {
+        display: block;
+    }
     .ui-empty.ant-popover-open {
         color:var(--main-bg-color)
     }
@@ -55,5 +61,7 @@
     .ant-table-wrapper .ant-table.ant-table-small .ant-table-thead>tr>th {
         padding: 3px;
         font-size:12px;
+
+        white-space: nowrap;
     }
 }

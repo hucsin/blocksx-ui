@@ -17,6 +17,9 @@ interface ValueViewState {
 }
 
 export default class ValueView extends React.Component<ValueViewProps, ValueViewState> {
+    public static defaultProps = {
+        type: 'auto'
+    }
     public constructor(props: ValueViewProps) {
         super(props);
 
