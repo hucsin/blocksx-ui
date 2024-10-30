@@ -1,0 +1,63 @@
+.dialogue-former {
+    .dialogue-choose-content {
+        display:none;
+    }
+    .ui-former-buttons {
+        text-align: left;
+        .ui-former-cancel {
+            opacity: .6;
+            display: none;
+        }
+    }
+    .former-column-one {
+        .former-object-small {
+            >.former-group {
+                >.former-group-item {
+                    >.former-group-item-content {
+
+                        max-height: 300px;
+                        overflow-y: auto;
+                    }
+                }
+            }
+        }
+    }
+    .ui-former-header {
+        display: none;
+    }
+    .dialogue-former-wrapper {
+        display: block;
+    }
+    .former-object .former-object-item .former-object-label-description {
+        opacity: .4;
+        font-size: 12px;
+    }
+
+    &.dialogue-former-stepone {
+        .dialogue-former-wrapper {
+            display: none;
+        }
+        .dialogue-choose-content {
+            display:block;
+        }
+    }
+    .back-btn {
+        cursor: pointer;
+        &:hover {
+            
+            span { opacity: 1 !important;}
+        }
+    }
+
+    .former-group .former-group-item-content {
+        padding: 8px 0;
+    }
+    .former-object .former-object-item .former-object-item-label {
+        padding-bottom: 0px;
+    }
+    .former-object .former-object-item {
+        padding-left: 12px;
+        padding-right: 8px;
+        padding-bottom: 8px;
+    }
+}

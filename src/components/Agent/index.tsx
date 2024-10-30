@@ -12,6 +12,155 @@ interface AgentProps {
     name: string;
 }
 
+
+function _test_getMessages(name: string) {
+    let testMessages = [
+        {
+            type: 'assistant',
+            content: `Hello, I am your assistant ${name}. How can I help you?`,
+            display: {
+                type: 'value',
+                value: Array.from({length: 11}).map((_, index) => ({
+                    userName: `user${index}@izao.cc`,
+                    Avatar: 'https://avatars.githubusercontent.com/u/1024025?v=4',
+                    Email: `user${index}@izao.cc`,
+                    Phone: `1380013800${index}`,
+                    Company: 'Anyhubs',
+                    Department: 'Development',
+                    Position: 'Developer',
+                }))
+            }
+        },
+        {
+            type: 'assistant',
+            content: `Hello, I am your assistant ${name}. How can I help you?`,
+            display: {
+                type: 'value',
+                value: {
+                    userName: 'user@izao.cc',
+                    Avatar: 'https://avatars.githubusercontent.com/u/1024025?v=4',
+                    Email: 'user@izao.cc',
+                    Phone: '13800138000',
+                    Company: 'Anyhubs',
+                    Department: 'Development',
+                    Position: 'Developer',
+                }
+            }
+            
+        },
+        {
+            type: 'assistant',
+            content: `Hello, I am your assistant ${name}. How can I help you?`,
+            display: {
+                type: 'feedback',
+                status: 'success',
+                message: 'Create Success  [link to](http://a.com.xxxx)',
+            }
+        },
+        {
+            type: 'assistant',
+            content: `Hello, I am your assistant ${name}. How can I help you ?`,
+            display: {
+                type: 'feedback',
+                status: 'error',
+                message: 'Create Error [link to](http://a.com.xxxx) ',
+            }
+        },
+        {
+            type: 'assistant',
+            content: `Hello, I am your assistant ${name}. How can I help you?`,
+            display: {
+                type: 'choose',
+                //tips: 'Please select one {name} below.',
+                dataSource: Array.from({length: 10}).map((_, index) => ({
+                    value: `value${index}`,
+                    label: `label${index}`,
+                    description: `description${index}`,
+                })),
+                app: {
+                    name: 'GoogleSheet',
+                    icon: 'GoogleSheetsBrandFilled',
+                }
+            }
+            
+        },
+        {
+            type: 'assistant',
+            content: `Hello, I am your assistant ${name}. How can I help you?`,
+            display: {
+                type: 'former',
+                app: {
+                    name: 'GoogleSheet',
+                    icon: 'GoogleSheetsBrandFilled',
+                },
+                first: {
+                    name: 'ddid',
+                    type: 'choose',
+                    dataSource: Array.from({length: 10}).map((_, index) => ({
+                        value: `value${index}`,
+                        label: `label${index}`,
+                        description: `description${index}`,
+                    }))
+                },
+                value: {},
+                schema: {
+                    type: 'object',
+                    properties: {
+                        userName: {
+                            type: 'string',
+                            description: 'Please select one xx below.',
+                            
+                        },
+                        whereEvent: {
+                            type: 'string',
+                            description: 'Please select one xx below.',
+                            default: 'userName',
+                            enum: ["userName", "classType"]
+                        },
+                        place: {
+                            type: 'string',
+                            description: 'Please select one xx below.',
+                            maxLength: 255
+                        },
+                        number: {
+                            type: 'number',
+                            description: 'Please input one xx below.',
+                            minimum: 1,
+                            maximum: 100
+                        },
+                        boolean: {
+                            type: 'boolean',
+                            description: 'Please select one xx below.',
+                        },
+                        date: {
+                            type: 'string',
+                            description: 'Please select one xx below.',
+                            format: 'date'
+                        },
+                        datetime: {
+                            type: 'string',
+                            description: 'Please select one xx below.',
+                            format: 'date-time'
+                        },
+                        time: {
+                            type: 'string',
+                            description: 'Please select one xx below.',
+                            format: 'time'
+                        }
+                    },
+                    required: ['userName', 'number', 'whereEvent', 'date', 'datetime', 'time']
+                }
+            }
+            
+        }
+    ]
+
+    let index: number = Math.floor(Math.random() * (testMessages.length));
+    
+    return testMessages[index] || testMessages[0];
+}
+
+
 export default class Agent extends React.Component<AgentProps, any> {
     private animator:AgentAnimator;
     private queue:AgentQueue;
@@ -26,6 +175,7 @@ export default class Agent extends React.Component<AgentProps, any> {
     private _moveHandle:any;
     private _upHandle:any;
     private _dragUpdateLoop:any;
+    private searching:boolean;
 
     public constructor(props: any) {
         super(props);
@@ -46,7 +196,7 @@ export default class Agent extends React.Component<AgentProps, any> {
             agent, 
             sounds
         );
-
+        this.searching = false;
         this._setupEvents();
 
         setTimeout(()=> {
@@ -372,7 +522,7 @@ export default class Agent extends React.Component<AgentProps, any> {
         AgentUtils.on(window, 'resize', this.reposition);
 
         AgentUtils.on(this.ref.current, 'mousedown', this._onMouseDown);
-        AgentUtils.on(this.ref.current, 'dblclick', this._onDoubleClick);
+        AgentUtils.on(this.ref.current, 'mouseover', this._onDoubleClick);
     }   
 
     private _onDoubleClick = () => {
@@ -500,10 +650,60 @@ export default class Agent extends React.Component<AgentProps, any> {
     public setAgent(name:string, agent: any) {
         this.loader.agentReady(name, agent)
     }
+    private onSubmit = (message: any, type: string = 'Searching') => {
+        this.searching = true;
+        console.log(message,33,type, this.animations())
+        this.queue.clear();
+        
+        this.keepPlay(type, ()=> {
+            return !this.searching;
+        });
+
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                this.searching = false;
+                resolve(_test_getMessages(this.props.name));
+            }, 4000);
+        });
+    }
+
+    /**
+     * 
+     * @param action 
+     * @param check 
+     */
+    public keepPlay (action: string, check: () => boolean) {
+        this.play(action, undefined, ()=> {
+            if (!check()) {
+                this.keepPlay(action, check);
+            }
+        })
+    }
+
+
     public render() {
         return (
             <div className='agents' ref={this.ref}>
-                <Dialogue name={utils.upperFirst(this.props.name)}><div className='inner'></div></Dialogue>
+                <Dialogue 
+                    name={utils.upperFirst(this.props.name)}
+                    onSubmit={this.onSubmit}
+                    efficiency={['Planning', 'Memory', 'Public Data', 'Actions', 'Application', 'Knowledge', 'Helper'].map((it, index) => ({
+                        label: it,
+                        key: index + 1,
+                        icon: 'EfficiencyUtilityOutlined',
+                        children: Array.from({length: 10}).map((it, idx) => ({
+                            label: `Efficiency ${index + 1}-${idx + 1}`,
+                            key: `${index + 1}-${idx + 1}`,
+                            children: Array.from({length: 10}).map((it, dd) => ({
+                                label: `Efficiency ${index + 1}-${dd + 1}`,
+                                key: `${index + 1}-${dd + 1}-${idx + 1}`,
+                                assistant: _test_getMessages(this.props.name)
+                            }))
+                        }))
+                    }))}
+                >
+                    <div className='inner'></div>
+                </Dialogue>
             </div>
         )
     }

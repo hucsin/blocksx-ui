@@ -18,9 +18,13 @@ interface IFormerTextarea extends IFormerBase {
     errorMessage?: string;
 }
 
-class FormerTextareaViewer extends React.Component<IFormerTextarea, {errorMessage : string}> {
+class FormerTextareaViewer extends React.Component<IFormerTextarea, {disabled: boolean,errorMessage : string}> {
     public constructor(props:any) {
         super(props)
+        this.state = {
+            disabled: props.readonly,
+            errorMessage: props.errorMessage
+        }
     }
     public render() {
        if (this.props.value) {
@@ -40,7 +44,7 @@ class FormerTextareaViewer extends React.Component<IFormerTextarea, {errorMessag
     }
 }
 
-export default class FormerTextarea extends React.Component<IFormerTextarea, { value: any, errorMessage: string }> {
+export default class FormerTextarea extends React.Component<IFormerTextarea, { disabled?: boolean, value: any, errorMessage: string }> {
 
     public static Viewer: any = FormerTextareaViewer;
     public constructor(props: IFormerTextarea) {
@@ -48,7 +52,8 @@ export default class FormerTextarea extends React.Component<IFormerTextarea, { v
 
         this.state = {
             value: props.value || '',
-            errorMessage: props.errorMessage || ''
+            errorMessage: props.errorMessage || '',
+            disabled: props.readonly
         };
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
@@ -60,6 +65,11 @@ export default class FormerTextarea extends React.Component<IFormerTextarea, { v
         if (newProps.errorMessage != this.state.errorMessage) {
             this.setState({
                 errorMessage: newProps.errorMessage
+            })
+        }
+        if (newProps.readonly != this.state.disabled) {
+            this.setState({
+                disabled: newProps.readonly
             })
         }
     }
@@ -75,7 +85,10 @@ export default class FormerTextarea extends React.Component<IFormerTextarea, { v
     public render() {
         return (
             <Tooltip title={this.state.errorMessage} placement='topLeft'>
-                <Input.TextArea status={this.getStatus()} rows={3} {...this.props['x-type-props']} disabled={this.props.readonly || this.props.disabled}  value={this.state.value} onChange={this.onChange} />
+                <Input.TextArea status={this.getStatus()} autoSize={{
+                    minRows: 2,
+                    maxRows: 3
+                }} {...this.props['x-type-props']} disabled={this.state.disabled || this.props.disabled}  value={this.state.value} onChange={this.onChange} />
             </Tooltip>
         )
     }

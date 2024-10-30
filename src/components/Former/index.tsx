@@ -11,7 +11,7 @@ import * as FormerTypes from './types';
 
 import Context from './context';
 
-import ConstValue from './const';
+import JSONSchema2FormerSchema from './adapter/JSONSchema';
 
 import './style.scss';
 import { pick } from 'lodash';
@@ -54,6 +54,8 @@ export interface FormerProps {
     onGetDependentParameters?: Function;
     onBeforeSave?: Function;
     onSave?: Function;
+    onCancel?: Function;
+    onSubmit?: Function;
     onView?: Function;
     onInit?: Function;
 
@@ -64,6 +66,7 @@ export interface FormerProps {
     okText?: string;
     okIcon?: string;
     cancelText?: string;
+    cancelType?: 'default' | 'primary' | 'dashed' | 'link';
     width?: number;
     onClose?: Function;
     onVisible?: Function;
@@ -120,6 +123,8 @@ interface FormerState {
  */
 export default class Former extends React.Component<FormerProps, FormerState> {
     public static FormerTypes = FormerTypes;
+    public static JSONSchema2FormerSchema = JSONSchema2FormerSchema;
+
     public static defaultProps = {
         defaultClassify: '基础',
         //classifyType: 'verticalTabs',
@@ -156,7 +161,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             viewer: props.viewer,
             column: this.getDefaultColumn(props.column),
             disabled: props.disabled || true,
-            loading: props.loading || false,
+            loading: props.loading,
             fetching: false,
             canmodify: props.canmodify,
             notice: props.notice,
@@ -440,6 +445,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 return;
             }
         }
+        
 
         this.validationValue(() => {
             this.doSave()
@@ -457,6 +463,11 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         if (this.props.onChangeValue) {
             this.props.onChangeValue(this.state.value, true);
         }
+        
+        if (this.props.onSubmit) {
+            this.props.onSubmit(this.state.value, this);
+        }
+
         // 在保存的时候直接提交值
         if (this.props.onSave) {
             let saveresult: any = this.props.onSave(this.state.value, this);
@@ -589,6 +600,11 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             
             this.props.onClose(e === true);
         }
+
+        if (this.props.onCancel) {
+            this.props.onCancel();
+        }
+
         this.setState({
             visible: true,
             loading: false
@@ -666,12 +682,12 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
         return (
             <Space>
-                {!this.state.viewer ? <Button icon={OkIconView && <OkIconView />} loading={this.state.loading} disabled={this.state.disabled} onClick={this.onSave} type="primary">
+                {!this.state.viewer ? <Button icon={OkIconView && <OkIconView />} size={this.props.size} loading={this.state.loading} disabled={this.state.disabled} onClick={this.onSave} type="primary">
                     {this.state.okText || 'Ok'}
                 </Button> : null}
 
                 {this.renderExtraContent()}
-                <Button className='ui-former-cancel' onClick={() => this.onCloseLayer(true)} style={{ marginRight: 8 }}>
+                <Button className='ui-former-cancel' type={this.props.cancelType} size={this.props.size} onClick={() => this.onCloseLayer(true)} style={{ marginRight: 8 }}>
                     {this.state.cancelText || 'Cancel'}
                 </Button>
             </Space>

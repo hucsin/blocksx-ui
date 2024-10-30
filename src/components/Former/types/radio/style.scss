@@ -92,6 +92,12 @@
             }
         }
     }
+    &.former-radio-small {
+        label {
+            line-height: 22px;
+            padding: 0 4px;
+        }
+    }
     label {
         display: inline-block;
         cursor: pointer;

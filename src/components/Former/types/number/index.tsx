@@ -9,7 +9,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
-import { InputNumber } from 'antd';
+import { InputNumber, Tooltip } from 'antd';
 import './style.scss'
 
 interface IFormerInput extends IFormerBase {
@@ -17,14 +17,16 @@ interface IFormerInput extends IFormerBase {
     size?: any;
     onChangeValue: Function;
     readonly?: boolean;
+    errorMessage?: string;
 }
-export default class FormerInput extends React.Component<IFormerInput, { readonly: boolean, value: any }> {
+export default class FormerInput extends React.Component<IFormerInput, { readonly: boolean, value: any, errorMessage?: string }> {
     public constructor(props: IFormerInput) {
         super(props);
 
         this.state = {
             value: props.value,
-            readonly: props.readonly || false
+            readonly: props.readonly || false,
+            errorMessage: props.errorMessage
         };
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
@@ -36,6 +38,11 @@ export default class FormerInput extends React.Component<IFormerInput, { readonl
         if (newProps.readonly != this.state.readonly) {
             this.setState({
                 readonly: newProps.readonly || false
+            })
+        }
+        if (newProps.errorMessage != this.state.errorMessage) {
+            this.setState({
+                errorMessage: newProps.errorMessage
             })
         }
     }
@@ -51,7 +58,9 @@ export default class FormerInput extends React.Component<IFormerInput, { readonl
     public render() {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
         return (
-            <InputNumber size={this.props.size} {...props}  style={{width: props.width}} disabled={this.state.readonly || this.props.disabled}  value={this.state.value} onChange={this.onChange} />
+            <Tooltip title={this.state.errorMessage} placement='topLeft'>
+                <InputNumber size={this.props.size} {...props}  style={{width: props.width}} disabled={this.state.readonly || this.props.disabled}  value={this.state.value} onChange={this.onChange} status={this.state.errorMessage ? 'error' : ''} />
+            </Tooltip>
         )
     }
 }

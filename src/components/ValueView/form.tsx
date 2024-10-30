@@ -79,7 +79,7 @@ export default class ValueViewForm extends React.Component<{ value: any, column?
                 )
             case 'object':
                 let valueLength: number = Object.keys(value).length;
-                let column: number = this.props.column || (valueLength < 8 ? 1 : 3 );
+                let column: number = this.props.column || (valueLength < 8 ? 1 : 2 );
 
                 return (
                     <Descriptions  column={ column } className={classnames({
@@ -100,7 +100,7 @@ export default class ValueViewForm extends React.Component<{ value: any, column?
                 key: key,
                 label: title ? ['',key].join('.') :utils.labelName(key),
                 span: valueLength > 25 ?  valueLength < 100 ? 2 : 3 : 1,
-                children: value
+                children: typeof value =='boolean'? value.toString() : value
             }
         })
     }

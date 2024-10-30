@@ -2,14 +2,14 @@
 import React from 'react';
 import { IFormerBase } from '../../typings';
 import dayjs from 'dayjs';
-import { DatePicker, Tooltip } from "antd";
+import { TimePicker, Tooltip } from "antd";
 import './style.scss'
 
-export interface FormerDateProps extends IFormerBase {
+interface FormerDateProps extends IFormerBase {
     value: any,
     size: any,
     disabled?: boolean,
-    showTime?: boolean,
+
     range?: boolean,
     format?: string;
     onChangeValue: Function;
@@ -30,10 +30,10 @@ interface FormerDateState {
     disabled?: boolean;
     errorMessage?: string;
 }
-export default class FormerDate extends React.Component<FormerDateProps, FormerDateState> {
+export default class FormerDateTime extends React.Component<FormerDateProps, FormerDateState> {
     public static defaultProps  = {
         range: false,
-        format: 'YYYY/MM/DD'
+        format: 'HH:mm:ss'
     }
     public constructor(props: FormerDateProps) {
         super(props);
@@ -74,42 +74,20 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
             this.props.onChangeValue && this.props.onChangeValue(datestring)
         }
     }
-    private isShowTime() {
-        let { format ="" } = this.state;
-
-        return this.props.showTime || format.includes('HH');
-    }
     public render() {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
         let disabled: boolean = props.disabled || this.props.disabled;
 
-        if (this.state.range) {
-            let rangeValue: any = this.state.value || [];
-            
-            return (
-                <Tooltip title={this.state.errorMessage} placement='topLeft'>
-                    <DatePicker.RangePicker 
-                        size={this.props.size}
-                        disabled={disabled}  
-                        value={rangeValue.map(it => dayjs(it, this.state.format)) as any} 
-                        format={this.state.format}
-                        onChange={this.onChangeValue}
-                    />
-                </Tooltip>
-            )
-        }
-
-       
         return(<Tooltip title={this.state.errorMessage} placement='topLeft'>
-            <DatePicker 
+            <TimePicker 
                 disabled={disabled}  
-                size={this.props.size}
                 {...props}
+                style={{width: props.width}}
+                size={this.props.size}
                 status={this.state.errorMessage ? 'error' : ''}
-                showTime={this.isShowTime()}
                 placeholder={this.state.placeholder || this.state.format}
                 value={this.state.value && dayjs(this.state.value as any, this.state.format)} 
-                format={this.state.format}
+                //format={this.state.format}
                 onChange={this.onChangeValue}
             />
         </Tooltip>)

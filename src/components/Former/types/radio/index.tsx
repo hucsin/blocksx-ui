@@ -111,7 +111,8 @@
         let { props = {} } = this.state;
         let dataSource: any = this.getDatasource();
         
-        let value: any = this.getLabelValue(this.state.value)
+        let value: any = this.getLabelValue(this.state.value);
+        
         return (
             
             /*<Radio.Group buttonStyle="solid" size={this.props.size} disabled={this.state.disabled}  onChange={this.onChangeValue} defaultValue={value}>
@@ -126,6 +127,7 @@
 
             <div className={classnames('former-radio-button', {
                 [`former-radio-${props.theme}`]: props.theme,
+                [`former-radio-${this.props.size}`]: this.props.size
             })}>
                 {dataSource.map((it: any) => {
                     

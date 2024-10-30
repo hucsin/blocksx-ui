@@ -1,0 +1,27 @@
+.dialogue-feedback {
+    display: flex;
+    align-items: center;
+    border: 1px dashed var(--secondary-border-color);
+    border-radius: 12px;
+    padding: 8px 16px;
+    
+    .dialogue-feedback-avatar {
+        width: 40px;
+        span {
+            font-size: 32px;
+        }
+    }
+    &.dialogue-feedback-success {
+        .anticon {
+            color: var(--success-color);
+        }
+    }
+    &.dialogue-feedback-error {
+        .anticon {
+            color: var(--error-color);
+        }
+    }
+    .dialogue-feedback-content {
+        flex: 1;
+    }
+}

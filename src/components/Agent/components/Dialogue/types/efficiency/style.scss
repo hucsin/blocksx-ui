@@ -1,0 +1,21 @@
+.dialogue-efficiency {
+    padding: 0 0px;
+    .title {
+        font-size: 13px;
+        opacity: 0.3;
+        
+    }
+    .item {
+        display: inline-block;
+        border: 1px solid var(--secondary-border-color);
+        padding: 2px 8px;
+        border-radius: 4px;
+        margin-right: 4px;
+        margin-bottom: 4px;
+        cursor: pointer;
+        .ant-dropdown-open,
+        &:hover {
+            background-color: var(--main-background-color);
+        }
+    }
+}
