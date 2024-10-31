@@ -1,6 +1,8 @@
 import React from 'react';
 import { utils } from '@blocksx/core';
 
+import SmartRequest from '../utils/SmartRequest';
+
 import AgentAnimator from './core/animator';
 import AgentLoader from './core/loader';
 import AgentUtils from './core/utils';
@@ -161,12 +163,13 @@ function _test_getMessages(name: string) {
 }
 
 
-export default class Agent extends React.Component<AgentProps, any> {
+export default class Agent extends React.Component<AgentProps, {open: boolean}> {
     private animator:AgentAnimator;
     private queue:AgentQueue;
     private loader:AgentLoader;
     private ref: React.RefObject<HTMLDivElement>;
-    
+    private enterTimeout: any;
+    private isDraging: any;
     private _hidden:boolean;
     private _idleDfd:any;
     private _targetX:any;
@@ -176,6 +179,7 @@ export default class Agent extends React.Component<AgentProps, any> {
     private _upHandle:any;
     private _dragUpdateLoop:any;
     private searching:boolean;
+    private sendHelper: any;
 
     public constructor(props: any) {
         super(props);
@@ -185,7 +189,11 @@ export default class Agent extends React.Component<AgentProps, any> {
         this.ref = React.createRef();
         this.loader = new AgentLoader(props.name);
         
-        
+        this.sendHelper = SmartRequest.makePostRequest('/api/agent/send');
+
+        this.state = {
+            open: false,
+        }
     }
     public async componentDidMount() {
         let { sounds, agent}:any = await this.loader.load()
@@ -522,6 +530,10 @@ export default class Agent extends React.Component<AgentProps, any> {
         AgentUtils.on(window, 'resize', this.reposition);
 
         AgentUtils.on(this.ref.current, 'mousedown', this._onMouseDown);
+        AgentUtils.on(this.ref.current, 'mouseenter', this.lazyShowDialogure);
+        AgentUtils.on(this.ref.current, 'mouseleave', () => {
+            clearTimeout(this.enterTimeout);
+        });
         AgentUtils.on(this.ref.current, 'mouseover', this._onDoubleClick);
     }   
 
@@ -529,6 +541,18 @@ export default class Agent extends React.Component<AgentProps, any> {
         if (!this.play('ClickedOn')) {
             this.animate();
         }
+    }
+
+    private lazyShowDialogure =()=> {
+
+        if (this.isDraging) return;
+        if (this.enterTimeout) {
+            window.clearTimeout(this.enterTimeout);
+            this.enterTimeout = null;
+        }
+        this.enterTimeout = window.setTimeout(()=> {
+            this.setState({open: true});
+        }, 500);
     }
 
     private reposition = () => {
@@ -585,6 +609,7 @@ export default class Agent extends React.Component<AgentProps, any> {
         AgentUtils.on(window, 'mouseup', this._upHandle);
 
         this._dragUpdateLoop = window.setTimeout(this._updateLocation, 10);
+        this.enterTimeout && window.clearTimeout(this.enterTimeout);
     }
 
     private _calculateClickOffset (e:any) {
@@ -612,6 +637,11 @@ export default class Agent extends React.Component<AgentProps, any> {
         let y = e.clientY - this._offset.top;
         this._targetX = x;
         this._targetY = y;
+        this.isDraging = true;
+        if ( this.state.open) {
+            this.enterTimeout && window.clearTimeout(this.enterTimeout);
+            this.setState({open: false});
+        }
     }
 
     private _finishDrag = () => {
@@ -621,9 +651,13 @@ export default class Agent extends React.Component<AgentProps, any> {
         AgentUtils.off(window, 'mouseup', this._upHandle);
         // resume animations
         //this._balloon.show();
+        this.isDraging = false;
         this.reposition();
         this.resume();
-
+        
+        if (!this.state.open ) {
+            this.setState({open: true});
+        }
     }
 
     private addToQueue (func:any, scope?:any) {
@@ -651,19 +685,20 @@ export default class Agent extends React.Component<AgentProps, any> {
         this.loader.agentReady(name, agent)
     }
     private onSubmit = (message: any, type: string = 'Searching') => {
-        this.searching = true;
-        console.log(message,33,type, this.animations())
-        this.queue.clear();
         
+        this.searching = true;
+        this.queue.clear();
+        console.log(message, 'showmemeeme')
         this.keepPlay(type, ()=> {
             return !this.searching;
         });
 
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                this.searching = false;
-                resolve(_test_getMessages(this.props.name));
-            }, 4000);
+        return this.sendHelper({
+            message
+        }).then((result: any) => {
+            return result;
+        }).finally(() => {
+            this.searching = false;
         });
     }
 
@@ -687,6 +722,12 @@ export default class Agent extends React.Component<AgentProps, any> {
                 <Dialogue 
                     name={utils.upperFirst(this.props.name)}
                     onSubmit={this.onSubmit}
+                    open={this.state.open}
+                    onOpenChange={(open)=> {
+                        if (!open) {
+                            this.setState({open});
+                        }
+                    }}
                     efficiency={['Planning', 'Memory', 'Public Data', 'Actions', 'Application', 'Knowledge', 'Helper'].map((it, index) => ({
                         label: it,
                         key: index + 1,

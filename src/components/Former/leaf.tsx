@@ -357,7 +357,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         return defaultValue
     }
     private isFeaturesNode() {
-        return ['array', 'object', 'map', 'condition'].indexOf(this.state.type) == -1;
+        return ['array', 'object', 'map', 'condition', 'list'].indexOf(this.state.type) == -1;
     }
     private isCanViewerType(type: string) {
         return ['array', 'group', 'map', 'object', 'pickmore', 'table'].indexOf(type) == -1;

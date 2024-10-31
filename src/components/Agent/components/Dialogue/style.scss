@@ -88,11 +88,10 @@
                 .dialogue-message-system {
                     opacity: .3;
                     text-align: center;
-                    margin: 10px 0;
                     width: 100%;
                     display: block;
                     font-size: 12px;
-                    ;
+                    
                 }
 
                 &.reverse {
@@ -116,9 +115,11 @@
                             margin-left: 32px;
                             margin-right: 0px;
                             text-align: left;
+                            background-color: var(--secondary-background-color);
                             &::before {
                                 right: auto;
                                 left: -28px;
+                                background-color: var(--secondary-background-color);
                             }
                         }
                     }

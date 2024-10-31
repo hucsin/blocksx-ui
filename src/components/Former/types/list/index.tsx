@@ -1,10 +1,10 @@
 import React from 'react';
-
+import { IFormerBase } from '../../typings';
 import './style.scss';
 
-interface FormerListProps {
+interface FormerListProps extends IFormerBase {
     value: any;
-    onChange: (value: any) => void;
+    onChangeValue: (value: any) => void;
 }
 
 interface FormerListState {
@@ -15,7 +15,7 @@ export default class FormerList extends React.Component<FormerListProps, FormerL
     public constructor(props: FormerListProps) {
         super(props);
         this.state = {
-            value: props.value
+            value: props.value || []
         }
     }
 
@@ -27,10 +27,19 @@ export default class FormerList extends React.Component<FormerListProps, FormerL
         }
     }
 
+    public getProps() {
+        return this.props['props'] || this.props['x-type-props'] || {};
+    }
+
+    
     public render() {
         return (
             <div className="former-list">
                 
+                <div className="former-list-item"></div>
+                <div className="former-list-add">
+                    add
+                </div>
             </div>
         )
     }

@@ -14,14 +14,18 @@ import * as DialogueTypes from './types';
 
 import  tools from '../../core/utils';
 import TablerUtils from '../../../utils/tool';
+import ValidMessage from './validMessage';
 
 import './style.scss'
 
 interface DialogueProps {
     name: string;
     children: any;
+    open: boolean;
     memoryDepth: number;
     onSubmit: (message: any, agentType: string) => Promise<any>;
+    onOpenChange: (open: boolean) => void;
+    //onMouseEnterx: () => void;
     efficiency?:any;
 }
 
@@ -32,7 +36,7 @@ interface DialogueState {
     loading: boolean;
     canSend: boolean;
     errorMessage: string;
-
+    open: boolean;
     efficiency: any[]
 }
 
@@ -41,6 +45,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         memoryDepth: 5 // 最大记忆深度
     }
     private scrollRef: any;
+    private inputRef: any;
     
     public constructor(props:any){
         super(props)
@@ -52,21 +57,41 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             loading: false,
             canSend: false,
             errorMessage: '',
-            efficiency: props.efficiency || []
-
+            efficiency: props.efficiency || [],
+            open: props.open || false,
         }
         this.scrollRef = React.createRef();
+        this.inputRef = React.createRef();
     }
     public UNSAFE_componentWillReceiveProps(nextProps: any) {
         if (nextProps.efficiency !== this.state.efficiency) {
             this.setState({efficiency: nextProps.efficiency});
+        }
+        if (nextProps.open !== this.state.open) {
+            this.setState({open: nextProps.open});
+            if (nextProps.open) {
+                this.relyScrollToBottom()
+            }
         }
     }
     public componentDidMount() {
         //this.scrollToBottom();
     }
     private scrollToBottom() {
-        this.scrollRef.current.scrollTop = this.scrollRef.current.scrollHeight;
+        if (this.scrollRef.current) {
+            this.scrollRef.current.scrollTop = this.scrollRef.current.scrollHeight;
+
+            if (this.inputRef.current) {
+                setTimeout(()=> {
+                    this.inputRef.current.focus();
+                }, 0)
+            }
+        }
+    }
+    private relyScrollToBottom() {
+        setTimeout(()=> {
+            this.scrollToBottom()
+        }, 0)
     }
     private renderAvatar(type: string) {
         return (
@@ -191,7 +216,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             })
         }
 
-        this.setState({messages}, ()=> {
+        this.setState({messages, loading: false}, ()=> {
 
             tools.setStorage(`agent-messages`, messages);
             this.scrollToBottom();
@@ -199,18 +224,24 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         
     }
     private findMemoryMessages() {
-
+        return this.findFreeMemoryDepth().map(it => {
+            return {
+                type: it.type,
+                content: it.content
+            }
+        }).reverse();
     }
     private findFreeMemoryDepth(messages?: any[]) {
         let memoryList: any = messages || this.state.messages || [];
         let memoryDepth: any = [];
         memoryList.slice().reverse().some(it => {
+            if (!it.invalid) {
 
-            if (it.type !=='system' || !it.memoryClear) {
-                
-                memoryDepth.push(it);
-            } else {
-                return true;
+                if (it.type !=='system' || !it.memoryClear) {                    
+                    memoryDepth.push(it);
+                } else {
+                    return true;
+                }
             }
         })
 
@@ -296,15 +327,46 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
     public sendMessage = (e) => {
         if (!this.state.loading && this.state.canSend) {
 
-            this.onSubmit({
-                type: 'user',   
+            let message: any = {
+                type: 'user',
                 content: this.state.message
-            })
+            }
+            // 如果输入不合格
+            // 自动回复
+            if (!ValidMessage.isValidQuestion(this.state.message)) {
+                //message.content = ValidMessage.getInvalidResponse();
+                
+                this.autoReplay({
+                    ...message,
+                    invalid: true
+                }, {
+                    type: 'assistant',
+                    invalid: true,
+                    content: ValidMessage.getInvalidResponse()
+                });
+
+            } else {
+
+                this.onSubmit(message)
+            }
+
             this.setState({ message: ''})
         }
 
         e.preventDefault();
         e.stopPropagation();
+    }
+    private autoReplay(message: any,systemMessage: any) {
+        let { messages = [] } = this.state;
+        messages.push(message);
+
+        this.setState({messages, loading: true}, ()=> {
+            this.scrollToBottom();
+
+            setTimeout(()=> {
+                this.dealRelyMessages(systemMessage);
+            }, 1000)
+        });
     }
     private isCanSend(message?: string) {
         let { messages = [], message: stateMessage } = this.state;
@@ -323,6 +385,13 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         }
         return true;
     }
+    /**
+     * 清空消息列表
+     */
+    public clearMessageList() {
+        this.setState({messages: []});
+        tools.setStorage(`agent-messages`, []);
+    }   
     private isCanSendMessage() {
         
         let { messages = [], message: stateMessage } = this.state;
@@ -365,7 +434,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 <Input.TextArea
                     autoSize={{ minRows: 1, maxRows: 2 }}
                     maxLength={256}
-                    
+                    ref={this.inputRef}
                     placeholder={`Send a message to ${this.props.name}.`} 
                     size='large'
                     disabled={this.state.loading || !this.isCanSendMessage()}
@@ -398,18 +467,18 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         return (
             <Popover 
                 placement='left' 
-                trigger={'hover'} 
                 title={this.renderTitle()} 
                 overlayClassName='dialogue-popover'
-                
+                trigger='hover'
                 content={this.renderContent()}
+                open={this.state.open}
+                
                 onOpenChange={(open)=> {
                     if (open) {
-                        setTimeout(()=> {
-                            this.scrollToBottom()
-                        }, 0)
                         
+                        this.relyScrollToBottom()
                     }
+                    this.props.onOpenChange(open);
                 }}
             >
                 {this.props.children}
