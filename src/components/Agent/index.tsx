@@ -738,7 +738,10 @@ export default class Agent extends React.Component<AgentProps, {open: boolean}> 
                             children: Array.from({length: 10}).map((it, dd) => ({
                                 label: `Efficiency ${index + 1}-${dd + 1}`,
                                 key: `${index + 1}-${dd + 1}-${idx + 1}`,
-                                assistant: _test_getMessages(this.props.name)
+                                assistant: {
+                                    question: `Efficiency ${index + 1}-${dd + 1}-${idx + 1}`,
+                                    answer: _test_getMessages(this.props.name)
+                                }
                             }))
                         }))
                     }))}

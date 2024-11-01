@@ -47,7 +47,7 @@ export default class FormerTags extends React.Component<FormerTagsProps, FormerT
             <FormerSelect 
                 {...this.props}
                 mode="tags"
-                popupClassName="former-tags-popup"
+               // popupClassName="former-tags-popup"
                 value={this.state.value || []}
                 runtimeValue={this.state.runtimeValue}
                 onChangeValue={this.onChangeValue}

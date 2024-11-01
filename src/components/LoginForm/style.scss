@@ -55,10 +55,15 @@
                 padding-top: 16px;
                 &.input-other-disabled {
                     a {
-                        background: var(--main-background-color);
+                        background: var(--secondary-background-color) !important;
+                        border-color: var(--secondary-background-color) !important;
                         cursor: not-allowed;
-                        color: #ccc;
+                        color: #ccc !important;
                         &:hover {
+
+                            background: var(--secondary-background-color);
+                            border-color: var(--secondary-background-color);
+                            color: #ccc;
                             transform: none;
                         }
                     }
@@ -68,8 +73,15 @@
                     height: 42px;
                     line-height: 42px;
                     border-radius: 12px;
-                    background: var(--main-bg-color);
-                    color: #fff;
+                    background: var(--main-background-color);
+                    border: 1px solid var(--main-border-color);
+                    &:first-child {
+
+                        background: var(--main-bg-color);
+                        border-color: var(--main-bg-color);
+                        color: #fff;
+                    }
+                    color: #888;
                     margin-bottom: 24px;
                     transition: all .2s;
                     text-decoration: none;
@@ -77,6 +89,9 @@
                         margin-right: 8px;
                     }
                     &:hover {
+                        background: var(--main-bg-color);
+                        border-color: var(--main-bg-color);
+                        color: #fff;
                         transform: scale(1.05);
                     }
                 }

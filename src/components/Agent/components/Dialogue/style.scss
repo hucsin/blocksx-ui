@@ -235,7 +235,22 @@
                 }
             }
         }
-
+        .dialogue-message-history-clear {
+            text-align: center;
+          
+            .ant-space {
+                border-radius: 12px;
+                cursor: pointer;
+                opacity: .4;
+                transition: opacity .3s;
+                
+                &:hover {
+                    //background-color: var(--main-background-color);
+                    opacity: .9;
+            
+                }
+            }
+        }
         .dialogue-footer {
             position: relative;
 

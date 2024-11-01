@@ -16,5 +16,8 @@
   }
 }
 .former-tags-wrapper {
-  max-width: 250px;
+  width: 100%;
+   .ant-select {
+      min-width: 60%;
+  }
 }

@@ -1,0 +1,30 @@
+.former-list {
+    border: 1px solid var(--main-border-color);
+    border-left-width: 4px;
+    border-radius: 8px;
+    padding: 8px;
+    &.former-list-error{
+        border-color: var(--error-color);
+    }
+    .former-list-item {
+        padding-bottom: 8px;
+        &:last-child {
+            padding-bottom: 0;
+        }
+        .ant-space-compact {
+            width: 100%;
+        }
+    }
+
+    .former-list-add {
+        cursor: pointer;
+        border-radius: 8px;
+        border: 1px dashed var(--main-border-color);
+        padding: 4px 8px;
+        text-align: center;
+
+        &:hover {
+            background-color: var(--main-background-color);
+        }
+    }
+}

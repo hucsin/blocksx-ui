@@ -148,6 +148,9 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                         </div>
                     )
                 })}
+                {messages.length >= 2 && !this.state.loading && <div className='dialogue-message-history-clear'>
+                    <Space onClick={()=> this.clearMessageList()}><Icons.DestroyUtilityOutlined />Clear Chat history</Space>
+                </div>}
             </div>
         )
     }
@@ -227,7 +230,8 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         return this.findFreeMemoryDepth().map(it => {
             return {
                 type: it.type,
-                content: it.content
+                content: it.content,
+                value: it.value
             }
         }).reverse();
     }
@@ -274,7 +278,8 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                             display: {
                                 type: 'value',
                                 value: utils.copy(value)
-                            }
+                            },
+                            value: utils.copy(value)
                         }).then(() => {
                             this.updateMessageDisplay({value}, index);
                         })
@@ -289,6 +294,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                             type: 'user',
                             //content: 'My selection is as follows:',
                             reply: index + 1,
+                            value,
                             display: {
                                 type: 'choose',
                                 value,
@@ -306,10 +312,26 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 return <DialogueTypes.efficiency 
                     dataSource={display.dataSource} 
                     onSubmit={(assistant) => {
-                        this.onSubmit({
-                            ...assistant,
-                            type: 'user',
-                        });
+
+                        if (assistant.answer && assistant.question) {
+                            let answer = assistant.answer;
+                            // 先提问，1秒后回答
+                            this.autoReplay({
+                                type: 'user',
+                                content: assistant.question
+                            }, {
+                                type: 'assistant',
+                                content: answer.content || 'I need you to provide the following information.',
+                                ...answer
+                            });
+                            
+                        } else {
+
+                            this.onSubmit({
+                                ...assistant,
+                                type: 'user',
+                            });
+                        }
                     }}
                 />
             case 'feedback':

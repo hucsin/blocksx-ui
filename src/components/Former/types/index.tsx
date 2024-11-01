@@ -51,3 +51,5 @@ export { default as badge} from './badge';
 
 export { default as scope } from './scope';
 
+export { default as list } from './list';
+

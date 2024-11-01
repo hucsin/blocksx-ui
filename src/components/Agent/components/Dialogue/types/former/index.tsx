@@ -48,7 +48,7 @@ export default class DialogueFormer extends React.Component<DialogueFormerProps,
         }
     }
     public renderFormer() {
-        let { first = {} } = this.props;
+        let { first } = this.props;
         return (
             <div className='dialogue-former-wrapper'>
                 <Former 
@@ -61,13 +61,13 @@ export default class DialogueFormer extends React.Component<DialogueFormerProps,
                     cancelText='Empty Data'
                     cancelType='link'
                     onCancel={() => {
-                        this.setState({value: utils.pick(this.state.value, [first.name])})
+                        this.setState({value: first ? utils.pick(this.state.value, [first.name]) : this.state.value})
                     }}
                     onSubmit={(value) => {
                         this.setState({loading: true}); 
                         return this.props.onSubmit?.(value).finally(() => {
                             this.setState({loading: false});
-                        });
+                        })
                     }}
                 />
             </div>

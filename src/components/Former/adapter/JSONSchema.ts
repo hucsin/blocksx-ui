@@ -56,7 +56,7 @@ export default class JSONSchema2FormerSchema {
             schema.defaultValue = schema.default;
         }
 
-        switch (schema.type) {
+        switch (schema.type.toLowerCase()) {
             case 'object':
                 return this.convertObject(schema);
             case 'boolean':
@@ -64,7 +64,7 @@ export default class JSONSchema2FormerSchema {
                 break;
             case 'number':
                 return this.convertNumber(schema);
-                break;
+                
             case 'array':
                 return this.convertArray(schema);   
             case 'string':
@@ -82,6 +82,10 @@ export default class JSONSchema2FormerSchema {
         return schema;
     }
     public static convertArray(schema: any) {
+        if (!schema.items) {
+            schema['x-type'] = 'tags';
+        }
+        
         return schema;
     }   
     public static convertString(schema: any) {
