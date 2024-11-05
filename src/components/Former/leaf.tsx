@@ -1,8 +1,8 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { clone } from 'lodash';
-import { Popover, Space, Tooltip } from 'antd';
+
+import { Space } from 'antd';
 
 import OneOf from './oneOf';
 import * as FormerTypes from './types';
@@ -11,7 +11,7 @@ import { EventEmitter } from 'events';
 import Validation from './validation';
 import ConstValue from './const';
 import { utils, keypath } from '@blocksx/core';
-import * as Icons from '../Icons'
+
 import Context from './context';
 
 
@@ -395,7 +395,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         return this.state.type === type;
     }
     private clone(target: any) {
-        return clone(target);
+        return utils.copy(target);
         //return target ? JSON.parse(JSON.stringify(target)) : target;
     }
     private getObjectByKeyValue(originValue: any[]) {

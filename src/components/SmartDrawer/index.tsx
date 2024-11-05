@@ -7,7 +7,7 @@ import * as FormerTypes from '../Former/types';
 import SmartPage from '../SmartPage';
 import SmartRequest from '../utils/SmartRequest';
 import TablerUtils from '../utils/tool';
-import { pick } from 'lodash';
+
 
 import withRouter, { routerParams } from '../utils/withRouter';
 
@@ -125,7 +125,7 @@ class SmartDrawer extends React.Component<SmartDrawerProps, SmartDrawerState> {
         if (mode == 'pick' && motion) {
             let requestHelper: any = SmartRequest.makePostRequest(motion);
             this.setState({loading:true})
-            requestHelper(pick(value, ['id'])).then((result) => {
+            requestHelper(utils.pick(value, ['id'])).then((result) => {
                 
                 if (result.smartaction) {
                     this.doSmartAction(result)

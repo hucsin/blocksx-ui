@@ -5,8 +5,8 @@ import Former from '../../../../../Former';
 import Choose from '../choose/index';
 import TablerUtils from '../../../../../utils/tool';
 import './styles.scss';
-import { Tooltip } from 'antd';
-
+import { Tooltip,Space } from 'antd';
+import * as Icons from '../../../../../Icons';
 interface DialogueFormerProps {
     app: any;
     value: any;
@@ -22,7 +22,7 @@ interface DialogueFormerState {
     step: boolean;
     loading: boolean;
     disabled?: boolean;
-    
+    title?: string;
 }
 
 export default class DialogueFormer extends React.Component<DialogueFormerProps, DialogueFormerState> {
@@ -34,7 +34,8 @@ export default class DialogueFormer extends React.Component<DialogueFormerProps,
             stepone: props.first ? true : false,
             step: !!props.first,
             loading: false,
-            disabled: props.disabled
+            disabled: props.disabled,
+            title: (props?.schema?.title || '').replace(/\.$/,'')
         }
 
         this.formerSchema = Former.JSONSchema2FormerSchema.convert(props.schema);
@@ -47,6 +48,15 @@ export default class DialogueFormer extends React.Component<DialogueFormerProps,
             this.setState({disabled: nextProps.disabled});
         }
     }
+    private renderTitle() {
+        if (this.state.title) {
+            return <Space size={4}>
+                        <Icons.FileTextOutlined/>
+                        <span>{this.state.title}:</span>
+                    </Space>
+        }
+        return null;
+    }
     public renderFormer() {
         let { first } = this.props;
         return (
@@ -57,11 +67,12 @@ export default class DialogueFormer extends React.Component<DialogueFormerProps,
                     value={this.state.value}
                     loading={this.state.loading}
                     okText='Submit'
+                    title={this.renderTitle()}
                     okIcon ='PublishUtilityFilled'
                     cancelText='Empty Data'
                     cancelType='link'
                     onCancel={() => {
-                        this.setState({value: first ? utils.pick(this.state.value, [first.name]) : this.state.value})
+                        //this.setState({value: first ? utils.pick(this.state.value, [first.name]) : this.state.value})
                     }}
                     onSubmit={(value) => {
                         this.setState({loading: true}); 

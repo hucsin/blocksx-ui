@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/outlined/idea-suggestion.svg';
+import iconsvg from './svg/outlined/idea-suggestion.svg?react';
 
 export default class IdeaSuggestionOutlined extends React.Component<IconProps> {
     public render() {

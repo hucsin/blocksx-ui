@@ -76,6 +76,11 @@
             padding-top: 16px;
             counter-reset: item -1;
 
+            input.ant-input{
+                width: auto;
+                min-width: 80%;
+            }
+
             .dialogue-message-item {
                 display: flex;
                 width: calc(100% - 20px);
@@ -196,8 +201,8 @@
                     padding: 12px;
                     display: inline-block;
                     box-shadow: 0 2px 2px 2px rgba(30, 30, 31, 0.0292156863);
-                    max-width: 360px;
-                    white-space: pre-wrap;
+                    max-width: 400px;
+                    
                     word-break: break-all;
                     overflow-wrap: break-word;
                     margin-right: 32px;
@@ -231,6 +236,19 @@
                             padding: 0;
                             margin: 0;
                         }
+                        ol,ul {
+                            margin-left: 32px;
+                            padding-top: 8px;
+                            padding-bottom: 8px;
+                            opacity: .8;
+                            transition: opacity .3s;
+                            &:hover {
+                                opacity: 1;
+                            }
+                            li {
+                                margin-block-end: 0;
+                            }
+                        }
                     }
                 }
             }
@@ -243,7 +261,7 @@
                 cursor: pointer;
                 opacity: .4;
                 transition: opacity .3s;
-                
+
                 &:hover {
                     //background-color: var(--main-background-color);
                     opacity: .9;

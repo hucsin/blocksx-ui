@@ -21,7 +21,6 @@ import Box from '../../../Box';
 import Former from '../../../Former';
 import SmartPage, {WithRouterSmartPage} from '../../index';
 
-import { pick } from 'lodash'
 
 import './style.scss';
 
@@ -100,7 +99,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
 
             
             this.findRequst('record.init')({
-                ...pick(this.state.value, ['id'])
+                ...utils.pick(this.state.value, ['id'])
             }).then(result=> {
                 let stateValue: any = {
                     loading: false

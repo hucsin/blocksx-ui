@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/outlined/flow-utility.svg';
+import iconsvg from './svg/outlined/flow-utility.svg?react';
 
 export default class FlowUtilityOutlined extends React.Component<IconProps> {
     public render() {

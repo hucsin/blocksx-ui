@@ -1,7 +1,8 @@
 import React from 'react';
+import { utils } from '@blocksx/core';
 import { GlobalScope, Icons, FormerTypes} from '@blocksx/ui';
 import ScopeTooltip from './panel/tooltip';
-import { upperFirst } from 'lodash';
+
 
 interface FormerScopeProps {
     $type: string;
@@ -66,7 +67,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                 },
                 {
                     name: 'KEYPATH',
-                    subname: 'Returns values ' +(this.props.dataType ? '<'+ upperFirst(this.props.dataType) + '>': '' ),
+                    subname: 'Returns values ' +(this.props.dataType ? '<'+ utils.upperFirst(this.props.dataType) + '>': '' ),
                     description: this.props.value
                 }
             ]} >

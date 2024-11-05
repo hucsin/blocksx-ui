@@ -6,7 +6,7 @@
         text-align: left;
         .ui-former-cancel {
             opacity: .6;
-            display: none;
+            display: none;;
         }
     }
     .former-column-one {
@@ -15,15 +15,16 @@
                 >.former-group-item {
                     >.former-group-item-content {
 
-                        max-height: 300px;
-                        overflow-y: auto;
+                       // max-height: 300px;
+//                        overflow-y: auto;
                     }
                 }
             }
         }
     }
     .ui-former-header {
-        display: none;
+       // display: none;
+       opacity: .5;
     }
     .dialogue-former-wrapper {
         display: block;

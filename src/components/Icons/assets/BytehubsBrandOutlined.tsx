@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/outlined/bytehubs-brand.svg';
+import iconsvg from './svg/outlined/bytehubs-brand.svg?react';
 
 export default class BytehubsBrandOutlined extends React.Component<IconProps> {
     public render() {

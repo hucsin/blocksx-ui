@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/filled/stripe-brand.svg';
+import iconsvg from './svg/filled/stripe-brand.svg?react';
 
 export default class StripeBrandFilled extends React.Component<IconProps> {
     public render() {

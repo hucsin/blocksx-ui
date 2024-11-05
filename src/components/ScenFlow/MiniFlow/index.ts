@@ -1,16 +1,17 @@
 import { EventEmitter } from 'events';
-import { utils } from '@blocksx/core';
+import { utils, keypath } from '@blocksx/core';
 import { StructuralMiniFlow } from '@blocksx/structural'
 import * as DomUtils from '../../utils/dom';
 import GlobalScope  from '../../core/GlobalScope';
 import JSPlumbTool from '../../utils/third-party/jsplumb'
+
 import Chinampa from './chinampa';
 import DraggableCanvas from './draggable';
 import PositioningCanvas from './positioning';
 import FormatCanvas from './format';
 
 import { IRect, IPointCoord, FlowNode, FlowConnector } from './typing';
-import { pick, get } from 'lodash';
+
 
 import SvgText from './icons';
 
@@ -1422,7 +1423,7 @@ export default class MiniFlow extends EventEmitter {
 
 
                         // TODO update
-                            this.doChangeSave('updateNode', pick(node, ['name', 'id', 'left', 'top']));
+                            this.doChangeSave('updateNode', utils.pick(node, ['name', 'id', 'left', 'top']));
 
                         }
                     }
@@ -1531,7 +1532,7 @@ export default class MiniFlow extends EventEmitter {
         return this.nodes.find(it=> {
             let finded: boolean = true;
             for (let prop in where) {
-                if (get(it, prop) !== where[prop]) {
+                if (keypath.get(it, prop) !== where[prop]) {
                     return false;
                 }
             }

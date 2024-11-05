@@ -4,7 +4,6 @@ import { ScopeManger } from '@blocksx/scope';
 import * as Icons from '../../../../../Icons';
 import Notice from '../../../notice';
 import Tooltip from './tooltip';
-import { upperFirst, emit } from 'lodash';
 
 
 export default class PanelOther extends React.Component<{name: string, onClick: Function, dataType: any, disabled?: boolean}, {dataType: any, disabled?: boolean}>{
@@ -72,9 +71,9 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
 
             if (Array.isArray(type)) {
                 
-                return type.some(it => dataType.includes(upperFirst(it)))
+                return type.some(it => dataType.includes(utils.upperFirst(it)))
             }
-            return dataType.includes(upperFirst(type))
+            return dataType.includes(utils.upperFirst(type))
         }
 
         return true;
@@ -84,7 +83,7 @@ export default class PanelOther extends React.Component<{name: string, onClick: 
         if (this.state.disabled) {
             return "The current position does not allow the input of more variables.";
         }
-        return `Returns dataType '${upperFirst(type)}' is not allowed at this position; types (${this.state.dataType}) are allowed at this position.` 
+        return `Returns dataType '${utils.upperFirst(type)}' is not allowed at this position; types (${this.state.dataType}) are allowed at this position.` 
     }
     public render () {
         let groupKeys: any = Object.keys(this.scopeList);

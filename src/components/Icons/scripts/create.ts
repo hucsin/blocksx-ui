@@ -33,7 +33,7 @@ function getIconTemplate(iconPath: string, name: string) {
     return `import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from '${iconPath}';
+import iconsvg from '${iconPath}?react';
 
 export default class ${name} extends React.Component<IconProps> {
     public render() {

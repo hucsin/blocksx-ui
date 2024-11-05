@@ -50,8 +50,8 @@
 import { utils } from '@blocksx/core';
 export default class JSONSchema2FormerSchema {
 
-    public static convert(schema: any) {
-
+    public static convert(input: any) {
+        let schema = utils.copy(input);
         if (schema.default) {
             schema.defaultValue = schema.default;
         }
@@ -88,10 +88,22 @@ export default class JSONSchema2FormerSchema {
         
         return schema;
     }   
+    private static isUseRadio({enum: enums}:any) {
+        
+        if (enums.length< 5) {
+            return true;
+        }
+        
+        if(enums.reduce((sum, item) => sum + item.length, 0) < 30) {
+            return true;
+        }
+
+        return false;
+    }
     public static convertString(schema: any) {
         // 处理枚举
         if (Array.isArray(schema.enum)) {
-            if (schema.enum.length < 5) {
+            if (this.isUseRadio(schema)) {
                 schema['x-type'] = 'radio';
             } else {
                 schema['x-type'] = 'select';
@@ -119,7 +131,7 @@ export default class JSONSchema2FormerSchema {
                 }
                 delete schema.format;
             } else {
-                if (schema.maxLength && schema.maxLength < 100) {
+                if (!schema.maxLength || schema.maxLength < 100) {
                     schema['x-type'] = 'input';
                 } else {
                     schema['x-type'] = 'textarea';
@@ -133,10 +145,13 @@ export default class JSONSchema2FormerSchema {
     public static convertObject(schema: any) {
         let required: string[] = schema.required || [];
         Object.keys(schema.properties).forEach((key) => {
+            console.log(schema, schema['x-order'], key,2222)
             schema.properties[key] = {
                 ...this.convert(schema.properties[key]),
                 title: utils.labelName(schema.properties[key].title || key),
-                
+                description: '',
+                tooltip: schema.properties[key].description,
+                ['x-index']: schema['x-order'] ? schema['x-order'].indexOf(key) : undefined,
                 ['x-validation']: {
                     ...schema.properties[key],
                     required: required.includes(key)

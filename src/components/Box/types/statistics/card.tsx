@@ -1,7 +1,9 @@
 import React from "react";
 import { Card, Progress, Tooltip, Space } from 'antd';
 import { Icons } from '@blocksx/ui';
-import { Tiny } from '@ant-design/plots';
+//import { Tiny } from '@ant-design/plots';
+import { Sparklines, SparklinesLine, SparklinesBars } from 'react-sparklines';
+
 import { BoxItemBase } from '../../interface';
 
 interface StatisticsCardProps extends BoxItemBase{
@@ -49,7 +51,16 @@ export default class StatisticsCard extends React.Component<StatisticsCardProps,
               fillOpacity: 0.6,
             },
           };
-          return <Tiny.Area {...config} />;
+          return (<div style={{ position: 'relative' }}>
+                {/* 定义渐变 */}
+        
+                {/* 渲染 Sparkline 并应用渐变 */}
+                <Sparklines data={data.map(it => it.value)} limit={30} height={20} width={100}>
+                <SparklinesLine color="#87d068"  strokeWidth={3} onMouseMove={(e,a) => {
+                    console.log(e,a, 33333)
+                }} />
+            </Sparklines>
+          </div>)
     }
     public getTinyData() {
         let { valumeKey, valumePaddingKey } = this.props;
@@ -103,7 +114,19 @@ export default class StatisticsCard extends React.Component<StatisticsCardProps,
                 items: [{ channel: 'y' }],
             },
           };
-          return <Tiny.Column {...config} />;
+
+          console.log(data, 3333)
+
+          return (<div style={{ position: 'relative' }}>
+            {/* 定义渐变 */}
+      
+            {/* 渲染 Sparkline 并应用渐变 */}
+            <Sparklines data={data.map(it => it.value)} limit={30} height={20} width={100}>
+                <SparklinesBars  style={{ width: 3,fill: "#41c3f9",stroke: "white", strokeWidth: "1"}} onMouseMove={(e,a) => {
+                    console.log(e,a, 33333)
+                }} />
+        </Sparklines>
+          </div>)
     }
     public renderProgress() {
         let { value = 0} = this.state;

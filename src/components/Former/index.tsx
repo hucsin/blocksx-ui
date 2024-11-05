@@ -14,8 +14,8 @@ import Context from './context';
 import JSONSchema2FormerSchema from './adapter/JSONSchema';
 
 import './style.scss';
-import { pick } from 'lodash';
-import TablerUtils from '../utils/tool';
+
+import TablerUtils from '../utils/tool'
 
 
 
@@ -436,7 +436,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         let { schema = {}, value } = this.state;
         let safeKeys: any = Object.keys(schema.properties)
 
-        return pick(_value || value, safeKeys)
+        return utils.pick(_value || value, safeKeys)
     }
     private onSave = (e) => {
 

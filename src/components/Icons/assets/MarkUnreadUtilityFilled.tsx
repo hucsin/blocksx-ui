@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/filled/mark-unread-utility.svg';
+import iconsvg from './svg/filled/mark-unread-utility.svg?react';
 
 export default class MarkUnreadUtilityFilled extends React.Component<IconProps> {
     public render() {

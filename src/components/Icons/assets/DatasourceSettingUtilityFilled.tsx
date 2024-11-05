@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/filled/datasource-setting-utility.svg';
+import iconsvg from './svg/filled/datasource-setting-utility.svg?react';
 
 export default class DatasourceSettingUtilityFilled extends React.Component<IconProps> {
     public render() {

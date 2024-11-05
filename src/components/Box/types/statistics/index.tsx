@@ -1,8 +1,7 @@
 import React from 'react';
 import { Flex, Typography, Tooltip } from 'antd';
-import classnames from 'classnames';
 import { BoxItem } from '../../interface';
-import { Icons } from '@blocksx/ui';
+
 import BoxManger from '../../BoxManger';
 
 import StatisticsCard from './card';

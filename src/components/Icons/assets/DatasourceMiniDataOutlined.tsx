@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/outlined/datasource-mini-data.svg';
+import iconsvg from './svg/outlined/datasource-mini-data.svg?react';
 
 export default class DatasourceMiniDataOutlined extends React.Component<IconProps> {
     public render() {

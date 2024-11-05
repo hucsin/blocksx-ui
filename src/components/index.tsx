@@ -1,4 +1,7 @@
 
+
+export * from 'antd';
+
 export { StateComponent, StateModel, StateX } from './StateX';
 export * from './core';
 
@@ -11,12 +14,14 @@ export { default as ContextMenu } from './ContextMenu';
 export { default as SplitPane } from './SplitPane';
 export { default as Pick } from './Pick';
 export { default as MiniFlow  } from './ScenFlow/MiniFlow';
+
+//export const MiniFlow = lazy(() => import('./ScenFlow/MiniFlow'));
 export { default as RouterLayout } from './RouterLayout';
 export { default as LoginForm } from './LoginForm';
 export { default as ErrorMessage } from './ErrorMessage';
 export { default as Tabler } from './Tabler';
 export { default as Former } from './Former';
-export { default as Agent } from './Agent';
+//export { default as Agent } from './Agent';
 export { default as ValueView } from './ValueView';
 export { default as Markdown } from './Markdown';
 
@@ -48,6 +53,6 @@ export { default as GlobalScope } from './core/GlobalScope';
 export { default as IThinkingNode } from './core/interface/IThinkingNode';
 export { default as ThinkingNodeManager } from './core/manager/ManagerThinkingNode'
 
-export { default as JSPlumbTool } from './utils/third-party/jsplumb'
+//export { default as JSPlumbTool } from './utils/third-party/jsplumb'
 
 

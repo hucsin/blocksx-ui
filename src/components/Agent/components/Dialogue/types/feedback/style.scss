@@ -25,3 +25,9 @@
         flex: 1;
     }
 }
+.dialogue-message-item-content-nofeedback {
+    .dialogue-feedback {
+        border:none;
+        padding: 0px 8px;
+    }
+}

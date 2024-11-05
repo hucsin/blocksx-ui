@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { StructuralMiniFlow } from '@blocksx/structural';
 import { utils } from '@blocksx/core';
 import { Tooltip, Tree, Spin, Tabs, Space } from 'antd'
-import { upperFirst } from 'lodash'
+
 import { GlobalScope, MiniFlow, SmartRequest, ThinkingNodeManager } from '@blocksx/ui';
 import ProcessNode from './node';
 
@@ -236,7 +236,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
     }
     private matchDataType (type: string, subtype?: string) {
         let { dataType } = this.state;
-        let trueType: string = subtype ? [upperFirst(type), upperFirst(subtype)].join('') : upperFirst(type)
+        let trueType: string = subtype ? [utils.upperFirst(type), utils.upperFirst(subtype)].join('') : utils.upperFirst(type)
         
         
         if (dataType) {
@@ -249,7 +249,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
                 return false;
             }
 
-            return !dataType.includes(upperFirst(trueType))
+            return !dataType.includes(utils.upperFirst(trueType))
         }
 
         return false;
@@ -360,7 +360,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
                 return (
                     <>
                         {item.title}
-                        {item.type && <span className='u-type'>{'<'+ upperFirst(item.type) + (item.subtype ? upperFirst(item.subtype): '') +'>'}</span>}
+                        {item.type && <span className='u-type'>{'<'+ utils.upperFirst(item.type) + (item.subtype ? utils.upperFirst(item.subtype): '') +'>'}</span>}
                         {item.description && <span className='u-description'>{item.description}</span>}
                     </>
                 )

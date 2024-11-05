@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/outlined/case-utility.svg';
+import iconsvg from './svg/outlined/case-utility.svg?react';
 
 export default class CaseUtilityOutlined extends React.Component<IconProps> {
     public render() {

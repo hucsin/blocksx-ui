@@ -8,11 +8,10 @@ import { Space, Button } from 'antd';
 import Former from './index';
 
 
-import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExtendEnum';
+import RelationshipExtendEnum from '@blocksx/bulk/es/constant/RelationshipExtendEnum';
 import TablerUtils from '../utils/tool';
 import SmartRequest from '../utils/SmartRequest';
 
-import {  upperFirst, omit, pick } from 'lodash';
 
 
 /*
@@ -108,7 +107,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             schema: this.getSchema(fields),
             columnKeys: columnKeys ,
             action: props.action,
-            value: props.valueCleaning ? omit(props.value || {}, columnKeys) : props.value,
+            value: props.valueCleaning ? utils.omit(props.value || {}, columnKeys) : props.value,
             originValue: props.value,
             fields: fields,
             viewer: props.viewer,
@@ -289,7 +288,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                 schema: this.getSchema(fields || this.state.fields),
                 columnKeys: columnKeys,
                 visible: !!newProps.action,
-                value: newProps.valueCleaning ? omit(newProps.value || {}, columnKeys) : newProps.value,
+                value: newProps.valueCleaning ? utils.omit(newProps.value || {}, columnKeys) : newProps.value,
                 fields: fields,
                 isStepOne: newProps.value ? false : true,
                 iconType:  newProps.value? 'icon': 'avatar',
@@ -470,7 +469,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         let firstField: any = this.state.schema.firstField;
         let { pageMeta = {} } = this.props;
         
-        let fistName: string = upperFirst(firstField.name);
+        let fistName: string = utils.upperFirst(firstField.name);
         let pageinfo: any = pageMeta.page || {};
         let defaultTitle: string = pageinfo.title || this.props.defaultFirstTitle || (fistName);
         
@@ -554,8 +553,8 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                 case 'create':
                     return i18n.t(['Create', 'new', this.props.pageType || pageMeta.title].join(' '));
                 default: 
-                    let name: string = this.state.name || this.state.action ;
-                    return this.props.title || `${upperFirst(name)} ${this.props.pageType || pageMeta.title}`
+                    let name: string = this.state.name || this.state.action || '' ;
+                    return this.props.title || `${utils.upperFirst(name)} ${this.props.pageType || pageMeta.title}`
             }
         }
     }
@@ -577,7 +576,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             case 'add':
                 return 'Create';
             default:
-                return upperFirst(this.state.name || this.state.action);
+                return utils.upperFirst(this.state.name || this.state.action);
         }
     }
     private cancelDoback() {
@@ -705,8 +704,8 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
 
         let pickKeys: any = majorFieldKeys.length > 0 ? majorFieldKeys : firstFieldKeys;
         
-        let ofirstvalue: any = pick(value, pickKeys);
-        let nfirstvalue: any = pick(newValue, pickKeys);
+        let ofirstvalue: any = utils.pick(value, pickKeys);
+        let nfirstvalue: any = utils.pick(newValue, pickKeys);
         let allkeys: any = [...Object.keys(ofirstvalue), ...Object.keys(nfirstvalue)]
         
         return allkeys.some(it => {

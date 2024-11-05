@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/filled/postgresql-brand.svg';
+import iconsvg from './svg/filled/postgresql-brand.svg?react';
 
 export default class PostgresqlBrandFilled extends React.Component<IconProps> {
     public render() {

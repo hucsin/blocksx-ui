@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/outlined/ellipsis-suggestion.svg';
+import iconsvg from './svg/outlined/ellipsis-suggestion.svg?react';
 
 export default class EllipsisSuggestionOutlined extends React.Component<IconProps> {
     public render() {

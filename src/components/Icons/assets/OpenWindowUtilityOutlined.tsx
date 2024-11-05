@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/outlined/open-window-utility.svg';
+import iconsvg from './svg/outlined/open-window-utility.svg?react';
 
 export default class OpenWindowUtilityOutlined extends React.Component<IconProps> {
     public render() {

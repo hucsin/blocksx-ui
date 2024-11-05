@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/outlined/Greaterto-utility.svg';
+import iconsvg from './svg/outlined/Greaterto-utility.svg?react';
 
 export default class GreatertoUtilityOutlined extends React.Component<IconProps> {
     public render() {

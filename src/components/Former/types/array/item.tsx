@@ -5,7 +5,6 @@ import { Popconfirm, Tooltip } from 'antd';
 import * as Icons from '../../../Icons';
 import StepFormer from '../../StepFormer';
 
-import { pick } from 'lodash'
 
 interface IFormerArrayItem extends IFormerBase {
     index: number;

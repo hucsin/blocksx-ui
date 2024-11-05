@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/filled/oceanbase-brand.svg';
+import iconsvg from './svg/filled/oceanbase-brand.svg?react';
 
 export default class OceanbaseBrandFilled extends React.Component<IconProps> {
     public render() {

@@ -3,7 +3,7 @@ import { utils } from '@blocksx/core';
 import { Encode, Decode} from '@blocksx/encrypt';
 import Session  from '../core/Session';
 import { message as MessageFor } from 'antd';
-import { pick } from 'lodash';
+
 
 
 class SmartRequest {
@@ -64,7 +64,7 @@ class SmartRequest {
     }
     private getRequestParams(request: any, fields?: any) {
         let inputParams: any = Array.isArray(request) ?  this.combineParamsList(request): request;
-        return  fields ? pick(inputParams, fields) : inputParams;
+        return  fields ? utils.pick(inputParams, fields) : inputParams;
     }
 
 

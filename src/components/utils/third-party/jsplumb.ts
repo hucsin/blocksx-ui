@@ -5,8 +5,10 @@
  * @Author: uoeye
  * @Date: 2020-09-24 08:28:10
  */
-//import jsplumb from 'jsplumb'
-const jsplumbs = require('./ps');
+import jsplumbs from './ps'
 
+//const jsplumbs = import('./ps');
+//const jsplumbs = require('./ps');
+//export * from './ps'
 
 export default jsplumbs;

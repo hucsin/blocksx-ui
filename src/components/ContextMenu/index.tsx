@@ -6,7 +6,7 @@ import { message as AntMessage } from 'antd';
 import { Pick, Icons, PluginManager , ContextMenuManger  } from '@blocksx/ui';
 import { utils } from '@blocksx/core';
 import i18n from '@blocksx/i18n';
-import { monaco } from 'react-monaco-editor';
+//import { monaco } from 'react-monaco-editor';
 
 import {
     Menu as ContexifyMenu,
@@ -234,7 +234,7 @@ export default class ContextMenu extends React.Component<ContextMenuProps, Conte
     }
     private getShortcutText(shortcut: number[]) {
         // todo 2048
-        return (UIUtils.isMacOS() ? "⌘": "ctrl") + '+' + (monaco.KeyCode[shortcut[1]] || '').replace('Key', '');
+        return (UIUtils.isMacOS() ? "⌘": "ctrl") + '+' + ('' || '').replace('Key', '');
     }
     public renderTitle(it) {
         return (

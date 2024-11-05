@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/filled/list-add-data.svg';
+import iconsvg from './svg/filled/list-add-data.svg?react';
 
 export default class ListAddDataFilled extends React.Component<IconProps> {
     public render() {

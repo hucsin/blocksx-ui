@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconProps } from '../type';
 import Icon from '@ant-design/icons';
-import iconsvg from './svg/filled/schema-data.svg';
+import iconsvg from './svg/filled/schema-data.svg?react';
 
 export default class SchemaDataFilled extends React.Component<IconProps> {
     public render() {

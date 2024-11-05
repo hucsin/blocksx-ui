@@ -137,7 +137,10 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                     return (
                         <div className={classnames('dialogue-message-item', {'reverse': it.type === 'user', 'nonumber': it.nonumber})}>
                             <div className='dialogue-message-item-avator'>{this.renderAvatar(it.type)}</div>
-                            <div className='dialogue-message-item-content'>
+                            <div className={classnames({
+                                'dialogue-message-item-content': true,
+                                'dialogue-message-item-content-nofeedback': !it.content
+                            })}>
                                 <div>
                                     
                                     {this.renderMessageContent(it, index - 1)}
@@ -231,6 +234,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             return {
                 type: it.type,
                 content: it.content,
+                call: it.call,
                 value: it.value
             }
         }).reverse();
@@ -275,6 +279,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                             type: 'user',
                             //content: 'My addition is as follows:',
                             reply: index + 1,
+                            call: display.call,
                             display: {
                                 type: 'value',
                                 value: utils.copy(value)
@@ -295,6 +300,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                             //content: 'My selection is as follows:',
                             reply: index + 1,
                             value,
+                            call: display.call,
                             display: {
                                 type: 'choose',
                                 value,
@@ -344,6 +350,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
     }
     private isNeedUserSubmit(message: any) {
         let { type, display = {} } = message;
+        
         return type === 'assistant' && ['former', 'choose'].includes(display.type);
     }
     public sendMessage = (e) => {
@@ -402,7 +409,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             return false;
         }
 
-        if (!/^[a-zA-Z0-9\.\,\s]{5,}$/.test(trimMessage)) {
+        if (trimMessage.length <5) {
             return false;
         }
         return true;
@@ -422,7 +429,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         let lastMessage = messages[messages.length - 1];
         
         if (lastMessage && this.isNeedUserSubmit(lastMessage)) {
-            return false;
+          //  return false;
         }
         return true;
     }
@@ -494,7 +501,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 trigger='hover'
                 content={this.renderContent()}
                 open={this.state.open}
-                
+                //open
                 onOpenChange={(open)=> {
                     if (open) {
                         

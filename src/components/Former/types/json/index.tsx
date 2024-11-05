@@ -1,6 +1,6 @@
 import React from 'react';
 
-import FormerCode from '../code';
+//import FormerCode from '../code';
 import { IFormerBase } from '../../typings';
 
 
@@ -45,9 +45,12 @@ export default class FormerJson extends React.Component<FormerJSONProps, FormerC
         }
     }
     public render() {
-        
+        return (
+            <pre>{this.state.value}</pre>
+        )
+       /* 
         return (
             <FormerCode title={'Editor the '+ this.props.fieldName} value={this.state.value} language='json' onChangeValue={this.onChangeValue} />
-        )
+        )*/
     }
 }

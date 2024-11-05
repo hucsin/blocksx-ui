@@ -7,6 +7,7 @@
  * @FilePath: /designer/Users/iceet/work/hucsin/blocksx/packages/design-components/src/former/types/input/index.tsx
  */
 import React from 'react';
+import { utils } from '@blocksx/core';
 import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
 import TablerUtils from '../../../utils/tool';
@@ -16,7 +17,7 @@ import { Button, Popover, Space, List, Spin } from 'antd';
 import * as Icons from '../../../Icons';
 import Avatar from '../avatar';
 import SmartAction from '../../../core/SmartAction';
-import { pick } from 'lodash';
+
 
 import './style.scss';
 
@@ -264,7 +265,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
         }
 
         if (Array.isArray(props.paramsKeys)) {
-            Object.assign(params, pick(props,props.paramsKeys))
+            Object.assign(params, utils.pick(props,props.paramsKeys))
         }
         
         return params;

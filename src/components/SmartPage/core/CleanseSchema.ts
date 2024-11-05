@@ -3,7 +3,7 @@
  */
 import SmartRequst from '../../utils/SmartRequest'
 import SmartUtils from '../../utils/tool';
-import RelationshipExtendEnum from '@blocksx/bulk/lib/constant/RelationshipExtendEnum';
+import RelationshipExtendEnum from '@blocksx/bulk/es/constant/RelationshipExtendEnum';
 
 import { utils } from '@blocksx/core';
 
