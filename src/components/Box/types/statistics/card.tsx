@@ -57,7 +57,7 @@ export default class StatisticsCard extends React.Component<StatisticsCardProps,
                 {/* 渲染 Sparkline 并应用渐变 */}
                 <Sparklines data={data.map(it => it.value)} limit={30} height={20} width={100}>
                 <SparklinesLine color="#87d068"  strokeWidth={3} onMouseMove={(e,a) => {
-                    console.log(e,a, 33333)
+                    console.log(e,a, 1111)
                 }} />
             </Sparklines>
           </div>)

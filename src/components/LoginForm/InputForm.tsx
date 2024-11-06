@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames'
-import { Input, Form, Divider, Button, Checkbox, Spin } from 'antd';
+import { Input, Divider, Button, Checkbox, Spin } from 'antd';
 import TablerUtils from '../utils/tool';
 //import { UserOutlined, LockOutlined,GoogleOutlined, GithubOutlined } from '@ant-design/icons'
 import * as Icons from '../Icons'
@@ -111,64 +111,7 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
         })
     }
     private renderForm() {
-        return (
-            <Form
-                onFinish={this.onSubmit}
-            >
-                <Form.Item
-                    initialValue={this.props.defaultValue}
-                    name="username"
-                    rules={[
-                        {required: true, message: " "},
-                        ({ getFieldValue }) => ({
-                            validator(_, value) {
-                                if (!value.match(/[^@]+\@[a-z0-9_\-]{1,}\.[a-z0-9_\-]{1,}/)) {
-                                    return Promise.reject('The username is a valid email address!')
-                                }
-                                return Promise.resolve()
-                            },
-                            })
-                    ]}
-                >
-                    <Input size='large' name="username" placeholder='Please enter your login account' prefix={<Icons.UserOutlined className={'prefixIcon'} />} />
-                </Form.Item>
-                <Form.Item
-                        name="password"
-                        rules={[
-                        {required: true, message: " "},
-                        
-                        ]}
-                >
-                    <Input.Password name="password" size='large' placeholder='Please enter the password' prefix={<Icons.LockOutlined className={'prefixIcon'} />} />
-                </Form.Item>
-                {this.state.type == 'signup' &&<Form.Item
-                        name="repassword"
-                        dependencies={['password']}
-                        rules={[
-                        {required: true, message: " "},
-                        ({ getFieldValue }) => ({
-                            validator(_, value) {
-                            if (!value || getFieldValue('password') === value) {
-                                return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('The new password that you entered do not match!'));
-                            },
-                        }),
-                        ]}
-                >
-                    <Input.Password size='large' name='repassword' placeholder='Please enter verification password' prefix={<Icons.LockOutlined className={'prefixIcon'} />} />
-                </Form.Item>}
-
-                {this.state.type == 'login' && <Form.Item>
-                    
-                    <div className='input-checkbox'>
-                    <Checkbox name="stay" onChange={this.onChangeStay}>Stay logged in</Checkbox>    
-                        <Button type='link' >Forget password</Button>
-                    </div>
-                </Form.Item>}
-                <Button loading={this.state.loading} type='primary' htmlType="submit" size='large' block>{this.getButtonText()}</Button>
-            </Form>
-        )
+        return (<div></div>)
     }
     public render() {
         let login: any = window.location.href.match(/__DEB_DEV__/);

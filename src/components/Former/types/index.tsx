@@ -36,7 +36,7 @@ export { default as label } from './label';
 export { default as link } from './link';
 export { default as icon } from './icon';
 export { default as more } from './more';
-//export { default as code } from './code';
+export { default as code } from './code';
 export { default as json } from './json';
 export { default as color } from './color';
 export { default as hidden } from './hidden';

@@ -9,8 +9,8 @@
 import React from 'react';
 import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
-import { Drawer, Button, message } from "antd";
-import MonacoEditor from 'react-monaco-editor';
+import { Drawer, Button, message, Input } from "antd";
+//import MonacoEditor from 'react-monaco-editor';
 
 import { utils } from '@blocksx/core';
 import './style.scss';
@@ -143,19 +143,10 @@ export default class FormerCode extends React.PureComponent<FormerCodeProps, For
               maskClosable={true}
               closable={false}
             >
-                <MonacoEditor
-                  height={clientHeight - 41}
-                  value={editorValue}
-                  language={this.state.language || "javascript"}
-                  theme="vs-dark"
-                  onChange={this.onChangeValue}
-                  options={{
-                      selectOnLineNumbers: true,
-                      minimap: {
-                          enabled: false
-                      }
-                  }}
-                ></MonacoEditor>
+              
+                
+                <Input.TextArea value={editorValue} onChange={e=> this.onChangeValue(e.target.value)} />
+                
                 <div className="former-code-tool">
                   <Button size="small" onClick={this.onHideEditor} style={{
                       marginRight: 8

@@ -1,6 +1,11 @@
 
 
-export * from 'antd';
+
+import {Table, Tabs, Tag, Tooltip, Alert, ConfigProvider, Popconfirm, Spin, Card, Collapse, Descriptions,Empty, List,Popover, Segmented, ColorPicker,DatePicker,InputNumber,Radio, Select,Switch,TimePicker,Avatar, Input, Button ,message,Result, notification, Space, Drawer, Typography, Flex, Divider, Dropdown, Menu, Checkbox } from 'antd'
+
+export {
+    Table, Tabs, Tag, Tooltip, Alert, ConfigProvider, Popconfirm, Spin, Card, Collapse, Descriptions,Empty, List,Popover, Segmented, ColorPicker,DatePicker,InputNumber,Radio, Select,Switch,TimePicker,Avatar, Input, Button ,message, Space,Result, notification, Drawer, Typography, Flex, Divider, Dropdown, Menu, Checkbox
+}
 
 export { StateComponent, StateModel, StateX } from './StateX';
 export * from './core';

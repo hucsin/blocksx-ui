@@ -3813,7 +3813,7 @@ var PLUMB_JS =  {};
 
 
     };
-
+/*
     var List = function(instance, el, options, id) {
 
         el["_jsPlumbList"] = id;
@@ -3951,7 +3951,7 @@ var PLUMB_JS =  {};
             }
         };
     };
-
+*/
 
 }).call(PLUMB_JS);
 
@@ -10696,11 +10696,6 @@ var PLUMB_JS =  {};
             return (_curAnchor && _curAnchor.getCssClass()) || "";
         };
 
-        /**
-         * Attempt to match an anchor with the given coordinates and then set it.
-         * @param coords
-         * @returns true if matching anchor found, false otherwise.
-         */
         this.setAnchorCoordinates = function(coords) {
             var idx = jsPlumbUtil.findWithFunction(this.anchors, function(a) {
                 return a.x === coords[0] && a.y === coords[1];
@@ -10949,7 +10944,7 @@ var PLUMB_JS =  {};
 
     var jsPlumbUtil = root.jsPlumbUtil;
     var jsPlumb = root.jsPlumb;
-
+    
     _jp.DefaultRouter = function(jsPlumbInstance) {
         this.jsPlumbInstance = jsPlumbInstance;
         this.anchorManager = new _jp.AnchorManager({jsPlumbInstance:jsPlumbInstance});
@@ -11033,16 +11028,7 @@ var PLUMB_JS =  {};
          */
         AbstractSegment: function (params) {
             this.params = params;
-
-            /**
-             * Function: findClosestPointOnPath
-             * Finds the closest point on this segment to the given [x, y],
-             * returning both the x and y of the point plus its distance from
-             * the supplied point, and its location along the length of the
-             * path inscribed by the segment.  This implementation returns
-             * Infinity for distance and null values for everything else;
-             * subclasses are expected to override.
-             */
+ 
             this.findClosestPointOnPath = function (x, y) {
                 return {
                     d: Infinity,
@@ -11061,28 +11047,11 @@ var PLUMB_JS =  {};
                 };
             };
 
-            /**
-             * Computes the list of points on the segment that intersect the given line.
-             * @method lineIntersection
-             * @param {number} x1
-             * @param {number} y1
-             * @param {number} x2
-             * @param {number} y2
-             * @returns {Array<[number, number]>}
-             */
+             
             this.lineIntersection = function(x1, y1, x2, y2) {
                 return [];
             };
-
-            /**
-             * Computes the list of points on the segment that intersect the box with the given origin and size.
-             * @method boxIntersection
-             * @param {number} x1
-             * @param {number} y1
-             * @param {number} w
-             * @param {number} h
-             * @returns {Array<[number, number]>}
-             */
+ 
             this.boxIntersection = function(x, y, w, h) {
                 var a = [];
                 a.push.apply(a, this.lineIntersection(x, y, x + w, y));
@@ -11092,16 +11061,12 @@ var PLUMB_JS =  {};
                 return a;
             };
 
-            /**
-             * Computes the list of points on the segment that intersect the given bounding box, which is an object of the form { x:.., y:.., w:.., h:.. }.
-             * @method lineIntersection
-             * @param {BoundingRectangle} box
-             * @returns {Array<[number, number]>}
-             */
+            
             this.boundingBoxIntersection = function(box) {
                 return this.boxIntersection(box.x, box.y, box.w, box.y);
             };
         },
+        
         Straight: function (params) {
             var _super = _jp.Segments.AbstractSegment.apply(this, arguments),
                 length, m, m2, x1, x2, y1, y2,
@@ -11141,10 +11106,7 @@ var PLUMB_JS =  {};
                 };
             };
 
-            /**
-             * returns the point on the segment's path that is 'location' along the length of the path, where 'location' is a decimal from
-             * 0 to 1 inclusive. for the straight line segment this is simple maths.
-             */
+            
             this.pointOnPath = function (location, absolute) {
                 if (location === 0 && !absolute) {
                     return { x: x1, y: y1 };
@@ -11158,28 +11120,16 @@ var PLUMB_JS =  {};
                 }
             };
 
-            /**
-             * returns the gradient of the segment at the given point - which for us is constant.
-             */
+            
             this.gradientAtPoint = function (_) {
                 return m;
             };
 
-            /**
-             * returns the point on the segment's path that is 'distance' along the length of the path from 'location', where
-             * 'location' is a decimal from 0 to 1 inclusive, and 'distance' is a number of pixels.
-             * this hands off to jsPlumbUtil to do the maths, supplying two points and the distance.
-             */
+           
             this.pointAlongPathFrom = function (location, distance, absolute) {
                 var p = this.pointOnPath(location, absolute),
                     farAwayPoint = distance <= 0 ? {x: x1, y: y1} : {x: x2, y: y2 };
-
-                /*
-                 location == 1 ? {
-                 x:x1 + ((x2 - x1) * 10),
-                 y:y1 + ((y1 - y2) * 10)
-                 } :
-                 */
+ 
 
                 if (distance <= 0 && Math.abs(distance) > 1) {
                     distance *= -1;
@@ -11197,11 +11147,6 @@ var PLUMB_JS =  {};
                 return Math.abs(c - a) < Math.abs(c - b) ? a : b;
             };
 
-            /**
-             Function: findClosestPointOnPath
-             Finds the closest point on this segment to [x,y]. See
-             notes on this method in AbstractSegment.
-             */
             this.findClosestPointOnPath = function (x, y) {
                 var out = {
                     d: Infinity,
@@ -11247,14 +11192,6 @@ var PLUMB_JS =  {};
                 return (p2 > p1) ? (p1 <= q && q <= p2) : (p1 >= q && q >= p2);
             }, _plb = _pointLiesBetween;
 
-            /**
-             * Calculates all intersections of the given line with this segment.
-             * @param _x1
-             * @param _y1
-             * @param _x2
-             * @param _y2
-             * @returns {Array}
-             */
             this.lineIntersection = function(_x1, _y1, _x2, _y2) {
                 var m2 = Math.abs(_jg.gradient({x: _x1, y: _y1}, {x: _x2, y: _y2})),
                     m1 = Math.abs(m),
@@ -11312,15 +11249,6 @@ var PLUMB_JS =  {};
                 return out;
             };
 
-            /**
-             * Calculates all intersections of the given box with this segment. By default this method simply calls `lineIntersection` with each of the four
-             * faces of the box; subclasses can override this if they think there's a faster way to compute the entire box at once.
-             * @param x X position of top left corner of box
-             * @param y Y position of top left corner of box
-             * @param w width of box
-             * @param h height of box
-             * @returns {Array}
-             */
             this.boxIntersection = function(x, y, w, h) {
                 var a = [];
                 a.push.apply(a, this.lineIntersection(x, y, x + w, y));
@@ -11330,38 +11258,12 @@ var PLUMB_JS =  {};
                 return a;
             };
 
-            /**
-             * Calculates all intersections of the given bounding box with this segment. By default this method simply calls `lineIntersection` with each of the four
-             * faces of the box; subclasses can override this if they think there's a faster way to compute the entire box at once.
-             * @param box Bounding box, in { x:.., y:..., w:..., h:... } format.
-             * @returns {Array}
-             */
             this.boundingBoxIntersection = function(box) {
                 return this.boxIntersection(box.x, box.y, box.w, box.h);
             };
         },
 
         /*
-         Arc Segment. You need to supply:
-
-         r   -   radius
-         cx  -   center x for the arc
-         cy  -   center y for the arc
-         ac  -   whether the arc is anticlockwise or not. default is clockwise.
-
-         and then either:
-
-         startAngle  -   startAngle for the arc.
-         endAngle    -   endAngle for the arc.
-
-         or:
-
-         x1          -   x for start point
-         y1          -   y for start point
-         x2          -   x for end point
-         y2          -   y for end point
-
-         */
         Arc: function (params) {
             var _super = _jp.Segments.AbstractSegment.apply(this, arguments),
                 _calcAngle = function (_x, _y) {
@@ -11451,10 +11353,6 @@ var PLUMB_JS =  {};
                     return n;
                 };
 
-            /**
-             * returns the point on the segment's path that is 'location' along the length of the path, where 'location' is a decimal from
-             * 0 to 1 inclusive.
-             */
             this.pointOnPath = function (location, absolute) {
 
                 if (location === 0) {
@@ -11475,9 +11373,6 @@ var PLUMB_JS =  {};
                 return { x: gentleRound(_x), y: gentleRound(_y), theta: angle };
             };
 
-            /**
-             * returns the gradient of the segment at the given point.
-             */
             this.gradientAtPoint = function (location, absolute) {
                 var p = this.pointOnPath(location, absolute);
                 var m = _jg.normal([ params.cx, params.cy ], [p.x, p.y ]);
@@ -11500,7 +11395,7 @@ var PLUMB_JS =  {};
 
             // TODO: lineIntersection
         },
-
+        /*
         Bezier: function (params) {
             this.curve = [
                 { x: params.x1, y: params.y1},
@@ -11618,18 +11513,13 @@ var PLUMB_JS =  {};
                 return location;
             };
 
-            /**
-             * returns the point on the segment's path that is 'location' along the length of the path, where 'location' is a decimal from
-             * 0 to 1 inclusive.
-             */
+            
             this.pointOnPath = function (location, absolute) {
                 location = _translateLocation(this.curve, location, absolute);
                 return root.jsBezier.pointOnCurve(this.curve, location);
             };
 
-            /**
-             * returns the gradient of the segment at the given point.
-             */
+            
             this.gradientAtPoint = function (location, absolute) {
                 location = _translateLocation(this.curve, location, absolute);
                 return root.jsBezier.gradientAtPoint(this.curve, location);
@@ -11662,7 +11552,7 @@ var PLUMB_JS =  {};
             this.lineIntersection = function(x1, y1, x2, y2) {
                 return root.jsBezier.lineIntersection(x1, y1, x2, y2, this.curve);
             };
-        }
+        }*/
     };
 
     _jp.SegmentRenderer = {
@@ -12041,6 +11931,7 @@ var PLUMB_JS =  {};
      *
      *    radius    -    radius of the endpoint.  defaults to 10 pixels.
      */
+    
     _jp.Endpoints.Dot = function (params) {
         this.type = "Dot";
         var _super = _jp.Endpoints.AbstractEndpoint.apply(this, arguments);
@@ -12116,6 +12007,7 @@ var PLUMB_JS =  {};
      TODO this class still might leak memory.
 
      */
+    /*
     _jp.Endpoints.Image = function (params) {
 
         this.type = "Image";
@@ -12145,14 +12037,7 @@ var PLUMB_JS =  {};
             }
         }.bind(this);
 
-        /*
-         Function: setImage
-         Sets the Image to use in this Endpoint.
-
-         Parameters:
-         img         -   may be a URL or an Image object
-         onload      -   optional; a callback to execute once the image has loaded.
-         */
+        
         this._jsPlumb.endpoint.setImage = function (_img, onload) {
             var s = _img.constructor === String ? _img : _img.src;
             _onload = onload;
@@ -12232,6 +12117,7 @@ var PLUMB_JS =  {};
      * Class: Endpoints.Blank
      * An Endpoint that paints nothing (visible) on the screen.  Supports cssClass and hoverClass parameters like all Endpoints.
      */
+    /*
     _jp.Endpoints.Blank = function (params) {
         var _super = _jp.Endpoints.AbstractEndpoint.apply(this, arguments);
         this.type = "Blank";
@@ -12276,6 +12162,7 @@ var PLUMB_JS =  {};
      * width   width of the triangle's base.  defaults to 55 pixels.
      * height  height of the triangle from base to apex.  defaults to 55 pixels.
      */
+    /*
     _jp.Endpoints.Triangle = function (params) {
         this.type = "Triangle";
         _jp.Endpoints.AbstractEndpoint.apply(this, arguments);
@@ -12292,7 +12179,7 @@ var PLUMB_JS =  {};
                 y = anchorPoint[1] - (height / 2);
             return [ x, y, width, height ];
         };
-    };
+    };*/
 // ********************************* END OF ENDPOINT TYPES *******************************************************************
 
 
@@ -12908,6 +12795,7 @@ var PLUMB_JS =  {};
  *
  * Dual licensed under the MIT and GPL2 licenses.
  */
+/*
 ;(function() {
     "use strict";
 
@@ -13065,7 +12953,7 @@ var PLUMB_JS =  {};
                         currentGroup.remove(el, false, doNotFireEvent, false, group);
                         self.updateConnectionsForGroup(currentGroup);
                     }
-                    group.add(el, doNotFireEvent/*, currentGroup*/);
+                    group.add(el, doNotFireEvent);
 
                     var handleDroppedConnections = function (list, index) {
                         var oidx = index === 0 ? 1 : 0;
@@ -13331,19 +13219,7 @@ var PLUMB_JS =  {};
         };
     };
 
-    /**
-     *
-     * @param {jsPlumbInstance} _jsPlumb Associated jsPlumb instance.
-     * @param {Object} params
-     * @param {Element} params.el The DOM element representing the Group.
-     * @param {String} [params.id] Optional ID for the Group. A UUID will be assigned as the Group's ID if you do not provide one.
-     * @param {Boolean} [params.constrain=false] If true, child elements will not be able to be dragged outside of the Group container.
-     * @param {Boolean} [params.revert=true] By default, child elements revert to the container if dragged outside. You can change this by setting `revert:false`. This behaviour is also overridden if you set `orphan` or `prune`.
-     * @param {Boolean} [params.orphan=false] If true, child elements dropped outside of the Group container will be removed from the Group (but not from the DOM).
-     * @param {Boolean} [params.prune=false] If true, child elements dropped outside of the Group container will be removed from the Group and also from the DOM.
-     * @param {Boolean} [params.dropOverride=false] If true, a child element that has been dropped onto some other Group will not be subject to the controls imposed by `prune`, `revert` or `orphan`.
-     * @constructor
-     */
+    
     var Group = function(_jsPlumb, params) {
         var self = this;
         var el = params.el;
@@ -13425,7 +13301,7 @@ var PLUMB_JS =  {};
             return dropOverride && (revert || prune || orphan);
         };
 
-        this.add = function(_el, doNotFireEvent/*, sourceGroup*/) {
+        this.add = function(_el, doNotFireEvent) {
             var dragArea = getDragArea();
             _each(_el, function(__el) {
 
@@ -13643,12 +13519,7 @@ var PLUMB_JS =  {};
         _jsPlumb.getGroupManager().addGroup(this);
     };
 
-    /**
-     * Adds a group to the jsPlumb instance.
-     * @method addGroup
-     * @param {Object} params
-     * @return {Group} The newly created Group.
-     */
+    
     _jpi.prototype.addGroup = function(params) {
         var j = this;
         j._groups = j._groups || {};
@@ -13666,12 +13537,7 @@ var PLUMB_JS =  {};
         return group;
     };
 
-    /**
-     * Add an element to a group.
-     * @method addToGroup
-     * @param {String} group Group, or ID of the group, to add the element to.
-     * @param {Element} el Element to add to the group.
-     */
+    
     _jpi.prototype.addToGroup = function(group, el, doNotFireEvent) {
 
         var _one = function(_el) {
@@ -13689,89 +13555,38 @@ var PLUMB_JS =  {};
         }
     };
 
-    /**
-     * Remove an element from a group, and sets its DOM element to be a child of the container again.  ??
-     * @method removeFromGroup
-     * @param {String} group Group, or ID of the group, to remove the element from.
-     * @param {Element} el Element to add to the group.
-     */
+    
     _jpi.prototype.removeFromGroup = function(group, el, doNotFireEvent) {
         this.getGroupManager().removeFromGroup(group, el, doNotFireEvent);
         this.getContainer().appendChild(el);
     };
 
-    /**
-     * Remove a group, and optionally remove its members from the jsPlumb instance.
-     * @method removeGroup
-     * @param {String|Group} group Group to delete, or ID of Group to delete.
-     * @param {Boolean} [deleteMembers=false] If true, group members will be removed along with the group. Otherwise they will
-     * just be 'orphaned' (returned to the main container).
-     * @returns {Map[String, Position}} When deleteMembers is false, this method returns a map of {id->position}
-     */
+   
     _jpi.prototype.removeGroup = function(group, deleteMembers, manipulateDOM, doNotFireEvent) {
         return this.getGroupManager().removeGroup(group, deleteMembers, manipulateDOM, doNotFireEvent);
     };
 
-    /**
-     * Remove all groups, and optionally remove their members from the jsPlumb instance.
-     * @method removeAllGroup
-     * @param {Boolean} [deleteMembers=false] If true, group members will be removed along with the groups. Otherwise they will
-     * just be 'orphaned' (returned to the main container).
-     */
+   
     _jpi.prototype.removeAllGroups = function(deleteMembers, manipulateDOM, doNotFireEvent) {
         this.getGroupManager().removeAllGroups(deleteMembers, manipulateDOM, doNotFireEvent);
     };
 
-    /**
-     * Get a Group
-     * @method getGroup
-     * @param {String} groupId ID of the group to get
-     * @return {Group} Group with the given ID, null if not found.
-     */
+    
     _jpi.prototype.getGroup = function(groupId) {
         return this.getGroupManager().getGroup(groupId);
     };
 
-    /**
-     * Gets all the Groups managed by the jsPlumb instance.
-     * @returns {Group[]} List of Groups. Empty if none.
-     */
+    
     _jpi.prototype.getGroups = function() {
         return this.getGroupManager().getGroups();
     };
 
-    /**
-     * Expands a group element. jsPlumb doesn't do "everything" for you here, because what it means to expand a Group
-     * will vary from application to application. jsPlumb does these things:
-     *
-     * - Hides any connections that are internal to the group (connections between members, and connections from member of
-     * the group to the group itself)
-     * - Proxies all connections for which the source or target is a member of the group.
-     * - Hides the proxied connections.
-     * - Adds the jtk-group-expanded class to the group's element
-     * - Removes the jtk-group-collapsed class from the group's element.
-     *
-     * @method expandGroup
-     * @param {String|Group} group Group to expand, or ID of Group to expand.
-     */
+    
     _jpi.prototype.expandGroup = function(group) {
         this.getGroupManager().expandGroup(group);
     };
 
-    /**
-     * Collapses a group element. jsPlumb doesn't do "everything" for you here, because what it means to collapse a Group
-     * will vary from application to application. jsPlumb does these things:
-     *
-     * - Shows any connections that are internal to the group (connections between members, and connections from member of
-     * the group to the group itself)
-     * - Removes proxies for all connections for which the source or target is a member of the group.
-     * - Shows the previously proxied connections.
-     * - Adds the jtk-group-collapsed class to the group's element
-     * - Removes the jtk-group-expanded class from the group's element.
-     *
-     * @method expandGroup
-     * @param {String|Group} group Group to expand, or ID of Group to expand.
-     */
+   
     _jpi.prototype.collapseGroup = function(groupId) {
         this.getGroupManager().collapseGroup(groupId);
     };
@@ -13781,12 +13596,7 @@ var PLUMB_JS =  {};
         this.getGroupManager().repaintGroup(group);
     };
 
-    /**
-     * Collapses or expands a group element depending on its current state. See notes in the collapseGroup and expandGroup method.
-     *
-     * @method toggleGroup
-     * @param {String|Group} group Group to expand/collapse, or ID of Group to expand/collapse.
-     */
+    
     _jpi.prototype.toggleGroup = function(group) {
         group = this.getGroupManager().getGroup(group);
         if (group != null) {
@@ -13794,9 +13604,7 @@ var PLUMB_JS =  {};
         }
     };
 
-    //
-    // lazy init a group manager for the given jsplumb instance.
-    //
+    
     _jpi.prototype.getGroupManager = function() {
         var mgr = this[GROUP_MANAGER];
         if (mgr == null) {
@@ -13809,12 +13617,7 @@ var PLUMB_JS =  {};
         delete this[GROUP_MANAGER];
     };
 
-    /**
-     * Gets the Group that the given element belongs to, null if none.
-     * @method getGroupFor
-     * @param {String|Element} el Element, or element ID.
-     * @returns {Group} A Group, if found, or null.
-     */
+    
     _jpi.prototype.getGroupFor = function(el) {
         el = this.getElement(el);
         if (el) {
@@ -13837,7 +13640,7 @@ var PLUMB_JS =  {};
         }
     };
 
-}).call(PLUMB_JS);
+}).call(PLUMB_JS);*/
 
 
 /*
@@ -13851,7 +13654,7 @@ var PLUMB_JS =  {};
  * Dual licensed under the MIT and GPL2 licenses.
  */
 ;
-(function () {
+/*(function () {
 
     "use strict";
     var root = PLUMB_JS, _jp = root.jsPlumb, _ju = root.jsPlumbUtil;
@@ -13884,9 +13687,7 @@ var PLUMB_JS =  {};
                     sgn( segment[3] - segment[1] )
                 ];
             },
-            /**
-             * helper method to add a segment.
-             */
+            
             addSegment = function (segments, x, y, paintInfo) {
                 if (lastx === x && lasty === y) {
                     return;
@@ -14209,7 +14010,7 @@ var PLUMB_JS =  {};
     _ju.extend(_jp.Connectors.Flowchart, _jp.Connectors.AbstractConnector);
 
 }).call(PLUMB_JS);
-
+*/
 /*
  * This file contains the code for the Bezier connector type.
  *
@@ -14221,6 +14022,7 @@ var PLUMB_JS =  {};
  * Dual licensed under the MIT and GPL2 licenses.
  */
 ;
+
 (function () {
 
     "use strict";
@@ -14288,7 +14090,7 @@ var PLUMB_JS =  {};
         return _super;
     };
     _ju.extend(_jp.Connectors.AbstractBezierConnector, _jp.Connectors.AbstractConnector);
-
+/*
     var Bezier = function (params) {
         params = params || {};
         this.type = "Bezier";
@@ -14364,7 +14166,7 @@ var PLUMB_JS =  {};
 
     _jp.Connectors.Bezier = Bezier;
     _ju.extend(Bezier, _jp.Connectors.AbstractBezierConnector);
-
+*/
 }).call(PLUMB_JS);
 
 /*
@@ -15174,6 +14976,7 @@ var PLUMB_JS =  {};
     _ju.extend(_jp.Overlays.svg.Diamond, [ _jp.Overlays.Diamond, AbstractSvgArrowOverlay ], svgProtoFunctions);
 
     // a test
+    /*
     _jp.Overlays.svg.GuideLines = function () {
         var path = null, self = this, p1_1, p1_2;
         _jp.Overlays.GuideLines.apply(this, arguments);
@@ -15229,7 +15032,7 @@ var PLUMB_JS =  {};
             return "M " + d1.x + "," + d1.y +
                 " L" + d2.x + "," + d2.y;
         };
-    };
+    };*/
     _ju.extend(_jp.Overlays.svg.GuideLines, _jp.Overlays.GuideLines);
 }).call(PLUMB_JS);
 
@@ -16192,6 +15995,7 @@ var PLUMB_JS =  {};
             // not going to be the jsplumb container; it's going to be some child of that element. In that case
             // we want to adjust the UI position to account for the offsetParent's position relative to the Container
             // origin.
+            
             var el = eventArgs[0].el;
             if (el.offsetParent == null) {
                 return null;
