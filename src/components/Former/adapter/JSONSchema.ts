@@ -145,7 +145,7 @@ export default class JSONSchema2FormerSchema {
     public static convertObject(schema: any) {
         let required: string[] = schema.required || [];
         Object.keys(schema.properties).forEach((key) => {
-            console.log(schema, schema['x-order'], key,2222)
+            
             schema.properties[key] = {
                 ...this.convert(schema.properties[key]),
                 title: utils.labelName(schema.properties[key].title || key),

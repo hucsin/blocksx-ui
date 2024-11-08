@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { BoxItem } from '../../interface';
-import { TablerUtils } from '@blocksx/ui';
+import TablerUtils from '../../../utils/tool'
 import BoxManger from '../../BoxManger';
 import './style.scss'
 

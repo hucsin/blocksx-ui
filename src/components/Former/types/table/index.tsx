@@ -9,7 +9,8 @@ import classnames from 'classnames';
 import { IFormerBase } from '../../typings';
 import { UnorderedListOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Table, Button, Dropdown, Tooltip } from 'antd';
-import UtilsTool from '../../../utils/tool';
+
+import FormerTool from '../../../utils/FormerTool';
 import Former from '../../index';
 
 import { utils } from '@blocksx/core';
@@ -290,7 +291,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
                             onClick={()=> {this.onClickFistCell(record)}}
                             key={[rowIndex,index].join('_')}
                         >
-                            {UtilsTool.renderComponentByField(field, {
+                            {FormerTool.renderComponentByField(field, {
                                 value: text,
                                 size: 'small',
                                 ... (field['props'] || field['x-type-props'])

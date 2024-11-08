@@ -2,8 +2,8 @@ import React from 'react';
 import classnames from 'classnames';
 import { ScopeManger } from '@blocksx/scope';
 import { utils } from '@blocksx/core';
-import { Popover,Alert } from 'antd';
-import { Icons } from '@blocksx/ui';
+import { Popover } from 'antd';
+import { FunctionOutlined, FlowUtilityOutlined, VariableUtilityOutlined } from '../../../../../Icons';
 
 
 interface PanelTooltipProps {
@@ -147,11 +147,11 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
 
         switch(this.props.$type) {
             case 'function':
-                return <Icons.FunctionOutlined/> 
+                return <FunctionOutlined/> 
             case 'scope':
-                return <Icons.FlowUtilityOutlined/>;
+                return <FlowUtilityOutlined/>;
             default:
-                return <Icons.VariableUtilityOutlined/>;
+                return <VariableUtilityOutlined/>;
 
         }
         

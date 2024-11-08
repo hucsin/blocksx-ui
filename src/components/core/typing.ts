@@ -1,5 +1,5 @@
 
-import { ContextMenuItem } from '@blocksx/ui'
+import { ContextMenuItem } from '../ContextMenu/typing';
 
 export type WidgetDirectionType = 'top' | 'bottom' | 'right' | 'left' | 'center';
 

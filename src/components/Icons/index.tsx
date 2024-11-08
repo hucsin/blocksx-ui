@@ -73,12 +73,16 @@ import {
     ProductOutlined,
     ScheduleOutlined,
     ApiOutlined,
-    MailOutlined
+    MailOutlined,
+    FileSearchOutlined,
+    PlusCircleOutlined
     
 } from '@ant-design/icons';
 
 // 重新导出需要的图标
 export { 
+    PlusCircleOutlined,
+    FileSearchOutlined,
     MailOutlined,
     ScheduleOutlined,
     ApiOutlined,

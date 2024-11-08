@@ -8,9 +8,10 @@ import { consume } from '../utils/dom';
 import * as FormerTypes from '../Former/types';
 import Box from '../Box';
 
-import { TablerProps} from './typings';
+import { TablerProps } from './typings';
 import * as Icons from '../Icons';
 import TableUtils from '../utils/tool';
+import FormerTool from '../utils/FormerTool';
 import BaseUtil from '../utils'
 import i18n from '@blocksx/i18n';
 import classnames from 'classnames';
@@ -524,7 +525,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             
             return extraList.map((field, index) => {
                 
-                return TableUtils.renderComponentByField(field, {
+                return FormerTool.renderComponentByField(field, {
                     value: rowData[field.key],
                     key: field.key + index,
                     displayValue: rowData['DisplayValue_' + field.key],

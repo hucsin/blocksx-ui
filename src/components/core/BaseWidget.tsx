@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tooltip } from 'antd';
-import { StateComponent } from '@blocksx/ui';
+import StateComponent from '../StateX/Component';
 import { WidgetDirectionType } from './typing';
 /**
  * 组件里面的部件,用来渲染组件面板

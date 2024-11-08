@@ -4,7 +4,9 @@ import { StructuralMiniFlow } from '@blocksx/structural';
 import { utils } from '@blocksx/core';
 import { Tooltip, Tree, Spin, Tabs, Space } from 'antd'
 
-import { GlobalScope, MiniFlow, SmartRequest, ThinkingNodeManager } from '@blocksx/ui';
+
+import MiniFlow from '../../../../../../ScenFlow/MiniFlow';
+import ThinkingNodeManager from '../../../../../../core/manager/ManagerThinkingNode'
 import ProcessNode from './node';
 
 import './style.scss'

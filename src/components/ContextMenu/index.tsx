@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import { message as AntMessage } from 'antd';
 
-import { Pick, Icons, PluginManager , ContextMenuManger  } from '@blocksx/ui';
+import Pick from '../Pick';
+import PluginManager from '../core/manager/ManagerPlugin';
+import ContextMenuManger from '../core/manager/ManagerContextMenu';
+
 import { utils } from '@blocksx/core';
 import i18n from '@blocksx/i18n';
 //import { monaco } from 'react-monaco-editor';

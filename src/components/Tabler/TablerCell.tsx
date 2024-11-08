@@ -13,7 +13,7 @@ import * as formerMap from '../Former/types';
 import * as DesignIcons from '../Icons/index';
 import { Input, Popover } from 'antd';
 
-import TablerUtils from '../utils/tool';
+import FormerTool from '../utils/FormerTool';
 
 export interface TablerCellProps {
     field: TablerField,
@@ -122,7 +122,7 @@ export default class TablerCell extends React.Component<TablerCellProps, TablerC
             ...(field['props']  || field['x-type-props']),
         }
 
-         return TablerUtils.renderComponentByField(field, {
+         return FormerTool.renderComponentByField(field, {
             value: this.props.value,
             recordValue: this.props.record,
             ...props

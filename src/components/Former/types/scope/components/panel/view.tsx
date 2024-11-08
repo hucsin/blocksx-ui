@@ -3,10 +3,11 @@ import classnames from 'classnames';
 import { utils } from '@blocksx/core'
 import Notice from '../../../notice';
 import Context from '../../contexts';
-import { GlobalScope, SmartRequest } from '@blocksx/ui';
+import SmartRequest from '../../../../../utils/SmartRequest';
+import GlobalScope from '../../../../../core/GlobalScope';
 
 import { Table, Empty, Spin } from 'antd';
-import { SearchBar } from '@blocksx/ui';
+import SearchBar from '../../../../../SearchBar';
 
 interface PanelViewProps {
     icon: string;

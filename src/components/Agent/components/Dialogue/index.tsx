@@ -9,7 +9,7 @@ import Markdown from '../../../Markdown';
 import * as Icons from '../../../Icons';
 import { Input, Popover, Space, Dropdown } from 'antd'
 
-import * as FormerTypes from '../../../Former/types';
+import FormerAvatar from '../../../Former/types/avatar';
 import * as DialogueTypes from './types';
 
 import  tools from '../../core/utils';
@@ -95,7 +95,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
     }
     private renderAvatar(type: string) {
         return (
-            <FormerTypes.avatar color={type === 'assistant' ? '#4d53e8' : ''} icon={type === 'assistant' ? 'AnyhubsBrandFilled' : 'UserOutlined'} />
+            <FormerAvatar color={type === 'assistant' ? '#4d53e8' : ''} icon={type === 'assistant' ? 'AnyhubsBrandFilled' : 'UserOutlined'} />
         )
     }
     private renderMessageList() {

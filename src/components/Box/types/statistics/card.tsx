@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Progress, Tooltip, Space } from 'antd';
-import { Icons } from '@blocksx/ui';
+
+import { ExclamationCircleFilled } from '../../../Icons'
 //import { Tiny } from '@ant-design/plots';
 import { Sparklines, SparklinesLine, SparklinesBars } from 'react-sparklines';
 
@@ -152,7 +153,7 @@ export default class StatisticsCard extends React.Component<StatisticsCardProps,
     public renderExtra() {
         if (this.props.description) {
             return (<Tooltip title={this.props.description}>
-                <Icons.ExclamationCircleFilled/>
+                <ExclamationCircleFilled/>
             </Tooltip>)
         }
         return null;

@@ -6,7 +6,8 @@
  */
 import React from 'react';
 import { utils } from '@blocksx/core';
-import { ContextMenuItem, PluginManager } from '@blocksx/ui';
+import { ContextMenuItem } from '../ContextMenu/typing';
+import PluginManager from './manager/ManagerPlugin';
 
 import { ContextMenuMap } from './typing';
 

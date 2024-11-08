@@ -10,6 +10,7 @@ import Former from '../../../Former';
 import { Table, Drawer, Space, Button, Alert } from 'antd';
 import { BlockOutlined } from '@ant-design/icons';
 import TablerUtils from '../../../utils/tool';
+import FormerTool from '../../../utils/FormerTool';
 
 import Tabler from '../../../Tabler';
 
@@ -229,7 +230,7 @@ export default class FormerPickMore extends React.Component<FormerPickProps, For
                             key={[rowIndex,index].join('_')}
                             onClick={()=> this.onClickView(record)}
                          >
-                            {TablerUtils.renderComponentByField(field, {
+                            {FormerTool.renderComponentByField(field, {
                                 value: text,
                                 ... (field['props'] || field['x-type-props'])
                             })}

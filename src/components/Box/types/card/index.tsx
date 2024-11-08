@@ -5,7 +5,7 @@ import { List, Typography } from 'antd';
 import { BoxItem } from '../../interface';
 
 import BehaviorWrapper from '../../utils/BehaviorWrapper';
-import Former from '../../../Former';
+import FormerAvatar from '../../../Former/types/avatar';
 import BoxManger from '../../BoxManger';
 
 import './style.scss';
@@ -32,7 +32,7 @@ export default class Card extends React.Component<BoxItem,{}> {
     public renderAvatar(item: BoxItem, index: number) {
         
         if (!item.avatar && !item.image) {
-            return  <Former.FormerTypes.avatar size={this.getDefaultAvatarSize()} text={''+(index+1)} />
+            return  <FormerAvatar size={this.getDefaultAvatarSize()} text={''+(index+1)} />
         }
         
         if (item.image) {
@@ -46,7 +46,7 @@ export default class Card extends React.Component<BoxItem,{}> {
             case 'index':
             case 'item':
             default:
-                return <Former.FormerTypes.avatar size={this.getDefaultAvatarSize()} color={item.color as string} icon={item.avatar as string} />
+                return <FormerAvatar size={this.getDefaultAvatarSize()} color={item.color as string} icon={item.avatar as string} />
         }
     }
     private getDefaultAvatarSize() {

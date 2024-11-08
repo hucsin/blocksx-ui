@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { BoxItem } from '../../interface';
-import { Icons } from '@blocksx/ui';
+import { PlusOutlined ,MinusOutlined } from '../../../Icons'
 import BoxManger from '../../BoxManger';
 
 import './style.scss'
@@ -44,7 +44,7 @@ export default class BoxQuestion extends React.Component<BoxItem, {open: any}> {
                             <dl key ={index} className={classnames({
                                 open: open.includes(index)
                             })}>
-                                <dt onClick={()=> this.onClick(index)}>{it.title} {!open.includes(index) ? <Icons.PlusOutlined/>: <Icons.MinusOutlined/>}</dt>
+                                <dt onClick={()=> this.onClick(index)}>{it.title} {!open.includes(index) ? <PlusOutlined/>: <MinusOutlined/>}</dt>
                                 <dd>{it.slogan || it.description}</dd>
                             </dl>
                         )

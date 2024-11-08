@@ -1,5 +1,5 @@
 import { utils } from '@blocksx/core';
-import { ContextMenuItem } from '@blocksx/ui'
+import { ContextMenuItem } from '../../ContextMenu/typing';
 
 
 export interface MenuItemPayload {

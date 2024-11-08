@@ -1,7 +1,14 @@
 import React from 'react';
 import { utils } from '@blocksx/core';
 import { Tree, Empty, Skeleton, Spin, Button } from 'antd';
-import { Icons, SmartRequest, SplitPane, CombineIcon, ContextMenu, PopoverMenu, TablerUtils } from '@blocksx/ui';
+import * as Icons from '../../../Icons';
+import SmartRequest from '../../../utils/SmartRequest';
+import SplitPane from '../../../SplitPane';
+import ContextMenu from '../../../ContextMenu';
+import PopoverMenu from '../../../PopoverMenu';
+import TablerUtils from '../../../utils/tool';
+import CombineIcon from '../../../Icons/CombineIcon'
+
 import Manger from '../../core/SmartPageManger';
 import SmartPageFormer from '../former';
 

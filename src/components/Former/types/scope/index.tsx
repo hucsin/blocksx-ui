@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 import { utils } from '@blocksx/core';
-import { SmartRequest } from '@blocksx/ui';
+import SmartRequest from '../../../utils/SmartRequest';
 import { Popover, Button, Tooltip } from 'antd';
 
 import * as Icons from '../../../Icons';

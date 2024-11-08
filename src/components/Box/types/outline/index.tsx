@@ -2,7 +2,7 @@ import React from 'react';
 
 import ReactMarkdown from 'react-markdown';
 import { utils } from '@blocksx/core';
-import Former from '../../../Former';
+import FormerAvatar from '../../../Former/types/avatar'
 import * as Icons from '../../../Icons';
 import { Space, Typography, Button, Tag } from 'antd';
 import { BoxItem, BoxAction, BoxTag } from '../../interface';
@@ -34,13 +34,13 @@ export default class Outline extends React.Component<BoxItem, any> {
                 <Space>
                     {icon.map((item, index) => {
                         return (
-                            <Former.FormerTypes.avatar key={index} icon={item} size={this.getAvatarSize()} />
+                            <FormerAvatar key={index} icon={item} size={this.getAvatarSize()} />
                         )
                     })}
                 </Space>
             )
         } else {
-            return <Former.FormerTypes.avatar icon={icon} size={this.getAvatarSize()} />
+            return <FormerAvatar icon={icon} size={this.getAvatarSize()} />
         }
     }
     private renderIcon(icon: string) {

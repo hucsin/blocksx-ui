@@ -1,6 +1,9 @@
 import React from 'react';
 import { utils } from '@blocksx/core';
-import { GlobalScope, Icons, FormerTypes} from '@blocksx/ui';
+
+import GlobalScope from '../../../../core/GlobalScope';
+import * as Icons from '../../../../Icons';
+
 import ScopeTooltip from './panel/tooltip';
 
 

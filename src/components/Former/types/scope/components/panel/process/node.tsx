@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { FormerTypes } from '@blocksx/ui';
+import * as FormerTypes from '../../../../index'
 
 interface ProcessNodeProps {
     left: number;

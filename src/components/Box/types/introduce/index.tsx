@@ -2,7 +2,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import { TablerUtils } from '@blocksx/ui';
+
 
 import { BoxItem } from '../../interface';
 import './style.scss'

@@ -1,7 +1,7 @@
 import React from 'react';
 import classname from 'classnames';
 import { ScopeManger } from '@blocksx/scope';
-import { Icons, FormerTypes } from '@blocksx/ui';
+import * as FormerTypes from '../../index';
 import { Popover } from 'antd'
 
 interface FunctionTooltipProps {
