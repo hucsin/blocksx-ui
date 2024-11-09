@@ -75,12 +75,20 @@ import {
     ApiOutlined,
     MailOutlined,
     FileSearchOutlined,
-    PlusCircleOutlined
+    PlusCircleOutlined,
+    CloudOutlined,
+    AndroidOutlined,
+    GoogleOutlined,
+    GithubOutlined
     
 } from '@ant-design/icons';
 
 // 重新导出需要的图标
 export { 
+    GoogleOutlined,
+    GithubOutlined,
+    AndroidOutlined,
+    CloudOutlined,
     PlusCircleOutlined,
     FileSearchOutlined,
     MailOutlined,

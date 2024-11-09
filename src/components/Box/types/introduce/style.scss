@@ -3,6 +3,7 @@
     align-items: center;
     .box-introduce-media {
         width: 48%;
+        padding-left: 5%;
         img {
             width: 100%;
         }
@@ -31,5 +32,9 @@
 
     &.box-introduce-theme-right {
         flex-direction: row-reverse;
+        .box-introduce-desc {
+            padding-left: 0;
+            padding-right: 5%;
+        }
     }
 }

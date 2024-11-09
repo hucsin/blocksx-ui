@@ -54,7 +54,7 @@ export default class Card extends React.Component<BoxItem,{}> {
         if (this.props.theme == 'section') {
             return 64;
         }
-        return this.props.size;
+        return 42;
     }
     private renderContent(item: any, index:number) {
     
