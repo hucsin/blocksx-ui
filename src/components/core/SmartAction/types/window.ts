@@ -28,8 +28,8 @@ class SmartActionWindow {
         
         let screenWidth = window.screen.width;
         let screenHeight = window.screen.height;
-        let windowWidth = Math.min(1000, screenWidth -  300);
-        let windowHeight = Math.min(700, screenHeight - 200);
+        let windowWidth = Math.min(520, screenWidth -  300);
+        let windowHeight = Math.min(600, screenHeight - 200);
         
         window.open(SmartRequest.getRequestURI(params.url), params.id, `width=${windowWidth},height=${windowHeight},top=${(screenHeight-windowHeight)/2},left=${(screenWidth-windowWidth)/2},menubar=no,toolbar=no,resizable=no,focus=1`)
 

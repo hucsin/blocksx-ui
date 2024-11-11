@@ -55,7 +55,6 @@ export default class SmartPageBlocks extends React.Component<SmartPageBlocksProp
         if (this.state.loading) {
             return <Skeleton active />
         }
-        console.log(this.state.value, 232323232)
         return (
             <Box dataSource={blocks || []} toolbarRef={this.props.toolbarRef} value={this.state.value}></Box>
         )

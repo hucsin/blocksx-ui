@@ -180,13 +180,14 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
         let matchItem: any = value.map(it => {
             let item: any = this.findMatchPlan(it.plans || [], type);
             if (item) {
-                item.info = it.description
+                item.description = it.description
+                item.label = it.label
             }
+            
             return item;
         }).filter(Boolean)
 
-
-        let hasChildren: boolean = matchItem.length > 1;
+        let hasChildren: boolean = matchItem.length >= 1;
         let first: any = rowdata.value[0];
 
         return matchItem.length ? (
@@ -196,7 +197,7 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
                     {matchItem.map(item => {
 
                         return (
-                            <li>{item.info} <Tooltip title={item.info || item.description}><Icons.ExclamationCircleOutlined /></Tooltip></li>
+                            <li>{item.label} <Tooltip title={item.description}><Icons.ExclamationCircleOutlined /></Tooltip></li>
                         )
                     })}
                 </ul>}

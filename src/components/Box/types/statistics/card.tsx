@@ -58,7 +58,7 @@ export default class StatisticsCard extends React.Component<StatisticsCardProps,
                 {/* 渲染 Sparkline 并应用渐变 */}
                 <Sparklines data={data.map(it => it.value)} limit={30} height={20} width={100}>
                 <SparklinesLine color="#87d068"  strokeWidth={3} onMouseMove={(e,a) => {
-                    console.log(e,a, 1111)
+                    
                 }} />
             </Sparklines>
           </div>)
@@ -116,7 +116,6 @@ export default class StatisticsCard extends React.Component<StatisticsCardProps,
             },
           };
 
-          console.log(data, 3333)
 
           return (<div style={{ position: 'relative' }}>
             {/* 定义渐变 */}
@@ -124,7 +123,7 @@ export default class StatisticsCard extends React.Component<StatisticsCardProps,
             {/* 渲染 Sparkline 并应用渐变 */}
             <Sparklines data={data.map(it => it.value)} limit={30} height={20} width={100}>
                 <SparklinesBars  style={{ width: 3,fill: "#41c3f9",stroke: "white", strokeWidth: "1"}} onMouseMove={(e,a) => {
-                    console.log(e,a, 33333)
+                    
                 }} />
         </Sparklines>
           </div>)

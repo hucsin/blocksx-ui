@@ -15,7 +15,8 @@
             font-size:42px;
         }
         p {
-            font-size:18px;
+            font-size:24px;
+            opacity: .5;
         }
         .box-actions {
             a{
@@ -34,7 +35,6 @@
         flex-direction: row-reverse;
         .box-introduce-desc {
             padding-left: 0;
-            padding-right: 5%;
         }
     }
 }

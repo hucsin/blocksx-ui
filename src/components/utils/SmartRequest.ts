@@ -79,15 +79,17 @@ class SmartRequest {
         }
     }
     public getRequestURI(url: string) {
+
+        let host: string = location.hostname.replace(/^(www|console)\./,'');
         
         if (url.match(/^https:\/\//)) {
             return url;
         } else {
             if(url.match(/^\/api/)) {
                 let zone: string[] = this.getUserZone();
-                return `//${zone[0]}.anyhubs.com/${zone[1]}${url}`
+                return `//${zone[0]}.${host}/${zone[1]}${url}`
             } else {
-                return `//uc.anyhubs.com${url}`;
+                return `//uc.${host}${url}`;
             }
         }
     }
