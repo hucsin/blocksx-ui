@@ -47,7 +47,10 @@
     required: ['userName', 'whereEvent', 'date', 'datetime', 'time']
 }
  */
+import SmartRequest from '../../utils/SmartRequest';
+
 import { utils } from '@blocksx/core';
+
 export default class JSONSchema2FormerSchema {
 
     public static convert(input: any) {
@@ -102,16 +105,28 @@ export default class JSONSchema2FormerSchema {
     }
     public static convertString(schema: any) {
         // 处理枚举
-        if (Array.isArray(schema.enum)) {
-            if (this.isUseRadio(schema)) {
-                schema['x-type'] = 'radio';
+        if (Array.isArray(schema.enum) || (utils.isPlainObject(schema.enum) && schema.enum.type == 'findPanelView')) {
+            if (Array.isArray(schema.enum)) {
+                if (this.isUseRadio(schema)) {
+                    schema['x-type'] = 'radio';
+                } else {
+                    schema['x-type'] = 'select';
+                }
+                schema.dataSource= schema.enum.map((item: any) => ({
+                    label: utils.labelName(item),
+                    value: item
+                }))
             } else {
-                schema['x-type'] = 'select';
+                //let { enum: enums } = schema;
+                if (schema.enum) {
+                    schema['x-type'] = 'select';
+                    schema['x-mode'] = 'lazy';
+                    schema.autoEnums= schema.enum;
+                    schema.enum.valueLabel = true;
+                    delete schema.enum;
+                }
+                //schema.dataSource= enums;
             }
-            schema.dataSource= schema.enum.map((item: any) => ({
-                label: utils.labelName(item),
-                value: item
-            }))
         } else {
             // 处理日期
             if (schema.format) {

@@ -1,9 +1,10 @@
 import React from 'react';
 import { utils } from '@blocksx/core';
 import classnames from 'classnames';
-import { Input, Popover, Space, Tooltip, Button, Spin } from 'antd';
+import { Input, Popover, Space, Tooltip, Button, Spin, Empty } from 'antd';
 import SmartRequest from '../../../../../utils/SmartRequest';
 import TablerUtils from '../../../../../utils/tool';
+
 
 import './styles.scss';
 
@@ -14,6 +15,8 @@ interface DialogueChooseProps {
         icon: string;
     };
     name: string;
+    chooseItem?: any;
+    show: boolean;
     value: any;
     viewer?: boolean;
     dataSource: any;
@@ -27,6 +30,7 @@ interface DialogueChooseState {
     dataSource: any[];
     query: string;
     value: any;
+    show: boolean;
     errorMessage: string;
     loading: boolean;
     disabled?: boolean;
@@ -44,11 +48,26 @@ export default class DialogueChoose extends React.Component<DialogueChooseProps,
             value: props.value,
             errorMessage: '',
             loading: false,
-            disabled: props.disabled
+            disabled: props.disabled,
+            show: props.show
         }
 
-        if (utils.isString(props.dataSource)) {
-            this.helper = SmartRequest.makeGetRequest(props.dataSource);
+        this.initHelper();
+    }
+    private initHelper() {
+
+        let { dataSource } = this.props;
+    
+        if( utils.isPlainObject(dataSource)) {
+            
+            if (dataSource.type == 'findPanelView') {
+                this.helper = SmartRequest.createAutoEnumsRequest(dataSource);
+            }
+
+        } else {
+            if ( utils.isString(dataSource)) {
+                this.helper = SmartRequest.makeGetRequest(dataSource);
+            }
         }
     }
     public UNSAFE_componentWillReceiveProps(nextProps: DialogueChooseProps) {
@@ -57,12 +76,34 @@ export default class DialogueChoose extends React.Component<DialogueChooseProps,
                 disabled: nextProps.disabled
             })
         }
+        if (nextProps.show !== this.state.show) {
+            this.setState({
+                show: nextProps.show
+            }, () => {
+                if (nextProps.show) {
+                    this.initHelperData();
+                }
+            })
+        }
     }
     public componentDidMount() {
+       if (this.state.show) {
+        this.initHelperData();
+       }
+    }
+    private initHelperData() {
         if (this.helper) {
+            this.setState({
+                loading: true
+            })
             this.helper({ query: this.state.query }).then((res: any) => {
                 this.setState({
-                    dataSource: res
+                    dataSource: res,
+                    loading: false
+                })
+            }).catch(() => {
+                this.setState({
+                    loading: false
                 })
             })
         }
@@ -86,23 +127,31 @@ export default class DialogueChoose extends React.Component<DialogueChooseProps,
             let displayName: string = utils.labelName(app.name || this.props.name)
             return <span>{this.props.tips?.replace('{name}', displayName)}</span>
         }
-        let find: any = dataSource.find((item: any) => item.value === value);
-
+        let find: any = dataSource.find((item: any) => item.value === value) || this.props.chooseItem;
+        
         return find ? <Space size={4}>
-            <span>Selected {utils.labelName(app.name || this.props.name)}:</span>
+            <span>Selected:</span>
             <Tooltip title={utils.labelName(find?.description || find?.value)}>{find.label || find.value}</Tooltip>
             {this.props.extra}
         </Space> : value;
     }
     public renderHeader() {
         let { app = {} }: any = this.props;
+        
         return (<div className='dialogue-choose-header'>
             <Space size={4} className='header-content'>
                 {app.icon && TablerUtils.renderIconComponent({ icon: app.icon, color: '#000' })}
                 {this.renderTips()}
             </Space>
-            {this.helper && <Input.Search size='small' placeholder='Filter choose items' onChange={(e) => this.setState({ query: e.target.value })} />}
+            {this.helper && <Input.Search size='small' allowClear placeholder='Filter choose items' onSearch={this.onSearch} />}
         </div>)
+    }
+    private onSearch = (e: any) => {
+        this.setState({
+            query: e
+        }, () => {
+            this.initHelperData();
+        })
     }
     private onSubmit() {
         if (this.state.value) {
@@ -124,12 +173,16 @@ export default class DialogueChoose extends React.Component<DialogueChooseProps,
         return !this.props.viewer && !this.state.disabled;
     }
     public render() {
-        return (<div className='dialogue-choose'>
+        let { dataSource = [] } = this.state;
+        return (<div className={classnames({
+            'dialogue-choose': true,
+            'dialogue-choose-hidesearch': this.state.loading
+        })}>
 
             <Spin spinning={this.state.loading}>
                 {this.renderHeader()}
                 <div className='dialogue-choose-content'>
-                    {this.props.dataSource.map((item, index) => {
+                    {dataSource.length > 0 ? dataSource.map((item, index) => {
                         let isActive = item.value === this.state.value;
                         if (this.props.viewer) {
                             if (!isActive) {
@@ -151,7 +204,7 @@ export default class DialogueChoose extends React.Component<DialogueChooseProps,
                                 </Space>
                             </div>
                         )
-                    })}
+                    }) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description='No more data available' />}
                 </div>
                 {this.canInput() && this.props.onSubmit && <Space>{<Button type='primary' size='small' onClick={() => this.onSubmit()} icon={TablerUtils.renderIconComponent({ icon: 'PublishUtilityFilled' })}>Submit</Button>}{this.state.errorMessage}</Space>}
             </Spin>

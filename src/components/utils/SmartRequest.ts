@@ -81,7 +81,7 @@ class SmartRequest {
     public getRequestURI(url: string) {
 
         let host: string = location.hostname.replace(/^(www|console)\./,'');
-        
+
         if (url.match(/^https:\/\//)) {
             return url;
         } else {
@@ -215,6 +215,32 @@ class SmartRequest {
                 })
             })
         }
+    }
+
+
+
+    public createAutoEnumsRequest(autoEnums: any, defaultParams?: any) {
+
+        let helper: any = this.makeGetRequest(autoEnums.type == 'findPanelView' ? '/api/thinking/findPanelView' : autoEnums.request);
+                
+        return (params: any) => {
+            return helper({
+                ...autoEnums.params,
+                ...params,
+                view: autoEnums.view,
+                ...(defaultParams && (typeof defaultParams == 'function' ? defaultParams() : defaultParams))
+            }).then((res: any) => {
+                
+                let response: any  = Array.isArray(res) ? res : Array.isArray(res.data) ? res.data : [];
+
+                return response.map((it: any) => {
+                    return {
+                        label: it[autoEnums.selectNameKey || autoEnums.labelKey] + (autoEnums.valueLabel ? `(${it[autoEnums.selectKey || autoEnums.valueKey]})` : ''),
+                        value: it[autoEnums.selectKey || autoEnums.valueKey]
+                    }
+                });
+            })
+        };
     }
 }
 

@@ -13,7 +13,9 @@ interface DialogueFormerProps {
     first?: any;
     disabled?: any;
     schema: any;
-    onSubmit?: (value: any) => Promise<any>;
+    firstChooseItem?: any;
+    state: any;
+    onSubmit?: (value: any,state?: any) => Promise<any>;
 }
 
 interface DialogueFormerState {
@@ -23,6 +25,7 @@ interface DialogueFormerState {
     loading: boolean;
     disabled?: boolean;
     title?: string;
+    firstChooseItem?: any;
 }
 
 export default class DialogueFormer extends React.Component<DialogueFormerProps, DialogueFormerState> {
@@ -31,14 +34,25 @@ export default class DialogueFormer extends React.Component<DialogueFormerProps,
         super(props);
         this.state = {
             value: props.value || {},
-            stepone: props.first ? true : false,
+            stepone: this.getDefaultStepOne(props),
             step: !!props.first,
             loading: false,
             disabled: props.disabled,
+            ...props.state,
             title: (props?.schema?.title || '').replace(/\.$/,'')
         }
 
+        console.log(props,332323)
         this.formerSchema = Former.JSONSchema2FormerSchema.convert(props.schema);
+    }
+    private getDefaultStepOne({ first, value }:any) {
+        if (first && value) {
+            if (first && first.key) {   
+                return !value[first.key];
+            }   
+        }
+
+        return false;
     }
     public UNSAFE_componentWillReceiveProps(nextProps: DialogueFormerProps) {
         if (nextProps.value != this.state.value) {
@@ -49,16 +63,17 @@ export default class DialogueFormer extends React.Component<DialogueFormerProps,
         }
     }
     private renderTitle() {
+        let { first } = this.props;
         if (this.state.title) {
-            return <Space size={4}>
-                        <Icons.FileTextOutlined/>
-                        <span>{this.state.title}:</span>
+            return <Space className='dialogue-tips-title' size={4}>
+                        {!first && <Icons.FileTextOutlined/>}
+                        <span>{this.state.title}</span>
                     </Space>
         }
         return null;
     }
     public renderFormer() {
-        let { first } = this.props;
+        
         return (
             <div className='dialogue-former-wrapper'>
                 <Former 
@@ -76,7 +91,7 @@ export default class DialogueFormer extends React.Component<DialogueFormerProps,
                     }}
                     onSubmit={(value) => {
                         this.setState({loading: true}); 
-                        return this.props.onSubmit?.(value).finally(() => {
+                        return this.props.onSubmit?.(value, {firstChooseItem: this.state.firstChooseItem}).finally(() => {
                             this.setState({loading: false});
                         })
                     }}
@@ -88,18 +103,22 @@ export default class DialogueFormer extends React.Component<DialogueFormerProps,
     public renderChoose() {
         let { first = {} } = this.props;
         let { value = {} } = this.state;
-        let displayValue = value[first.name];
+        let displayValue = value[first.key];
+        
         return (
             <Choose 
                 app={this.props.app} 
                 tips={'First, please select the {name} below.'}
-                value={displayValue} 
+                value={displayValue}
+                show={this.state.stepone}
                 name={first.name} 
+                chooseItem={this.state.firstChooseItem}
                 dataSource={first.dataSource} 
                 extra={!this.state.stepone && first && <Tooltip title='Go First'><span className='back-btn' onClick={() => this.setState({stepone: true})}>{TablerUtils.renderIconComponent({icon: 'GoLeftDirectivityFilled'})}</span></Tooltip> }
                 onChange={(val, item) => {
-                    value[first.name] = val;
-                    this.setState({value, stepone: false});
+                    value[first.key || first.name] = val;
+
+                    this.setState({value, stepone: false, firstChooseItem: item});
                 }}
             />
         )

@@ -6,6 +6,7 @@ import { Tooltip, Tree, Spin, Tabs, Space } from 'antd'
 
 
 import MiniFlow from '../../../../../../ScenFlow/MiniFlow';
+import GlobalScope from '../../../../../../core/GlobalScope';
 import ThinkingNodeManager from '../../../../../../core/manager/ManagerThinkingNode'
 import ProcessNode from './node';
 

@@ -16,6 +16,7 @@ import * as Icons from '../../../Icons';
 import { utils, keypath } from '@blocksx/core';
 import { Select, Tooltip } from 'antd';
 import TablerUtils from '../../../utils/tool';
+import SmartRequest from '../../../utils/SmartRequest';
 
 import './style.scss';
 
@@ -23,7 +24,9 @@ export interface FormerSelectProps extends IFormerBase {
     value: any,
     size?: any,
     dict?: any;
+    former?:any;
     mode?: string,
+    autoEnums?: any;
     viewer?: boolean;
     onChangeValue: Function,
     placeholder?: string;
@@ -57,6 +60,8 @@ export interface FormerSelectState {
     errorMessage?: string;
 
     dependency?: any;
+    
+    autoEnumsDependency?: any;
 }
 
 
@@ -66,6 +71,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         'x-mode': 'lazy',
         popupMatchSelectWidth: true
     }
+    private autoEnumsRequest?: any;
     public constructor(props: FormerSelectProps) {
         super(props);
         let isMultiple: boolean = this.isMultiple();
@@ -83,6 +89,16 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
             dependency: props.dependency
         };
 
+        this.initAutoEnumsRequest();
+        
+    }
+    private initAutoEnumsRequest() {
+        let { autoEnums } = this.props;
+        if (autoEnums && autoEnums.type == 'findPanelView') {
+            this.autoEnumsRequest = SmartRequest.createAutoEnumsRequest(autoEnums, () => {
+                return this.getAutoEnumsDependecy();
+            });
+        }
     }
     private clearValue(value: any) {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
@@ -143,9 +159,14 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         return this.props['x-mode'] == 'lazy';
     }
     public componentDidMount() {
-        if (!this.isLazyLoader())
+        if (!this.isLazyLoader()){
             this.fetchData();
+        }
+        
     }
+
+
+
     public UNSAFE_componentWillReceiveProps(newProps: any) {
         if (newProps.value != this.state.value) {
             this.setState({
@@ -202,28 +223,83 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         }, () => this.props.onChangeValue(value));
     }
     private onSearch =(v) => {
+        console.log(v,3333, this.getAutoEnumsDependecy(), 2222)
         this.setState({
-            search: v
+            search: v            
         }, () => {
             this.fetchData()
         })
+    }
+    private onFocus =()=> {
+        if (this.isLazyLoader()) {
+            console.log(33333, this.getAutoEnumsDependecy())
+            this.fetchData()
+        }
     }
     private setLoading(loading: boolean) {
         this.setState({
             loading: loading
         })
     }
+    private getAutoEnumsDependecy() {
+        let { autoEnums, former } = this.props;
+        if (autoEnums && autoEnums.params) {
+            let dependency: any = former.getValue() || {};
+            let autoEnumsDependency: any = {};
 
+            Object.entries(autoEnums.params).forEach(([key, value]) => {
+                if (typeof value == 'boolean') {
+                    autoEnumsDependency[key] = dependency[key];
+                }
+            })
+
+            return autoEnumsDependency;
+        }
+        return {};
+    }
+    
+    private isChangeAutoEnumsDependency() {
+        let { former } = this.props;
+        let { autoEnumsDependency = {} } = this.state;
+        let dependency: any = former.getValue() || {};
+        console.log(3333, autoEnumsDependency, dependency)
+        if (dependency) {
+            for (let key in autoEnumsDependency) {
+                if (autoEnumsDependency[key] != dependency[key]) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private needRefreshData() {
+        return (this.props.autoEnums && this.isChangeAutoEnumsDependency()) || !utils.isValidArray(this.state.dataSource) || (this.state.search !== this.state.query); 
+    }
     private fetchData(data?: any) {
+        let { autoEnums } = this.props;
         let { dataSource } = this.props['x-type-props'] || {};
         let isLabelValue: boolean = utils.isPlainObject(this.state.value);
-        let source: any = data || dataSource || this.props.dataSource;
+        let source: any = data ||  dataSource || this.props.dataSource;
 
+        if (!source && autoEnums) {
+            // 创建自动枚举
+            // 从接口获取，自动和依赖关系绑定
+            source = this.autoEnumsRequest;
+        }
+        
         if (source) {
-            
             // TODO 如果参数变化之后不cache
-            if (!utils.isValidArray(this.state.dataSource) || (this.state.search !== this.state.query)) {
+            if (this.needRefreshData()) {
                 this.setLoading(true);
+                // loading 之前清空
+                if (autoEnums) {
+                    this.setState({
+                        dataSource: [],
+                        value: ''
+                    })
+                }
                 
                 UtilsDatasource.getSource(source, {
                     //...this.state.runtimeValue, 
@@ -234,7 +310,9 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                         dataSource: datasource,
                         loading: false,
                         originSource: datasource,
-                        query: this.state.search
+                        query: this.state.search,
+                        value: autoEnums ? '' : this.state.value,
+                        autoEnumsDependency: this.getAutoEnumsDependecy()
                     })
                 })
             }
@@ -320,17 +398,12 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
                     status={this.getStatus()}
                     {...props}
                     placeholder={props.placeholder || this.props.placeholder}
-                    onFocus={() => {
-                        if (this.isLazyLoader()) {
-                            this.fetchData();
-                        }
-                    }}
+                    onFocus={this.onFocus}
                     style={
                         {
                             width: props.width 
                         }
                     }
-                    
                     popupMatchSelectWidth={popupMatchSelectWidth}
                     mode={this.props.mode}
                     showSearch={true}

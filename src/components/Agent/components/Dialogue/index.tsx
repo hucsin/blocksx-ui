@@ -261,6 +261,8 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         let currentMessage = messages[index];
 
         Object.assign(currentMessage.display, props);
+
+        console.log(messages, 88888)
         
         this.setState({messages});
     }
@@ -274,7 +276,9 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             case 'former':
                 return <DialogueTypes.former 
                     {...display} 
-                    onSubmit={(value) => {
+                    {...item.state}
+                    onSubmit={(value, state) => {
+                        
                         return this.onSubmit({
                             type: 'user',
                             //content: 'My addition is as follows:',
@@ -284,9 +288,12 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                                 type: 'value',
                                 value: utils.copy(value)
                             },
-                            value: utils.copy(value)
+                            value: utils.copy(value),
+                            params: display.params,
+                            
+
                         }).then(() => {
-                            this.updateMessageDisplay({value}, index);
+                            this.updateMessageDisplay({value, state}, index);
                         })
                     }}
                 />
@@ -501,7 +508,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 trigger='hover'
                 content={this.renderContent()}
                 open={this.state.open}
-                //open
+                
                 onOpenChange={(open)=> {
                     if (open) {
                         

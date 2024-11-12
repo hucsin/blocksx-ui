@@ -42,22 +42,44 @@
         }
         .item-label {
             display: inline-block;
+            white-space: nowrap;
+            line-height: 22px;
+            
+        }
+        .ant-space {
+            max-width: 95%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .item-description {
             display: inline-block;
             font-size: 12px;
+            max-width: 70%;
+            line-height: 22px;
+            vertical-align: middle;
         }
         .item-icon {
             display: inline-block;
             opacity: .8;
         }
+
     }
 }
+.dialogue-former:not(.dialogue-former-stepone),
+.dialogue-choose-hidesearch {
+    .dialogue-choose-header {
+        .ant-input-group-wrapper {
+            display: none;
+        }
+    }
+}
+
 .dialogue-choose-header {
     position: relative;
     .ant-input-group-wrapper {
         position: absolute;
-        right: 0;
+        right: 0px;
         top: 0;
         width: 160px;
         opacity: 0;
@@ -65,12 +87,13 @@
         input {
             font-size: 12px;
             line-height: 22px;
-            
+            width: 100% !important;
+            min-width: 100px !important;
             padding-left: 4px !important
         }
     }
     .header-content {
-        font-size: 12px;
+        font-size: 14px;
         
         padding-top: 4px !important;
         padding-bottom: 4px !important;
