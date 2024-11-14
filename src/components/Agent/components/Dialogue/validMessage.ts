@@ -21,13 +21,13 @@ export default class ValidMessage {
      * @returns 
      */
     public static isValidQuestion(message: string): boolean {
-        let messageWords = message.toLowerCase().split(' ');
-        if (messageWords.length < 2) {
-            return false;
-        }
-        if (messageWords.length < 4) {
-            return messageWords.some(word => Words.includes(word));
-        }
+        //let messageWords = message.toLowerCase().split(' ');
+        //if (messageWords.length < 2) {
+          //  return false;
+       // }
+        //if (messageWords.length < 4) {
+           // return messageWords.some(word => Words.includes(word));
+        //}
 
         return true;
     }

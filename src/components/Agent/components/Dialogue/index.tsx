@@ -7,7 +7,7 @@ import { utils } from '@blocksx/core';
 import classnames from 'classnames';
 import Markdown from '../../../Markdown';
 import * as Icons from '../../../Icons';
-import { Input, Popover, Space, Dropdown } from 'antd'
+import { Input, Popover, Space, Dropdown, Popconfirm } from 'antd'
 
 import FormerAvatar from '../../../Former/types/avatar';
 import * as DialogueTypes from './types';
@@ -15,7 +15,7 @@ import * as DialogueTypes from './types';
 import  tools from '../../core/utils';
 import TablerUtils from '../../../utils/tool';
 import ValidMessage from './validMessage';
-
+import MessageContext, { MessageBody } from '@blocksx/core/es/MessageContext';
 import './style.scss'
 
 interface DialogueProps {
@@ -31,7 +31,7 @@ interface DialogueProps {
 
 interface DialogueState {
     holder: boolean;
-    messages: any[];
+    messages: any;
     message: any;
     loading: boolean;
     canSend: boolean;
@@ -46,13 +46,14 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
     }
     private scrollRef: any;
     private inputRef: any;
+    private messageContext: MessageContext;
     
     public constructor(props:any){
         super(props)
 
         this.state = {
             holder: false,
-            messages: (tools.getStorage(`agent-messages`) || []).slice(-50),
+            messages: [],
             message: '',
             loading: false,
             canSend: false,
@@ -62,7 +63,10 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         }
         this.scrollRef = React.createRef();
         this.inputRef = React.createRef();
+
+        this.messageContext = new MessageContext((tools.getStorage(`agent-messages`) || []).slice(-50));
     }
+
     public UNSAFE_componentWillReceiveProps(nextProps: any) {
         if (nextProps.efficiency !== this.state.efficiency) {
             this.setState({efficiency: nextProps.efficiency});
@@ -99,13 +103,13 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         )
     }
     private renderMessageList() {
-        let messages = this.state.messages;
+        let messages:MessageBody[] = this.messageContext.getMessageList();
         // 添加初始消息
         messages = [
             {
-                type: 'assistant',
-                nonumber: true,
+                role: 'assistant',
                 content: `Hello, I am your assistant ${this.props.name}. How can I help you?`,
+                pointless: true,
                 display: {
                     type: 'efficiency',
                     dataSource: this.state.efficiency
@@ -116,8 +120,8 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
 
         if (this.state.loading) {
             messages.push({
-                type: 'assistant',
-                nonumber: true,
+                role: 'assistant',
+                pointless: true,
                 display: {
                     type: 'thinking'
                 }
@@ -127,7 +131,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         return (
             <div className='dialogue-message-list' ref={this.scrollRef}>
                 {messages.map((it, index) => {
-                    if (it.type === 'system') {
+                    if (it.role === 'system') {
                         return (
                             <div className='dialogue-message-item'>
                                 <div className='dialogue-message-system'>{it.content}</div>
@@ -135,8 +139,8 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                         )
                     }
                     return (
-                        <div className={classnames('dialogue-message-item', {'reverse': it.type === 'user', 'nonumber': it.nonumber})}>
-                            <div className='dialogue-message-item-avator'>{this.renderAvatar(it.type)}</div>
+                        <div className={classnames('dialogue-message-item', {'reverse': it.role === 'user'})}>
+                            <div className='dialogue-message-item-avator'>{this.renderAvatar(it.role)}</div>
                             <div className={classnames({
                                 'dialogue-message-item-content': true,
                                 'dialogue-message-item-content-nofeedback': !it.content
@@ -152,119 +156,79 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                     )
                 })}
                 {messages.length >= 2 && !this.state.loading && <div className='dialogue-message-history-clear'>
-                    <Space onClick={()=> this.clearMessageList()}><Icons.DestroyUtilityOutlined />Clear Chat history</Space>
+                    <Popconfirm
+                        title='Are you sure'
+                        description='Clear the chat history?'
+                        okText="I'm sure"
+                        onConfirm={()=> this.clearMessageList()}
+                    ><Space ><Icons.DestroyUtilityOutlined />Clear Chat history</Space></Popconfirm>
                 </div>}
             </div>
         )
     }
-    private renderMessageContent(message: any, index: number) {
+    private renderMessageContent(message: MessageBody, index: number) {
         
-        if (message.reply) {
+        if (this.messageContext.isCallConfirmedStatus(message)) {
             return <div className='dialogue-message-item-content-text'>
                 <Space>
                     <Icons.MessageOutlined />
-                    <span>Reply to message <span className="parentheses" onClick={(e) => this.goToMessageByNumber(message.reply, e)}>#{message.reply}</span></span>
+                    <span>The information you submitted is as follows:</span>
                 </Space>
                 
             </div>
         }
+
         if (message.content) {
             return <div className='dialogue-message-item-content-text'>{<Markdown>{message.content}</Markdown>}</div>
         }
     }
-    private goToMessageByNumber(number: number, e: any) {
-        
-        if (this.scrollRef.current) {
-            let tags: any = this.scrollRef.current.getElementsByClassName('dialogue-message-item');
-            
-            if (tags && tags[number + 1]) {
-                tags[number + 1].scrollIntoView({behavior: 'smooth', block: 'center', inline: 'nearest'});
-            }
-        }
-        e.stopPropagation();
-        e.preventDefault();
-    }
+    
     private onSubmit(message: any) {
         
-        let { messages = [] } = this.state;
-        let agentType: string = message.reply ? 'Writing' : Math.random() > .5 ? 'Searching' : 'Thinking';
-        
         return new Promise((resolve, reject) => {
-            this.setState({messages: [...messages, this.clearMessage(message)], loading: true}, () => {
-                this.scrollToBottom();
+            this.messageContext.addMessage(message);
 
-                this.props.onSubmit(this.findMemoryMessages(), agentType).then((message) => {
-                    this.dealRelyMessages(message);
+            this.refreshMessagesAndScrollToEnd(() =>{
+                // 提交
+                this.props.onSubmit(this.messageContext.getMessageContextList(), this.getAgentType(message)).then((message) => {
+                    // 消息回信息
+                    this.handleReplyMessages(message);
                     resolve(message);
                 }).catch((error) => {
                     reject(error);
                 }).finally(() => {
                     this.setState({loading: false});
                 })
-            });
+            }, { loading: true });
         });
     }
-    private clearMessage(message: any) {
-        message.createAt = new Date().toLocaleString();
-        return message;
+    private getAgentType(message: MessageBody) {
+        return (this.messageContext.isCallConfirmStatus(message) 
+                || this.messageContext.isCallConfirmedStatus(message))
+            ? 'Writing' 
+            : Math.random() > .5 ? 'Searching' : 'Thinking';
     }
 
-    private dealRelyMessages(message: any) {
-        let { messages = [] } = this.state;
+    private handleReplyMessages(message: MessageBody) {
 
-        messages.push(this.clearMessage(message));
-
-        if (this.findFreeMemoryDepth(messages).length > this.props.memoryDepth && !this.isNeedUserSubmit(message)) {
-            messages.push({
-                type: 'system',
-                content: 'Auto clear memory.',
-                memoryClear: true
-            })
+        if(message.patch) {
+            this.messageContext.patchMessage(message.patch);
+            delete message.patch;
         }
 
-        this.setState({messages, loading: false}, ()=> {
-
-            tools.setStorage(`agent-messages`, messages);
+        this.messageContext.addMessage(message);
+        this.refreshMessagesAndScrollToEnd(() => {
+            tools.setStorage(`agent-messages`, this.messageContext.getMessageList());
+        }, { loading: false });
+    }
+    private refreshMessagesAndScrollToEnd(callback?: Function, props?: any) {
+        this.setState({
+            messages: this.messageContext.getMessageListLength(),
+            ...props
+        }, () => {
             this.scrollToBottom();
+            callback && callback();
         });
-        
-    }
-    private findMemoryMessages() {
-        return this.findFreeMemoryDepth().map(it => {
-            return {
-                type: it.type,
-                content: it.content,
-                call: it.call,
-                value: it.value
-            }
-        }).reverse();
-    }
-    private findFreeMemoryDepth(messages?: any[]) {
-        let memoryList: any = messages || this.state.messages || [];
-        let memoryDepth: any = [];
-        memoryList.slice().reverse().some(it => {
-            if (!it.invalid) {
-
-                if (it.type !=='system' || !it.memoryClear) {                    
-                    memoryDepth.push(it);
-                } else {
-                    return true;
-                }
-            }
-        })
-
-        return memoryDepth;
-    }
-    private updateMessageDisplay(props: any, index: number) {
-        let { messages = [] } = this.state;
-
-        let currentMessage = messages[index];
-
-        Object.assign(currentMessage.display, props);
-
-        console.log(messages, 88888)
-        
-        this.setState({messages});
     }
     private renderDisplay(display: any, index: number, item: any) {
         if (!display) {
@@ -275,48 +239,46 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             
             case 'former':
                 return <DialogueTypes.former 
+                    value = {item.value}
                     {...display} 
                     {...item.state}
+                    
                     onSubmit={(value, state) => {
-                        
+                        // 添加用户信息
                         return this.onSubmit({
-                            type: 'user',
-                            //content: 'My addition is as follows:',
-                            reply: index + 1,
+                            role: 'user',
+                            status: MessageContext.STATUS.CALL_CONFIRMED,
                             call: display.call,
                             display: {
-                                type: 'value',
-                                value: utils.copy(value)
+                                type: 'value'
                             },
                             value: utils.copy(value),
                             params: display.params,
-                            
-
                         }).then(() => {
-                            this.updateMessageDisplay({value, state}, index);
+                            this.messageContext.updateMessageByIndex(index, {value, state});
                         })
                     }}
                 />
             case 'choose':
                 return <DialogueTypes.choose 
+                    value  = {item.value}    
                     {...display}
+                    
                     onSubmit={(value, item) => {
                         
                         return this.onSubmit({
-                            type: 'user',
-                            //content: 'My selection is as follows:',
-                            reply: index + 1,
+                            role: 'user',
+                            status:  MessageContext.STATUS.CALL_CONFIRMED,
                             value,
                             call: display.call,
                             display: {
                                 type: 'choose',
-                                value,
                                 dataSource: display.dataSource,
                                 app: display.app,
                                 viewer: true
                             }
                         }).then((result) => {
-                            this.updateMessageDisplay({value}, index);
+                            this.messageContext.updateMessageByIndex(index, {value});
                             return result;
                         })
                     }}
@@ -330,10 +292,10 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                             let answer = assistant.answer;
                             // 先提问，1秒后回答
                             this.autoReplay({
-                                type: 'user',
+                                role: 'user',
                                 content: assistant.question
                             }, {
-                                type: 'assistant',
+                                role: 'assistant',
                                 content: answer.content || 'I need you to provide the following information.',
                                 ...answer
                             });
@@ -352,19 +314,15 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             case 'thinking':
                 return <DialogueTypes.thinking />
             case 'value':
-                return <DialogueTypes.value value={display.value} />
+                return <DialogueTypes.value value={display.value || item.value} />
         }
     }
-    private isNeedUserSubmit(message: any) {
-        let { type, display = {} } = message;
-        
-        return type === 'assistant' && ['former', 'choose'].includes(display.type);
-    }
+    
     public sendMessage = (e) => {
         if (!this.state.loading && this.state.canSend) {
 
-            let message: any = {
-                type: 'user',
+            let message: MessageBody = {
+                role: 'user',
                 content: this.state.message
             }
             // 如果输入不合格
@@ -374,10 +332,10 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 
                 this.autoReplay({
                     ...message,
-                    invalid: true
+                    pointless: true
                 }, {
-                    type: 'assistant',
-                    invalid: true,
+                    role: 'assistant',
+                    pointless: true,
                     content: ValidMessage.getInvalidResponse()
                 });
 
@@ -393,53 +351,40 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         e.stopPropagation();
     }
     private autoReplay(message: any,systemMessage: any) {
-        let { messages = [] } = this.state;
-        messages.push(message);
 
-        this.setState({messages, loading: true}, ()=> {
-            this.scrollToBottom();
-
+        this.messageContext.addMessage(message);
+        
+        this.refreshMessagesAndScrollToEnd(() => {
+            
             setTimeout(()=> {
-                this.dealRelyMessages(systemMessage);
+                this.handleReplyMessages(systemMessage);
             }, 1000)
-        });
+        }, { loading: true });
     }
     private isCanSend(message?: string) {
-        let { messages = [], message: stateMessage } = this.state;
+        let { message: stateMessage } = this.state;
 
         if (!message) {
             message = stateMessage;
         }
-        
         let trimMessage: any = message?.trim();
-        if (trimMessage.length === 0) {
+
+        if (trimMessage.length < 2) {
             return false;
         }
 
-        if (trimMessage.length <5) {
-            return false;
-        }
         return true;
     }
     /**
      * 清空消息列表
      */
     public clearMessageList() {
-        this.setState({messages: []});
+
+        this.messageContext.clearMessageList();
+        this.setState({messages: 0});
         tools.setStorage(`agent-messages`, []);
     }   
-    private isCanSendMessage() {
-        
-        let { messages = [], message: stateMessage } = this.state;
 
-        // 如果最后一个message是需要用户提交的表单类型，则需要等待用户提交
-        let lastMessage = messages[messages.length - 1];
-        
-        if (lastMessage && this.isNeedUserSubmit(lastMessage)) {
-          //  return false;
-        }
-        return true;
-    }
     public renderFooter() {
         return (
             <div className='dialogue-footer'>
@@ -460,7 +405,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                         onClick: ({item}:any) => {
                             this.onSubmit({
                                 ...item.props.assistant,
-                                type: 'user'
+                                role: 'user'
                             });
                         }
                     }}
@@ -473,7 +418,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                     ref={this.inputRef}
                     placeholder={`Send a message to ${this.props.name}.`} 
                     size='large'
-                    disabled={this.state.loading || !this.isCanSendMessage()}
+                    disabled={this.state.loading}
                    // suffix={}
                     value={this.state.message}
                     onChange={(e) => this.setState({message: e.target.value, canSend: this.isCanSend(e.target.value)})}
@@ -508,7 +453,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 trigger='hover'
                 content={this.renderContent()}
                 open={this.state.open}
-                
+                mouseLeaveDelay={2}
                 onOpenChange={(open)=> {
                     if (open) {
                         
