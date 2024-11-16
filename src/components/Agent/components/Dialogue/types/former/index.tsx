@@ -63,10 +63,11 @@ export default class DialogueFormer extends React.Component<DialogueFormerProps,
         }
     }
     private renderTitle() {
-        let { first } = this.props;
+        let { first, app = {} } = this.props;
+        
         if (this.state.title) {
             return <Space className='dialogue-tips-title' size={4}>
-                        {!first && <Icons.FileTextOutlined/>}
+                        {!first && app.icon ? TablerUtils.renderIconComponent({icon: app.icon}) : !first && <Icons.FileTextOutlined/>}
                         <span>{this.state.title}</span>
                     </Space>
         }

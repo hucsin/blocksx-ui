@@ -717,7 +717,7 @@ export default class Agent extends React.Component<AgentProps, {open: boolean}> 
 
     public render() {
         return (
-            <div className='agents' ref={this.ref}>
+            <div className='agents' ref={this.ref} >
                 <Dialogue 
                     name={utils.upperFirst(this.props.name)}
                     onSubmit={this.onSubmit}

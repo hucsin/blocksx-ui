@@ -12,7 +12,7 @@ import { Input, Popover, Space, Dropdown, Popconfirm } from 'antd'
 import FormerAvatar from '../../../Former/types/avatar';
 import * as DialogueTypes from './types';
 
-import  tools from '../../core/utils';
+import tools from '../../core/utils';
 import TablerUtils from '../../../utils/tool';
 import ValidMessage from './validMessage';
 import MessageContext, { MessageBody } from '@blocksx/core/es/MessageContext';
@@ -26,7 +26,7 @@ interface DialogueProps {
     onSubmit: (message: any, agentType: string) => Promise<any>;
     onOpenChange: (open: boolean) => void;
     //onMouseEnterx: () => void;
-    efficiency?:any;
+    efficiency?: any;
 }
 
 interface DialogueState {
@@ -40,15 +40,15 @@ interface DialogueState {
     efficiency: any[]
 }
 
-export default class Dialogure extends React.Component<DialogueProps, DialogueState>  {
+export default class Dialogure extends React.Component<DialogueProps, DialogueState> {
     public static defaultProps = {
         memoryDepth: 5 // 最大记忆深度
     }
     private scrollRef: any;
     private inputRef: any;
     private messageContext: MessageContext;
-    
-    public constructor(props:any){
+
+    public constructor(props: any) {
         super(props)
 
         this.state = {
@@ -65,14 +65,16 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         this.inputRef = React.createRef();
 
         this.messageContext = new MessageContext((tools.getStorage(`agent-messages`) || []).slice(-50));
+        console.log(this.messageContext.getMessageList(), 3333, 'messageContext')
+
     }
 
     public UNSAFE_componentWillReceiveProps(nextProps: any) {
         if (nextProps.efficiency !== this.state.efficiency) {
-            this.setState({efficiency: nextProps.efficiency});
+            this.setState({ efficiency: nextProps.efficiency });
         }
         if (nextProps.open !== this.state.open) {
-            this.setState({open: nextProps.open});
+            this.setState({ open: nextProps.open });
             if (nextProps.open) {
                 this.relyScrollToBottom()
             }
@@ -86,14 +88,14 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             this.scrollRef.current.scrollTop = this.scrollRef.current.scrollHeight;
 
             if (this.inputRef.current) {
-                setTimeout(()=> {
+                setTimeout(() => {
                     this.inputRef.current.focus();
                 }, 0)
             }
         }
     }
     private relyScrollToBottom() {
-        setTimeout(()=> {
+        setTimeout(() => {
             this.scrollToBottom()
         }, 0)
     }
@@ -103,7 +105,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         )
     }
     private renderMessageList() {
-        let messages:MessageBody[] = this.messageContext.getMessageList();
+        let messages: MessageBody[] = this.messageContext.getMessageList();
         // 添加初始消息
         messages = [
             {
@@ -139,14 +141,14 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                         )
                     }
                     return (
-                        <div className={classnames('dialogue-message-item', {'reverse': it.role === 'user'})}>
+                        <div className={classnames('dialogue-message-item', { 'reverse': it.role === 'user' })}>
                             <div className='dialogue-message-item-avator'>{this.renderAvatar(it.role)}</div>
                             <div className={classnames({
                                 'dialogue-message-item-content': true,
                                 'dialogue-message-item-content-nofeedback': !it.content
                             })}>
                                 <div>
-                                    
+
                                     {this.renderMessageContent(it, index - 1)}
                                     {this.renderDisplay(it.display, index - 1, it)}
                                 </div>
@@ -160,21 +162,21 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                         title='Are you sure'
                         description='Clear the chat history?'
                         okText="I'm sure"
-                        onConfirm={()=> this.clearMessageList()}
+                        onConfirm={() => this.clearMessageList()}
                     ><Space ><Icons.DestroyUtilityOutlined />Clear Chat history</Space></Popconfirm>
                 </div>}
             </div>
         )
     }
     private renderMessageContent(message: MessageBody, index: number) {
-        
+
         if (this.messageContext.isCallConfirmedStatus(message)) {
             return <div className='dialogue-message-item-content-text'>
                 <Space>
                     <Icons.MessageOutlined />
                     <span>The information you submitted is as follows:</span>
                 </Space>
-                
+
             </div>
         }
 
@@ -182,13 +184,13 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             return <div className='dialogue-message-item-content-text'>{<Markdown>{message.content}</Markdown>}</div>
         }
     }
-    
+
     private onSubmit(message: any) {
-        
+
         return new Promise((resolve, reject) => {
             this.messageContext.addMessage(message);
 
-            this.refreshMessagesAndScrollToEnd(() =>{
+            this.refreshMessagesAndScrollToEnd(() => {
                 // 提交
                 this.props.onSubmit(this.messageContext.getMessageContextList(), this.getAgentType(message)).then((message) => {
                     // 消息回信息
@@ -197,21 +199,21 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 }).catch((error) => {
                     reject(error);
                 }).finally(() => {
-                    this.setState({loading: false});
+                    this.setState({ loading: false });
                 })
             }, { loading: true });
         });
     }
     private getAgentType(message: MessageBody) {
-        return (this.messageContext.isCallConfirmStatus(message) 
-                || this.messageContext.isCallConfirmedStatus(message))
-            ? 'Writing' 
+        return (this.messageContext.isCallConfirmStatus(message)
+            || this.messageContext.isCallConfirmedStatus(message))
+            ? 'Writing'
             : Math.random() > .5 ? 'Searching' : 'Thinking';
     }
 
     private handleReplyMessages(message: MessageBody) {
 
-        if(message.patch) {
+        if (message.patch) {
             this.messageContext.patchMessage(message.patch);
             delete message.patch;
         }
@@ -236,41 +238,40 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         }
 
         switch (display.type) {
-            
+
             case 'former':
-                return <DialogueTypes.former 
-                    value = {item.value}
-                    {...display} 
-                    {...item.state}
-                    
+                return <DialogueTypes.former
+                    value={item.value}
+                    {...display}
+
                     onSubmit={(value, state) => {
                         // 添加用户信息
+                        console.log(item.status)
                         return this.onSubmit({
                             role: 'user',
                             status: MessageContext.STATUS.CALL_CONFIRMED,
-                            call: display.call,
+                            call: { ...display.call, prevStatus: item.status },
                             display: {
                                 type: 'value'
                             },
                             value: utils.copy(value),
                             params: display.params,
                         }).then(() => {
-                            this.messageContext.updateMessageByIndex(index, {value, state});
+                            this.messageContext.updateMessageByIndex(index, { value, state });
                         })
                     }}
                 />
             case 'choose':
-                return <DialogueTypes.choose 
-                    value  = {item.value}    
+                return <DialogueTypes.choose
+                    value={item.value}
                     {...display}
-                    
                     onSubmit={(value, item) => {
-                        
+
                         return this.onSubmit({
                             role: 'user',
-                            status:  MessageContext.STATUS.CALL_CONFIRMED,
+                            status: MessageContext.STATUS.CALL_CONFIRMED,
                             value,
-                            call: display.call,
+                            call: { ...display.call, prevStatus: item.status },
                             display: {
                                 type: 'choose',
                                 dataSource: display.dataSource,
@@ -278,14 +279,14 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                                 viewer: true
                             }
                         }).then((result) => {
-                            this.messageContext.updateMessageByIndex(index, {value});
+                            this.messageContext.updateMessageByIndex(index, { value });
                             return result;
                         })
                     }}
                 />
             case 'efficiency':
-                return <DialogueTypes.efficiency 
-                    dataSource={display.dataSource} 
+                return <DialogueTypes.efficiency
+                    dataSource={display.dataSource}
                     onSubmit={(assistant) => {
 
                         if (assistant.answer && assistant.question) {
@@ -299,7 +300,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                                 content: answer.content || 'I need you to provide the following information.',
                                 ...answer
                             });
-                            
+
                         } else {
 
                             this.onSubmit({
@@ -310,14 +311,14 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                     }}
                 />
             case 'feedback':
-                return <DialogueTypes.feedback {...display}  />
+                return <DialogueTypes.feedback {...display} />
             case 'thinking':
                 return <DialogueTypes.thinking />
             case 'value':
                 return <DialogueTypes.value value={display.value || item.value} />
         }
     }
-    
+
     public sendMessage = (e) => {
         if (!this.state.loading && this.state.canSend) {
 
@@ -329,7 +330,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             // 自动回复
             if (!ValidMessage.isValidQuestion(this.state.message)) {
                 //message.content = ValidMessage.getInvalidResponse();
-                
+
                 this.autoReplay({
                     ...message,
                     pointless: true
@@ -344,19 +345,19 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 this.onSubmit(message)
             }
 
-            this.setState({ message: ''})
+            this.setState({ message: '' })
         }
 
         e.preventDefault();
         e.stopPropagation();
     }
-    private autoReplay(message: any,systemMessage: any) {
+    private autoReplay(message: any, systemMessage: any) {
 
         this.messageContext.addMessage(message);
-        
+
         this.refreshMessagesAndScrollToEnd(() => {
-            
-            setTimeout(()=> {
+
+            setTimeout(() => {
                 this.handleReplyMessages(systemMessage);
             }, 1000)
         }, { loading: true });
@@ -381,9 +382,9 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
     public clearMessageList() {
 
         this.messageContext.clearMessageList();
-        this.setState({messages: 0});
+        this.setState({ messages: 0 });
         tools.setStorage(`agent-messages`, []);
-    }   
+    }
 
     public renderFooter() {
         return (
@@ -393,16 +394,16 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                     placement='topLeft'
                     rootClassName='dialogue-efficiency-popover'
                     overlayClassName='dialogue-efficiency-popover'
-                    
+
                     menu={{
                         forceSubMenuRender: true,
                         items: this.state.efficiency.map(it => {
                             return {
                                 ...it,
-                                icon: TablerUtils.renderIconComponent({icon: it.icon})
+                                icon: TablerUtils.renderIconComponent({ icon: it.icon })
                             }
                         }),
-                        onClick: ({item}:any) => {
+                        onClick: ({ item }: any) => {
                             this.onSubmit({
                                 ...item.props.assistant,
                                 role: 'user'
@@ -410,25 +411,25 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                         }
                     }}
                 >
-                    <Icons.EfficiencyUtilityOutlined className='more'/>
+                    <Icons.EfficiencyUtilityOutlined className='more' />
                 </Dropdown>
                 <Input.TextArea
                     autoSize={{ minRows: 1, maxRows: 2 }}
                     maxLength={256}
                     ref={this.inputRef}
-                    placeholder={`Send a message to ${this.props.name}.`} 
+                    placeholder={`Send a message to ${this.props.name}.`}
                     size='large'
                     disabled={this.state.loading}
-                   // suffix={}
+                    // suffix={}
                     value={this.state.message}
-                    onChange={(e) => this.setState({message: e.target.value, canSend: this.isCanSend(e.target.value)})}
+                    onChange={(e) => this.setState({ message: e.target.value, canSend: this.isCanSend(e.target.value) })}
                     onPressEnter={this.sendMessage}
                 />
-                <Icons.PublishUtilityFilled className={classnames({'disabled': !this.isCanSend()})} onClick={this.state.canSend ? this.sendMessage : undefined} />
+                <Icons.PublishUtilityFilled className={classnames({ 'disabled': !this.isCanSend() })} onClick={this.state.canSend ? this.sendMessage : undefined} />
             </div>
         )
     }
-    private renderContent () {
+    private renderContent() {
         return (
             <div className='dialogue-content'>
                 {this.renderMessageList()}
@@ -439,24 +440,24 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
     private renderTitle() {
         return (
             <Space>
-                <Icons.AiUtilityOutlined/>
+                <Icons.AiUtilityOutlined />
                 <span>{this.props.name} Assistant</span>
             </Space>
         )
     }
     public render() {
         return (
-            <Popover 
-                placement='left' 
-                title={this.renderTitle()} 
+            <Popover
+                placement='left'
+                title={this.renderTitle()}
                 overlayClassName='dialogue-popover'
-                trigger='hover'
+                trigger={['focus','hover']}
                 content={this.renderContent()}
                 open={this.state.open}
-                mouseLeaveDelay={2}
-                onOpenChange={(open)=> {
+                mouseLeaveDelay={1.2}
+                onOpenChange={(open) => {
                     if (open) {
-                        
+
                         this.relyScrollToBottom()
                     }
                     this.props.onOpenChange(open);

@@ -1,5 +1,6 @@
 import { utils } from '@blocksx/core';
 
+
 export default class AgentUtils {
 
   public static css(element: any, property: any, value?: string): any {
@@ -168,14 +169,16 @@ export default class AgentUtils {
 
   public static setStorage(key: string, value: any) {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      localStorage.setItem(key, JSON.stringify(utils.compress( value)));
     } catch (e) {
       console.error(e);
     }
   }
   public static getStorage(key: string, defaultValue: any = '[]') {
     try {
-      return JSON.parse(localStorage.getItem(key) || defaultValue);
+      let value: any = localStorage.getItem(key);
+
+      return value ? utils.decompress(JSON.parse( value)) : null;
     } catch (e) {
       console.error(e);
       return null;
