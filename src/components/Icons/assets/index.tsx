@@ -86,6 +86,7 @@ export { default as FolderCommonOutlined } from './FolderCommonOutlined';
 export { default as ForeachUtilityOutlined } from './ForeachUtilityOutlined';
 export { default as FunctionUtilityOutlined } from './FunctionUtilityOutlined';
 export { default as GbaseBrandOutlined } from './GbaseBrandOutlined';
+export { default as GoogleContactsBrandOutlined } from './GoogleContactsBrandOutlined';
 export { default as GreaterEqualtoUtilityOutlined } from './GreaterEqualtoUtilityOutlined';
 export { default as GreatertoUtilityOutlined } from './GreatertoUtilityOutlined';
 export { default as HelpSuggestionOutlined } from './HelpSuggestionOutlined';

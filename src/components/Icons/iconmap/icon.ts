@@ -17,6 +17,7 @@ export const map:any = {
         "BytehubsBrandOutlined",
         "DbqueryBrandOutlined",
         "GbaseBrandOutlined",
+        "GoogleContactsBrandOutlined",
         "HiveBrandOutlined",
         "MysqlBrandOutlined",
         "NotionBrandOutlined",
