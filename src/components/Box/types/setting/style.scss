@@ -52,7 +52,9 @@
             padding-left: 32px;
             padding-right: 32px;
             padding: 16px 32px;
-
+            .ant-input-suffix {
+                opacity: .5;
+            }
             .ant-list-item-meta-avatar {
                 opacity: 1;
             }

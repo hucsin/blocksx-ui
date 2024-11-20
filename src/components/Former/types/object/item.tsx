@@ -121,11 +121,12 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
         
         let descriptionText: any = this.getDescriptionText();
         let tooltip: string = this.props.tooltip || this.props.notice;
-
+        console.log(this.props, 3333311)
         return (
             <div 
                 className={classnames('former-object-item', {
                     [`former-object-${this.props.size}`]: true,
+                    [`former-object-hidden-item`]: this.props.hidden,
                     [`former-object-label-bold`]: this.props['x-label-bold'],
                     [`former-object-item-float-${this.props['x-float']}`]: this.props['x-float'],
                     [`former-object-item-clear`]: this.props['x-clear'],
@@ -135,7 +136,7 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
                     'former-object-collapse-on': this.state.collapse,
                     'former-object-label-indent': this.props['x-label-indent'] || this.props['x-indent'],
                     'former-object-content-indent': this.props['x-content-indent'] || this.props['x-indent'],
-                    'former-object-required': this.props['x-validation'] ?  this.props['x-validation'].required  : false,
+                    'former-object-required': this.props['x-validation'] ?  this.props['x-validation']?.required  : false,
                     [`former-object-align-${this.props['x-label-align']}`]: this.props['x-label-align'],
                     'former-object-label-hidden': this.props['x-label-hidden'] ,
                     'former-object-item-hidden': (this.props.conditionalDisplay && !this.state.value)
