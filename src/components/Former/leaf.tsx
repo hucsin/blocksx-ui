@@ -395,8 +395,14 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         return this.state.type === type;
     }
     private clone(target: any) {
-        return utils.copy(target);
-        //return target ? JSON.parse(JSON.stringify(target)) : target;
+        let cloneTarget = utils.copy(target);
+
+        for (let key in target) {
+            if (utils.isFunction(target[key])) {
+                cloneTarget[key] = target[key];
+            }
+        }
+        return cloneTarget;
     }
     private getObjectByKeyValue(originValue: any[]) {
 
@@ -828,7 +834,6 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         if (controlPatch[prop]) {
             return Object.assign(this.clone(props), controlPatch[prop]);
         }
-
 
         // 多选情况
         if (props.type == 'oneOf') {

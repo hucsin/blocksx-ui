@@ -1,4 +1,5 @@
 import { default as SmartActionWindow } from './types/window';
+import { default as SmartActionLogout } from './types/logout';
 
 export default class SmartAction {
     private  static actionMap: any  = {};
@@ -10,7 +11,7 @@ export default class SmartAction {
         let type: string = typeof params == 'string' ? params :  params.smartaction;
         return this.actionMap[type];
     }
-    public static doAction(params: any, callback: Function, errback?: Function) {
+    public static doAction(params: any, callback?: Function, errback?: Function) {
         let action: any = this.find(params);
 
         if (typeof action == 'function') {
@@ -20,3 +21,4 @@ export default class SmartAction {
 }
 
 SmartAction.register('window', SmartActionWindow)
+SmartAction.register('logout', SmartActionLogout)

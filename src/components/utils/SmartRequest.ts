@@ -152,7 +152,7 @@ class SmartRequest {
                         if (code == 302) {
                             window.location.href = result.url;
                         } else if (code == 401) {
-                            window.location.href= '/login'
+                           // window.location.href= '/login'
                         } else {
                             if (message) {
                                 MessageFor.error(message)

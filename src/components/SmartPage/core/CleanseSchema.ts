@@ -33,10 +33,11 @@ export default class CleanseSchema {
             }
 
             if (factor) {
-
-                let factorRequst: any = SmartRequst.makePostRequest(
-                    factor.path + `/${field.factor.type || field.factor.name}`
+                let factorRequst: any = SmartRequst.makeGetRequest(
+                    (path || factor.path) + `/${factor.type || factor.name}`
                 );
+
+                
                 fieldObject.dataSource = (value: any) => {
                     let params: any = {
                         ...value

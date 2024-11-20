@@ -18,7 +18,7 @@
         }
     }
     .ui-block {
-        .ui-block-item:not(.ui-block-item-type-outline) {
+        .ui-block-item:not(.ui-block-item-type-outline,.ui-block-item-type-setting) {
             margin-bottom: 6em;
             &:last-child {
                 margin-bottom: 0;

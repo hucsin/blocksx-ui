@@ -6,3 +6,4 @@ import './pricing/index';
 import './swap/index';
 import './question/index';
 import './statistics/index';
+import './setting/index';

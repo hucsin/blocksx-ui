@@ -56,7 +56,7 @@ export default class SmartPageBlocks extends React.Component<SmartPageBlocksProp
             return <Skeleton active />
         }
         return (
-            <Box dataSource={blocks || []} toolbarRef={this.props.toolbarRef} value={this.state.value}></Box>
+            <Box dataSource={blocks || []} meta={schema.meta} toolbarRef={this.props.toolbarRef} value={this.state.value}></Box>
         )
     }
 }

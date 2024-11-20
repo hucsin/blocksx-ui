@@ -594,11 +594,12 @@ export default class Agent extends React.Component<AgentProps, {open: boolean}> 
 
 
     /**************************** Drag ************************************/
-
+    private offsetLimit: number = (128 - 80) / 2    ;
     private _startDrag (e:any) {
         // pause animations
         this.pause();
         //this._balloon.hide(true);
+        
         this._offset = this._calculateClickOffset(e);
 
         this._moveHandle = this._dragMove;
@@ -619,8 +620,8 @@ export default class Agent extends React.Component<AgentProps, {open: boolean}> 
 
         let o = AgentUtils.offset(this.ref.current);
         return {
-            top:mouseY - o.top,
-            left:mouseX - o.left
+            top:mouseY - o.top + this.offsetLimit,
+            left:mouseX - o.left + this.offsetLimit
         }
 
     }
@@ -632,8 +633,8 @@ export default class Agent extends React.Component<AgentProps, {open: boolean}> 
 
     private _dragMove = (e:any) => {
         e.preventDefault();
-        let x = e.clientX - this._offset.left;
-        let y = e.clientY - this._offset.top;
+        let x = e.clientX - this._offset.left - this.offsetLimit/4;
+        let y = e.clientY - this._offset.top - this.offsetLimit/4;
         this._targetX = x;
         this._targetY = y;
         this.isDraging = true;

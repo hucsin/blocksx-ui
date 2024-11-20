@@ -454,7 +454,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 trigger={['focus','hover']}
                 content={this.renderContent()}
                 open={this.state.open}
-                mouseLeaveDelay={1.2}
+                mouseLeaveDelay={.8}
                 onOpenChange={(open) => {
                     if (open) {
 

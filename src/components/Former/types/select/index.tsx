@@ -116,13 +116,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         let group : any = {};
 
         datasource.forEach(it => {
-
-            if (it.icon && typeof it.label =='string') {
-                let IconView: any = Icons[it.icon];
-                if (IconView) {
-                    it.label = (<><IconView clasName="dd"/><span>{it.label}</span></>)
-                }
-            }
+            
 
             if (it.group) {
                 if (!group[it.group]) {

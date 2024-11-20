@@ -15,6 +15,7 @@ import './index.scss';
 
 export interface BoxProps {
     toolbarRef?: any;
+    meta?: any;
     size?: 'small' | 'default' | 'large';
     events?: any;
     dataSource: BoxItem[];
@@ -48,7 +49,7 @@ export default class Box extends React.Component<BoxProps, BoxState> {
         if (BoxManger.has(it.type)) {
             let View: any = BoxManger.get(it.type);
            
-            return <View key={index} size={this.props.size} value={this.state.value} {...it} events={this.props.events} toolbarRef={this.props.toolbarRef}/>
+            return <View meta={this.props.meta} key={index} size={this.props.size} value={this.state.value} {...it} events={this.props.events} toolbarRef={this.props.toolbarRef}/>
         }
 
     }

@@ -80,12 +80,14 @@ import {
     AndroidOutlined,
     GoogleOutlined,
     GithubOutlined,
-    NodeCollapseOutlined
+    NodeCollapseOutlined,
+    NodeExpandOutlined
     
 } from '@ant-design/icons';
 
 // 重新导出需要的图标
 export { 
+    NodeExpandOutlined,
     NodeCollapseOutlined,
     GoogleOutlined,
     GithubOutlined,

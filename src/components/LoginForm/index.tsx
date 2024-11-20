@@ -87,9 +87,16 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
         if (this.state.oauth) {
             this.setState({loading: true})
             
-            this.props.onBinding && this.props.onBinding({oauth: this.state.oauth, code: this.state.code}).finally(()=> {
+            this.props.onBinding && this.props.onBinding({timezone: this.getTimezone(), oauth: this.state.oauth, code: this.state.code}).finally(()=> {
                 this.setState({loading: false})
             })
+        }
+    }
+    private getTimezone() {
+        try {
+            return Intl.DateTimeFormat().resolvedOptions().timeZone;
+        }catch(e) {
+            return 'Asia/Shanghai'
         }
     }
     private getOAuthType(oauths: any, type: string){
