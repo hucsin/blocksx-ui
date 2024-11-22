@@ -89,6 +89,7 @@ export { default as FunctionUtilityOutlined } from './FunctionUtilityOutlined';
 export { default as GbaseBrandOutlined } from './GbaseBrandOutlined';
 export { default as GoogleCalendarBrandOutlined } from './GoogleCalendarBrandOutlined';
 export { default as GoogleContactsBrandOutlined } from './GoogleContactsBrandOutlined';
+export { default as GoogleTodoBrandOutlined } from './GoogleTodoBrandOutlined';
 export { default as GreaterEqualtoUtilityOutlined } from './GreaterEqualtoUtilityOutlined';
 export { default as GreatertoUtilityOutlined } from './GreatertoUtilityOutlined';
 export { default as HelpSuggestionOutlined } from './HelpSuggestionOutlined';

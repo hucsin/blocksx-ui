@@ -293,6 +293,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                         }
                         this.loading(false)
                     },()=> {
+                        
                         this.loading(false)
                     })
                 } else {

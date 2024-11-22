@@ -20,6 +20,7 @@ export const map:any = {
         "GbaseBrandOutlined",
         "GoogleCalendarBrandOutlined",
         "GoogleContactsBrandOutlined",
+        "GoogleTodoBrandOutlined",
         "HiveBrandOutlined",
         "MysqlBrandOutlined",
         "NotionBrandOutlined",

@@ -81,7 +81,24 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
     public componentDidMount(): void {
         this.request();
     }
+    private getParams(params: any) {
+        let param:any = {};
 
+        Object.keys(params).forEach(key => {
+            let item: any = params[key];
+            if (Array.isArray(item)) {
+                if (item.length && item[0].value && item[0].$type) {
+                    param[key] = item[0].value
+                } else {
+                    param[key] = item.join(',')
+                }
+            } else {
+                param[key] = params[key]
+            }
+        })
+        return param;
+    }
+    
     private request(data:any = {}) {
         let { params = {} } = this.props;
         let flow = GlobalScope.getContext(GlobalScope.TYPES.CURRENTFLOW_CONTEXT);
@@ -94,9 +111,10 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
 
         let paramsKeys = Object.keys(params);
         if (paramsKeys.length) {
-            params = {...params, ...utils.pick(formerValue, paramsKeys)}
+            params = {...params, ...this.getParams(utils.pick(formerValue, paramsKeys))}
             
         }
+        console.log(params, 333)
 
         this.setState({ loading: true })
         this.requestHelper({
