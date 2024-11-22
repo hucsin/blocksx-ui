@@ -51,6 +51,7 @@ export const map:any = {
         "ValidationUtilityFilled",
         "ViewOffUtilityFilled",
         "ViewUtilityFilled",
+        "WorkflowUtilityFilled",
         "AiUtilityOutlined",
         "AllNotOfUtilityOutlined",
         "AllOfUtilityOutlined",
