@@ -27,7 +27,7 @@
         &::after {
             content: " ";
             position: absolute;
-            width: 30px;
+            width: 36px;
             height: 2px;
             left: 0;
             bottom: -2px;
@@ -51,8 +51,10 @@
                 }
             }
             span.anticon {
-                opacity: .8;
+                opacity: .7;
                 margin-right: 8px;
+                font-size: 34px;
+
             }
         
         }

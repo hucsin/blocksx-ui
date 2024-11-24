@@ -30,7 +30,7 @@ export  class SideHeader extends React.Component<SideHeaderProps> {
                         <HoofsIcons.AnyhubsBrandFilled />
                     </div>
                     <p>anyhubs</p>
-                    <span>Connect anything</span>
+                    <span>Assistant anything</span>
                     <div className='hoofs-sidebar-header-fold' onClick={()=> {this.props.onFoldSwitch()}}>
                         <HoofsIcons.DoubleLeftOutlined/>
                     </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import './style.scss';
-import { List ,Button, Typography, Avatar} from 'antd';
+import { List ,Tag, Typography, Avatar, Space} from 'antd';
 
 import BoxSettingInput from './components/input';
 import BoxSettingSelect from './components/select';
@@ -32,6 +32,11 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
     public renderItem = (item: any) => {
         let { value = {} } = this.props;
         let avatar = item.avatarKey && value[item.avatarKey] || item.avatar;
+        let settingIndex = value[item.settingIndexKey];
+        let settings = item.setting || [];
+
+        let setting = Array.isArray(settings) ? settings[typeof settingIndex == 'number' ? settingIndex : 0] : settings;
+        
         return (
             <List.Item key={item.email}>
               <List.Item.Meta
@@ -39,11 +44,27 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
                 title={item.titleKey && value[item.titleKey] || item.title}
                 description={item.descriptionKey && value[item.descriptionKey] || item.description}
               />
-              <div>
-                {this.renderAction(item.setting || {}, value[item.valueKey || item.dataKey], item.valueKey || item.dataKey)}
-              </div>
+              <Space>
+                {this.renderTips(item, value)}
+                {this.renderAction(setting || {}, value[item.valueKey || item.dataKey], item.valueKey || item.dataKey)}
+              </Space>
             </List.Item>
         )
+    }
+    private renderTips(item: any, value: any) {
+        
+        if (item.plan == value.plan) {
+            if (value.success) {
+                return (
+                    <Tag bordered={false} color="success">{value.success}</Tag>
+                )
+            } else if (value.error) {
+                return (
+                    <Tag bordered={false} color="error">{value.error}</Tag>
+                )
+            }
+        }
+        return null;
     }
     public renderAction(setting: any, value?: any, valueKey?: string) {
         
