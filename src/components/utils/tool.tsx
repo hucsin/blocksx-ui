@@ -33,7 +33,7 @@ export default class TablerUtils {
             if (iconstring && Icons[iconstring]) {
                 let UIView: any = Icons[iconstring];
 
-                return <UIView style={{color:field.color}} key={iconstring || icon || 'j'} />
+                return <UIView style={{color:field.color}} size={field.size} key={iconstring || icon || 'j'} />
             }
         } else {
             if (Array.isArray(icon) ) {

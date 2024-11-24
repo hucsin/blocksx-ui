@@ -2,11 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames'
 import { Tooltip, Typography, Tag, Space, Switch, Button } from 'antd';
+import { Encode } from '@blocksx/encrypt';
 import * as Icons from '../../../Icons';
+import Session  from '../../../core/Session';
 
 import SmartRequest from '../../../utils/SmartRequest';
 import TablerUtils from '../../../utils/tool'
-import { BoxItem, BoxAction, BoxTag } from '../../interface';
+import { BoxItem } from '../../interface';
 
 import BoxManger from '../../BoxManger';
 import './style.scss';
@@ -16,6 +18,7 @@ interface PricingProps extends BoxItem {
     features?: any[],
     plans?: any[],
     toolbarRef: any;
+    sample: boolean
 }
 
 export default class BoxPricing extends React.Component<PricingProps, { selected: string, isCut: boolean, features: any, plans }> {
@@ -42,6 +45,7 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
         if (props.motion) {
             this.requestHelper = SmartRequest.makePostRequest(props.motion)
         }
+
     }
     public componentDidMount(): void {
         if (this.requestHelper) {
@@ -232,17 +236,27 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
                             }
 
                             <dd className='ui-price-buy'>
-                                <Button size='large' block type={it.main? 'primary': 'default'}>
-                                    {it.value == 'free' ? 'Start for free' : 'Add the plan'}
-                                </Button>
-                                <div id="paypal-button-container-P-5L978383GP515450CM4HDWQI"></div>
-
+                                <Button size='large' onClick={() => this.onClickBuy(it)} block type={it.main? 'primary': 'default'}>
+                                    {it.value == 'free' ? 'Start for free' : 'Subscribe to this plan'}
+                                </Button>   
                             </dd>
                         </dl>
                     )
                 })}
             </div>
         )
+    }
+    private onClickBuy = (it: any) => {
+        if (it.value == 'free' || !Session.hasLogin()) {
+            return window.open('https://console.anyhubs.com/login', '_blank');
+        }
+
+        let params: any = Encode.encode(JSON.stringify({
+            plan: it.value,
+            interval: !this.state.isCut ? 'month' : 'year'
+        }))
+
+        return window.open(`https://uc.anyhubs.com/eos/pricing/checkout?${params}`, '_blank');
     }
     private renderSwitch() {
         if (this.props.toolbarRef && this.props.toolbarRef.current) {
@@ -272,12 +286,15 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
     }
     public render() {
 
-        return <div className='ui-box-pricing-inner'>
-            {this.props.title && <Typography.Title level={1}>{this.props.title}</Typography.Title>}
-            {this.props.description && <Typography.Paragraph className='block-subtitle'>{this.props.description}</Typography.Paragraph>}
-            <Typography.Title className='all-features' level={3}>{this.renderSwitch()}</Typography.Title>
+        return <div className={classnames({
+            'ui-box-pricing-inner': true,
+            [`ui-box-pricing-${this.props.theme}`]: this.props.theme
+        })}>
+            {this.props.title && !this.props.sample && <Typography.Title level={1}>{this.props.title}</Typography.Title>}
+            {this.props.description &&!this.props.sample && <Typography.Paragraph className='block-subtitle'>{this.props.description}</Typography.Paragraph>}
+            { !this.props.sample && <Typography.Title className='all-features' level={3}>{this.renderSwitch()}</Typography.Title>}
             
-            {this.renderPricingSubmit()}
+            {!this.props.sample && this.renderPricingSubmit()}
             <Typography.Title className='all-features' level={3}> All plan features</Typography.Title>
             {this.renderPricingTable()}
         </div>

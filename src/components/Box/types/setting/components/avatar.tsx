@@ -18,7 +18,8 @@ export default class BoxSettingAvatar extends React.Component<any, {value: any, 
         if (this.state.loading) {
             return;
         }
-        this.setState({ loading: true })
+        this.setState({ loading: true });
+        
         this.props.onSubmit(this.props.valueKey, value).then((res: any)=> {
             if (res.success) {
                 this.setState({ loading: false, value })
@@ -29,6 +30,7 @@ export default class BoxSettingAvatar extends React.Component<any, {value: any, 
     }
     public renderAvatar() {
         let { dataSource = [] } = this.props;
+        
         return dataSource.map((item: any) => {
             return <Tooltip title={item.label || item.value}><Avatar className={classnames({
                 'box-setting-avatar-active': item.value === this.state.value

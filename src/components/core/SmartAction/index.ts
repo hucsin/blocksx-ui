@@ -1,5 +1,6 @@
 import { default as SmartActionWindow } from './types/window';
 import { default as SmartActionLogout } from './types/logout';
+import { default as SmartActionLink } from './types/link';
 
 export default class SmartAction {
     private  static actionMap: any  = {};
@@ -22,3 +23,4 @@ export default class SmartAction {
 
 SmartAction.register('window', SmartActionWindow)
 SmartAction.register('logout', SmartActionLogout)
+SmartAction.register('link', SmartActionLink)

@@ -2,16 +2,17 @@ import React from 'react';
 
 import './style.scss';
 import { List ,Button, Typography, Avatar} from 'antd';
-import * as FormerTypes from '../../../Former/types';
 
 import BoxSettingInput from './components/input';
 import BoxSettingSelect from './components/select';
 import BoxSettingAvatar from './components/avatar';
 import BoxSettingSwitch from './components/switch';
+import BoxSettingButton from './components/button';
 
 import BoxManger from '../../BoxManger';
-import SmartAction from '../../../core/SmartAction';
+
 import SmartRequest from '../../../utils/SmartRequest';
+import TablerUtils from '../../../utils/tool';
 
 interface BoxSettingProps {
     meta?: any;
@@ -27,13 +28,14 @@ interface BoxSettingProps {
 
 export default class BoxSetting extends React.Component<BoxSettingProps> {
     private helperRequest: any;
+   
     public renderItem = (item: any) => {
         let { value = {} } = this.props;
         let avatar = item.avatarKey && value[item.avatarKey] || item.avatar;
         return (
             <List.Item key={item.email}>
               <List.Item.Meta
-                avatar={avatar ? avatar.includes('.') ? <Avatar src={avatar} size={48} /> : <FormerTypes.avatar size={40} icon={avatar} /> : null}
+                avatar={avatar ? avatar.includes('.') ? <Avatar src={avatar} size={48} /> : TablerUtils.renderIconComponent({icon: avatar, size: 40}) : null}
                 title={item.titleKey && value[item.titleKey] || item.title}
                 description={item.descriptionKey && value[item.descriptionKey] || item.description}
               />
@@ -44,18 +46,10 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
         )
     }
     public renderAction(setting: any, value?: any, valueKey?: string) {
+        
         switch (setting.type) {
             case 'button':
-                return <Button 
-                    icon={setting.icon} 
-                     size='large'
-                    type='default'
-                    onClick={() => {
-                        if (setting.smartaction) {
-                            SmartAction.doAction(setting.smartaction)
-                        }
-                            }}
-                >{setting.label}</Button>
+                return <BoxSettingButton {...setting} value={value} object={this.props.value}  />
             case 'switch':
                 return <BoxSettingSwitch {...setting} value={value} object={this.props.value} onSubmit={this.onSave} valueKey={valueKey} />
             case 'avatar':
@@ -69,7 +63,9 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
                     <BoxSettingInput {...setting} value={value} object={this.props.value} onSubmit={this.onSave} valueKey={valueKey} />
                 )
             default:
-                return <Typography.Paragraph copyable>{value}</Typography.Paragraph>;
+                if (setting.type) {
+                    return <Typography.Paragraph copyable>{value}</Typography.Paragraph>;
+                }
         }
         
     }
@@ -93,7 +89,6 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
     }
     
     public render() {
-        console.log(this.props,29);
         return (
             <div className='box-setting'>
                 <h2>{this.props.title}</h2>

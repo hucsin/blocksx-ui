@@ -32,6 +32,12 @@
         
         box-shadow: 0 0 0 1px var(--secondary-border-color), 0 2px 8px #0c0d1905, 0 4px 16px #0c0d1905, 0 8px 32px #0c0d1905;
         border-radius: 12px;
+        .ant-list-item-meta {
+            .ant-list-item-meta-avatar {
+                font-size: 32px;
+                opacity: .8 !important;
+            }
+        }
         pre {
             color:var(--main-bg-color);
             margin: 0;

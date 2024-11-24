@@ -31,6 +31,17 @@
         }
     }
 }
+.ui-block-item-theme-backend {
+    .ui-box-pricing {
+        padding: 32px 42px !important;
+    }
+    .all-features {
+        padding-left: 32px;
+        opacity: 0.9 !important;
+        font-weight: 600 !important;
+        font-size: 24px !important;
+    }
+}
 .ui-block-item  {
     .ui-box-pricing {
         background: #fff;

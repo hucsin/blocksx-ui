@@ -301,7 +301,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
                 if (!this.state.noClassify) {
 
-                    if (data.schema.fields) {
+                    if (utils.isValidArray(data.schema.fields)) {
 
                         let classifyField = this.getClassifyField(data.schema.fields);
 
