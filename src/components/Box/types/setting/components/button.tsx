@@ -2,13 +2,15 @@ import React from 'react';
 import * as Icons from '../../../../Icons';
 import { Button, Dropdown } from 'antd';
 import SmartAction from '../../../../core/SmartAction';
+import SmartRequest from '../../../../utils/SmartRequest';
 
 
 export default class BoxSettingButton extends React.Component<any> {
     public render() {
-        let setting: any = this.props;
+        let setting: any = Object.assign({}, this.props);
+        let value: any = this.props.object;
+        
         if (setting.menus) {
-            console.log(setting.menus, 23333)
             let menus: any [] = setting.menus;
             let items: any [] = setting.menus.map((item: any)=> ({
                 label: item.label,
@@ -25,7 +27,7 @@ export default class BoxSettingButton extends React.Component<any> {
                             let it: any = menus.find((i: any)=> i.value === item.key);
 
                             if (it && it.smartaction) {
-                                this.doAction(it)
+                                this.doAction(it, value)
                             }
                         }
                     }}
@@ -41,14 +43,32 @@ export default class BoxSettingButton extends React.Component<any> {
                     type='default'
                     onClick={() => {
                         if (setting.smartaction) {
-                            this.doAction(setting)
+                            this.doAction(setting, value)
                         }
                     }}
                 >{setting.label}</Button>
             )
         }
     }
-    public doAction(smartaction: any) {
-        SmartAction.doAction(smartaction)
+    public doAction(smartaction: any, value: any = {}) {
+
+        if (smartaction.contentKey) {
+            smartaction.content = value[smartaction.contentKey]
+        }
+        if (smartaction.smartaction == 'modal') {
+            SmartAction.doAction(smartaction, () => {
+                if (smartaction.okLink) {
+                    let helper: any = SmartRequest.makePostRequest(smartaction.okLink)
+                    return new Promise((resole, reject) => {
+                        helper().then((d)=> {
+                            window.location.reload()
+                            resole(d)
+                        }).catch(reject)
+                    })
+                }
+            })
+        } else {
+            SmartAction.doAction(smartaction)
+        }
     }
 }
