@@ -1,7 +1,8 @@
 import React from 'react';
 import classnames from 'classnames'
-import { Input, Divider, Button, Checkbox, Spin } from 'antd';
+import { Popover, Divider, Button, Checkbox, Spin } from 'antd';
 import TablerUtils from '../utils/tool';
+import { QRCodeCanvas } from 'qrcode.react';
 //import { UserOutlined, LockOutlined,GoogleOutlined, GithubOutlined } from '@ant-design/icons'
 import * as Icons from '../Icons'
 
@@ -15,6 +16,8 @@ interface InputFormProps {
     onSubmit: Function
     oauths?: any;
     loading?: boolean;
+    onPollcheck: Function;
+    onBinding: Function;
 }
 
 interface InputFormState {
@@ -26,9 +29,12 @@ interface InputFormState {
     loading?: boolean;
     stay: boolean;
     agree: boolean;
+    open: boolean;
+    time: number;
 }
 
 export default class InputForm extends React.Component<InputFormProps, InputFormState> {
+    public loptime: number;
     public constructor(props: InputFormProps) {
         super(props);
 
@@ -40,8 +46,11 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
             actions: props.actions,
             loading: props.loading,
             stay: true,
-            agree: true
+            agree: true,
+            open: false,
+            time: 30
         }
+        this.loptime = 0;
     }
 
     public UNSAFE_componentWillReceiveProps(newProps:InputFormProps) {
@@ -113,6 +122,86 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
     private renderForm() {
         return (<div></div>)
     }
+    private renderQrCodeContent(item: any) {
+        if (this.state.open) {
+            let qrcode: string = typeof item.qrcode =='function' ? item.qrcode() : ''
+            
+            return (
+                <div className='qrcode'>
+                    <QRCodeCanvas size={200} level="M" value={qrcode} />
+                    <div className='icon' style={{color: item.color}}> {TablerUtils.renderIconComponent(item)}</div>
+                    <div className='button'>
+                        <Button type="text" size="small" onClick={this.onCancelLogin}>({this.state.time}s) Cancel login</Button> 
+                        
+                    </div>
+                    <div className="loader"></div>
+                </div>
+            )
+        } 
+        return null;
+    }
+    private onCancelLogin=(back?: Function)=> {
+        
+        this.setState({
+            open: false
+        }, () => {
+            back && back()
+        })
+    }
+    private intervalPollcheck = (item, timeout: number = 6000) => {
+        
+        if (this.state.open) {
+            this.props.onPollcheck({
+                key: item.getId(),
+                type: item.name
+            }).then((result:any = {})=> {
+                if (result.wait) {
+                    setTimeout(()=> {
+                        this.intervalPollcheck(item, 3500)
+                    }, timeout)
+                    
+                } else {
+                    if (result.login) {
+                        this.onCancelLogin(()=> {
+                            this.props.onBinding(result.login)
+                        });
+                    }
+                }
+            }).catch(e => {
+
+            })
+        }
+
+    }
+    // 设置定时器
+    private intervalTimer() {
+        if (this.state.open ){
+            if (this.state.time) {
+                setTimeout(()=> {
+                    this.setState({
+                        time: this.state.time - 1
+                    }, ()=> {
+                        this.intervalTimer();
+                    })
+                }, 1000)
+            } else {
+                this.onCancelLogin();
+            }
+        }
+    }
+    private onOpenChange = (open, item)=> {
+        if (open) {
+            // 开始登陆检查
+            
+            this.setState({
+                open: true,
+                time: 120
+            }, () => {
+                this.intervalPollcheck(item);
+                this.intervalTimer();
+            })
+        }
+    }
     public render() {
         let login: any = window.location.href.match(/__DEB_DEV__/);
         return (
@@ -136,7 +225,24 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
                             'input-other-disabled': !this.state.agree
                         })}>
                             {!login ? this.props.oauths.map(it => {
-                                return <a href={this.state.agree ? it.url : '#'}>{TablerUtils.renderIconComponent(it)} {it.title}</a>
+                                
+                                if (it.type =='qrcode') {
+                                    return (
+                                        <Popover
+                                            trigger={'click'}
+                                            open={!this.state.agree ? false :this.state.open}
+                                            onOpenChange={(open) => this.state.agree && this.onOpenChange(open, it)}
+                                            title={`Use ${it.name} to scan the QR code and send the login command`}
+                                            overlayClassName='login-qrcode'
+                                            content = {this.renderQrCodeContent(it)}
+                                        >
+                                            <span className='a'>
+                                                {TablerUtils.renderIconComponent(it)} <span className='text'>{it.title}</span>
+                                            </span>
+                                        </Popover>
+                                    )
+                                }
+                                return <a className='a' href={this.state.agree ? it.url : '#'}>{TablerUtils.renderIconComponent(it)} <span className='text'>{it.title}</span></a>
                             }): this.renderForm()}
                             
                         </div>

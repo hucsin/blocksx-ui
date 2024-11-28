@@ -44,6 +44,7 @@ export { default as TriggerUtilityFilled } from './TriggerUtilityFilled';
 export { default as ValidationUtilityFilled } from './ValidationUtilityFilled';
 export { default as ViewOffUtilityFilled } from './ViewOffUtilityFilled';
 export { default as ViewUtilityFilled } from './ViewUtilityFilled';
+export { default as WhatsappBrandFilled } from './WhatsappBrandFilled';
 export { default as WorkflowUtilityFilled } from './WorkflowUtilityFilled';
 export { default as AiUtilityOutlined } from './AiUtilityOutlined';
 export { default as AllNotOfUtilityOutlined } from './AllNotOfUtilityOutlined';

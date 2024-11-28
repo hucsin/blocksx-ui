@@ -12,16 +12,17 @@ class SmartActionWindow {
     private deleteSelfCookie() {
         document.cookie =  '__=; expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/; domain=.anyhubs.com;' 
     }
-    private bindFocus(errorBack?: Function, caller?: Function) {
+    private bindFocus(iSsuccess: Function, errorBack?: Function, caller?: Function) {
         let oldfocus = window.onfocus;
-        window.onfocus = () => {
-           
-            if (errorBack) {
-                errorBack()
+        window.onfocus = () => {   
+            if (!iSsuccess()) {
+                if (errorBack) {
+                    errorBack()
+                }
+                oldfocus && oldfocus.call(window);
+                window.onfocus = oldfocus;
+                caller && caller();
             }
-            oldfocus && oldfocus.call(window);
-            window.onfocus = oldfocus;
-            caller && caller();
         }
     }
     public doAction(params: Record<string, any>, callback: Function, errorBack?: Function) {
@@ -34,17 +35,19 @@ class SmartActionWindow {
         window.open(SmartRequest.getRequestURI(params.url), params.id, `width=${windowWidth},height=${windowHeight},top=${(screenHeight-windowHeight)/2},left=${(screenWidth-windowWidth)/2},menubar=no,toolbar=no,resizable=no,focus=1`)
 
         let timer = setInterval((message) => {
-            
-            if (message = this.getSelfCookie()) {
-                
-                clearInterval(timer);
-                
-                this.deleteSelfCookie()
-                callback(message);
-            }
+            iSsuccess(message);
         }, 200)
 
-        this.bindFocus(errorBack, ()=> {
+        const iSsuccess =  (message: any) => {
+            if (message = this.getSelfCookie()) {
+                clearInterval(timer);
+                this.deleteSelfCookie()
+                callback(message);
+                return true;
+            }
+        }
+
+        this.bindFocus(iSsuccess, errorBack, ()=> {
             clearInterval(timer)
         });
     }

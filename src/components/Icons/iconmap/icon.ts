@@ -15,6 +15,7 @@ export const map:any = {
         "PaypalBrandFilled",
         "PostgresqlBrandFilled",
         "StripeBrandFilled",
+        "WhatsappBrandFilled",
         "BytehubsBrandOutlined",
         "DbqueryBrandOutlined",
         "GbaseBrandOutlined",

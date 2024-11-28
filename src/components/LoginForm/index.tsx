@@ -22,7 +22,11 @@ export interface LoginPageThreeParty {
     name: string;
     title: string;
     icon: string;
-    url: string;
+    color?: string;
+    type: string;
+    qrcode?: Function;
+    getId?: Function;
+    url?: string;
 }
 interface TitleMap {
     [key: string]: string;
@@ -40,6 +44,7 @@ export interface LoginPageFormProps {
     // 第三方登录
     oauths: LoginPageThreeParty[];
 
+    onPollcheck: Function;
     onSingup: Function;
     onLogin: Function;
     onBinding: Function;
@@ -244,6 +249,16 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
                                 type={isOauthType ? 'oauth' : 'login'}
                                 onSubmit={this.onSubmit}
                                 loading={this.state.loading}
+                                onPollcheck= {this.props.onPollcheck}
+                                onBinding = {(code: string) => {
+                                    this.setState({
+                                        loading: true
+                                    }, ()=> {
+                                        this.props.onBinding && this.props.onBinding({timezone: this.getTimezone(), code}).finally(()=> {
+                                            this.setState({loading: false})
+                                        })
+                                    })
+                                }}
                             />
                         </div>
                     </div>

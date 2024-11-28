@@ -1,3 +1,76 @@
+.login-qrcode {
+    .ant-popover-title {
+        width: 200px;
+        line-height: 16px;
+        opacity: .5;
+        font-weight: 400;
+        font-size: 12px;
+    }
+    .qrcode {
+        position: relative;
+        .loader {
+            width: 210px;
+            height: 210px;
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            display: grid;
+            border-radius: 8px;;
+            color: #046D8B;
+            opacity: .1;
+        }
+        .loader:before,
+        .loader:after {
+            content: "";
+            grid-area: 1/1;
+            --c:#0000 calc(100%/3),#046D8B 0 calc(2*100%/3),#0000 0;
+            --c1:linear-gradient(90deg,var(--c));
+            --c2:linear-gradient( 0deg,var(--c));
+            background: var(--c1),var(--c2),var(--c1),var(--c2);
+            background-size: 300% 4px,4px 300%;
+            background-repeat: no-repeat;
+            animation: l15 2.5s infinite;
+        }
+        .loader:after {
+            animation-delay: -1.75s;
+        }
+        @keyframes l15 {
+            0%   {background-position: 50%  0,100% 100%,0    100%,0 0}
+            25%  {background-position: 0    0,100% 50% ,0    100%,0 0}
+            50%  {background-position: 0    0,100% 0   ,50%  100%,0 0}
+            75%  {background-position: 0    0,100% 0   ,100% 100%,0 50%}
+            75.01% {background-position: 100% 0,100% 0   ,100% 100%,0 50%}
+            100% {background-position: 50%  0,100% 0   ,100% 100%,0 100%}
+        }
+        canvas {
+            border-radius: 8px;
+        }
+        .button {
+            text-align: center;
+            margin-bottom: -8px;
+            .ant-btn >span {
+                font-size: 12px;
+            }
+
+            /* HTML: <div class="loader"></div> */
+            
+        }
+        
+        .icon {
+            width: 50px;
+            line-height: 50px;
+            text-align: center;
+            font-size: 42px;
+            border-radius: 6px;
+            background-color: #fff;
+            top:50%;
+            left: 50%;
+            margin-left: -25px;
+            margin-top: -35px;
+            position: absolute;
+        }
+    }
+}
 .login-form-wrapper {
     width: 100%;
     height: 100%;
@@ -54,7 +127,7 @@
             .input-other {
                 padding-top: 16px;
                 &.input-other-disabled {
-                    a {
+                    .a {
                         background: var(--secondary-background-color) !important;
                         border-color: var(--secondary-background-color) !important;
                         cursor: not-allowed;
@@ -68,9 +141,10 @@
                         }
                     }
                 }
-                a {
+                .a {
                     display: block;
                     height: 42px;
+                    cursor: pointer;
                     line-height: 42px;
                     border-radius: 12px;
                     background: var(--main-background-color);
@@ -85,8 +159,15 @@
                     margin-bottom: 24px;
                     transition: all .2s;
                     text-decoration: none;
-                    span {
+                    span:not(.text) {
                         margin-right: 8px;
+                        font-size: 20px;
+                    }
+                    span.text {
+                        display: inline-block;
+                        min-width: 150px;
+                        /* text-align: left; */
+                        text-align: justify;
                     }
                     &:hover {
                         background: var(--main-bg-color);
