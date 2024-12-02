@@ -1585,7 +1585,6 @@ export default class MiniFlow extends EventEmitter {
 
         this.stopAutoSave();
 
-        console.log(currentNode, 33333)
 
         if (currentNode && currentNode.type == 'go') {
 

@@ -631,7 +631,6 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
     }
     private onChangeValue(value: any) {
         // 清洗下labelvalue
-        //console.log(value, former, 3333)
         if (this.state.isStepMode && this.state.isStepOne) {
           //  return this.setState({
            //     setpOneValue: value,

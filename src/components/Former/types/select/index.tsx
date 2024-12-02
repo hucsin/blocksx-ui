@@ -217,7 +217,6 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         }, () => this.props.onChangeValue(value));
     }
     private onSearch =(v) => {
-        console.log(v,3333, this.getAutoEnumsDependecy(), 2222)
         this.setState({
             search: v            
         }, () => {
@@ -256,7 +255,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         let { former } = this.props;
         let { autoEnumsDependency = {} } = this.state;
         let dependency: any = former.getValue() || {};
-        console.log(3333, autoEnumsDependency, dependency)
+        
         if (dependency) {
             for (let key in autoEnumsDependency) {
                 if (autoEnumsDependency[key] != dependency[key]) {

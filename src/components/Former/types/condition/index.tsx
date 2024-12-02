@@ -78,7 +78,7 @@ export default class FormerCondition extends React.Component<FormerConditionProp
         let caseInsensitive: any = TupleSymbol[tuple.value.operator] || {};
         let hideLeft: any = this.state.right == index;
         let hideRight: any = this.state.left == index;
-        console.log(tuple.value, 333333)
+        
         return (
             <div className={classnames({
                 'ui-regular-tuple': true,

@@ -288,7 +288,6 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
                                 index={index + this.getDefaultIndex(this.state.level - 1) * (idx + 1)}
                                 context={this.context}
                                 onRemoveValue={(currentIndex) => {
-                                    //console.log(currentIndex , 333333)
                                     // 参数不能删除只能让光标往前
                                      return this.doRemoveScopeValue(item.parameters, idx, currentIndex)
                                       
