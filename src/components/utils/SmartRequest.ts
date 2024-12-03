@@ -161,8 +161,9 @@ class SmartRequest {
                         }
                     }
                 }).catch((e: any,) => {
-                    MessageFor.error(this.getTrueMessage(e.message || e || 'system error'));
-                    reject(e)
+                    let message: string = this.getTrueMessage(e.message || e || 'system error');
+                    MessageFor.error(message);
+                    reject(message)
                 })
             })
         }
@@ -210,8 +211,9 @@ class SmartRequest {
                         }
                     }
                 }).catch((e: any,) => {
-                    MessageFor.error(this.getTrueMessage(e.message || e || 'system error'));
-                    reject(e)
+                    let message: string = this.getTrueMessage(e.message || e || 'system error');
+                    MessageFor.error(message);
+                    reject(message)
                 })
             })
         }
