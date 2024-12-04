@@ -688,7 +688,7 @@ export default class Agent extends React.Component<AgentProps, {open: boolean}> 
         
         this.searching = true;
         this.queue.clear();
-        console.log(message, 'showmemeeme')
+        
         this.keepPlay(type, ()=> {
             return !this.searching;
         });

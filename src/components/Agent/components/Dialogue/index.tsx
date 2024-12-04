@@ -64,8 +64,8 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         this.scrollRef = React.createRef();
         this.inputRef = React.createRef();
 
-        this.messageContext = new MessageContext((tools.getStorage(`agent-messages`) || []).slice(-50));
-        console.log(this.messageContext.getMessageList(), 3333, 'messageContext')
+        this.messageContext = new MessageContext(tools.getStorage(`agent-messages`) || []);
+        
 
     }
 
@@ -246,7 +246,6 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
 
                     onSubmit={(value, state) => {
                         // 添加用户信息
-                        console.log(item.status)
                         return this.onSubmit({
                             role: 'user',
                             status: MessageContext.STATUS.CALL_CONFIRMED,
