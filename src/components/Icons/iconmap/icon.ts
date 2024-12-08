@@ -8,6 +8,7 @@ export const map:any = {
         "GoldendbBrandFilled",
         "GoogleContactsBrandFilled",
         "GoogleFormsBrandFilled",
+        "GoogleKeepBrandFilled",
         "GoogleSheetsBrandFilled",
         "GussdbBrandFilled",
         "KingbaseBrandFilled",

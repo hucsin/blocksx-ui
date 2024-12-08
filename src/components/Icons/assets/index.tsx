@@ -16,6 +16,7 @@ export { default as GoRightDirectivityFilled } from './GoRightDirectivityFilled'
 export { default as GoldendbBrandFilled } from './GoldendbBrandFilled';
 export { default as GoogleContactsBrandFilled } from './GoogleContactsBrandFilled';
 export { default as GoogleFormsBrandFilled } from './GoogleFormsBrandFilled';
+export { default as GoogleKeepBrandFilled } from './GoogleKeepBrandFilled';
 export { default as GoogleSheetsBrandFilled } from './GoogleSheetsBrandFilled';
 export { default as GussdbBrandFilled } from './GussdbBrandFilled';
 export { default as ImageAddUtilityFilled } from './ImageAddUtilityFilled';

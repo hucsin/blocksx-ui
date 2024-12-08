@@ -38,6 +38,7 @@ interface DialogueState {
     errorMessage: string;
     open: boolean;
     efficiency: any[]
+    calling: any;
 }
 
 export default class Dialogure extends React.Component<DialogueProps, DialogueState> {
@@ -60,6 +61,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             errorMessage: '',
             efficiency: props.efficiency || [],
             open: props.open || false,
+            calling: false
         }
         this.scrollRef = React.createRef();
         this.inputRef = React.createRef();
@@ -120,7 +122,17 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             ...messages
         ];
 
-        if (this.state.loading) {
+        if (this.state.calling) {
+
+            messages.push({
+                role: 'assistant',
+                pointless: true,
+                display: {
+                    type: 'calling',
+                    payload: this.state.calling
+                }
+            })
+        } else if (this.state.loading) {
             messages.push({
                 role: 'assistant',
                 pointless: true,
@@ -157,7 +169,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                         </div>
                     )
                 })}
-                {messages.length >= 2 && !this.state.loading && <div className='dialogue-message-history-clear'>
+                {messages.length >= 2 && (!this.state.loading && !this.state.calling) && <div className='dialogue-message-history-clear'>
                     <Popconfirm
                         title='Are you sure'
                         description='Clear the chat history?'
@@ -212,16 +224,26 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
     }
 
     private handleReplyMessages(message: MessageBody) {
-
+        let { display } = message;
         if (message.patch) {
             this.messageContext.patchMessage(message.patch);
             delete message.patch;
         }
 
+        // 判断是否call
+        if (display.call && display.value) {
+            // 直接调用，不用确认
+
+            return this.setState({
+                calling: display
+            });
+        }
+
+
         this.messageContext.addMessage(message);
         this.refreshMessagesAndScrollToEnd(() => {
             tools.setStorage(`agent-messages`, this.messageContext.getMessageList());
-        }, { loading: false });
+        }, { loading: false, calling: false });
     }
     private refreshMessagesAndScrollToEnd(callback?: Function, props?: any) {
         this.setState({
@@ -232,6 +254,24 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             callback && callback();
         });
     }
+    private  async onCalling(payload: any) {
+
+        return new Promise((resolve, reject) => {
+            
+            this.refreshMessagesAndScrollToEnd(() => {
+                // 提交
+                this.props.onSubmit([...this.messageContext.getMessageContextList(), payload], 'assistant').then((message) => {
+                    // 消息回信息
+                    this.handleReplyMessages(message);
+                    resolve(message);
+                }).catch((error) => {
+                    reject(error);
+                }).finally(() => {
+                    this.setState({ calling: false });
+                })
+            });
+        });
+    }
     private renderDisplay(display: any, index: number, item: any) {
         if (!display) {
             return null;
@@ -239,6 +279,18 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
 
         switch (display.type) {
 
+            case 'calling':
+                return <DialogueTypes.calling 
+                    {...display} 
+                    onCalling={() => {
+                       let payload: any = display.payload;
+                       return this.onCalling({
+                            call: { ...payload.call, prevStatus: payload.status },
+                            params: payload.params,
+                            value: utils.copy(payload.value)
+                        })
+                    }}
+                />
             case 'former':
                 return <DialogueTypes.former
                     value={item.value}
