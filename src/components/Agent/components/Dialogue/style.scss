@@ -89,7 +89,9 @@
 
                 position: relative;
 
-
+                &.hidden {
+                    display: none;
+                }
                 .dialogue-message-system {
                     opacity: .3;
                     text-align: center;

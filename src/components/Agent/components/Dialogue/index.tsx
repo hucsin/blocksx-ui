@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { utils } from '@blocksx/core';
+import { utils, keypath } from '@blocksx/core';
 import classnames from 'classnames';
 import Markdown from '../../../Markdown';
 import * as Icons from '../../../Icons';
@@ -145,6 +145,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         return (
             <div className='dialogue-message-list' ref={this.scrollRef}>
                 {messages.map((it, index) => {
+                    let display: any = it.display || {}
                     if (it.role === 'system') {
                         return (
                             <div className='dialogue-message-item'>
@@ -153,7 +154,10 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                         )
                     }
                     return (
-                        <div className={classnames('dialogue-message-item', { 'reverse': it.role === 'user' })}>
+                        <div className={classnames('dialogue-message-item', { 
+                            'reverse': it.role === 'user',
+                            'hidden': display.hidden 
+                        })}>
                             <div className='dialogue-message-item-avator'>{this.renderAvatar(it.role)}</div>
                             <div className={classnames({
                                 'dialogue-message-item-content': true,
@@ -162,7 +166,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                                 <div>
 
                                     {this.renderMessageContent(it, index - 1)}
-                                    {this.renderDisplay(it.display, index - 1, it)}
+                                    {this.renderDisplay(display, index - 1, it)}
                                 </div>
                                 <span className='arrow'></span>
                             </div>
@@ -295,7 +299,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 return <DialogueTypes.former
                     value={item.value}
                     {...display}
-
+                    disabled={item.disabled}
                     onSubmit={(value, state) => {
                         // 添加用户信息
                         return this.onSubmit({
@@ -316,21 +320,31 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 return <DialogueTypes.choose
                     value={item.value}
                     {...display}
+                    disabled={item.disabled}
                     onSubmit={(value, item) => {
-
+                        let caller: any = display.call || {};
+                        let panel: any = display.panel || {};
+                        let defaultValue: any = {
+                            ...caller.value,
+                            [panel.selectKey]: value
+                        };
                         return this.onSubmit({
                             role: 'user',
                             status: MessageContext.STATUS.CALL_CONFIRMED,
-                            value,
-                            call: { ...display.call, prevStatus: item.status },
-                            display: {
+                            value: defaultValue,
+                            params: caller.params,
+                            call: utils.omit({ ...caller, ...caller.params, prevStatus: item.status }, ['value', 'params']),
+                            display: !display.panel ?    {
                                 type: 'choose',
                                 dataSource: display.dataSource,
                                 app: display.app,
                                 viewer: true
+                            } : {
+                                type: 'value',
+                                hidden: true
                             }
                         }).then((result) => {
-                            this.messageContext.updateMessageByIndex(index, { value });
+                            this.messageContext.updateMessageByIndex(index, { value, disabled: true });
                             return result;
                         })
                     }}
