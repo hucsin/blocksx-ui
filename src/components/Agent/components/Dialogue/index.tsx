@@ -228,7 +228,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
     }
 
     private handleReplyMessages(message: MessageBody) {
-        let { display } = message;
+        let { display = {} } = message;
         if (message.patch) {
             this.messageContext.patchMessage(message.patch);
             delete message.patch;
