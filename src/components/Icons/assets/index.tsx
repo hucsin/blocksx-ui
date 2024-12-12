@@ -126,6 +126,7 @@ export { default as NotionBrandOutlined } from './NotionBrandOutlined';
 export { default as OneNotOfUtilityOutlined } from './OneNotOfUtilityOutlined';
 export { default as OneOfUtilityOutlined } from './OneOfUtilityOutlined';
 export { default as OpenWindowUtilityOutlined } from './OpenWindowUtilityOutlined';
+export { default as OpenaiBrandOutlined } from './OpenaiBrandOutlined';
 export { default as OpengaussBrandOutlined } from './OpengaussBrandOutlined';
 export { default as OracleBrandOutlined } from './OracleBrandOutlined';
 export { default as PageCommonOutlined } from './PageCommonOutlined';

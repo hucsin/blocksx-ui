@@ -26,6 +26,7 @@ export const map:any = {
         "HiveBrandOutlined",
         "MysqlBrandOutlined",
         "NotionBrandOutlined",
+        "OpenaiBrandOutlined",
         "OpengaussBrandOutlined",
         "OracleBrandOutlined",
         "PolardbBrandOutlined",

@@ -228,14 +228,14 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
     }
 
     private handleReplyMessages(message: MessageBody) {
-        let { display = {} } = message;
+        let { display } = message;
         if (message.patch) {
             this.messageContext.patchMessage(message.patch);
             delete message.patch;
         }
 
         // 判断是否call
-        if (display.call && display.value) {
+        if (display && display.call && display.value) {
             // 直接调用，不用确认
 
             return this.setState({
@@ -275,6 +275,20 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 })
             });
         });
+    }
+    private getCallResult({ data,type}: any, value: any) { 
+        if (type == 'tool_calls') {
+            let toolCalls: any = this.messageContext.getLastToolCallsInvocation();
+
+            return [{
+                callId: toolCalls[0].id,
+                name: toolCalls[0].function.name,
+                result: data.filter(it => {
+                    return JSON.stringify(it) .includes(value)
+                })
+            }]
+        }
+        return null;
     }
     private renderDisplay(display: any, index: number, item: any) {
         if (!display) {
@@ -317,24 +331,29 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                     }}
                 />
             case 'choose':
+                
                 return <DialogueTypes.choose
                     value={item.value}
                     {...display}
                     disabled={item.disabled}
                     onSubmit={(value, item) => {
+                        let onlyChoose: boolean = !(display.panel || display.call)
                         let caller: any = display.call || {};
                         let panel: any = display.panel || {};
-                        let defaultValue: any = {
+                        
+                        let defaultValue: any = !onlyChoose ? {
                             ...caller.value,
-                            [panel.selectKey]: value
-                        };
+                            [panel.selectKey || 'value']: value
+                        } : value;
+                        
                         return this.onSubmit({
                             role: 'user',
-                            status: MessageContext.STATUS.CALL_CONFIRMED,
-                            value: defaultValue,
+                            status: !   onlyChoose && MessageContext.STATUS.CALL_CONFIRMED,
+                            [onlyChoose ? 'content' : 'value']: defaultValue,
                             params: caller.params,
-                            call: utils.omit({ ...caller, ...caller.params, prevStatus: item.status }, ['value', 'params']),
-                            display: !display.panel ?    {
+                            call: !onlyChoose && utils.omit({ ...caller, ...caller.params, prevStatus: item.status }, ['value', 'params']),
+                            callResult: display.patch && this.getCallResult(display.patch, value),
+                            display: onlyChoose ? undefined : (!display.panel ?    {
                                 type: 'choose',
                                 dataSource: display.dataSource,
                                 app: display.app,
@@ -342,7 +361,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                             } : {
                                 type: 'value',
                                 hidden: true
-                            }
+                            })
                         }).then((result) => {
                             this.messageContext.updateMessageByIndex(index, { value, disabled: true });
                             return result;
