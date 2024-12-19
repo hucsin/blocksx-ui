@@ -154,8 +154,8 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         if (this.props.onFetchList) {
 
             this.fetchDataSource({
-                pageNumber: this.state.pageNumber,
-                pageSize: this.state.pageSize
+                pageNumber: this.state.pageNumber || 1,
+                pageSize: this.state.pageSize || 10
             });
         } else {
             this.setState({
@@ -170,7 +170,6 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         this.props.onResetDataSource && this.props.onResetDataSource(datasource);
      }
     public getNextDatasource = () => {
-        
         if (this.state.pageNumber * this.state.pageSize < this.state.total) {
             if (this.props.onFetchList) {
                 
@@ -223,12 +222,19 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
     public fetchDataSource(params: any) {
         if (this.props.onFetchList){
+            let pageNumber: number = params.pageNumber || this.state.pageNumber;
             this.props.onFetchList(params).then(result => {
+                // append
+                let dataSource: any = pageNumber > 1 ? [
+                    ...this.state.dataSource,
+                    ...result.data
+                ] : result.data;
+
                 this.setState({
-                    pageNumber: result.pageNumber,
-                    pageSize: result.pageSize,
+                    pageNumber: result.pageNumber || params.pageNumber,
+                    pageSize: result.pageSize || params.pageSize,
                     total: result.total,
-                    dataSource: result.data
+                    dataSource: dataSource
                 })
             })
         }
@@ -252,7 +258,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             }
         }
 
-        if (newProps.total !== this.state.total) {
+        if (!utils.isUndefined(newProps.total) && (newProps.total !== this.state.total)) {
            this.setState({
                total: newProps.total
            })
@@ -675,9 +681,8 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
 
         
         let { dataSource } = this.state;
-
+        
         if (dataSource && dataSource.length) {
-          
             return (<InfiniteScroll
                 dataLength={dataSource.length}
                 next={this.getNextDatasource}

@@ -131,7 +131,7 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
                     <QRCodeCanvas size={200} level="M" value={qrcode} />
                     <div className='icon' style={{color: item.color}}> {TablerUtils.renderIconComponent(item)}</div>
                     <div className='button'>
-                        <Button type="text" size="small" onClick={this.onCancelLogin}>({this.state.time}s) Cancel login</Button> 
+                        <Button type="text" size="small" onClick={() => this.onCancelLogin()}>({this.state.time}s) Cancel login</Button> 
                         
                     </div>
                     <div className="loader"></div>
