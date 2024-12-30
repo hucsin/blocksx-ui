@@ -175,6 +175,7 @@ export { default as TidbBrandOutlined } from './TidbBrandOutlined';
 export { default as TimerCountdownUtilityOutlined } from './TimerCountdownUtilityOutlined';
 export { default as TimerIntervalUtilityOutlined } from './TimerIntervalUtilityOutlined';
 export { default as TimerOnceUtilityOutlined } from './TimerOnceUtilityOutlined';
+export { default as TmdbBrandOutlined } from './TmdbBrandOutlined';
 export { default as TomorrowBrandOutlined } from './TomorrowBrandOutlined';
 export { default as ToolsUtilityOutlined } from './ToolsUtilityOutlined';
 export { default as TriggerLinkUtilityOutlined } from './TriggerLinkUtilityOutlined';

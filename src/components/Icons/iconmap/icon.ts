@@ -34,6 +34,7 @@ export const map:any = {
         "PolardbBrandOutlined",
         "PolygonBrandOutlined",
         "TidbBrandOutlined",
+        "TmdbBrandOutlined",
         "TomorrowBrandOutlined",
         "WorldnewsapiBrandOutlined"
     ],
