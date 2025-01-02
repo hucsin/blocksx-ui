@@ -2,6 +2,7 @@ export const map:any = {
     "brand": [
         "AntdbBrandFilled",
         "AnyhubsBrandFilled",
+        "BraveBrandFilled",
         "DamengBrandFilled",
         "DbqueryMiniBrandFilled",
         "GmailBrandFilled",
@@ -17,6 +18,7 @@ export const map:any = {
         "PaypalBrandFilled",
         "PostgresqlBrandFilled",
         "StripeBrandFilled",
+        "UnsplashBrandFilled",
         "WhatsappBrandFilled",
         "AlphaVantageBrandOutlined",
         "BytehubsBrandOutlined",
@@ -110,6 +112,7 @@ export const map:any = {
         "MatchesPatternUtilityOutlined",
         "MenuUtilityOutlined",
         "MonitorUtilityOutlined",
+        "NewsUtilityOutlined",
         "NoContainsUtilityOutlined",
         "NoEndsWithUtilityOutlined",
         "NoMatchesPatternUtilityOutlined",
