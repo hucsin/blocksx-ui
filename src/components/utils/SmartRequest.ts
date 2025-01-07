@@ -87,9 +87,9 @@ class SmartRequest {
         } else {
             if(url.match(/^\/api/)) {
                 let zone: string[] = this.getUserZone();
-                return `//${zone[0]}.${host}/${zone[1]}${url}`
+                return `https://${zone[0]}.${host}/${zone[1]}${url}`
             } else {
-                return `//uc.${host}${url}`;
+                return `https://uc.${host}${url}`;
             }
         }
     }

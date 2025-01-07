@@ -166,7 +166,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                                 <div>
 
                                     {this.renderMessageContent(it, index - 1)}
-                                    {this.renderDisplay(display, index - 1, it)}
+                                    {this.renderDisplay(it.display, index - 1, it)}
                                 </div>
                                 <span className='arrow'></span>
                             </div>
@@ -294,6 +294,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         if (!display) {
             return null;
         }
+        console.log(display, 'renderDisplay')
 
         switch (display.type) {
 
@@ -400,6 +401,8 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 return <DialogueTypes.thinking />
             case 'value':
                 return <DialogueTypes.value value={display.value || item.value} />
+            case 'oauth':
+                return <DialogueTypes.oauth {...display} />
         }
     }
 
