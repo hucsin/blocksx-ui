@@ -37,6 +37,7 @@ interface DialogueState {
     canSend: boolean;
     errorMessage: string;
     open: boolean;
+    keep: boolean;
     efficiency: any[]
     calling: any;
 }
@@ -58,6 +59,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             message: '',
             loading: false,
             canSend: false,
+            keep: false,
             errorMessage: '',
             efficiency: props.efficiency || [],
             open: props.open || false,
@@ -201,10 +203,10 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         }
     }
 
-    private onSubmit(message: any) {
+    private onSubmit(message?: any) {
 
         return new Promise((resolve, reject) => {
-            this.messageContext.addMessage(message);
+            message && this.messageContext.addMessage(message);
 
             this.refreshMessagesAndScrollToEnd(() => {
                 // 提交
@@ -220,11 +222,14 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             }, { loading: true });
         });
     }
-    private getAgentType(message: MessageBody) {
-        return (this.messageContext.isCallConfirmStatus(message)
-            || this.messageContext.isCallConfirmedStatus(message))
-            ? 'Writing'
-            : Math.random() > .5 ? 'Searching' : 'Thinking';
+    private getAgentType(message?: MessageBody) {
+        if (message) {
+            return (this.messageContext.isCallConfirmStatus(message)
+                || this.messageContext.isCallConfirmedStatus(message))
+                ? 'Writing'
+                : Math.random() > .5 ? 'Searching' : 'Thinking';
+        }
+        return 'Searching';
     }
 
     private handleReplyMessages(message: MessageBody) {
@@ -294,8 +299,6 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         if (!display) {
             return null;
         }
-        console.log(display, 'renderDisplay')
-
         switch (display.type) {
 
             case 'calling':
@@ -402,7 +405,21 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             case 'value':
                 return <DialogueTypes.value value={display.value || item.value} />
             case 'oauth':
-                return <DialogueTypes.oauth {...display} />
+                return (<DialogueTypes.oauth 
+                    onOAuthStart={()=>{
+                        this.setState({ keep: true });
+                    }} 
+                    onSuccessOAuth={()=>{
+
+                        this.setState({ keep: false });
+                        this.onSubmit();
+                    }} 
+                    onCancelOAuth={()=>{
+                        this.setState({ keep: false });
+                        this.onOpenChange(false);
+                    }} 
+                    {...display} 
+                />)
         }
     }
 
@@ -532,6 +549,14 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             </Space>
         )
     }
+    private onOpenChange(open: boolean) {
+        
+        if (open) {
+            this.relyScrollToBottom()
+        }
+        this.props.onOpenChange(open);
+    
+    }
     public render() {
         return (
             <Popover
@@ -540,14 +565,12 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 overlayClassName='dialogue-popover'
                 trigger={['focus','hover']}
                 content={this.renderContent()}
-                open={this.state.open}
+                open={this.state.keep || this.state.open}
                 mouseLeaveDelay={.8}
                 onOpenChange={(open) => {
-                    if (open) {
-
-                        this.relyScrollToBottom()
+                    if (!this.state.keep){
+                        this.onOpenChange(open);
                     }
-                    this.props.onOpenChange(open);
                 }}
             >
                 {this.props.children}

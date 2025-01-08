@@ -4,17 +4,44 @@ import SmartRequest from '../../../../utils/SmartRequest';
 import SmartAction from '../../../../core/SmartAction';
 import { OpenWindowUtilityOutlined } from '../../../../Icons';
 
-export default function OAuth(props: any) {
-    console.log(props, 'OAuth')
-    return (
-        <Button icon={<OpenWindowUtilityOutlined/>} type="default" size="small" block onClick={() => {
-            
-            SmartAction.doAction({
-                smartaction: 'window',
-                url: SmartRequest.getRequestURI(props.url)
-            }, () => {
+interface OAuthProps {
+    onOAuthStart: () => void;
+    onSuccessOAuth: () => void;
+    onCancelOAuth: () => void;
+    title: string;
+    url: string;
+}
 
-            })
-        }}>{props.title}</Button>
-    )
+interface OAuthState {  
+    keep: boolean;
+}
+export default class OAuth extends React.Component<OAuthProps, OAuthState> {
+    constructor(props: OAuthProps) {
+        super(props);
+        this.state = {
+            keep: false
+        }
+    }
+    public onClick = () => {
+        this.props.onOAuthStart();
+        this.setState({ keep: true });
+        SmartAction.doAction({
+            smartaction: 'window',
+            url: SmartRequest.getRequestURI(this.props.url)
+        }, (error) => {
+            console.log('success',error)
+            this.props.onSuccessOAuth();
+            this.setState({ keep: false });
+        }, ()=>{
+            console.log('error')
+            this.props.onCancelOAuth();
+            this.setState({ keep: false });
+        })
+    }
+    render() {
+        let props: any = this.props;
+        return (
+                <Button loading={this.state.keep} icon={<OpenWindowUtilityOutlined/>} type="default" size="small" block onClick={this.onClick}>{props.title}</Button>
+        )
+    }
 }
