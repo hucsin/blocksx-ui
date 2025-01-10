@@ -594,13 +594,14 @@ export default class FormerTable extends React.Component<IFormerTable, {
                         footer={this.renderSummary}
                     />
                 
-                <Former
+                {this.state.visible && <Former
                     type={formerType}
                     title={this.getDefaultTitle()}
                     icon="GoogleSheetsBrandFilled"
                     value={this.state.record || {}}
                     visible={this.state.visible}
                     onVisible={(visible)=> {
+                        console.log(visible,33)
                         this.setState({
                             visible
                         })
@@ -642,7 +643,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
                         })
                     }}
 
-                ><span className='table-former-footer' >1</span></Former>
+                ><span className='table-former-footer' >1</span></Former>}
             </div>
             </Tooltip>
         )
