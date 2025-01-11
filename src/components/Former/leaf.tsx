@@ -80,6 +80,7 @@ interface TLeaf {
 interface IControl {
     when?: string[] | any;
     show?: string[];
+    direct?: boolean;
     hide?: string[];
     patch?: any;
     validation?: any;
@@ -179,6 +180,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             }, () => {
                 // console.log('this.state.value', this.state.value)
                 // dealControl
+                
                 if (this.props['x-control']) {
                     this.dealControl(newProps.value, this.props['x-control']);
                 }
@@ -546,12 +548,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     private onDealControl(control: IControl) {
 
         let { hide = [], show = [], patch = {} } = control;
-
+        
         let controlHideInfo = this.getControlInfo(hide);
         let controlShowInfo = this.getControlInfo(show);
         let controlPatchInfo = this.getControlInfo(Object.keys(patch))
 
-        console.log(hide,controlHideInfo, show,controlShowInfo , 33333, '#741')
 
         let controlHide = this.state.controlHide || [];
         let controlPatch = {};
@@ -573,6 +574,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             controlHide = controlHide.filter((it: string) => controlShowInfo.controlList.indexOf(it) == -1)
         }
 
+        this.props.former.hiddenMap = controlHide;
         this.setState({
             controlHide: controlHide,
             controlPatch: controlPatch
@@ -712,57 +714,81 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         return false;
     }
     private dealControl(value: any, controlList: IFormerControl) {
+        let { fieldKey } = this.props;
         let showList: any[] = [];
         let hideList: any[] = [];
         let patchList: any = {};
 
         if (this.props.onDealControl) {
+            // TODO 目前是临时方案
+            if (!this.props.former.hiddenMap.includes(fieldKey)) {
+            
+                controlList.forEach((control: IControl) => {
 
-            controlList.forEach((control: IControl) => {
-
-                let { when = [], hide = [], show = [] } = control;
-                // 支持 ['a','b'], true, false, 
-                
-                if (utils.isArray(when) || utils.isBoolean(when) || utils.isPlainObject(when)) {
-                    // 当存在值的时候
-                    // 简单判断值是否存在，不做模糊匹配
-                    let dependMatch: boolean = this.matchDepend(when);
-                    if (utils.isPlainObject(when)) {
-                        when = when.value;
-                    }
-
-                    let matchValue: boolean =  utils.isBoolean(when) ? utils.isValidValue(value) : when.indexOf(value) > -1;
-
-                    if (matchValue && dependMatch) {
-                        showList = showList.concat(show);
-                        hideList = hideList.concat(hide);
-
-                        // TODO 处理 validation 级联情况
-                        if (control.patch) {
-                            let hotPatch: any = this.getTrueHotPatch(control.patch);
-                            
-                            Object.assign(
-                                patchList, {
-                                    ...hotPatch
-                                }
-                            )
+                    let { when = [], hide = [], show = [], direct= false } = control;
+                    // 支持 ['a','b'], true, false, 
+                    
+                    if (utils.isArray(when) || utils.isBoolean(when) || utils.isPlainObject(when)) {
+                        // 当存在值的时候
+                        // 简单判断值是否存在，不做模糊匹配
+                        let dependMatch: boolean = this.matchDepend(when);
+                        if (utils.isPlainObject(when)) {
+                            when = when.value;
                         }
 
+                        let matchValue: boolean =  utils.isBoolean(when) ? utils.isValidValue(value) : when.indexOf(value) > -1;
 
-                        // 不存在值的时候
-                    } else {
-                        showList = showList.concat(hide);
-                        hideList = hideList.concat(show);
+                        if (matchValue && dependMatch) {
+                            //showList = showList.concat(show);
+                            show.map(it => {
+                                !showList.includes(it) && showList.push(it);
+                            })
+                            hide.map(it => {
+                            // if (!show.includes(it)) {
+                                    !hideList.includes(it) && hideList.push(it);
+                                //}
+                            })
+                            //hideList = hideList.concat(hide);
+
+                            // TODO 处理 validation 级联情况
+                            if (control.patch) {
+                                let hotPatch: any = this.getTrueHotPatch(control.patch);
+                                
+                                Object.assign(
+                                    patchList, {
+                                        ...hotPatch
+                                    }
+                                )
+                            }
+
+
+                            // 不存在值的时候
+                        } else {
+                            //showList = showList.concat(hide);
+                            if (!direct){
+                                hide.map(it => {
+                                    //if (!hideList.includes(it)) {
+                                        !showList.includes(it) && showList.push(it);
+                                    //}
+                                })
+                                //hideList = hideList.concat(show);
+                                show.map(it => {
+                                // if (!showList.includes(it)) {
+                                        !hideList.includes(it) && hideList.push(it);
+                                    //}
+                                })
+                            }
+                        }
                     }
-                }
 
-            });
+                });
 
-            this.props.onDealControl({
-                hide: hideList,
-                show: showList,
-                patch: patchList
-            })
+                this.props.onDealControl({
+                    hide: hideList,
+                    show: showList,
+                    patch: patchList
+                })
+            }
         }
     }
 
@@ -888,8 +914,6 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     }
     private isShowObjectKeyByProp(prop: string) {
         let { controlHide } = this.state;
-
-        
 
         return controlHide.indexOf(prop) == -1;
     }

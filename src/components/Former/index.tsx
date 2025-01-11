@@ -141,6 +141,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     private helper: any;
     private helperError: any;
     private cache: any;
+    private hiddenMap: any;
 
     public constructor(props: FormerProps) {
         super(props);
@@ -177,6 +178,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
         this.emitter = new EventEmitter();
         this.emitter.setMaxListeners(1000);
+
+        this.hiddenMap = [];
 
     }
     public removeCache(key: string) {
