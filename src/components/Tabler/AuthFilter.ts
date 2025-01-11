@@ -13,17 +13,17 @@ export default class AuthFilter {
         this.tabler = tabler;
     }
     private matchValue (data: any, item: any): boolean {
-        let { key, value } = item;
+        let { key, value, reverse = false } = item;
         let _value = data[key];
         if (!utils.isUndefined(value)) {
             if (utils.isArray(value)) {
-                return value.indexOf(_value) > -1;
+                return (value.includes(_value) === !reverse);
             } else {
-                return value === _value;
+                return (value === _value) === !reverse;
             }
         }
         
-        return !!_value;
+        return (!!_value) === !reverse;
     }
     public filterAuth (listItem:RowOperate, rowData: any) {
         

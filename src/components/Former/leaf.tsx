@@ -551,6 +551,8 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         let controlShowInfo = this.getControlInfo(show);
         let controlPatchInfo = this.getControlInfo(Object.keys(patch))
 
+        console.log(hide,controlHideInfo, show,controlShowInfo , 33333, '#741')
+
         let controlHide = this.state.controlHide || [];
         let controlPatch = {};
 
@@ -738,6 +740,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         // TODO 处理 validation 级联情况
                         if (control.patch) {
                             let hotPatch: any = this.getTrueHotPatch(control.patch);
+                            
                             Object.assign(
                                 patchList, {
                                     ...hotPatch
@@ -774,7 +777,10 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         propertiesKey.forEach((it: string) => {
             let props = this.properties[it];
             let groupName = props['x-group'];
-            let portal: any = props['x-portal'];
+            
+            let portal: any = this.getPatchByProp(it, 'portal') || props['x-portal'];
+            
+            // TODO
 
             if (portal) {
                 let portalSplit: any = portal.split('.');
@@ -841,6 +847,14 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         } else {
             return this.clone(props);
         }
+    }
+    private getPatchByProp(fieldKey: string, prop?: string) {
+        let { controlPatch = {} } = this.state;
+
+        if (controlPatch[fieldKey]) {
+            return prop ? controlPatch[fieldKey][prop] : controlPatch[fieldKey];
+        }
+        return false;
     }
     private getObjectItemOneOfNode(prop: string) {
         let { value = {} } = this.state;
@@ -1234,10 +1248,12 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             Portal.forEach((it) => {
 
                 let { leafProps } = it;
-                if (['input', 'select', 'date', 'datetime'].indexOf(leafProps.uiType) > -1) {
-                    Compactwrap.push(it)
-                } else {
-                    noCompact.push(it)
+                if (leafProps) {
+                    if (['input', 'select', 'date', 'datetime', 'time', 'number'].indexOf(leafProps.uiType) > -1) {
+                        Compactwrap.push(it)
+                    } else {
+                        noCompact.push(it)
+                    }
                 }
             })
 

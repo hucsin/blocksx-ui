@@ -262,7 +262,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
 
         if (rowoperate) {
             rowoperate = rowoperate.filter(it => {
-                return !it.disabled && (!it.place || it.place != 'list')
+                return !it.disabled && ( it.place == 'article')
             })
             
             if (rowoperate.length) {

@@ -91,6 +91,7 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
                     <DatePicker.RangePicker 
                         size={this.props.size}
                         disabled={disabled}  
+                        width={props.width}
                         value={rangeValue.map(it => dayjs(it, this.state.format)) as any} 
                         format={this.state.format}
                         onChange={this.onChangeValue}
@@ -99,12 +100,14 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
             )
         }
 
-       
         return(<Tooltip title={this.state.errorMessage} placement='topLeft'>
             <DatePicker 
                 disabled={disabled}  
                 size={this.props.size}
                 {...props}
+
+                width={props.width}
+                style={{width: props.width}}
                 status={this.state.errorMessage ? 'error' : ''}
                 showTime={this.isShowTime()}
                 placeholder={this.state.placeholder || this.state.format}

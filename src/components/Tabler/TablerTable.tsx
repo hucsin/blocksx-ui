@@ -396,6 +396,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
                 title: i18n.t('Operate'),
                 fixed: 'right',
                 key: '10002',
+                
                 width: this.getOperateWidth(),
                 render: (text: any, column: any, rowIndex: number) => this.renderColumnAction(column, rowIndex)
             })
@@ -407,7 +408,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
         let length: any = this.props.rowOperateLength;
         if (length) {
             if (length >= 3) {
-                return 140;
+                return 90;
             } else if (length > 1) {
                 return 110;
             }
@@ -529,7 +530,8 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
                     dataSource={this.state.dataSource}
                     ref={this.tableRef}
 
-                    scroll={this.columns.length <= this.props.resizeMaxColumns + 1 ? undefined : { x: this.getTableWidth() }}
+                    //scroll={this.columns.length <= this.props.resizeMaxColumns + 1 ? undefined : { x: this.getTableWidth() }}
+                    scroll={{ x: 'max-content' }}
                     rowSelection={this.isPickMode() && {
                         selectedRowKeys: this.state.selectedRowKeys,
                         onChange: this.onSelectChange,

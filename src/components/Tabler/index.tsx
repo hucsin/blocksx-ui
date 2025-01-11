@@ -107,7 +107,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
      */
     private operateSize = {
         list: 2,
-        table: 3
+        table: 2
     }
 
     private authFilter: AuthFilter
@@ -546,6 +546,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 })
                 //}
                 break;
+            case 'delete':
             case 'remove':
                 this.onRemove(rowData)
                 break;
@@ -739,7 +740,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             actionNode.push(more);
         }
 
-        return <Space size="small">{actionNode}</Space>
+        return <Space size={4}>{actionNode}</Space>
 
     }
     private renderBatchMenu(actionList: any[], column?: any, rowIndex?: any, callback?: Function) {
