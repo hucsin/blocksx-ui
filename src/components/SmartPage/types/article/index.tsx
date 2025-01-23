@@ -298,7 +298,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
         let { value = {} } = this.state;
         return (
             <div className='ui-smartpage-article-title'>
-                <Typography.Title level={3}>{this.renderByPlace('avatar')}{this.state.title || this.renderByPlace('title')}</Typography.Title>
+                <Typography.Title level={3}>{this.renderByPlace('avatar')} {this.state.title || this.renderByPlace('title')}</Typography.Title>
                 <div className='ui-smartpage-article-des'>
                     {this.state.summary || this.renderByPlace('summary')}
                     {this.state.storagelink && this.renderStorageLink()}
@@ -354,7 +354,6 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                             onInitPage={(data)=> {
                                 
                                 let { pageMeta = {}, uiType } = data;
-                                
                                 this.setState({
                                     storagelink: pageMeta.storagelink,
                                     title: pageMeta.title,

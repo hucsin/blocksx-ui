@@ -47,6 +47,7 @@
             z-index: 2;
             line-height: 12px;
             transform: scale(.8);
+           
             .anticon {
                 font-size:12px;
             }
@@ -142,6 +143,9 @@
             font-weight: bold;;
             width: 32px;
             display:inline-block;
+            &:empty {
+                display:none;
+            }
         }
         border: 1px solid var(--main-border-color);
         border-radius: 12px;

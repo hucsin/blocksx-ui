@@ -656,7 +656,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     private renderCreateAt(rowData: any) {
         
         if (rowData.createdAt && this.state.mode =='default') {
-            return (<Tooltip placement="top" title={"Created: " + BaseUtil.formatDate(rowData.createdAt, 'YYYY/MM/DD HH:mm:ss ddd')}>
+            return (<Tooltip placement="top" title={utils.isMobileDevice() ? '' : "Created: " + BaseUtil.formatDate(rowData.createdAt, 'YYYY/MM/DD HH:mm:ss ddd')}>
                 <span className='ui-createdat-wrapper'>
                     {BaseUtil.formatSampleDate(rowData.createdAt, 'YYYY/MM/DD')}
                 </span>

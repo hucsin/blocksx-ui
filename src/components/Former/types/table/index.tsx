@@ -608,7 +608,7 @@ export default class FormerTable extends React.Component<IFormerTable, {
                     }}
                     schema={this.getDefaultSchema()}
                     viewer={this.state.formerViewer}
-                    column={'two'}
+                    column={utils.isMobileDevice() ? 'one': 'two'}
                     placement={'rightTop'}
                     key={this.getFormerKey()}
                     width={formerType == 'popover' ? 450 : 700}

@@ -22,6 +22,8 @@ export { default as MiniFlow  } from './ScenFlow/MiniFlow';
 
 //export const MiniFlow = lazy(() => import('./ScenFlow/MiniFlow'));
 export { default as RouterLayout } from './RouterLayout';
+export { default as RouterDirect } from './RouterDirect';
+
 export { default as LoginForm } from './LoginForm';
 export { default as ErrorMessage } from './ErrorMessage';
 export { default as Tabler } from './Tabler';

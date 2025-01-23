@@ -711,7 +711,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
         })
 
         if (actionMore.length > 0) {
-            if (this.props.type == 'list') {
+            //if (this.props.type == 'list') {
                 return (
                     <Dropdown.Button
                         disabled={disabled}
@@ -725,8 +725,8 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                         {actionList[0].name}
                     </Dropdown.Button>
                 )
-            }
-
+            //}
+            /*
             let more = (
                 <Dropdown
                     disabled={disabled}
@@ -737,7 +737,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                     <Button size='small' disabled={true} type="link" >···<DownOutlined /></Button>
                 </Dropdown>
             )
-            actionNode.push(more);
+            actionNode.push(more);*/
         }
 
         return <Space size={4}>{actionNode}</Space>

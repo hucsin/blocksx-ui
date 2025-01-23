@@ -68,7 +68,8 @@ export default class FormerGroupItem extends React.Component<{
 
                 <div className={classnames('former-group-item-content', {
                     'former-group-item-hidden': this.state.collapse,
-                    'former-group-item-border': this.props.title
+                    'former-group-item-border': this.props.title,
+                    [`former-group-length-${this.props.children.length}`]: true
                 })}>
                     {this.props.children}
                 </div>

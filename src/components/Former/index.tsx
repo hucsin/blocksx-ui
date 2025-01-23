@@ -705,7 +705,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     public renderTitle() {
         let RenderContent: any = (
-            <Space size={0} className='ui-former-header'>
+            <Space size={4} className='ui-former-header'>
                 {this.state.icon && this.renderIcon()}
                 {this.state.title || 'Edit record'}
             </Space>

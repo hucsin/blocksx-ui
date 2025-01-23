@@ -1,10 +1,11 @@
 import React from 'react';
-import { ConfigProvider } from 'antd';
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { utils } from '@blocksx/core'
+
 import { WithRouterSmartPage }  from '../SmartPage';
 import { WithRouterSmartPageGroup } from '../SmartPage/group';
 import SmartRequest from '../utils/SmartRequest';
-import { utils } from '@blocksx/core'
+
 
 import PageLayout from './Layout';
 

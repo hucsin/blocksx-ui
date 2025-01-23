@@ -399,7 +399,6 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
     private getDefaultNotice() {
         let { pageMeta = {}} = this.props;
         let { notice, noticeIcon } = pageMeta;
-        
         if (notice ) {
             if (utils.isString(notice)) {
                 notice = {
@@ -409,7 +408,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             
             return {
                 ...notice,
-                icon: noticeIcon
+                icon: noticeIcon || notice.icon ||  pageMeta.icon
             }
         }
         let { schema={}} = this.state;
@@ -850,8 +849,8 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                     this.props.onInit && this.props.onInit(former);
                 }}
                 autoclose = {false}
-                column = {this.props.column ? this.props.column as any : 'two'}
-                width = {this.props.width || (this.props.column =='one' ? 500 : 700)}
+                column = {utils.isMobileDevice() ? 'one' : this.props.column ? this.props.column as any : 'two'}
+                width = {utils.isMobileDevice() ? 900 : this.props.width || (this.props.column =='one' ? 500 : 700)}
                 onClose={(isInitiate?: any) => {
                     if (isInitiate) {
                         if (this.cancelDoback()) {

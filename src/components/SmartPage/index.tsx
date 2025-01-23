@@ -540,6 +540,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     public renderContentView() {
         let { pageMeta, meta = {} } = this.state;
         let pageInfo: any = meta.page || {};
+
         
         return SmartPageUtils.renderPageType(this.state.uiType, {
             id: this.state.id,
