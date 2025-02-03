@@ -16,7 +16,8 @@ import tools from '../../core/utils';
 import TablerUtils from '../../../utils/tool';
 import ValidMessage from './validMessage';
 import MessageContext, { MessageBody } from '@blocksx/core/es/MessageContext';
-import './style.scss'
+import './style.scss';
+import SmartRequest from '../../../utils/SmartRequest';
 
 interface DialogueProps {
     name: string;
@@ -50,6 +51,8 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
     private inputRef: any;
     private messageContext: MessageContext;
 
+    private efficiencyRequest: any = SmartRequest.makeGetRequest('/eos/abilities/getAbilities');
+
     public constructor(props: any) {
         super(props)
 
@@ -73,9 +76,12 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
 
     }
 
+
     public UNSAFE_componentWillReceiveProps(nextProps: any) {
-        if (nextProps.efficiency !== this.state.efficiency) {
-            this.setState({ efficiency: nextProps.efficiency });
+        if (nextProps.efficiency) {
+            if (nextProps.efficiency !== this.state.efficiency) {
+                this.setState({ efficiency: nextProps.efficiency });
+            }
         }
         if (nextProps.open !== this.state.open) {
             this.setState({ open: nextProps.open });
@@ -86,6 +92,13 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
     }
     public componentDidMount() {
         //this.scrollToBottom();
+
+        this.efficiencyRequest({}).then((result)=> {
+            
+            this.setState({
+                efficiency: result
+            })
+        })
     }
     private scrollToBottom() {
         if (this.scrollRef.current) {
@@ -123,7 +136,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             },
             ...messages
         ];
-
+        console.log(messages, 3332)
         if (this.state.calling) {
 
             messages.push({
@@ -393,7 +406,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
 
                             this.onSubmit({
                                 ...assistant,
-                                type: 'user',
+                                role: 'user',
                             });
                         }
                     }}
@@ -404,6 +417,8 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 return <DialogueTypes.thinking />
             case 'value':
                 return <DialogueTypes.value value={display.value || item.value} />
+            case 'link':
+                return <DialogueTypes.link {...display.value} />
             case 'oauth':
                 return (<DialogueTypes.oauth 
                     onOAuthStart={()=>{

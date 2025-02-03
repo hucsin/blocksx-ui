@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Spin } from 'antd';
+import { Spin, Empty } from 'antd';
 
 import { utils } from '@blocksx/core';
 
@@ -12,7 +12,7 @@ import { WithRouterSmartPageGroup } from '../SmartPage/group';
 
 import './device.scss';
 
-export default class RouterDirect extends React.Component<{pageComponentMap: any}, {loading: boolean, router: any, message: string}> {
+export default class RouterDirect extends React.Component<{pageComponentMap: any, router: string}, {loading: boolean, router: any, message: string}> {
     private onFetchPageTree: any = SmartRequest.makeGetRequest('/eos/resources/findTree');
     public constructor(props: any) {
         super(props);
@@ -24,8 +24,8 @@ export default class RouterDirect extends React.Component<{pageComponentMap: any
         }
     }
     public componentDidMount() {
-
-        let router: any = window.location.pathname.replace(/\/h5/, '');
+        let router = this.props.router;
+        //let router: any = window.location.pathname.replace(/\/h5/, '');
 
         this.onFetchPageTree({}).then((result) => {
             if (utils.isValidArray(result)) {
@@ -40,6 +40,11 @@ export default class RouterDirect extends React.Component<{pageComponentMap: any
                     message: 'Invalid request parameters. Please check the information.'
                 })
             }
+        }).catch(e => {
+            
+            this.setState({
+                message: e
+            })
         })
     }
     private renderRouterItem = (router: any, index: number)=> {
@@ -65,23 +70,37 @@ export default class RouterDirect extends React.Component<{pageComponentMap: any
 
     }
     public renderMain() {
-        return (
-            <Spin spinning={!this.state.router}>
+
+        if (this.state.message) {
+
+            return (
                 <div className='router-direct-wrapper'>
-                    { this.state.router ? <div className='logo'><Icons.AnyhubsBrandFilled/></div> : null}
-                    {
-                        this.state.router ? this.renderRouterItem(this.state.router, 0) : <div className='router-loading'>loading</div>
-                    }
+                    <div className='logo' id="top"><Icons.AnyhubsBrandFilled/><span className='ui-text'>anyhubs</span></div>
+                   <Empty
+                    description={this.state.message}
+                   />
                 </div>
-            </Spin>
-        )
+            )
+
+        } else {
+            return (
+                <Spin spinning={!this.state.router}>
+                    <div className='router-direct-wrapper'>
+                        { this.state.router ? <div className='logo' id="top"><Icons.AnyhubsBrandFilled/></div> : null}
+                        {
+                            this.state.router ? this.renderRouterItem(this.state.router, 0) : <div className='router-loading'>loading</div>
+                        }
+                    </div>
+                </Spin>
+            )
+        }
     }
     public render() {
         
         return (
             <BrowserRouter>
                 <Routes>
-                    <Route path={window.location.pathname} element={this.renderMain()}></Route>
+                    <Route path={location.pathname} element={this.renderMain()}></Route>
                 </Routes>
             </BrowserRouter>
         )

@@ -8,9 +8,11 @@ import { message as MessageFor } from 'antd';
 
 class SmartRequest {
     
-
+    public globalParams:any;
+    
     public constructor() {
         //Request.axios.defaults.headers.common['x-eos-encrypt'] = true;
+        this.globalParams = {};
     }
     private getValidParmas(params: any) {
         let value: any = {}
@@ -19,6 +21,11 @@ class SmartRequest {
                 value[prop] = params[prop]
             }
         }
+
+        Object.keys(this.globalParams).forEach(it => {
+            value[it] = this.globalParams[it]
+        })
+
         return value;
     }
     
@@ -75,12 +82,15 @@ class SmartRequest {
             return zone.split('_')
         } else {
             // 跳转到登陆页
-            window.location.href= "/login"
+            if (!utils.isMobileDevice()) {
+                window.location.href= "/login"
+            }
         }
     }
     public getRequestURI(url: string) {
 
         let host: string = location.hostname.replace(/^(www|console)\./,'');
+
 
         if (url.match(/^https:\/\//)) {
             return url;
@@ -117,13 +127,16 @@ class SmartRequest {
             }
         }
     }
+    public setGlobalParmas(key:string, value: string) {
+        this.globalParams[key] = value;
+    }
     /**
      * 创建request请求
      */
     public getHeaders() {
        
         return {
-            'Accept': 'application/json, text/plain, */*'
+            'Accept': 'application/json, text/plain, */*',
         }
     }
     public makePostRequest(url: string, fields?: any) {
@@ -149,14 +162,18 @@ class SmartRequest {
                         resolve(result)
                     } else {
                         // 302 跳转
-                        if (code == 302) {
-                            window.location.href = result.url;
-                        } else if (code == 401) {
-                            window.location.href= '/login'
-                        } else {
-                            if (message) {
-                                MessageFor.error(message)
+                        if (!utils.isMobileDevice()) {
+                            if (code == 302) {
+                                window.location.href = result.url;
+                            } else if (code == 401) {
+                                window.location.href= '/login'
+                            } else {
+                                if (message) {
+                                    MessageFor.error(message)
+                                }
+                                reject(message)
                             }
+                        } else {
                             reject(message)
                         }
                     }
@@ -195,24 +212,27 @@ class SmartRequest {
                     
                     // 正常响应
                     if (code == 200) {
-                       // call && call(inputParams, result);
                         resolve(result)
                     } else {
                         // 302 跳转
-                        if (code == 302) {
-                            window.location.href = result.url;
-                        }  else if (code == 401) {
-                            window.location.href= '/login'
-                        } else {
-                            if (message) {
-                                MessageFor.error(message)
+                        if (!utils.isMobileDevice()) {
+                            if (code == 302) {
+                                window.location.href = result.url;
+                            }  else if (code == 401) {
+                                window.location.href= '/login'
+                            } else {
+                                if (message) {
+                                    MessageFor.error(message)
+                                }
+                                reject(message)
                             }
+                        } else {
                             reject(message)
                         }
                     }
                 }).catch((e: any,) => {
                     let message: string = this.getTrueMessage(e.message || e || 'system error');
-                    MessageFor.error(message);
+                    !utils.isMobileDevice() &&  MessageFor.error(message);
                     reject(message)
                 })
             })

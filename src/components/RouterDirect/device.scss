@@ -1,5 +1,6 @@
 .router-direct-wrapper {
     padding-top: 4px;
+    min-height: 100%;
     &::after {
         content: " ";
         display:block;
@@ -11,12 +12,25 @@
         top: 0px;
         left: 0;
     }
+    
+        .ant-empty {
+            margin-top: 46.8%
+        }
+    
     .logo {
         position: absolute;
         color:var(--main-bg-color);
         font-size:38px;
         left: 11px;
         top: 4px;
+        span {
+            vertical-align: middle;;
+        }
+        .ui-text {
+            font-size:20px;
+            line-height: 38px;
+            display: inline-block;
+        }
     }
 }
 .router-loading {
@@ -88,6 +102,15 @@
             display:none;
         }
     }
+    .ui-smartpage-article-toolbar {
+        .tabler-batch-add {
+            .ant-btn-primary:not([disabled]) {
+                border: 1px solid var(--color) !important;
+                color: var(--color) !important;
+                
+            }
+        }
+    }
     .ui-smartpage-wrapper .ui-classify-wrapper {
         padding: 0 12px;
     }
@@ -132,7 +155,12 @@
     .ui-classify-panel .ant-tabs-top {
         padding-top: 8px;
     }
-    .ant-list .ant-list-item .ant-list-item-meta {
+    .former-object-item-content {
+        .ant-list .ant-list-item .ant-list-item-meta  {
+            align-items: center;
+        }
+    }
+    .ui-mircotable .ant-list .ant-list-item .ant-list-item-meta {
 
         .ant-list-item-meta-title {
             margin-bottom: 0;
@@ -200,7 +228,8 @@
             .ui-smartpage-article-toolbar ,
             .tabler-batch-add {
                 button {
-                    padding: 0 8px;
+                    height: 26px;
+                    padding: 0 4px;
                    > span:not(.ant-btn-icon){
                         display:none;
                     }
@@ -215,8 +244,11 @@
         }
 
         .ui-smartpage-article .ui-smartpage-article-title .ui-smartpage-article-toolbar {
-            top: -50px;
+            top: -46px;
             right: 0;
+            > span {
+                vertical-align: top;
+            }
         }
         .ui-smartpage-article .ui-smartpage-article-content {
             padding-right: 0;
@@ -253,9 +285,18 @@
 
     /*弹窗*/
     .ant-drawer .ant-drawer-header {
-        border-top: 4px solid var(--main-bg-color);
 
         padding: 11px 12px;
+    }
+    .ant-drawer .ant-drawer-title {
+        >.ant-space {
+            .ant-avatar {
+                background-color: #ccc !important;
+            }
+        }
+    }
+    .ant-drawer .ant-drawer-content {
+        border-top: 4px solid var(--main-bg-color)
     }
     .ant-drawer .ant-drawer-body {
         .ui-former-notice {
@@ -278,5 +319,22 @@
                 padding-right: 0;
             }
         }
+    }
+    .login-form-wrapper.login-form-light {
+        .login-form-bg,
+        
+        .login-logo {
+            display:none;
+        }
+    }
+    .login-form-inner {
+        border-top: 7px solid var(--main-bg-color);
+    }
+    .login-prompt {
+        display:none;
+    }
+
+    .ui-classify-panel > .ui-header .ui-title {
+        text-transform: uppercase;
     }
 }

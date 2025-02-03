@@ -533,7 +533,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         }
     }
     private onSelectedValue = (value: any) => {
+        
         if (this.props.onSelectedValue) {
+            
             return this.props.onSelectedValue(value)
         }
     }
@@ -541,7 +543,6 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         let { pageMeta, meta = {} } = this.state;
         let pageInfo: any = meta.page || {};
 
-        
         return SmartPageUtils.renderPageType(this.state.uiType, {
             id: this.state.id,
             key: this.state.id,
@@ -585,8 +586,14 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
             onGetRequestParams: this.getQueryParams,
             onOptionalOpen: this.state.optional ? (close) => {
+                
                 this.setState({
                     optionalOpen: !close ? true : false
+                }, ()=> {
+                    if (!close && utils.isMobileDevice()) {
+                        let topdom: any = document.getElementById('top');
+                        topdom && topdom.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
                 })
             } : null,
             onClose: this.onClose

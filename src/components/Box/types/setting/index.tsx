@@ -8,6 +8,7 @@ import BoxSettingSelect from './components/select';
 import BoxSettingAvatar from './components/avatar';
 import BoxSettingSwitch from './components/switch';
 import BoxSettingButton from './components/button';
+import BoxSettingQrcode from './components/qrcode';
 
 import BoxManger from '../../BoxManger';
 
@@ -69,6 +70,8 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
     public renderAction(setting: any, value?: any, valueKey?: string) {
         
         switch (setting.type) {
+            case 'qrcode':
+                return <BoxSettingQrcode {...setting} value={value} object={this.props.value} />
             case 'button':
                 return <BoxSettingButton {...setting} value={value} object={this.props.value}  />
             case 'switch':

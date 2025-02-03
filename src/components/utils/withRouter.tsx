@@ -92,7 +92,7 @@ export default function withRouter(WrapperComponent: any) {
         
         const location = useLocation();
         routerData.utils = new RouterUtils(routerData);
-        
+        window['RouterUtils'] = routerData.utils;
         routerData.naviagte = naviagte;
         routerData.params = params || {};
         routerData.location = location;

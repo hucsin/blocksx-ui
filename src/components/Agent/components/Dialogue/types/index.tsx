@@ -6,3 +6,4 @@ export { default as feedback } from './feedback/index';
 export { default as efficiency } from './efficiency/index';
 export { default as calling } from './calling';
 export { default as oauth } from './oauth';
+export { default as link } from './link';

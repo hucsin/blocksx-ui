@@ -542,7 +542,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     private renderLeaf() {
         let { schema = {}, classify, visible, column, notice } = this.state;
-
+        
         if (!schema && !visible) {
             return null;
         }
@@ -551,7 +551,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
 
         return (
-            <div className={
+            <div  className={
                 classnames({
                     [`former-column-${column}`]: true
                 })
@@ -763,6 +763,8 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                     </Modal>
                 )
             case 'drawer':
+                let { notice = {}} = this.state;
+                let icon: string = notice.icon || ''
                 return (
                     <Drawer
                         title={this.renderTitle()}
@@ -775,6 +777,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                             'ui-former': true,
                             //[`drawer-type-${this.props.size}`]: true
                         })}
+                        style={{
+                            borderColor: icon && ('#' +icon.split('#')[1])
+                        }}
 
                         footer={
                             <Popover

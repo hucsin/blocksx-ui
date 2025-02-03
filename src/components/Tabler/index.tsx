@@ -843,7 +843,9 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
 
             let battchList = this.getBatchAction();
             let battchAddList = this.getBatchAddAction();
-
+            
+            let { pageMeta = {} } = this.props;
+            let icon: string = pageMeta.icon || '';
             return (
                 <Space size={this.props.searchSize}>
 
@@ -853,7 +855,9 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                         </div>
                         : null}
                     {/* 新增操作 */}
-                    <div className="tabler-batch-add">
+                    <div className="tabler-batch-add" style={{
+                        '--color': icon&& ('#'+icon.split('#')[1])
+                    } as any}>
                         {this.renderBatchAddList(battchAddList)}
                     </div>
                 </Space>
