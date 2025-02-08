@@ -211,7 +211,7 @@ export default class Siderbar extends React.Component<SidebarProps, sidebarState
                         <dl>
                             <dd onClick={this.goFirstMenu}>
                                 <HoofsIcons.ArrowLeftOutlined/>
-                                <span className='hoofs-sidebar-menu-text'>{i18n.join('return', this.state.firstMenu.name)} </span>
+                                <span className='hoofs-sidebar-menu-text'>{i18n.join(this.state.firstMenu.name)} </span>
                             </dd>
                         </dl>
                     }

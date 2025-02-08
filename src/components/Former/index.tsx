@@ -437,7 +437,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     private getSafeValue(_value?: any) {
         let { schema = {}, value } = this.state;
-        let safeKeys: any = Object.keys(schema.properties)
+        let safeKeys: any = ['id',...Object.keys(schema.properties)]
 
         return utils.pick(_value || value, safeKeys)
     }

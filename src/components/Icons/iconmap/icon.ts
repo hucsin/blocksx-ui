@@ -40,6 +40,22 @@ export const map:any = {
         "TomorrowBrandOutlined",
         "WorldnewsapiBrandOutlined"
     ],
+    "avator": [
+        "Avator01AvatorFilled",
+        "Avator02AvatorFilled",
+        "Avator03AvatorFilled",
+        "Avator04AvatorFilled",
+        "Avator05AvatorFilled",
+        "Avator06AvatorFilled",
+        "Avator07AvatorFilled",
+        "Avator08AvatorFilled",
+        "Avator09AvatorFilled",
+        "Avator10AvatorFilled",
+        "Avator11AvatorFilled",
+        "Avator12AvatorFilled",
+        "Avator13AvatorFilled",
+        "Avator14AvatorFilled"
+    ],
     "utility": [
         "CalendarUtilityFilled",
         "ConnectUtilityFilled",
@@ -55,6 +71,7 @@ export const map:any = {
         "MarkUnreadUtilityFilled",
         "NarrowUtilityFilled",
         "NoteUtilityFilled",
+        "PersonaUtilityFilled",
         "ProductUtilityFilled",
         "PublishUtilityFilled",
         "RemoveUtilityFilled",
@@ -128,6 +145,7 @@ export const map:any = {
         "OneOfUtilityOutlined",
         "OpenWindowUtilityOutlined",
         "OptionsUtilityOutlined",
+        "PersonaUtilityOutlined",
         "PickUtilityOutlined",
         "PluginUtilityOutlined",
         "PowerUpUtilityOutlined",

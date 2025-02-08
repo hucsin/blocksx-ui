@@ -181,8 +181,10 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
 
         // 在原来的schema上加上新的
         if (schema) {
+            
             let trueSchema:any = utils.copy(schema.other ? schema.other : schema);
             let hasdyschema: any =  dyschema.properties && Object.keys(dyschema.properties).length > 0;
+            
             if (trueSchema) {
                 if (nextKey) {
                     if (hasdyschema) {
@@ -378,7 +380,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                 fields,
                 firstField: firstFields[0] || {},
                 firstStep: TablerUtils.getDefaultSchema(firstFields),
-                other: TablerUtils.getDefaultSchema(this.splitStepField(fields))
+                other: TablerUtils.getDefaultSchema([...this.splitStepField(fields), ...this.converHidenFields(firstFields)])
             }
 
         } else {
@@ -386,9 +388,22 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             return TablerUtils.getDefaultSchema(fields);
         }
     }
+    private converHidenFields(fields) {
+        
+        return utils.copy(fields).map(it =>{
+            return {
+                ...it,
+                uiType: 'hidden',
+                'ui-type': 'hidden',
+                hidden: true
+            }
+        })
+    }
     private splitStepField(fields: any ,isFirst?: boolean) {
+
         return fields.filter(field => {
-            return  isFirst ? field.step : (!field.step || field.step == 'all')
+            return  isFirst 
+                ? field.step : (!field.step || field.step == 'all')
         })
     }
     private getDefaultId() {
@@ -640,7 +655,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
            // })
         }
         
-
+        
         this.setState({
             value: value
         })

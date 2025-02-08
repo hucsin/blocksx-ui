@@ -12,7 +12,8 @@
         >.former-object-item-label {
             >.former-object-label-title {
                 position: relative;
-
+                font-weight: bold;;
+                /*
                 &:before {
                     content: "*";
                     position: absolute;
@@ -25,7 +26,7 @@
                     margin-top: -6px;
                     color: red;
                     opacity: .4
-                }
+                }*/
             }
         }
     }

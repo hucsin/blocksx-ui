@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import { Avatar, Space, Tooltip } from 'antd';
 import { utils } from '@blocksx/core';
 
@@ -71,10 +72,13 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
                 return (<Tooltip  key={icon} title={tips}><Avatar 
                  shape = {props.shape}
                  key={icon}
+                 className={classnames({
+                    'ui-avatar-type-avatar': this.props.type == 'avatar'
+                 })}
                  size = {props.size} style={{
                     background: this.props.reverseColor ? trueFontColor :trueBackgroundColor, 
                     
-                    fontSize: props.size > 20 ? props.size* 2/3 :  props.size * 2/3 ,
+                    fontSize: this.props.type == 'avatar' ? 64 :props.size > 20 ? props.size* 2/3 :  props.size * 2/3 ,
                     borderColor: this.props.reverseColor ? trueBackgroundColor : undefined,
                     color: this.props.reverseColor ? trueBackgroundColor: trueFontColor,
                     ...props.style,
@@ -111,11 +115,12 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
         return  props;
     }
     public render() {
+
         
         let props: any = this.getProps();
         let icon: any  = props.value || props.icon || props.url;
         let subsize: number = this.getSubSize();
-        
+
         if (Array.isArray(icon)) {
 
             if (utils.isArrayObject(icon)) {

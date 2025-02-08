@@ -13,6 +13,7 @@ export { default as time } from './time';
 
 export { default as range } from './range';
 export { default as avatar } from './avatar';
+export { default as avatarpicker } from './avatarpicker';
 export { default as array } from './array';
 export { default as object } from './object';
 export { default as input } from './input';

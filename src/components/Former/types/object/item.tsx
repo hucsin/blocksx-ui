@@ -122,6 +122,9 @@ export default class FormerObjectItem  extends React.Component<IFormerObjectItem
         let descriptionText: any = this.getDescriptionText();
         let tooltip: string = this.props.tooltip || this.props.notice;
         
+        if (this.props.hidden) {
+            return <div style={{display:'none'}}>{this.props.children}</div>;
+        }
         return (
             <div 
                 className={classnames('former-object-item', {

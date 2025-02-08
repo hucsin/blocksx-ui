@@ -83,11 +83,12 @@ export default class FormerTextarea extends React.Component<IFormerTextarea, { d
     }
 
     public render() {
+        let props: any = this.props['x-type-props'] || this.props['props'] || {};
         return (
             <Tooltip title={this.state.errorMessage} placement='topLeft'>
                 <Input.TextArea status={this.getStatus()} autoSize={{
-                    minRows: 2,
-                    maxRows: 3
+                    minRows: props.minRows || 2,
+                    maxRows: props.maxRows || 3
                 }} {...this.props['x-type-props']} disabled={this.state.disabled || this.props.disabled}  value={this.state.value} onChange={this.onChange} />
             </Tooltip>
         )

@@ -113,7 +113,7 @@
     width: 245px;
     height: 100%;
     color:var(--main-front-color, #333);
-    font-size:16px;
+    font-size:20px;
     position: relative;
     z-index: 110;
 
@@ -132,7 +132,7 @@
     }
 
     dd {
-        height: 21px;
+        height: 28px;
         word-break: break-all;
         white-space: nowrap;
         text-overflow: ellipsis; 

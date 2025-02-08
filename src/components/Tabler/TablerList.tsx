@@ -427,7 +427,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         return avatars;
     }
     private getAvatarsByRowData(rowData: any,rowIndex: number, avatarField:any) {
-        
+            console.log(this.props.avatar)
         if (avatarField) {
             let avatarData: any = rowData[avatarField.key];
 
@@ -447,6 +447,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                     return icon ? {
                         icon: icon,
                         //type: icon.match(/[\/\.]/) ? 'img' : 'icon',
+                        type: this.props.avatar,
                         color: temp.color
                     } : false;
                 }).filter(Boolean));
@@ -495,9 +496,10 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 if (this.props.layout == 'connections' || this.props.avatar ==='connections') {
                     return (
                         <span className='ui-mircotable-avatar-con'>
-                            <FormerTypes.avatar  reverseColor={this.isReverseColor(rowData)} key={1} type="string" viewer={true}  icon={this.props.icon} size={40} />
-                            <Icons.ConnectionsDirectivityOutlined key={2} />
                             <FormerTypes.avatar  reverseColor={this.isReverseColor(rowData)} key={3} type="string" {...avatars[0]} size={40} />
+                            <Icons.ConnectionsDirectivityOutlined key={2} />
+                            <FormerTypes.avatar  reverseColor={this.isReverseColor(rowData)} key={1} type="string" viewer={true}  icon={this.props.icon} size={40} />
+                            
                         </span>
                     )
                 }

@@ -154,7 +154,9 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         //this.props.onChangeValue && this.props.onChangeValue(this.state.value, 'init');
         this.onChange(this.state.value, 'init')
         // 清空control的影响
+        
         if (this.props['x-control']) {
+            
             this.dealControl(this.state.value, this.props['x-control']);
             
         }
@@ -654,16 +656,19 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         return patch;
     }
     private matchDepend(when: any) {
+        
         if (utils.isPlainObject(when) && utils.isPlainObject(when.depend)) {
             let formerValue: any = this.props.former.getSafeValue() || {};
 
             if (Object.keys(when.depend).some(it => {
                 let dependValue: any = when.depend[it];
                 let value: any =  formerValue[it];
-                return !(utils.isBoolean(dependValue)
-                    ? (
-                        (utils.isValidValue(value)  == false && dependValue == false)
-                         ||(utils.isValidValue(value) == true && dependValue == true) )  
+                
+                return (utils.isBoolean(dependValue)
+                    ? dependValue == false 
+                        ? utils.isValidValue(value) 
+                        : !utils.isValidValue(value) 
+                        
                     : dependValue.includes(value))
 
                  
@@ -718,7 +723,6 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         let showList: any[] = [];
         let hideList: any[] = [];
         let patchList: any = {};
-
         if (this.props.onDealControl) {
             // TODO 目前是临时方案
             if (!this.props.former.hiddenMap.includes(fieldKey)) {
@@ -735,9 +739,9 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                         if (utils.isPlainObject(when)) {
                             when = when.value;
                         }
-
+                        
                         let matchValue: boolean =  utils.isBoolean(when) ? utils.isValidValue(value) : when.indexOf(value) > -1;
-
+                        
                         if (matchValue && dependMatch) {
                             //showList = showList.concat(show);
                             show.map(it => {
