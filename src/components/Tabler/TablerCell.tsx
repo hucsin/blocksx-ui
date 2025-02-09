@@ -24,6 +24,7 @@ export interface TablerCellProps {
     rowIndex: number,
     colIndex: number,
     onClickCell?: Function;
+    onlyview?:boolean
 
 }
 
@@ -161,7 +162,7 @@ export default class TablerCell extends React.Component<TablerCellProps, TablerC
                 <span className={
                     classnames({
                         'tabler-cell-wraper': true,
-                        'tabler-cell-first': this.props.colIndex === 0,
+                        'tabler-cell-first': !this.props.onlyview && this.props.colIndex === 0,
                     })
                 }
                     onClick={this.onClickCell}

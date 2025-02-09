@@ -198,12 +198,12 @@ class SmartRequest {
         return (request: any) => {
             let params = this.getRequestParams(request, fields);
             let query: any = this.getValidParmas(params);
-            
+            console.log(request, params, 23333)
 
             return new Promise((resolve, reject) => {
                 Request.get(this.getRequestURI(url)
                 // @ts-ignore
-                    , (location as any).href.match(/__debug__/) ?{...query, __debug__: true } : {
+                    , (location as any).href.match(/__debug__/ig) ?{...query, __debug__: true } : {
                         _: Encode.encode(JSON.stringify(query))
                     }
                     , this.getHeaders() 

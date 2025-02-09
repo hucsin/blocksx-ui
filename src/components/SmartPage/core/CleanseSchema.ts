@@ -139,7 +139,7 @@ export default class CleanseSchema {
                 props = quick;
                 quick = quick.type;
             }
-            
+            console.log(datasource, 333)
             return {
                 type: quick,
                 field: field.fieldKey,

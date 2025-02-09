@@ -80,7 +80,7 @@ interface TablerValueProps extends TablerProps {
     okText?: string;
     formerOkText?: string;
     okIcon?: string;
-    
+    onlyview?: boolean
 }
 
 /**

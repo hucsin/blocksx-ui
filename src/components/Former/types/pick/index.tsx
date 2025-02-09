@@ -9,9 +9,11 @@ import "./style.scss";
 
 interface FormerPickProps extends IFormerBase {
     fields?: any[];
+    props?: any;
     extendsFor?: any;
     value?: any;
     meta?: any;
+    onlyview: any;
 }
 
 interface FormerPickState {
@@ -100,8 +102,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
         let schema: any = this.getSchema();
         let pageSize: number = this.getDefaultPageSize();
         let defaultParams: any = this.getDefaultParams();
-
-        
+        let { props = {}} = this.props;
         return (
             <div className='ui-pick-wrapper'>
                 <Tabler
@@ -117,6 +118,7 @@ export default class FormerPick extends React.Component<FormerPickProps, FormerP
                     size='small'
                     selectedRowKeys={this.state.value ? [this.state.value]: []}
                     mode="pickone"
+                    onlyview={props.onlyview}
                     onChangeValue={(rowKeys: any, row: any)=> {
                         //this.onSelected(row[0])
                        this.onChange(rowKeys[0])

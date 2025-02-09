@@ -3,6 +3,7 @@
     margin-left: -2px;
     margin-right: -2px;
     text-align: justify;
+
     .former-radio-block-item {
         transition: all .2s;
         &:Hover {
@@ -136,6 +137,9 @@
 }
 .former-radio-card {
     padding-top: 8px;
+    .ant-avatar.ant-avatar-square {
+        border-radius: 12px;;
+    }
     .ant-list-item {
         .former-radio-block-right {
             color: var(--main-bg-color);

@@ -78,7 +78,7 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
                  size = {props.size} style={{
                     background: this.props.reverseColor ? trueFontColor :trueBackgroundColor, 
                     
-                    fontSize: this.props.type == 'avatar' ? 64 :props.size > 20 ? props.size* 2/3 :  props.size * 2/3 ,
+                    fontSize: this.props.type == 'avatar' ? 40 :props.size > 20 ? props.size* 2/3 :  props.size * 2/3 ,
                     borderColor: this.props.reverseColor ? trueBackgroundColor : undefined,
                     color: this.props.reverseColor ? trueBackgroundColor: trueFontColor,
                     ...props.style,

@@ -70,6 +70,7 @@ interface TablerTableProps extends TablerProps {
     mode: any,
     onClickFistCell?: Function;
     next?: string;
+    onlyview?: boolean;
 }
 
 export default class TablerTable extends React.Component<TablerTableProps, TablerState> {
@@ -252,6 +253,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
                         colIndex ={index}
                         editable={multilineEdit === rowIndex && tablerColumn.editable}
                         field={field}
+                        onlyview={this.props.onlyview}
                         onChange={(value: any) => {
                             let multilineDataCache = this.state.multilineDataCache || {};
                             multilineDataCache[field.key] = value;
@@ -262,7 +264,9 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
                         }}
                         onClickCell={()=> {
                             if (index ==0){
-                                this.props.onClickFistCell && this.props.onClickFistCell(record)
+                                if(!this.props.onlyview) {
+                                    this.props.onClickFistCell && this.props.onClickFistCell(record)
+                                }
                             }
                         }}
                     ></TablerCell>
