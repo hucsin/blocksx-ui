@@ -35,9 +35,9 @@
 }
 .tabler-wrapper {
     .former-radio-button label.ui-selected {
-        background: var(--main-active-background-color);
+        background: var(--main-bg-color);
         border-color:var(--main-hover-background-color);
-        color:var(--main-front-color)
+        color:#fff
     }
     .ui-tabler-selected-summary {
         position: absolute;

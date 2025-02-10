@@ -37,7 +37,7 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
         let settings = item.setting || [];
 
         let setting = Array.isArray(settings) ? settings[typeof settingIndex == 'number' ? settingIndex : 0] : settings;
-        
+     
         return (
             <List.Item key={item.email}>
               <List.Item.Meta
@@ -47,7 +47,7 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
               />
               <Space>
                 {this.renderTips(item, value)}
-                {this.renderAction(setting || {}, value[item.valueKey || item.dataKey], item.valueKey || item.dataKey)}
+                {this.renderAction(setting || {}, value[item.valueKey || item.dataKey], item.valueKey || item.dataKey, item)}
               </Space>
             </List.Item>
         )
@@ -67,7 +67,7 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
         }
         return null;
     }
-    public renderAction(setting: any, value?: any, valueKey?: string) {
+    public renderAction(setting: any, value?: any, valueKey?: string, item?: any) {
         
         switch (setting.type) {
             case 'qrcode':
@@ -75,16 +75,24 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
             case 'button':
                 return <BoxSettingButton {...setting} value={value} object={this.props.value}  />
             case 'switch':
-                return <BoxSettingSwitch {...setting} value={value} object={this.props.value} onSubmit={this.onSave} valueKey={valueKey} />
+                return <BoxSettingSwitch {...setting} value={value} object={this.props.value} onSubmit={(key, value)=> {
+                   return this.onSave(key, value, item)
+                }} valueKey={valueKey} />
             case 'avatar':
-                return <BoxSettingAvatar {...setting} value={value} object={this.props.value} onSubmit={this.onSave} valueKey={valueKey} />
+                return <BoxSettingAvatar {...setting} value={value} object={this.props.value} onSubmit={(key, value) => {
+                   return this.onSave(key, value, item);
+                }} valueKey={valueKey} />
             case 'select':
                 return (
-                    <BoxSettingSelect {...setting} value={value} object={this.props.value} onSubmit={this.onSave} valueKey={valueKey} />
+                    <BoxSettingSelect {...setting} value={value} object={this.props.value} onSubmit={(key,value) => {
+                       return this.onSave(key, value, item);
+                    }} valueKey={valueKey} />
                 )
             case 'input':
                 return (
-                    <BoxSettingInput {...setting} value={value} object={this.props.value} onSubmit={this.onSave} valueKey={valueKey} />
+                    <BoxSettingInput {...setting} value={value} object={this.props.value} onSubmit={(key,value)=> {
+                       return this.onSave(key,value, item)
+                    }} valueKey={valueKey} />
                 )
             default:
                 if (setting.type) {
@@ -93,9 +101,20 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
         }
         
     }
+    private doAction (type: string,key:string, value: any) {
+        switch(type) {
+            case 'localStorage':
+                localStorage.setItem(['setting', key].join('.'), value)
+        }
+    }
 
-    public onSave = (key: string, value: any) => {
+    public onSave = (key: string, value: any, item: any) => {
         let HelperRequest = this.getHelperRequest();
+
+        if (item.onAfterAction) {
+            this.doAction(item.onAfterAction,key, value);
+        }
+
         if (!HelperRequest) {
             return Promise.resolve();
         }

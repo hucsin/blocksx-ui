@@ -96,6 +96,15 @@
         height: 100%;
     }
 
+    .ant-tag {
+        line-height: 16px;
+        color:#aaa;
+        font-weight: 400;
+        font-size:12px;
+        transform: scale(.8);
+        margin-left: -8px !important;
+        opacity: .8;
+    }
     .ui-block-item-type-outline {
         border: 1px solid #f4f4f4;
         padding: 48px;

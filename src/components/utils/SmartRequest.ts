@@ -198,7 +198,7 @@ class SmartRequest {
         return (request: any) => {
             let params = this.getRequestParams(request, fields);
             let query: any = this.getValidParmas(params);
-            console.log(request, params, 23333)
+            
 
             return new Promise((resolve, reject) => {
                 Request.get(this.getRequestURI(url)

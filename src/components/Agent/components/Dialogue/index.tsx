@@ -117,9 +117,16 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         }, 0)
     }
     private renderAvatar(type: string) {
-        return (
-            <FormerAvatar color={type === 'assistant' ? '#4d53e8' : ''} icon={type === 'assistant' ? 'AnyhubsBrandFilled' : 'UserOutlined'} />
-        )
+        if (type =='user') {
+            return (
+                <FormerAvatar  icon={ 'UserOutlined'} />
+            )
+        } else {
+            
+            return (
+                <FormerAvatar icon ={`/static/agent/${localStorage.getItem('setting.agent') || 'merlin'}.png`} />
+            )
+        }
     }
     private renderMessageList() {
         let messages: MessageBody[] = this.messageContext.getMessageList();
@@ -127,7 +134,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         messages = [
             {
                 role: 'assistant',
-                content: `Hello, I am your assistant ${this.props.name}. How can I help you?`,
+                content: `Hello, I am your assistant ${localStorage.getItem('setting.agentname') || 'Bob'}. How can I help you?`,
                 pointless: true,
                 display: {
                     type: 'efficiency',
@@ -136,7 +143,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             },
             ...messages
         ];
-        console.log(messages, 3332)
+        
         if (this.state.calling) {
 
             messages.push({
@@ -536,7 +543,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                     autoSize={{ minRows: 1, maxRows: 2 }}
                     maxLength={256}
                     ref={this.inputRef}
-                    placeholder={`Send a message to ${this.props.name}.`}
+                    placeholder={`Send a message to ${localStorage.getItem('setting.agentname') || 'Bob'}.`}
                     size='large'
                     disabled={this.state.loading}
                     // suffix={}
@@ -560,7 +567,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
         return (
             <Space>
                 <Icons.AiUtilityOutlined />
-                <span>{this.props.name} Assistant</span>
+                <span>{localStorage.getItem('setting.agentname') || 'Bob'} Assistant</span>
             </Space>
         )
     }

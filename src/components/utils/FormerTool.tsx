@@ -22,6 +22,7 @@ export default class FormerTool {
 
 
         let UiView: any = FormerTypes[uiType];
+
        
         let record: any = props.recordValue || {};
         let DisplayValue: any = record['DisplayValue_' + field.key]

@@ -40,13 +40,12 @@ export default class Card extends React.Component<BoxItem,{}> {
                 <img src={item.image as any} />
             </div>)
         }
-
         
         switch(this.props.type) {
             case 'index':
             case 'item':
             default:
-                return <FormerAvatar size={this.getDefaultAvatarSize()} color={item.color as string} icon={item.avatar as string} />
+                return <FormerAvatar size={this.getDefaultAvatarSize()} color={item.color as string || '#fdfdfd'} icon={item.avatar as string} />
         }
     }
     private getDefaultAvatarSize() {

@@ -11,7 +11,17 @@
          .ant-list-item-meta {
             align-items: center;
          }
-
+        &.block-item-type-avatar {
+            .ant-list-item-meta-avatar {
+                .ant-avatar {
+                    border-radius: 12px;
+                    width: 64px !important;
+                    height: 64px !important;
+                    color:#666 !important;
+                    border:1px solid #dfdfdf;
+                }
+            }
+        }
         &.block-item-type-image {
             .ant-list-item-meta-avatar {
                 width: 38.2%;

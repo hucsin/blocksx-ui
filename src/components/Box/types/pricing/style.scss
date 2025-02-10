@@ -32,9 +32,11 @@
     }
 }
 .ui-block-item-theme-backend {
-    .ui-box-pricing {
-        padding: 32px 42px !important;
-    }
+
+    min-width: 600px;
+    max-width: 1200px;
+    margin: 0 auto;
+   
     .all-features {
         padding-left: 32px;
         opacity: 0.9 !important;

@@ -741,6 +741,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     icon={this.getFolderIcon()}
                     onFetchCustomFolders={this.getOnFetchFolder(folderField, 'list')}
                     onAddCustomFolder={this.getOnFetchFolder(folderField, 'create')}
+                    onRemoveCustomFolder={this.getOnFetchFolder(folderField, 'remove')}
                     onChange={this.onFolderChange}
                     currentKey={this.state.defaultFolder}
                 >

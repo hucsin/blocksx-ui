@@ -664,15 +664,26 @@ export default class Former extends React.Component<FormerProps, FormerState> {
 
         return this.renderOperateWraper();
     }
+    private getButtonSize(size: string = 'small') {
+        switch(size) {
+            case 'small':
+                return 'middle';
+            default: 
+                return 'large'
+        }
+    }
     public renderOperateWraper() {
 
-        let OkIconView: any = ICONS[this.props.okIcon as any]
+        let OkIconView: any = ICONS[this.props.okIcon as any];
+        let buttonSize: any = this.getButtonSize(this.props.size);
+        
         if (this.props.onlyButton) {
             return (
                 !this.state.viewer
                     ? <Button
                         loading={this.state.loading}
-                        size={this.props.size}
+                        size={buttonSize}
+
                         disabled={this.state.disabled}
                         onClick={this.onSave} type="primary"
                         icon={OkIconView && <OkIconView />}
@@ -685,12 +696,12 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
         return (
             <Space>
-                {!this.state.viewer ? <Button icon={OkIconView && <OkIconView />} size={this.props.size} loading={this.state.loading} disabled={this.state.disabled} onClick={this.onSave} type="primary">
+                {!this.state.viewer ? <Button icon={OkIconView && <OkIconView />} size={buttonSize} loading={this.state.loading} disabled={this.state.disabled} onClick={this.onSave} type="primary">
                     {this.state.okText || 'Ok'}
                 </Button> : null}
 
                 {this.renderExtraContent()}
-                <Button className='ui-former-cancel' type={this.props.cancelType} size={this.props.size} onClick={() => this.onCloseLayer(true)} style={{ marginRight: 8 }}>
+                <Button className='ui-former-cancel' type={this.props.cancelType} size={buttonSize} onClick={() => this.onCloseLayer(true)} style={{ marginRight: 8 }}>
                     {this.state.cancelText || 'Cancel'}
                 </Button>
             </Space>

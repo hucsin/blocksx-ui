@@ -384,15 +384,17 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
             return this.getColumnByField(it, columns.length, index)
         });
 
-        columns.unshift({
-            title: '#',
-            width: 40,
-            key: '10000',
-            align: 'center',
-            render: (text: any, column: any, rowIndex: number) => {
-                return (rowIndex + 1);
-            }
-        })
+        if (!this.state.pageSize || this.state.pageSize > 15) {
+            columns.unshift({
+                title: '#',
+                width: 40,
+                key: '10000',
+                align: 'center',
+                render: (text: any, column: any, rowIndex: number) => {
+                    return (rowIndex + 1);
+                }
+            })
+        }
 
         // 添加操作列
         if (!this.isPickMode()) {

@@ -262,7 +262,7 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                 let folders: any = this.state.folders;
 
                 folders = folders.filter(it => {
-                    return it.key !== key;
+                    return it.value !== key;
                 })
 
                 //if (key == currentKey) {
@@ -270,7 +270,6 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                     
                   //  this.onSelect(currentKey);
                 //}
-
                 this.setState({loading:false, folders})
             }, ()=> {
                 this.setState({loading:false})

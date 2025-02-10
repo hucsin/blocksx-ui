@@ -34,9 +34,10 @@ export default class CleanseSchema {
 
             if (factor) {
                 let factorRequst: any = SmartRequst.makeGetRequest(
-                    (path || factor.path) + `/${factor.type || factor.name}`
+                    ( factor.path || path) + `/${factor.type || factor.name}`
                 );
 
+                
                 
                 fieldObject.dataSource = (value: any) => {
                     let params: any = {
