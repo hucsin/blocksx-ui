@@ -64,6 +64,7 @@ export default class FormerNotice extends React.Component<{value?: any, icon?: a
     public render() {
 
         let { icon, color, notice, value } = this.state;
+        let { props } = this.props;
 
         if (utils.isPlainObject(notice)) {
             if (notice.icon) {
@@ -80,7 +81,12 @@ export default class FormerNotice extends React.Component<{value?: any, icon?: a
                 value = notice;
             }
         }
-        
+
+        if (props) {
+            if (props.icon) {
+                icon = props.icon;
+            }
+        }
         
         return value ? (
             <div className='ui-former-notice'>

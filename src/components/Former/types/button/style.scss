@@ -104,9 +104,9 @@
     align-items: center;
 
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.02);
+    background-color: #fafafa;
     
     justify-content: space-between;
-    background-color: #fff;
     cursor: default;
     &.ui-meta-empty {
         cursor: pointer;

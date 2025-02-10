@@ -19,4 +19,16 @@
         margin: 4px 0;
         opacity: .7\5;
     }
+    > ol {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+.former-group-item:not(.former-group-type-0){
+    .former-object-item-content {
+    > .ui-former-notice {
+            background:#fff !important ;
+            border-left-width: 1px;
+        }
+    }
 }

@@ -84,7 +84,11 @@
         padding-bottom: 4px;
         margin-bottom: 8px;
     }
-
+    .former-group-type-9  {
+        .former-group-item-content{
+            border: none;
+        }
+    }
     .former-group-item-content {
 
         transition: backgroundColor .4s;

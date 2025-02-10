@@ -7,7 +7,7 @@ import PanelProcess from './process';
 import PanelStorges from './storges';
 import PanelOther from './other';
 import PanelView from './view';
-
+import './style.scss';
 
 import Avatar from '../../../avatar';
 

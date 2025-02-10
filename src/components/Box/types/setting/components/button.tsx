@@ -9,6 +9,8 @@ export default class BoxSettingButton extends React.Component<any> {
     public render() {
         let setting: any = Object.assign({}, this.props);
         let value: any = this.props.object;
+        let mode: any = setting.mode || 'default';
+        let label: string = setting.label;
         
         if (setting.menus) {
             let menus: any [] = setting.menus;
@@ -17,10 +19,26 @@ export default class BoxSettingButton extends React.Component<any> {
                 key: item.value
             }))
 
+            if (mode == 'primary'){
+                label = label +' ' +items[0].label;
+                items = items.slice(1, items.length)
+            }
+
             return (
                 <Dropdown.Button 
                     size='large'
+                    //type={mode}
+                    type={mode}
                     icon={<Icons.DownOutlined />}
+                    onClick={()=> {
+                        console.log(3333)
+                        if (mode == 'primary') {
+                            let it: any = menus[0]
+                            if (it && it.smartaction) {
+                                this.doAction(it, value)
+                            }
+                        }
+                    }}
                     menu={{
                         items,
                         onClick: (item)=> {
@@ -32,7 +50,7 @@ export default class BoxSettingButton extends React.Component<any> {
                         }
                     }}
                 >
-                    {setting.label}
+                    {label}
                 </Dropdown.Button>
             )
         } else {

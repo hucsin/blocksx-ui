@@ -231,20 +231,20 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             }
             
         }
-
+        
         this.setState({loading: true})
 
         let params: any = {
             ...value,
             ...this.props.onGetRequestParams && this.props.onGetRequestParams(value, 'next')
         };
-
-        
         this.nextDyamicRequest(params).then((result) => {
             let trueValue: any =  {
                 ...this.state.setpOneValue,
                 ...result.value
             };
+
+            console.log(result, trueValue, 23333)
             if (result.schema) {
                 
                 this.setState({
@@ -256,6 +256,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                     isStepOne: false,
                     iconType: 'icon'
                 })
+                
             } else {
                 this.setState({
                     loading:false,
@@ -265,6 +266,12 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                     iconType: 'avatar'
                 })
             }
+            this.former.resetSafeValue(trueValue, 'man', (value) => {
+                this.former.stepFormer.setStepOne(false);
+            })
+            this.former.setLoading(false);
+            
+            //this.former.resetSafeValue(trueValue, 'man')
         }).catch(e => {
             this.setState({
                 loading: false
@@ -395,6 +402,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                 ...it,
                 uiType: 'hidden',
                 'ui-type': 'hidden',
+                group: 9,
                 hidden: true
             }
         })
@@ -695,7 +703,6 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         this.former.validationValue((value: any)=> {
             
             if (this.isStepDynamicFormer()) {
-
                 this.onDynamicStepChange(this.state.value);
             } else {    
                 this.setStepOne(false)

@@ -83,12 +83,20 @@ import {
     NodeCollapseOutlined,
     NodeExpandOutlined,
     BulbOutlined,
-    QrcodeOutlined
+    QrcodeOutlined,
+    NotificationOutlined,
+    NumberOutlined,
+    InfoOutlined,
+    SettingFilled,
     
 } from '@ant-design/icons';
 
 // 重新导出需要的图标
 export { 
+    SettingFilled,
+    InfoOutlined,
+    NotificationOutlined,
+    NumberOutlined,
     QrcodeOutlined,
     BulbOutlined,
     NodeExpandOutlined,
