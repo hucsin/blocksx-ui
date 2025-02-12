@@ -429,8 +429,8 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     private getAvatarsByRowData(rowData: any,rowIndex: number, avatarField:any) {
             
         if (avatarField) {
-            let avatarData: any = rowData[avatarField.key];
-
+            let avatarData: any = rowData['DisplayValue_'+ avatarField.key] || rowData[avatarField.key];
+            
             if (avatarData) {
                 if (this.props.avatarMerge) {
                     return avatarData;
@@ -466,7 +466,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     private renderAvatarAuto(avatarPlace: any, rowData: any) {
         let fieldKey: string = avatarPlace.fieldKey;
         let dict: any = avatarPlace.dict || [];
-        let data: any = rowData[fieldKey];
+        let data: any = rowData['DisplayValue_'+fieldKey] ||rowData[fieldKey];
         let findIcon = dict.find(it => it.value == data)
         
         if (findIcon && findIcon.icon) {

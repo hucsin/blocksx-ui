@@ -146,6 +146,10 @@
                 width: 32px;
                 .ant-avatar {
                     margin-left: -6px;
+                    img {
+                        width: auto;
+                        height: 100%;
+                    }
                 }
             }
 
@@ -156,7 +160,10 @@
                 padding-bottom: 16px;
 
                 
-
+                .dialogue-context {
+                    font-weight: bold;
+                    padding-bottom: 8px;
+                }
 
                 >.arrow {
                     position: absolute;

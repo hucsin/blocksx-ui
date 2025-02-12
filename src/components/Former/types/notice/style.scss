@@ -12,6 +12,8 @@
 
     > span {
         margin-inline-end: 8px;
+        display:block;
+        flex-shrink: 0
     }
     > p {
         flex: 1 0;
@@ -22,6 +24,7 @@
     > ol {
         margin-top: 0;
         margin-bottom: 0;
+        padding-left: 24px;
     }
 }
 .former-group-item:not(.former-group-type-0){

@@ -138,6 +138,14 @@
 .former-object-item-content {
    
 }
+.verify-password-wrapper {
+    width: 350px;
+    padding:16px;
+    p {
+        padding-left: 0;
+        opacity: .5;
+    }
+}
 .former-column-two {
 
     .former-object {
@@ -200,7 +208,7 @@
 }
 
 .ui-former-buttons {
-    padding-top: 16px;
+    padding-top: 42px;
     text-align: right;
 }
 

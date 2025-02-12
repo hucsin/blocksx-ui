@@ -43,6 +43,7 @@ export interface IFormerType {
     title?: any;
     formerSchema?: any;
     action?: any;
+    password?: boolean;
     fields?: any;
     value: any;
     pageMeta?: any;
@@ -770,6 +771,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         
         return (
             <Former
+                password={this.props.password}
                 groupType ={groupType}
                 groupMeta={groupMeta}
                 title={ this.renderDefaultTitle()}

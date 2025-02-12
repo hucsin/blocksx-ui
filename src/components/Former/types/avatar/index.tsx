@@ -128,7 +128,7 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
                 return (
                     <Avatar.Group max={{
                         count: 3,
-                        style: { color: '#fff',width: props.size,height: props.size, backgroundColor: '#ccc' },
+                        style: { color: '#fff',width: props.size,height: props.size, minWidth: props.size, backgroundColor: '#ccc' },
                       }} className='ui-avatar-group'>
                         {icon.map(ic => this.renderItem(props,ic.icon, ic.color, ic.componentName || ic.description || ic.name))}
                     </Avatar.Group>
@@ -142,7 +142,7 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
                     return (
                         <div className='ui-avatar-merge'>
                             {this.renderItem(props, icon[0], iconreg.color)}
-                            {icon[1] && <span className='ui-sub'>{this.renderItem({...props, shape: 'sh',style :{ width: subsize, height: subsize, fontSize: 14}, size: subsize}, icon[1], this.props.subcolor || '#ffffff', '', iconreg.color || this.props.color)}</span>}
+                            {icon[1] && <span className='ui-sub'>{this.renderItem({...props, shape: 'sh',style :{ width: subsize, minWidth: props.subsize, height: subsize, fontSize: 14}, size: subsize}, icon[1], this.props.subcolor || '#ffffff', '', iconreg.color || this.props.color)}</span>}
                         </div>
                     )
                 } else {

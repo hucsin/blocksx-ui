@@ -34,7 +34,7 @@ export default class FormerNotice extends React.Component<{value?: any, icon?: a
         let { props = { }, color } = propsc;
         return color || props.color ;
     }
-    public  UNSAFE_componentWillReceiveProps(nextProps: any): void {
+    public UNSAFE_componentWillReceiveProps(nextProps: any): void {
         if (nextProps.value != this.state.value) {
             this.setState({
                 value: nextProps.value,

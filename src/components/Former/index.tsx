@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { utils } from '@blocksx/core';
 import Leaf from './leaf';
-import { Drawer, Modal, Space, Button, Popover, Tabs, Spin } from 'antd';
+import { Drawer, Modal, Space,Input, Button, Popover, Tabs, Spin, message } from 'antd';
 import { EventEmitter } from 'events';
 import classnames from 'classnames';
 import { utils as BUtils } from '@blocksx/core';
@@ -58,7 +58,7 @@ export interface FormerProps {
     onSubmit?: Function;
     onView?: Function;
     onInit?: Function;
-
+    password?: boolean;
 
     visible?: boolean;
     id?: any;
@@ -100,7 +100,8 @@ interface FormerState {
     cancelText?: string;
     width?: number;
     id?: any;
-
+    showPassword?:boolean;
+    password?: string;
     column: any;
     viewer?: boolean; // 标记视图模式，只展示
     canmodify?: boolean; // 标记为编辑模式
@@ -131,6 +132,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         keep: false,
         size: 'small',
         viewer: false,
+        
         autoclose: true,
         column: 'one',
         placement: 'top'
@@ -169,7 +171,9 @@ export default class Former extends React.Component<FormerProps, FormerState> {
             readonly: props.readonly || false,
             icon: props.icon,
             iconType: props.iconType,
-            mandatoryValidation: props.mandatoryValidation
+            mandatoryValidation: props.mandatoryValidation,
+            showPassword: false,
+            password: ''
         };
 
         this.timer = null;
@@ -404,7 +408,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         this.leafInstance.forEach((it: any) => {
 
             let result:any = it.validation(parmas);
-            
+            console.log(result, it, 333)
 
             if (result !== true && result) {
                 errorMessage.push(result);   
@@ -443,18 +447,46 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     private onSave = (e) => {
 
-        if (this.props.onBeforeSave) {
-            if (this.props.onBeforeSave() === false) {
-                return;
+        if (this.props.password) {
+            this.setState({
+                showPassword: true
+            })
+        } else {
+            if (this.props.onBeforeSave) {
+                
+                if (this.props.onBeforeSave() === false) {
+                    return;
+                }
             }
+            
+
+            this.onSaveValidation();
         }
-        
+    }
+    private verifySubmit =()=> {
+        let {password } = this.state;
+        if (!password) {
+            return message.error('Password Required')
+        }
+
+        if (password.length > 8) {
+            return message.error('Password must be between 1 and 8 characters')
+        }
+
+        this.onSaveValidation();
+    }
+    private onSaveValidation() {
 
         this.validationValue(() => {
             this.doSave()
         })
     }
     private doSave() {
+        let submitValue: any = this.state.value;
+
+        if (this.props.password) {
+            submitValue._$password = this.state.password;
+        }
         if (this.props.autoclose) {
             this.onCloseLayer();
         } else {
@@ -468,12 +500,12 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         }
         
         if (this.props.onSubmit) {
-            this.props.onSubmit(this.state.value, this);
+            this.props.onSubmit(submitValue, this);
         }
 
         // 在保存的时候直接提交值
         if (this.props.onSave) {
-            let saveresult: any = this.props.onSave(this.state.value, this);
+            let saveresult: any = this.props.onSave(submitValue, this);
 
             if (BUtils.isPromise(saveresult)) {
                 saveresult.then(() => {
@@ -598,7 +630,6 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     public onCloseLayer = (e?: any) => {
 
-        
         if (this.props.onClose) {
             
             this.props.onClose(e === true);
@@ -674,37 +705,65 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     public renderOperateWraper() {
 
-        let OkIconView: any = ICONS[this.props.okIcon as any];
-        let buttonSize: any = this.getButtonSize(this.props.size);
-        
         if (this.props.onlyButton) {
             return (
                 !this.state.viewer
-                    ? <Button
-                        loading={this.state.loading}
-                        size={buttonSize}
-
-                        disabled={this.state.disabled}
-                        onClick={this.onSave} type="primary"
-                        icon={OkIconView && <OkIconView />}
-                    >
-                        {this.state.okText || 'Ok'}
-                    </Button>
+                    ? this.renderOkButton()
                     : null
 
             )
         }
         return (
             <Space>
-                {!this.state.viewer ? <Button icon={OkIconView && <OkIconView />} size={buttonSize} loading={this.state.loading} disabled={this.state.disabled} onClick={this.onSave} type="primary">
-                    {this.state.okText || 'Ok'}
-                </Button> : null}
+                {!this.state.viewer ? this.renderOkButton()
+                    : null}
 
                 {this.renderExtraContent()}
-                <Button className='ui-former-cancel' type={this.props.cancelType} size={buttonSize} onClick={() => this.onCloseLayer(true)} style={{ marginRight: 8 }}>
+                <Button className='ui-former-cancel' type={this.props.cancelType} size={this.getButtonSize(this.props.size)} onClick={() => this.onCloseLayer(true)} style={{ marginRight: 8 }}>
                     {this.state.cancelText || 'Cancel'}
                 </Button>
             </Space>
+        )
+    }
+    public renderPassword() {
+        return (
+            <div className='verify-password-wrapper'>
+                <Input.Password maxLength={8} placeholder='Please enter the password' onChange={(e)=> {
+                    this.setState({
+                        password: e.target.value
+                    })
+                }}/>
+                <p>Please enter the form submission password to verify. Only after verification will you be able to submit the form.</p>
+                <Button type='primary' onClick={this.verifySubmit}>Verify Password and Submit</Button>
+            </div>
+        );
+    }
+    public renderOkButton() {
+        let OkIconView: any = ICONS[this.props.okIcon as any];
+        return (
+            <Popover 
+                open={this.state.showPassword} 
+                title={<><ICONS.LockOutlined/> Verify Password</> } 
+                content={this.renderPassword()}
+                onOpenChange={(open)=> {
+                    if (!open) {
+                        this.setState({
+                            showPassword: false
+                        })
+                    }
+                }}
+            >
+                <Button
+                    loading={this.state.loading}
+                    size={this.getButtonSize(this.props.size)}
+
+                    disabled={this.state.disabled}
+                    onClick={this.onSave} type="primary"
+                    icon={OkIconView && <OkIconView />}
+                >
+                    {this.state.okText || 'Ok'}
+                </Button>
+            </Popover>
         )
     }
     public renderIcon() {

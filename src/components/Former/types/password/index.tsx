@@ -46,7 +46,7 @@ export default class FormerInput extends React.Component<IFormerInput, { value: 
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
         
         return (
-            <Input.Password size={this.props.size} {...props} disabled={this.props.disabled} value={this.state.value} onChange={this.onChange} />
+            <Input.Password size={this.props.size} {...props} disabled={this.props.disabled} style={{width: props.width}} value={this.state.value} onChange={this.onChange} />
         )
     }
 }

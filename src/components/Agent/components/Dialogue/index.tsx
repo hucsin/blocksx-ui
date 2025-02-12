@@ -73,7 +73,6 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
 
         this.messageContext = new MessageContext(tools.getStorage(`agent-messages`) || []);
         
-
     }
 
 
@@ -119,12 +118,22 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
     private renderAvatar(type: string) {
         if (type =='user') {
             return (
-                <FormerAvatar  icon={ 'UserOutlined'} />
+                <FormerAvatar  icon={localStorage.getItem('setting.avatar') ||'UserOutlined'} />
             )
         } else {
             
             return (
                 <FormerAvatar icon ={`/static/agent/${localStorage.getItem('setting.agent') || 'merlin'}.png`} />
+            )
+        }
+    }
+    private renderContext(item: any) {
+        console.log(item, 3)
+        if (item.context && item.role == 'assistant') {
+            return (
+                <div className='dialogue-context'>
+                    @{item.context}:
+                </div>
             )
         }
     }
@@ -186,7 +195,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                                 'dialogue-message-item-content-nofeedback': !it.content
                             })}>
                                 <div>
-
+                                    {this.renderContext(it)}
                                     {this.renderMessageContent(it, index - 1)}
                                     {this.renderDisplay(it.display, index - 1, it)}
                                 </div>
