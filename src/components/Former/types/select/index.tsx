@@ -12,7 +12,6 @@ import React from 'react';
 import { IFormerBase } from '../../typings';
 
 import UtilsDatasource from '../../../utils/datasource';
-import * as Icons from '../../../Icons';
 import { utils, keypath } from '@blocksx/core';
 import { Select, Tooltip } from 'antd';
 import TablerUtils from '../../../utils/tool';
@@ -76,6 +75,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         super(props);
         let isMultiple: boolean = this.isMultiple();
         let datasource: any [] = this.getDefaultDatasource(props);
+        
         this.state = {
             value: isMultiple ? this.fixedMultipleValue(props.value) : props.value,
             dataSource: datasource,
@@ -109,7 +109,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
             value = value.value;
         }
 
-        return value;
+        return utils.isUndefined(value) ? value : value +'';
     }
     private makeGroupDataSource(datasource: any) {
         let list: any = [];
@@ -117,7 +117,6 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
 
         datasource.forEach(it => {
             
-
             if (it.group) {
                 if (!group[it.group]) {
                     group[it.group] = [];
@@ -156,7 +155,6 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         if (!this.isLazyLoader()){
             this.fetchData();
         }
-        
     }
 
 
@@ -225,7 +223,6 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
     }
     private onFocus =()=> {
         if (this.isLazyLoader()) {
-            console.log(33333, this.getAutoEnumsDependecy())
             this.fetchData()
         }
     }
@@ -381,7 +378,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         let value: any = this.clearValue(this.state.value);
         let dataSource: any = this.getDatasource();
 
-        
+        console.log(3333, dataSource, value, 2111)
         
         return (
             <Tooltip title={this.state.errorMessage || tooltip} placement='topLeft'>

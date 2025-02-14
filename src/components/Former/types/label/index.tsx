@@ -65,7 +65,7 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
         
         if (utils.isArray(dictList)) {
             let find: any = dictList.find((it: any) => {
-                if (it.value === _value || it.key === _value) {
+                if (it.value == _value || it.key == _value) {
                     return true;
                 }
             })
@@ -119,6 +119,6 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
                     return <Tag key={it} >{it}</Tag>
                 })}
             </span>
-        ) : <Tooltip title={this.props.tooltip}><span className="former-label"> {value} {this.renderSuffix()}</span></Tooltip>
+        ) : <Tooltip title={this.props.tooltip}><span className="former-label"> {value}{this.renderSuffix()}</span></Tooltip>
     }
 }
