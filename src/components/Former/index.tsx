@@ -408,7 +408,6 @@ export default class Former extends React.Component<FormerProps, FormerState> {
         this.leafInstance.forEach((it: any) => {
 
             let result:any = it.validation(parmas);
-            console.log(result, it, 333)
 
             if (result !== true && result) {
                 errorMessage.push(result);   

@@ -31,7 +31,6 @@ export default class BoxSettingButton extends React.Component<any> {
                     type={mode}
                     icon={<Icons.DownOutlined />}
                     onClick={()=> {
-                        console.log(3333)
                         if (mode == 'primary') {
                             let it: any = menus[0]
                             if (it && it.smartaction) {

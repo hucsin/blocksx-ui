@@ -121,14 +121,13 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                 <FormerAvatar  icon={localStorage.getItem('setting.avatar') ||'UserOutlined'} />
             )
         } else {
-            
             return (
                 <FormerAvatar icon ={`/static/agent/${localStorage.getItem('setting.agent') || 'merlin'}.png`} />
             )
         }
     }
     private renderContext(item: any) {
-        console.log(item, 3)
+        
         if (item.context && item.role == 'assistant') {
             return (
                 <div className='dialogue-context'>

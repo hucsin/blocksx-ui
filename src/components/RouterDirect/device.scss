@@ -20,7 +20,7 @@
     .logo {
         position: absolute;
         color:var(--main-bg-color);
-        font-size:38px;
+        font-size:32px;
         left: 11px;
         top: 4px;
         span {
@@ -86,7 +86,7 @@
         .ui-classify-panel > .ui-header .ui-title span.des {
             display:none;
         }
-    .router-direct-wrapper > .ui-smartpage-wrapper >.ant-spin-nested-loading>.ant-spin-container > .ui-classify-wrapper>.ui-classify-panel  .tabler-batch-add button {
+         > .ui-smartpage-wrapper >.ant-spin-nested-loading>.ant-spin-container > .ui-classify-wrapper>.ui-classify-panel  .tabler-batch-add button {
             padding: 4px 8px;
             &.ant-btn-variant-solid {
                 background-color: #fff;
