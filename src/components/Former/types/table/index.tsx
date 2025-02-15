@@ -16,7 +16,6 @@ import Former from '../../index';
 import { utils } from '@blocksx/core';
 
 import './style.scss';
-import { extend } from 'dayjs';
 
 interface IFormerTable extends IFormerBase {
 

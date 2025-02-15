@@ -1,6 +1,7 @@
 import React from 'react';
 import Date, {FormerDateProps } from '../date';
 
+
 export default class FormerDatetime extends React.Component<FormerDateProps, {value: any, disabled?: boolean, errorMessage?: string}> {
     public static defaultProps = {
         format: 'YYYY/MM/DD HH:mm:ss'
@@ -32,6 +33,6 @@ export default class FormerDatetime extends React.Component<FormerDateProps, {va
         }
     }
     public render() {
-        return <Date {...this.props} value={this.state.value} showTime disabled={this.state.disabled} errorMessage={this.state.errorMessage} />
+        return <Date {...this.props} defaultValue={this.state.value} showTime disabled={this.state.disabled} errorMessage={this.state.errorMessage} />
     }
 }

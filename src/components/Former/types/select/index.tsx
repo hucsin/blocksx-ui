@@ -75,7 +75,7 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         super(props);
         let isMultiple: boolean = this.isMultiple();
         let datasource: any [] = this.getDefaultDatasource(props);
-        
+
         this.state = {
             value: isMultiple ? this.fixedMultipleValue(props.value) : props.value,
             dataSource: datasource,
@@ -377,8 +377,6 @@ export default class FormerSelect extends React.Component<FormerSelectProps, For
         let tooltip: string = props.tooltip =='auto' ? this.findCurrentLabel().label  : props.tooltip || this.props.tooltip;
         let value: any = this.clearValue(this.state.value);
         let dataSource: any = this.getDatasource();
-
-        console.log(3333, dataSource, value, 2111)
         
         return (
             <Tooltip title={this.state.errorMessage || tooltip} placement='topLeft'>

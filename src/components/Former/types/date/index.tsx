@@ -1,7 +1,8 @@
 
 import React from 'react';
+import { utils } from '@blocksx/core';
 import { IFormerBase } from '../../typings';
-import dayjs from 'dayjs';
+
 import { DatePicker, Tooltip } from "antd";
 import './style.scss'
 
@@ -31,6 +32,7 @@ interface FormerDateState {
     errorMessage?: string;
 }
 export default class FormerDate extends React.Component<FormerDateProps, FormerDateState> {
+    
     public static defaultProps  = {
         range: false,
         format: 'YYYY/MM/DD'
@@ -75,7 +77,7 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
         }
     }
     private isShowTime() {
-        let { format ="" } = this.state;
+        let { format = "" } = this.state;
 
         return this.props.showTime || format.includes('HH');
     }
@@ -92,7 +94,7 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
                         size={this.props.size}
                         disabled={disabled}  
                         width={props.width}
-                        value={rangeValue.map(it => dayjs(it, this.state.format)) as any} 
+                        value={rangeValue.map(it => utils.getDayjs(it, this.state.format)) as any} 
                         format={this.state.format}
                         onChange={this.onChangeValue}
                     />
@@ -111,7 +113,7 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
                 status={this.state.errorMessage ? 'error' : ''}
                 showTime={this.isShowTime()}
                 placeholder={this.state.placeholder || this.state.format}
-                value={this.state.value && dayjs(this.state.value as any, this.state.format)} 
+                defaultValue={this.state.value && utils.getDayjs(this.state.value as string, this.state.format)} 
                 format={this.state.format}
                 onChange={this.onChangeValue}
             />

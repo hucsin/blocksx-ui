@@ -5,7 +5,7 @@ export default class BoxSettingSelect extends React.Component<any, {value: strin
     public constructor(props: any) {
         super(props);
         this.state = {
-            value: props.value || '',
+            value: props.value || props.defaultValue || '',
             loading: false
         }
     }
@@ -16,6 +16,7 @@ export default class BoxSettingSelect extends React.Component<any, {value: strin
             
             return Intl.supportedValuesOf('timeZone').map(tz => ({ label: tz, value: tz }));
         }
+
         return options;
     }
     
@@ -32,6 +33,8 @@ export default class BoxSettingSelect extends React.Component<any, {value: strin
     }
     public render() {
 
-        return <Select size='large' value={this.state.value} loading={this.state.loading} onSelect={this.onSelect} showSearch options={this.getOptions()} />
+        console.log(this.props,333)
+
+        return <Select size='large' value={this.state.value} defaultValue={this.props.defaultValue} loading={this.state.loading} onSelect={this.onSelect} showSearch options={this.getOptions()} />
     }
 }

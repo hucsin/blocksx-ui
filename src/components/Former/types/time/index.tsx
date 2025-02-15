@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { IFormerBase } from '../../typings';
-import dayjs from 'dayjs';
+import { utils } from '@blocksx/core'
 import { TimePicker, Tooltip } from "antd";
 import './style.scss'
 
@@ -86,7 +86,7 @@ export default class FormerDateTime extends React.Component<FormerDateProps, For
                 size={this.props.size}
                 status={this.state.errorMessage ? 'error' : ''}
                 placeholder={this.state.placeholder || this.state.format}
-                value={this.state.value && dayjs(this.state.value as any, this.state.format)} 
+                value={this.state.value && utils.getDayjs(this.state.value as any, this.state.format)} 
                 //format={this.state.format}
                 onChange={this.onChangeValue}
             />
