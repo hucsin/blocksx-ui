@@ -1,11 +1,30 @@
 .box-statistics {
-    h1 {
+    h2{
         opacity: .9;
+        margin-right: 0 !important;
     }
     p {
         opacity: .6;
         font-size: 16px;
     }
+    .extra {
+        float:right;
+        cursor: pointer;
+        opacity: .8;
+        transition: all .2s;
+        font-size:14px;
+        &:hover {
+            opacity: 1;
+        }
+        .ant-tag {
+            margin-right: 0;
+            border-radius: 12px;
+            >span:last-child {
+                margin-left: 2px
+            }
+        }
+    }
+
     .box-statistics-item {
         .ant-card {
             padding: 12px;

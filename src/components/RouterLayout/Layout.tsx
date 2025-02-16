@@ -32,7 +32,6 @@ class Layout extends  React.Component<LayoutProps, LayoutState> {
         let path: string = this.getPathByMenuKey(menuKey);
         this.props.router.naviagte(path)
 
-        
     }
 
     public render() {

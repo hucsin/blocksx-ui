@@ -14,6 +14,27 @@
 }
 .box-setting {
     padding: 8px;
+    .subscription {
+        display: inline-block;
+        margin-left: 8px;
+        font-size: 12px;
+        font-weight: 400;
+        opacity: .7;
+
+        cursor: pointer;
+        transition: all .2s;
+        &:Hover {
+            opacity: 1;
+        }
+        .ant-tag {
+            transform: scale(.8);
+            margin-right: -4px;
+            border-radius: 12px;
+            > span:last-child {
+                margin-left:2px;
+            }
+        }
+    }
     
    > h2 {
         margin-bottom: 0px;

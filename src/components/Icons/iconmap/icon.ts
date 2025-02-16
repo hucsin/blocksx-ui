@@ -69,6 +69,7 @@ export const map:any = {
     "utility": [
         "CalendarUtilityFilled",
         "CollectionUtilityFilled",
+        "ConfigurationUtilityFilled",
         "ConnectUtilityFilled",
         "ContactsUtilityFilled",
         "DatasourceSettingUtilityFilled",
@@ -95,9 +96,11 @@ export const map:any = {
         "TicketUtilityFilled",
         "TodoUtilityFilled",
         "TriggerUtilityFilled",
+        "UserUtilityFilled",
         "ValidationUtilityFilled",
         "ViewOffUtilityFilled",
         "ViewUtilityFilled",
+        "VipUtilityFilled",
         "WordbookUtilityFilled",
         "WorkflowUtilityFilled",
         "AiUtilityOutlined",
@@ -200,6 +203,7 @@ export const map:any = {
         "UserGroupUtilityOutlined",
         "UserUtilityOutlined",
         "VariableUtilityOutlined",
+        "VipUtilityOutlined",
         "WorkflowUtilityOutlined",
         "WorkspaceUtilityOutlined",
         "ViewUtilityCombine"

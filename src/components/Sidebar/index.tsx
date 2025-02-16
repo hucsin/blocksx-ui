@@ -20,6 +20,7 @@ export interface sidebarState {
     foldState?: boolean;
     firstMenu: SidebarMenuItem;
 
+    pathname:string;
     currentKey?: string;
 }
 export interface SidebarProps {
@@ -52,15 +53,40 @@ export default class Siderbar extends React.Component<SidebarProps, sidebarState
             favorites: props.favorites,
             folding: false,
             currentKey,
-            children
+            children,
+            pathname: location.pathname
         }
         
         
     }
     public componentDidMount() {
         this.onChange(this.state.currentKey, this.menuMap[this.state.currentKey as string]);
+        this.bindEvent();
     }
+    public bindEvent() {
+        const observer = new MutationObserver(() => {
 
+            if (location.pathname != this.state.pathname) {
+                this.goPath(location.pathname)
+            }
+        });
+
+        
+        observer.observe(document, { subtree: true, childList: true });
+    }
+    private goPath(path: string) {
+        let { menu = [], roadmap =[]} = this.props;
+        
+        let find: any = [...menu, ...roadmap].find((it:any) => it.pagePath == path);
+        if (find){
+            this.setState({
+                pathname: path,
+                children: path.includes('/')? undefined : this.state.children
+            }, ()=> {
+                this.onSelectMenu(find.key, find, true)
+            })
+        }
+    }
     private getFirstMenu(menu: any) {
         let firstCache: any = menu[0];
         let firstItem: any = null;
@@ -158,16 +184,17 @@ export default class Siderbar extends React.Component<SidebarProps, sidebarState
         })
         this.onChange(firstMenu.key, firstMenu)
     }
-    public onSelectMenu =(currentKey:string, it: any)=> {
+    public onSelectMenu =(currentKey:string, it: any, nochange:boolean = false)=> {
         
         let current: any = it;
-
+        
         if (['Shortcut', 'Link'].indexOf(current.type) == -1) {
 
             if (this.state.children) {
 
                 this.setState({
-                    currentKey: currentKey
+                    currentKey: currentKey,
+                    pathname: it.pagePath
                 })
             } else {
 
@@ -178,12 +205,13 @@ export default class Siderbar extends React.Component<SidebarProps, sidebarState
 
                 this.setState({
                     currentKey: currentKey,
-                    children: it.children
+                    children: it.children,
+                    pathname: it.pagePath
                 })
             }
         }
 
-        this.onChange(currentKey, current);
+        !nochange &&  this.onChange(currentKey, current);
     }
     public render () {
 

@@ -1,7 +1,8 @@
 import React from 'react';
+import { utils } from '@blocksx/core';
+import { List ,Tag, Typography, Avatar, Space, Popover} from 'antd';
 
-import './style.scss';
-import { List ,Tag, Typography, Avatar, Space} from 'antd';
+import * as Icons from '../../../Icons';
 
 import BoxSettingInput from './components/input';
 import BoxSettingSelect from './components/select';
@@ -14,6 +15,8 @@ import BoxManger from '../../BoxManger';
 
 import SmartRequest from '../../../utils/SmartRequest';
 import TablerUtils from '../../../utils/tool';
+import withRouter from '../../../utils/withRouter';
+import './style.scss';
 
 interface BoxSettingProps {
     meta?: any;
@@ -21,13 +24,14 @@ interface BoxSettingProps {
     titleKey?: string;
     value?: any;
     valueKey?: string;
+    router: any;
 
     description: string;
     descriptionKey?: string;
     items: any[];
 }
 
-export default class BoxSetting extends React.Component<BoxSettingProps> {
+class BoxSetting extends React.Component<BoxSettingProps> {
     private helperRequest: any;
    
     public renderItem = (item: any) => {
@@ -42,7 +46,7 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
             <List.Item key={item.email}>
               <List.Item.Meta
                 avatar={avatar ? avatar.includes('.') ? <Avatar src={avatar} size={48} /> : TablerUtils.renderIconComponent({icon: avatar, size: 40}) : null}
-                title={item.titleKey && value[item.titleKey] || item.title}
+                title={this.renderTitle(item,value)}
                 description={item.descriptionKey && value[item.descriptionKey] || item.description}
               />
               <Space>
@@ -50,6 +54,28 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
                 {this.renderAction(setting || {}, value[item.valueKey || item.dataKey], item.valueKey || item.dataKey, item)}
               </Space>
             </List.Item>
+        )
+    }
+    private renderTitle(item: any, value: any) {
+        return (
+            <>
+                {item.titleKey && value[item.titleKey] || item.title}
+                {item.subscription && this.renderSubscription(value)}
+            </>
+        )
+    }
+    private onClick =()=> {
+        this.props.router.naviagte('/subscription')
+    }
+    private renderSubscription(value:any) {
+        let isFree: boolean = (!value.plan || value.plan == 'free');
+        return (
+            <div className='subscription' onClick={this.onClick}>
+                <Popover content={isFree ? 'Click to upgrade the plan.' :  'The current billing cycle ends on '+ value.planExpiration}>
+                    <Tag color={isFree?'#f50': 'var(--main-bg-color)'} icon={<Icons.VipUtilityOutlined/>}>{utils.toUpper(value.plan ||'free')}</Tag>
+                    {isFree && 'Upgrade Plan'}
+                </Popover>
+            </div>
         )
     }
     private renderTips(item: any, value: any) {
@@ -147,4 +173,4 @@ export default class BoxSetting extends React.Component<BoxSettingProps> {
         }
 }
 
-BoxManger.set('setting', BoxSetting);
+BoxManger.set('setting', withRouter(BoxSetting));
