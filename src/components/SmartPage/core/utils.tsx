@@ -63,7 +63,7 @@ export default class SmartPageUtils {
         let TypeView: any = PageManger.findComponentByType(uiType);
         
         if (TypeView) {
-            return (<TypeView {...props} />)
+            return (<TypeView {...props}  key={uiType} />)
         }
     }
 }

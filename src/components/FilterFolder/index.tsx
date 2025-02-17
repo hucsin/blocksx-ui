@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { Input, Button, Popover, Spin, Popconfirm, Empty, Skeleton, Space } from 'antd';
+import { Input, Button,message, Popover, Spin, Popconfirm, Empty, Skeleton, Space } from 'antd';
 import { PlusOutlined, FolderOutlined, FolderOpenOutlined, CloseOutlined, SearchOutlined } from '@ant-design/icons';
 
 import { utils } from '@blocksx/core';
@@ -423,7 +423,15 @@ export default class FilterFolder extends React.Component<FilterFolderProps, Fil
                 error: i18n.t('Must be filled in all fields') + '!'
             })
         }
-
+        let folders: any = this.state.folders || [];
+        
+        if (folders.length >= 10) {
+            message.error('A maximum of 10 folders is allowed.')
+            return this.setState({
+                error: 'A maximum of 10 folders is allowed.'
+            })
+        }
+        
         this.setState({ addLoading: true })
 
         if (this.props.onAddCustomFolder) {

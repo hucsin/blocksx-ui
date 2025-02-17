@@ -82,7 +82,7 @@ export default class FunctionTooltip extends React.Component<FunctionTooltipProp
         return (
             <Popover
                 title={this.renderTitle()}
-                overlayClassName='ui-function-tooltip'
+                rootClassName='ui-function-tooltip'
                 
                 content={this.renderParameters()}
             >{this.props.children}</Popover>

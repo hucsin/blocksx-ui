@@ -30,9 +30,9 @@ export default class StatisticsCard extends React.Component<StatisticsCardProps,
     public renderText() {
         let { steps = [] } = this.props;
         let { value = {}} = this.state;
-        return <text><Space>{steps.map(it => {
-            return <Tooltip title={it.tooltip}><span>{it.name} {this.renderValue(value[it.valueKey])}</span></Tooltip>
-        })}</Space></text>
+        return <span><Space>{steps.map((it, index) => {
+            return <Tooltip title={it.tooltip} key={index}><span>{it.name} {this.renderValue(value[it.valueKey])}</span></Tooltip>
+        })}</Space></span>
     }
     public renderArea() {
         const data = this.getTinyData();
@@ -172,7 +172,7 @@ export default class StatisticsCard extends React.Component<StatisticsCardProps,
         let { footer = [] } = this.props;
 
         return (
-            <Card bordered={false} size="small" title={this.props.title} extra={this.renderExtra()}>
+            <Card variant={'borderless'} size="small" title={this.props.title} extra={this.renderExtra()}>
                 <div className="card-value">{this.renderValue(value[this.props.valueKey as string])}</div>
                 <div className="card-body">
                     {this.renderContent()}
@@ -181,7 +181,7 @@ export default class StatisticsCard extends React.Component<StatisticsCardProps,
                     <Space>
                         {
                             footer.map((it, index) => {
-                                return <Tooltip title={it.tooltip}><span key={index}>{it.name} {this.renderValue(value[it.valueKey])}</span></Tooltip>
+                                return <Tooltip title={it.tooltip} key={index}><span key={index}>{it.name} {this.renderValue(value[it.valueKey])}</span></Tooltip>
                             })
                         }
                     </Space>

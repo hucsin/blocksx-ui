@@ -91,7 +91,6 @@ class SmartRequest {
 
         let host: string = location.hostname.replace(/^(www|console)\./,'');
 
-
         if (url.match(/^https:\/\//)) {
             return url;
         } else {

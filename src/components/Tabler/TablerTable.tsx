@@ -110,7 +110,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
     }
     public componentDidMount() {
         //this.initDataSource(this.props);
-        this.tableDOM = this.tableRef.current;//ReactDOM.findDOMNode(this);
+        this.tableDOM = this.tableRef.current;
     }
 
     public UNSAFE_componentWillReceiveProps(newProps: any) {

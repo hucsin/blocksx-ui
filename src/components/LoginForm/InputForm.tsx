@@ -233,7 +233,7 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
                                             open={!this.state.agree ? false :this.state.open}
                                             onOpenChange={(open) => this.state.agree && this.onOpenChange(open, it)}
                                             title={`Use ${it.name} to scan the QR code and send the login command`}
-                                            overlayClassName='login-qrcode'
+                                            rootClassName='login-qrcode'
                                             content = {this.renderQrCodeContent(it)}
                                         >
                                             <span className='a'>

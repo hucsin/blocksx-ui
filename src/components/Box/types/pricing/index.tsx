@@ -92,9 +92,9 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
         return (
             <>
                 <th>{this.props.subtitle}</th>
-                {items.map(it => {
+                {items.map((it, index) => {
                     return (
-                        <th className={classnames({
+                        <th key={index} className={classnames({
                             'plan-item': true,
                             [`plan-item-${it.value}`]: it.value
                         })} >{TablerUtils.renderIconComponent(it)}{it.label}</th>
@@ -123,19 +123,19 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
         }
         return '-'
     }
-    public renderLine(rowdata: any) {
+    public renderLine(rowdata: any, index: number) {
         let { items = [] } = this.props;
         let plans = rowdata.plans || [];
 
         return (
-            <tr>
+            <tr key={index}>
                 <td>{rowdata.name} {rowdata.description && <Tooltip title={rowdata.description}><Icons.ExclamationCircleOutlined /></Tooltip>}</td>
-                {items.map(it => {
+                {items.map((it, index) => {
                     let key: string = it.value;
                     let find: any = this.findMatchPlan(plans, key)
 
                     return (
-                        <td className={classnames({
+                        <td key={index} className={classnames({
                             'plan-item': true,
                             [`plan-item-${it.value}`]: it.value
                         })} >
@@ -159,7 +159,7 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
                     </tr>
                 </thead>
                 <tbody>
-                    {features.map(it => this.renderLine(it))}
+                    {features.map((it, index) => this.renderLine(it, index))}
                 </tbody>
             </table>
         )

@@ -153,7 +153,7 @@ export default class TablerUtils {
     }
 
     public static getDefaultFieldSchema(it:any, index) {
-        //console.log(it.type, it, it.column, 111)
+       
         let props: any = Object.assign({}, it.props, it.meta && it.meta.props);
         let meta: any = it.meta || {};
         return {

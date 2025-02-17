@@ -168,7 +168,7 @@ export default class PanelTooltip extends React.Component<PanelTooltipProps, Pan
     public render() {
         return (
             <Popover
-                overlayClassName='ui-scope-panel-tooltip'
+                rootClassName='ui-scope-panel-tooltip'
                 mouseEnterDelay={.5}
                 title={''} 
                 content={this.renderBody()}

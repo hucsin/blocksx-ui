@@ -29,11 +29,9 @@ export default class OAuth extends React.Component<OAuthProps, OAuthState> {
             smartaction: 'window',
             url: SmartRequest.getRequestURI(this.props.url)
         }, (error) => {
-            console.log('success',error)
             this.props.onSuccessOAuth();
             this.setState({ keep: false });
         }, ()=>{
-            console.log('error')
             this.props.onCancelOAuth();
             this.setState({ keep: false });
         })

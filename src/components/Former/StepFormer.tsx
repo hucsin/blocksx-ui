@@ -245,7 +245,6 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                 ...result.value
             };
 
-            console.log(result, trueValue, 23333)
             if (result.schema) {
                 
                 this.setState({
@@ -819,7 +818,6 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                         //let newValue: any = value[currentField.key];
                         //if (newValue && ( newValue != setpOneValue[currentField.key])) {
                         // 检查
-                        //console.log('cahgnevalue,', value, this.state.value)
                         //return;
                         this.setState({
                             setpOneValue: {

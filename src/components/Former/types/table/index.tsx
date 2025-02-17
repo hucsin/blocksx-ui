@@ -600,7 +600,6 @@ export default class FormerTable extends React.Component<IFormerTable, {
                     value={this.state.record || {}}
                     visible={this.state.visible}
                     onVisible={(visible)=> {
-                        console.log(visible,33)
                         this.setState({
                             visible
                         })

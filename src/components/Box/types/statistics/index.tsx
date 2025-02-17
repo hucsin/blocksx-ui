@@ -45,17 +45,17 @@ export default class BoxStatistics extends React.Component<BoxStatisticsProps, {
         let { items = [] } = this.props;
 
         let width: any = 1/items.length * 100;
-        console.log(this.props, 22)
+        
         return (
             <div className='box-statistics'>
                 <Typography.Title level={2}>{this.props.title} {this.renderExtra()}</Typography.Title>
                 <Typography.Paragraph className='block-subtitle'>{this.props.description}</Typography.Paragraph>
                 <Flex gap={16}>
                     {
-                        items.map(it => {
+                        items.map((it, index) => {
                             return (
-                                <div className='box-statistics-item' style={{width: width + '%'}}>
-                                    <StatisticsCard {...it} value={this.state.value} />
+                                <div key={index} className='box-statistics-item' style={{width: width + '%'}}>
+                                    <StatisticsCard {...it} key={index} value={this.state.value} />
                                 </div>
                             )
                         })

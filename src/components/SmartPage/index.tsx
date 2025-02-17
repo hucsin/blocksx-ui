@@ -423,7 +423,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         // TODO 检查什么时候需要设置这个值
         if (this.props.onChangeValue) {
             if (newProps.value != this.state.value) {
-                // console.log('resetvalue', newProps.value)
+               
                 //  this.setState({
                 //      value: newProps.value
                 //  })

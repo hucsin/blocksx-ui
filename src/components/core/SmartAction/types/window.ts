@@ -6,7 +6,7 @@ import { Encode, Decode} from '@blocksx/encrypt';
 class SmartActionWindow {
     private getSelfCookie() {
         let match: any = document.cookie.match(/__=([^;]+)/)
-        match && console.log(decodeURIComponent(match[1]), Decode.decode(decodeURIComponent(match[1])), 1222);
+       
         return match && Decode.decode(decodeURIComponent(match[1]))
     }
     private deleteSelfCookie() {

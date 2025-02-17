@@ -114,7 +114,7 @@ export default class PanelView extends React.Component<PanelViewProps, PanelView
             params = {...params, ...this.getParams(utils.pick(formerValue, paramsKeys))}
             
         }
-        console.log(params, 333)
+        
 
         this.setState({ loading: true })
         this.requestHelper({

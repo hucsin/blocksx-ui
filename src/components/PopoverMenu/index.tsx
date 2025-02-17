@@ -132,7 +132,7 @@ export default class PopoverMenu extends React.Component<PopoverMenuProps, Popov
 
                     content={this.renderMenu()}
                     open={this.state.open}
-                    overlayClassName="popover-menu-wrapper"
+                    rootClassName="popover-menu-wrapper"
                     trigger="click"
                     onOpenChange={(vs)=> this.setState({open: hasNoMenu ? false :vs})}
                     placement="bottomRight"

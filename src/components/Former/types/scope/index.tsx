@@ -410,7 +410,6 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
     private isOneValue(value: any) {
 
         if (Array.isArray(value)) {
-            //console.log(value, 3220019191)
             return value.length <= 1;
         }
 
@@ -503,7 +502,7 @@ export default class FormerScope extends React.Component<FormerScopeProps, Forme
                 }
             }}>
             <Popover
-                overlayClassName="ui-scope-panel"
+                rootClassName="ui-scope-panel"
                 content={opened 
                     ? <ScopePanel 
                         iterator={typeProps.iterator}

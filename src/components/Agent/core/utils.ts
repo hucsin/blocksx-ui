@@ -176,9 +176,9 @@ export default class AgentUtils {
   }
   public static getStorage(key: string, defaultValue: any = '[]') {
     try {
-      let value: any = localStorage.getItem(key);
+      let value: any = localStorage.getItem(key) || defaultValue;
 
-      let result: any = value ? utils.decompress(JSON.parse( value)) : null;
+      let result: any = value ? utils.decompress(JSON.parse( value )) : null;
       
       // TODO 
       

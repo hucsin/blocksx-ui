@@ -178,7 +178,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                     let display: any = it.display || {}
                     if (it.role === 'system') {
                         return (
-                            <div className='dialogue-message-item'>
+                            <div className='dialogue-message-item' key={index}>
                                 <div className='dialogue-message-system'>{it.content}</div>
                             </div>
                         )
@@ -187,7 +187,7 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
                         <div className={classnames('dialogue-message-item', { 
                             'reverse': it.role === 'user',
                             'hidden': display.hidden 
-                        })}>
+                        })} key={index}>
                             <div className='dialogue-message-item-avator'>{this.renderAvatar(it.role)}</div>
                             <div className={classnames({
                                 'dialogue-message-item-content': true,
@@ -592,7 +592,8 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             <Popover
                 placement='left'
                 title={this.renderTitle()}
-                overlayClassName='dialogue-popover'
+                rootClassName='dialogue-popover'
+
                 trigger={['focus','hover']}
                 content={this.renderContent()}
                 open={this.state.keep || this.state.open}

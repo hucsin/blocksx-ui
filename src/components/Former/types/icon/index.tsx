@@ -169,7 +169,7 @@ export default class FormerIcon extends React.Component<IFormerIcon, {open: bool
                         trigger={"click"}
                         placement="bottomRight"
                         onOpenChange={(v)=> {this.setState({open: v})}}
-                        overlayClassName="former-icons-popover"
+                        rootClassName="former-icons-popover"
                         title="Select The Icon" 
                         content={this.renderPopoverContent()}
                     >

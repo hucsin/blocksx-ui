@@ -180,7 +180,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             this.setState({
                 value: newProps.value
             }, () => {
-                // console.log('this.state.value', this.state.value)
+                
                 // dealControl
                 
                 if (this.props['x-control']) {
@@ -384,7 +384,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
 
             return View;
         }
-        console.log(this.props, this.state.type, type, 3333)
+        console.log(this.props, this.state.type, type)
         throw new Error(`没有注册的组件类型 ${_type}`);
     }
 
@@ -1004,7 +1004,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                     }}
                                     renderTitlePortal={titlePortal.length ? () => {
 
-                                        return titlePortal.map(it => {
+                                        return titlePortal.map((it, index) => {
                                             if (it.leafProps) {
                                                 let { description } = it.leafProps;
                                                 return <Leaf
@@ -1014,6 +1014,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                                     size={'small'}
                                                     tooltip={description}
                                                     popupMatchSelectWidth={false}
+                                                    key={index}
                                                 />
                                             }
                                         })
@@ -1030,6 +1031,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                                 ><Leaf
                                         {...leafProps}
                                         portalMap={propsPortalMap}
+                                        key={index}
                                     />
                                 </Child>
                             );
@@ -1305,7 +1307,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
 
 
-        return <View {...viewProps} ref={this.wrapperRef} />
+        return <View {...viewProps} ref={this.wrapperRef} key={viewProps.key} />
 
     }
     private getPortalBySlot(portalMap: any, slot: string) {

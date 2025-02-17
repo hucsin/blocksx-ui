@@ -7,6 +7,7 @@
  * @FilePath: /packages/design-components/src/former/types/textarea/index.tsx
  */
 import React from 'react';
+import { utils } from '@blocksx/core';
 import { IFormerBase } from '../../typings';
 import { Input,Tooltip } from 'antd';
 
@@ -89,7 +90,7 @@ export default class FormerTextarea extends React.Component<IFormerTextarea, { d
                 <Input.TextArea status={this.getStatus()} autoSize={{
                     minRows: props.minRows || 2,
                     maxRows: props.maxRows || 3
-                }} {...this.props['x-type-props']} disabled={this.state.disabled || this.props.disabled}  value={this.state.value} onChange={this.onChange} />
+                }} {...utils.omit(this.props['x-type-props'], ['minRows', 'maxRows'])} disabled={this.state.disabled || this.props.disabled}  value={this.state.value} onChange={this.onChange} />
             </Tooltip>
         )
     }

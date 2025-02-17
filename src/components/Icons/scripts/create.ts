@@ -89,7 +89,7 @@ outlinedIcons.forEach(writeFile);
 combineIcons.forEach(writeFile)
 
 // 写index.ts
-console.log(combineIcons, iconList)
+
 fs.writeFileSync('../assets/index.tsx', iconList.map(ic => {
     
     return `export { default as ${ic} } from './${ic}';`

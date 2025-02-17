@@ -42,7 +42,6 @@ export default class DialogueFormer extends React.Component<DialogueFormerProps,
             title: (props?.schema?.title || '').replace(/\.$/,'')
         }
 
-        console.log(props,332323)
         this.formerSchema = Former.JSONSchema2FormerSchema.convert(props.schema);
     }
     private getDefaultStepOne({ first, value }:any) {

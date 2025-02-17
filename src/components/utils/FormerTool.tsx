@@ -65,7 +65,7 @@ export default class FormerTool {
                 if (UiView = UiView.Viewer) {
                    
                     return (
-                        <UiView key={field.key} viewer={true} {...field} {...props} />
+                        <UiView viewer={true} {...field} {...props}  key={field.key}  />
                     )
                     
                 }
@@ -82,7 +82,7 @@ export default class FormerTool {
                         {iconField ? <Tooltip title={field.fieldName}>{TablerUtils.renderIconComponent({
                             icon: this.findIconInField(field, value)
                         })}</Tooltip> : null}
-                        <Tooltip placement="topLeft" overlayClassName="ui-tooltip" title={field.summary ? utils.isString(field.summary) ? field.summary : value : ''}>
+                        <Tooltip placement="topLeft" rootClassName="ui-tooltip" title={field.summary ? utils.isString(field.summary) ? field.summary : value : ''}>
                             {TablerUtils.renderValue(field, value)}
                         </Tooltip>
                     </span>

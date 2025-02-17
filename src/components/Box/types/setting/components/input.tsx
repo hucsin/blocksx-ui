@@ -40,7 +40,6 @@ export default class BoxSettingInput extends React.Component<any, {object: any,e
                 if (!res.success) {
                     this.showError(res.message)
                 } else {
-                    console.log(res.payload, 333)
                     this.setState({ loading: false, rebind: false, object: res.payload })
                 }
             }).finally(()=> {

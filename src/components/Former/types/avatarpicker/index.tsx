@@ -40,7 +40,7 @@ export default class AvatarPicker extends React.Component<AvatarPickerProps, Ava
         this.props.onChangeValue && this.props.onChangeValue(value);
     }
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<AvatarPickerProps>, nextContext: any): void {
-        console.log(nextProps.value, 3333111111)
+        
         if (nextProps.value != this.state.value ) {
             this.setState({
                 value: nextProps.value

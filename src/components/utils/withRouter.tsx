@@ -55,7 +55,7 @@ class RouterUtils {
     
     }
     public getHistory() {
-        console.log(this.history)
+       
     }
     public goQuery(query?: any) {
         Object.assign(this.router.query, query);

@@ -186,7 +186,7 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
                 if (!match) {
                     match =  items.some(it => {
                         let returnsDataType: any = it.returns.dataType;
-                       // console.log(returnsDataType, currentDataType, returnsDataType.some(it => currentDataType.includes(it)),2222)
+                       
                         return returnsDataType.some(it => currentDataType.includes(it))
                     })
                 }
@@ -198,7 +198,7 @@ export default class ScopePanel extends React.Component<ScopePanelProps, ScopePa
     }
     private filterTabs(tabs: any) {
         let { dataType = [] } = this.state;
-        //console.log(tabs, this.groupList, 222,dataType, this.getFilterTabs(dataType))
+        
         return tabs; //this.getFilterTabs(dataType);
         /*
         return dataType ? tabs.filter(it => {

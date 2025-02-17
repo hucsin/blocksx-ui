@@ -33,7 +33,6 @@ export default class BoxSettingSelect extends React.Component<any, {value: strin
     }
     public render() {
 
-        console.log(this.props,333)
 
         return <Select size='large' value={this.state.value} defaultValue={this.props.defaultValue} loading={this.state.loading} onSelect={this.onSelect} showSearch options={this.getOptions()} />
     }

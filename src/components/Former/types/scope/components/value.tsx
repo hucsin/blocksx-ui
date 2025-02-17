@@ -494,7 +494,7 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
         if (prevScpoe.$type == 'value') {
             
             if (this.isSampleScopeValue(prevScpoe) && prevScpoe.value.length > 0) {
-                console.log(index, currentIndex,111)
+                
                 // 当值大于零的时候，焦点
                 prevScpoe.value = prevScpoe.value.substring(0, prevScpoe.value.length);
                 currentIndex--;
@@ -552,7 +552,6 @@ export default class FormerScopeValue extends React.Component<FormerScopeProps, 
     public render() {
         let { value, originValue } = this.state;
         
-        //console.log(value.length, 'render value')
         if (Array.isArray(value)) {
             
             return (

@@ -316,10 +316,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             })
             // TODO 
             if (this.props.former) {
-               /* console.log(this.props, {
-                    ...value,
-                    [`${this.props.fieldKey}`]: value[rowKey]
-                })*/
+              
                 this.props.former.resetSafeValue({
                     ...value,
                     [`${this.props.fieldKey}`]: value[rowKey]
@@ -382,7 +379,6 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                     'ui-meta-empty': !this.state.value
                 })}
                 onClick={() => {
-                   // console.log(this.state.value, 333)
                    // if (!this.state.value) {
                         this.doAction()
                     //}
@@ -425,7 +421,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             <Popover 
                 open={this.state.open} 
                 title={props.valuesTitle || 'CHOOSE ITEM'} 
-                overlayClassName="ui-former-button-metapop" 
+                rootClassName="ui-former-button-metapop" 
                 content={this.renderValuesButton()}
                 onOpenChange={(open: any)=>{
                     this.setState({open: false})
