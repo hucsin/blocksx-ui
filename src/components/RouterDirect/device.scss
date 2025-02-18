@@ -43,6 +43,83 @@
        (max-width: 767px) and (min-resolution: 192dpi),
        (orientation: portrait) {
     .router-direct-wrapper {
+        .ui-smartpage-layout-page {
+            padding-bottom: 48px;
+        }
+        .ui-block-item-type-setting {
+            min-width: auto;
+            width: 100%;
+        }
+        .ui-boarding-wrapper > div .ui-boarding-body ul li.ui-avatar-has {
+            padding-left: 44px;
+        }
+        .box-setting {
+            margin: 0;
+            padding: 2px;
+            > h2 {
+                margin-bottom: 0;
+                padding-bottom: 0;
+                margin-top: 8px;
+                opacity: .5;
+                font-size: 20px;
+                font-weight: 300;
+            }
+            .box-setting-items {
+                padding-bottom: 16px;
+                padding-top: 16px;
+            }
+            .box-setting-items .ant-list .ant-list-item {
+                padding: 8px 16px;
+                display: block;;
+                >.ant-space {
+                    display: block;
+                    text-align: right;;
+
+                    overflow: hidden;
+                    >.ant-space-item {
+                        float:right;
+                    }
+                }
+            }
+            .box-setting-items .ant-list .ant-list-item .ant-list-item-meta-description {
+                max-width: 100%;
+            }
+            .ant-list-item-meta {
+                padding-bottom: 12px;
+            }
+             
+        }
+        .ui-box-pricing-inner {
+
+            .all-features {
+                opacity: .5 !important;
+                font-weight: 300 !important;
+                text-align: left;
+                font-size:20px !important;
+                padding-left: 0 !important
+            }  
+        }
+        .ui-block-item-theme-backend {
+            min-width: auto;
+        }
+        .ui-box-pricing {
+            padding: 0;
+            thead tr {
+                th:first-child{
+                    display: none;
+                }
+            }    
+            tbody tr {
+                td:first-child{
+                    display: none;
+                }
+            }   
+        } 
+        .ui-classify-content-left  {
+            .ui-block .ui-block-item {
+                margin-top: 0 !important;
+            }
+        }
         .ant-picker-dropdown {
             .ant-picker-time-panel-column >li.ant-picker-time-panel-cell .ant-picker-time-panel-cell-inner {
                 height: 20px;
@@ -337,5 +414,7 @@
         .ui-classify-panel > .ui-header .ui-title {
             text-transform: uppercase;
         }
+
+        
     }
 }

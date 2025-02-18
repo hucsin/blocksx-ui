@@ -2,7 +2,7 @@ import { Request } from '@blocksx/swap';
 import { utils } from '@blocksx/core';
 import { Encode, Decode} from '@blocksx/encrypt';
 import Session  from '../core/Session';
-import { message as MessageFor } from 'antd';
+import { notification, message as MessageFor } from 'antd';
 
 
 
@@ -153,7 +153,7 @@ class SmartRequest {
                     , this.getEncodeWrapper(params)
                     , this.getHeaders()
                     , this.dealHeader
-                ).then(({code, message, result}) => {
+                ).then(({code, message,title, result}) => {
 
                     // 正常响应
                     if (code == 200) {
@@ -163,32 +163,46 @@ class SmartRequest {
                         // 302 跳转
                         if (!utils.isMobileDevice()) {
                             if (code == 302) {
-                                window.location.href = result.url;
+                               return window.location.href = result.url;
                             } else if (code == 401) {
-                                window.location.href= '/login'
-                            } else {
-                                if (message) {
-                                    MessageFor.error(message)
-                                }
-                                reject(message)
+                               return window.location.href= '/login'
                             }
-                        } else {
-                            reject(message)
-                        }
+                        } 
+                        
+                        this.dealErrorMessage({
+                            code,
+                            message,
+                            title
+                        }, reject)
                     }
                 }).catch((e: any,) => {
-                    let message: string = this.getTrueMessage(e.message || e || 'system error');
-                    MessageFor.error(message);
-                    reject(message)
+                    
+                    this.dealErrorMessage({
+                        code: 500,
+                        message: this.getTrueMessage(e.message || e || 'system error')
+                    }, reject)
                 })
             })
         }
     }
 
+    private dealErrorMessage(e: any, reject) {
+       if ([401,402].includes(e.code)) {
+            notification.info({
+                description: e.message,
+                message: e.title
+            })
+            reject('')
+       } else {
+            !utils.isMobileDevice() && MessageFor.error(e.message);
+            reject(e.message)
+       }   
+    } 
+
     public getTrueMessage(message: any) {
 
         if (utils.isPlainObject(message)) {
-            return message.message || message.error_description ;
+            return message.message || message.error_description || message.error || message.errorMessage;
         }
         return String(message);
     }
@@ -207,7 +221,7 @@ class SmartRequest {
                     }
                     , this.getHeaders() 
                     , this.dealHeader
-                ).then(({code, message, result}) => {
+                ).then(({code, message, title, result}) => {
                     
                     // 正常响应
                     if (code == 200) {
@@ -216,23 +230,24 @@ class SmartRequest {
                         // 302 跳转
                         if (!utils.isMobileDevice()) {
                             if (code == 302) {
-                                window.location.href = result.url;
+                                return window.location.href = result.url;
                             }  else if (code == 401) {
-                                window.location.href= '/login'
-                            } else {
-                                if (message) {
-                                    MessageFor.error(message)
-                                }
-                                reject(message)
+                                return window.location.href= '/login'
                             }
-                        } else {
-                            reject(message)
                         }
+
+                        this.dealErrorMessage({
+                            code,
+                            message,
+                            title
+                        }, reject)
                     }
                 }).catch((e: any,) => {
-                    let message: string = this.getTrueMessage(e.message || e || 'system error');
-                    !utils.isMobileDevice() &&  MessageFor.error(message);
-                    reject(message)
+
+                    this.dealErrorMessage({
+                        code: 500,
+                        message: this.getTrueMessage(e.message || e || 'system error')
+                    }, reject)
                 })
             })
         }
