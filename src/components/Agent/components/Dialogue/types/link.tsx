@@ -14,7 +14,7 @@ interface LinkProps {
 export default class Link extends React.Component<LinkProps> {
     private onClick = ()=> {
         let url: string = this.props.url || this.props['link'];
-        console.log(this.props,33)
+        
         // 现在只处理内站跳转
         if (this.isSelfURL(url)) {
             let pathmap: any = this.getRouterMap(url);

@@ -507,7 +507,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 return (
                     <span className='ui-mircotable-avatar'>
                         {!this.props.avatarMerge ? avatars.map((avatar, index) => {
-                            return <FormerTypes.avatar  reverseColor={this.isReverseColor(rowData)} shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} key={index} {...avatar} size={this.getAvatarSize()} style={{ zIndex: avatars.length - index }} />
+                            return <FormerTypes.avatar  reverseColor={this.isReverseColor(rowData)} shape={this.getAvatarShape()} autoColor={!!this.props.autoColor}  {...avatar} size={this.getAvatarSize()} key={index} style={{ zIndex: avatars.length - index }} />
                         }) : <FormerTypes.avatar  reverseColor={this.isReverseColor(rowData)} key={2} shape={this.getAvatarShape()} autoColor={!!this.props.autoColor} size={this.getAvatarSize()} icon={avatars}  />}
                     </span>
                 )
@@ -535,11 +535,12 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 
                 return FormerTool.renderComponentByField(field, {
                     value: rowData[field.key],
-                    key: field.key + index,
                     displayValue: rowData['DisplayValue_' + field.key],
                     size: this.getActionSize(),
                     ...(field.meta ? field.meta.props : {}),
                     recordValue: rowData,
+
+                    key: field.key + index,
                     onChangeValue: (value) => {
                         
                         if (smartRequestMap[field.action]) {

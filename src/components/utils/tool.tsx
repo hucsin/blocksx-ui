@@ -99,11 +99,12 @@ export default class TablerUtils {
         }
     }
     public static getFieldValidation(field: any) {
+        
         return {
             minLength: 1,
             maxLength: field.fieldLength,
             ...field.validator,
-            required: field.isRequired
+            required: field.isRequired || field?.meta?.required
         }
     }
 

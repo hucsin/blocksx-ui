@@ -224,11 +224,12 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
                             'input-other': true,
                             'input-other-disabled': !this.state.agree
                         })}>
-                            {!login ? this.props.oauths.map(it => {
+                            {!login ? this.props.oauths.map((it, index) => {
                                 
                                 if (it.type =='qrcode') {
                                     return (
                                         <Popover
+                                            key={index}
                                             trigger={'click'}
                                             open={!this.state.agree ? false :this.state.open}
                                             onOpenChange={(open) => this.state.agree && this.onOpenChange(open, it)}
@@ -242,7 +243,7 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
                                         </Popover>
                                     )
                                 }
-                                return <a className='a' href={this.state.agree ? it.url : '#'}>{TablerUtils.renderIconComponent(it)} <span className='text'>{it.title}</span></a>
+                                return <a className='a' key={index} href={this.state.agree ? it.url : '#'}>{TablerUtils.renderIconComponent(it)} <span className='text'>{it.title}</span></a>
                             }): this.renderForm()}
                             
                         </div>

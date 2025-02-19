@@ -1,4 +1,5 @@
 import { Decode } from '@blocksx/encrypt';
+import { utils } from '@blocksx/core'
 
 
 class Session {
@@ -8,23 +9,33 @@ class Session {
     public constructor() {
 
         this.cache = {};
+        this.resetSession();
     }
     public resetSession() {
 
         let match: any = document.cookie.match(/__token=([^;]+)/);
         if (match && match[1]) {
+
             try {
                 let sekey: any = localStorage.getItem(this.sessionKey);
-                let sess: any = JSON.parse(Decode.decode(decodeURIComponent(match[1])));
                 let info: any = sekey ? JSON.parse(sekey) : {};
-                
+
+                let tokenstring: any = Decode.decode(decodeURIComponent(match[1]));
+                let tokenvalue: any = utils.quickUnZIP(tokenstring.split('#')[0])
+
                 this.session = {
-                    user: sess.u,
-                    zone: sess.z,
-                    avatar: 'UserOutlined',
+                    user: utils.maskEmail(tokenvalue.u),
+                    zone: tokenvalue.z,
+                    plan: tokenvalue.p || 'free',
+                    avatar: localStorage.getItem('setting.avatar') || 'UserOutlined',
+                    agent: localStorage.getItem('setting.agent') || 'merlin',
+                    agentname: localStorage.getItem('setting.agentname') || 'Bob',
+
                     ...info
                 };
+
             } catch(e) {
+                
                 this.session = null;
             }
         } else {
@@ -38,6 +49,17 @@ class Session {
         if (this.session && this.session.user && this.session.zone) {
             return true;
         }
+    }
+    public getUserPlan() {
+        this.resetSession();
+        if (this.session) {
+            return this.session.plan;
+        }
+        return 'free'
+    }
+    public getUserSession() {
+        this.resetSession();
+        return this.session;
     }
     public getUserInfo() {
         return this.session;

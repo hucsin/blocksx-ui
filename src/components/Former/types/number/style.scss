@@ -1,6 +1,13 @@
 .ant-input-number {
     min-width: 60px;
 }
-.ant-input-number-suffix {
-    opacity: .5;
+.ant-input-number-affix-wrapper {
+    width: 108px;
+    .ant-input-number {
+        min-width: 80px;
+    }
+    .ant-input-number-suffix {
+        opacity: .5;
+        position: absolute;
+    }
 }

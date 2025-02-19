@@ -56,7 +56,8 @@ export default class FormerInput extends React.Component<IFormerInput, { readonl
     }
 
     public render() {
-        let props:any = this.props['props'] || this.props['x-type-props'] || {};
+        let props:any = this.props.getProps ? this.props.getProps(): this.props['props'] || this.props['x-type-props'] || {};
+        
         return (
             <Tooltip title={this.state.errorMessage} placement='topLeft'>
                 <InputNumber size={this.props.size} {...props}  style={{width: props.width}} disabled={this.state.readonly || this.props.disabled}  value={this.state.value} onChange={this.onChange} status={this.state.errorMessage ? 'error' : ''} />

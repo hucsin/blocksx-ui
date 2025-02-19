@@ -65,7 +65,7 @@ export default class FormerInput extends React.Component<IFormerInput, {readonly
         return this.state.errorMessage ? 'error' : ''
     }
     public renderContext() {
-        let props:any = this.props['props'] || this.props['x-type-props'] || {};
+        let props:any = this.props.getProps ? this.props.getProps() : this.props['props'] || this.props['x-type-props'] || {};
         let disabled: boolean = props.disabled || this.props.disabled;
 
         if (props.prefix) {

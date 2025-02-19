@@ -77,7 +77,18 @@ export default class FormerDateTime extends React.Component<FormerDateProps, For
     public render() {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
         let disabled: boolean = props.disabled || this.props.disabled;
+        let { value } = this.state;
+        let dayjsValue: any ;
+        if (value =='@now') {
+            dayjsValue = new Date();
+        } else {
+            if (value) {
+                dayjsValue = '1970/01/01'  + value;
+            }
+        }
 
+
+        
         return(<Tooltip title={this.state.errorMessage} placement='topLeft'>
             <TimePicker 
                 disabled={disabled}  
@@ -86,7 +97,7 @@ export default class FormerDateTime extends React.Component<FormerDateProps, For
                 size={this.props.size}
                 status={this.state.errorMessage ? 'error' : ''}
                 placeholder={this.state.placeholder || this.state.format}
-                value={this.state.value && utils.getDayjs(this.state.value as any, this.state.format)} 
+                value={dayjsValue && utils.getDayjs(dayjsValue, this.state.format)} 
                 //format={this.state.format}
                 onChange={this.onChangeValue}
             />

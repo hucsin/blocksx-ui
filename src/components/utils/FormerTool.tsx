@@ -41,7 +41,7 @@ export default class FormerTool {
             if (utils.isFunction(field.motion)) {
 
                 return (
-                    <UiView key={field.key} size="default"  {...props} loading={true} onChangeValue={(v) => {
+                    <UiView size="default"  {...props}  key={field.key} loading={true} onChangeValue={(v) => {
                         
                         return new Promise((resolve, reject)=> {
                             field.motion({

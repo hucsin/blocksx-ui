@@ -24,7 +24,7 @@ interface DateProps {
 }
 
 interface FormerDateState {
-    value: string | [string, string];
+    value: any;
     range?: boolean;
     format?: string;
     placeholder?: string;
@@ -84,6 +84,13 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
     public render() {
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
         let disabled: boolean = props.disabled || this.props.disabled;
+        let { value } = this.state;
+
+        if (value == '@now') {
+            value = new Date()
+        }
+
+        let dayjsValue =  value ? utils.getDayjs(value, this.state.format) : value;
 
         if (this.state.range) {
             let rangeValue: any = this.state.value || [];
@@ -113,7 +120,7 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
                 status={this.state.errorMessage ? 'error' : ''}
                 showTime={this.isShowTime()}
                 placeholder={this.state.placeholder || this.state.format}
-                defaultValue={this.state.value && utils.getDayjs(this.state.value as string, this.state.format)} 
+                defaultValue={dayjsValue} 
                 format={this.state.format}
                 onChange={this.onChangeValue}
             />

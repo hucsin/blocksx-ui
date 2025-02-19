@@ -11,7 +11,7 @@ import { EventEmitter } from 'events';
 import Validation from './validation';
 import ConstValue from './const';
 import { utils, keypath } from '@blocksx/core';
-
+import Session from '../core/Session';
 import Context from './context';
 
 
@@ -1266,9 +1266,57 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         }
         return null;
     }
+    private computeDynamicProps(viewProps: any) {
+        let props: any = keypath.get(viewProps, 'x-type-props') || {}
+        let smartProps: any = props.$props;
+        
+        if (smartProps) {
+            smartProps.forEach(it => {
+                if (utils.isPlainObject(it.when) && utils.isPlainObject(it.else) && utils.isPlainObject(it.then)) {
+                    let { session, type, value } = it.when;
+                    let repalcevalue: any = null;
+                    // session match 条件
+                    /*{
+                        when: {session: 'plan', value: 'free'}
+                        when: { type: 'xx'},
+                        else: {min: 2},
+                        then: {min: 4}
+                    }*/
+                   // match session
+                    if (session) {
+                        let usersession: any = Session.getUserSession() || {};
+                        
+                        if (usersession[session] == value) {
+                            repalcevalue = it.then;
+                        } else {
+                            repalcevalue = it.else;
+                        }
 
+                    }
+
+                    if (repalcevalue) {
+                        props = {
+                            ...props,
+                            ...repalcevalue
+                        }
+                        
+                        keypath.set(viewProps, 'x-type-props', props);
+                        keypath.set(viewProps, 'meta.props', props)
+                        keypath.set(viewProps, 'props', props);
+                    }
+                }
+            })
+        } 
+    }
     private renderCompactPortal(View: any, viewProps: any, Portal: any) {
 
+        
+        this.computeDynamicProps(viewProps);
+
+        const getProps = ()=>{
+            return utils.omit(viewProps['props'] || viewProps['x-type-props'] || {}, ['$props'])
+        };
+        
         if (Portal.length > 0) {
             // 遍历找出input， select 这种可以组合在一起的
             //let 
@@ -1291,23 +1339,23 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
                 return (
                     <>
                         <Space.Compact>
-                            <View {...viewProps} ref={this.wrapperRef} />
+                            <View {...viewProps} key={1} ref={this.wrapperRef} getPorps={getProps} />
                             {this.renderPortal(Compactwrap)}
                         </Space.Compact>
-                        {noCompact && this.renderPortal(noCompact)}
+                        {noCompact.length ?  this.renderPortal(noCompact): null}
                     </>
                 )
             } else {
 
                 if (noCompact.length > 0) {
-                    return <Space><View {...viewProps} ref={this.wrapperRef} />{this.renderPortal(noCompact)}</Space>
+                    return <Space><View {...viewProps} ref={this.wrapperRef} getPorps={getProps} />{this.renderPortal(noCompact)}</Space>
                 }
             }
 
         }
 
 
-        return <View {...viewProps} ref={this.wrapperRef} key={viewProps.key} />
+        return <View {...viewProps} ref={this.wrapperRef} key={viewProps.key} getProps={getProps} />
 
     }
     private getPortalBySlot(portalMap: any, slot: string) {
@@ -1319,11 +1367,11 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
     }
     private renderPortal(portalMap) {
         if (portalMap) {
-            return portalMap.map(it => {
+            return portalMap.map((it, index) => {
 
                 if (it.leafProps) {
                     let { description } = it.leafProps;
-                    return <Leaf {...it.leafProps} former={this.props.former} tooltip={description} popupMatchSelectWidth={false} />
+                    return <Leaf {...it.leafProps} key={'c'+index} former={this.props.former} tooltip={description} popupMatchSelectWidth={false} />
                 }
             })
         }
