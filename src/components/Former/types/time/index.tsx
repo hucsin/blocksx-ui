@@ -3,6 +3,7 @@ import React from 'react';
 import { IFormerBase } from '../../typings';
 import { utils } from '@blocksx/core'
 import { TimePicker, Tooltip } from "antd";
+
 import './style.scss'
 
 interface FormerDateProps extends IFormerBase {
@@ -39,7 +40,7 @@ export default class FormerDateTime extends React.Component<FormerDateProps, For
         super(props);
         let typeProps:DateProps = this.props['props'] || this.props['x-type-props'] || {};
         this.state = {
-            value: props.value,
+            value: this.getFixedTime(props.value),
             range: typeof typeProps.range == 'undefined' ? props.range : typeProps.range,
             format: typeProps.format || props.format,
             placeholder: typeProps.placeholder,
@@ -47,11 +48,24 @@ export default class FormerDateTime extends React.Component<FormerDateProps, For
             errorMessage: props.errorMessage
         };
     }
+    private getFixedTime(value) {
+        if (value == '@now') {
+            return utils.getDayjs(new Date(), this.props.format).format(this.props.format);
+        }
+        return value;
+    }
+    public componentDidMount(): void {
+        // 处理默认值为@now的情况
+        let { value } = this.props;
+        if (value =='@now') {
+            this.onChangeValue(null, this.getFixedTime(value))
+        }
+    }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
         
         if (newProps.value != this.state.value) {
             this.setState({
-                value: newProps.value
+                value: this.getFixedTime(newProps.value)
             })
         }
         if (newProps.disabled != this.state.disabled) {
@@ -79,16 +93,11 @@ export default class FormerDateTime extends React.Component<FormerDateProps, For
         let disabled: boolean = props.disabled || this.props.disabled;
         let { value } = this.state;
         let dayjsValue: any ;
-        if (value =='@now') {
-            dayjsValue = new Date();
-        } else {
-            if (value) {
-                dayjsValue = '1970/01/01'  + value;
-            }
+      
+        if (value) {
+            dayjsValue = value.includes('/') ? value : '1970/01/01 '  + value;
         }
-
-
-        
+        console.log(dayjsValue)
         return(<Tooltip title={this.state.errorMessage} placement='topLeft'>
             <TimePicker 
                 disabled={disabled}  

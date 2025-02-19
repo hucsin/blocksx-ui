@@ -41,7 +41,7 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
         super(props);
         let typeProps:DateProps = this.props['props'] || this.props['x-type-props'] || {};
         this.state = {
-            value: props.value,
+            value: this.getFixedTime(props.value),
             range: typeof typeProps.range == 'undefined' ? props.range : typeProps.range,
             format: typeProps.format || props.format,
             placeholder: typeProps.placeholder,
@@ -49,11 +49,25 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
             errorMessage: props.errorMessage
         };
     }
+
+    private getFixedTime(value) {
+        if (value == '@now') {
+            return utils.getDayjs(new Date(), this.props.format).format(this.props.format);
+        }
+        return value;
+    }
+    public componentDidMount(): void {
+        // 处理默认值为@now的情况
+        let { value } = this.props;
+        if (value =='@now') {
+            this.onChangeValue(null, this.getFixedTime(value))
+        }
+    }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
         
         if (newProps.value != this.state.value) {
             this.setState({
-                value: newProps.value
+                value: this.getFixedTime(newProps.value)
             })
         }
         if (newProps.disabled != this.state.disabled) {
@@ -85,10 +99,6 @@ export default class FormerDate extends React.Component<FormerDateProps, FormerD
         let props:any = this.props['props'] || this.props['x-type-props'] || {};
         let disabled: boolean = props.disabled || this.props.disabled;
         let { value } = this.state;
-
-        if (value == '@now') {
-            value = new Date()
-        }
 
         let dayjsValue =  value ? utils.getDayjs(value, this.state.format) : value;
 

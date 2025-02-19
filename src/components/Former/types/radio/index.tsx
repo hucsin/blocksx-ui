@@ -85,10 +85,13 @@
             return;
         }
         let { value } = e.target;
+
+        if (value != this.state.value ) {
         
-        this.setState({
-            value: value
-        }, () => this.props.onChangeValue(value));
+            this.setState({
+                value: value
+            }, () => this.props.onChangeValue(value));
+        }
 
     }
     private getDatasource() {
@@ -97,8 +100,6 @@
       if (!datasource.length) {
         datasource = this.props.dict || [];
       }
-
-    
 
       // 过滤 视图前面
       if (this.props.viewer) {
