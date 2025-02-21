@@ -45,7 +45,7 @@ interface TablerState {
     formerName?: string;
     currentRowData?: any;
     currentRowOperate?: any;
-
+    selectedRow?: any;
     selectedRowKeys?: any[];
     rowSelection?: boolean;
 
@@ -65,7 +65,7 @@ interface TablerValueProps extends TablerProps {
     pageMeta?: any;
     avatar?: string;
     autoInit?: boolean;
-
+    selectedRow?: any;
     selectedRowKeys?: any[];
     batchOpertate?: any[]
     
@@ -132,7 +132,8 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             smartPageData: {},
             mode: props.mode,
             query: {},
-            optional:props.optional
+            optional:props.optional,
+            selectedRow: props.selectedRow
         }
         
         this.authFilter = new AuthFilter(this);
@@ -168,6 +169,12 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 
                 this.resetDataSource();
 
+            })
+        }
+
+        if (newProps.rowSelection != this.state.rowSelection) {
+            this.setState({
+                rowSelection: newProps.rowSelection
             })
         }
         
@@ -405,6 +412,8 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 if (it.batch) {
                     rowBatch.push(it)
                 }
+                
+                
             })
         }
 
@@ -423,7 +432,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             if (it.place && it.place !== 'list') {
                 return false;
             }
-        
+            
             return this.filterAuthItem(it);
         });
 
@@ -486,13 +495,22 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
     private getRowAction(rowData: any) {
         let { rowOperate = [] } = this.props;
         let actionList: RowOperate[] = DEFAULT_COLUMNS_ACTION.slice(0, DEFAULT_COLUMNS_ACTION.length);
-
+        let contextValue: any = this.state.selectedRow || {}
         // 加入自定义数据
         if (rowOperate.length > 0) {
             actionList = actionList.filter(it => {
                 return !rowOperate.find(rt => rt.key == it.key)
             })
             rowOperate.forEach((it: RowOperate) => {
+                if (it.control) {
+                    if (Object.keys(it.control).some(key => {
+                        console.log(contextValue[key], it.control[key], 33)
+                        return contextValue[key] != it.control[key] 
+                    })) {
+                        return;
+                    }
+                }
+
                 if (it.batch !== 'only') {
                     if (!it.disabled) {
                         actionList.push(it);
@@ -500,6 +518,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 }
             })
         }
+
 
         return actionList.sort((left: any, right: any) => {
 
@@ -522,7 +541,6 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             ...rowData,
             ...(this.props.onGetRequestParams && this.props.onGetRequestParams(rowData, rowIndex) || {})
         }
-        
         
         // 子组建回掉
         callback && callback(operate, rowData, rowIndex)
@@ -924,6 +942,8 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
                 <View
                     key={'2view'}
                     {...this.props}
+
+                    selectedRow={this.state.selectedRow}
                     
                     pageMeta={this.props.pageMeta}
                     pageSize={this.state.pageSize}

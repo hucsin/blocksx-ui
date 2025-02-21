@@ -46,9 +46,17 @@ export default class FormerLink extends React.Component<IFormerLabel, SFormerLab
         // @ts-ignore
         let defaultOrigin: any = window.location.origin;
         let { value = '' } = this.state;
-        let props: any = this.props['props'] || this.props['x-type-props'];
-        let { icon, dir,  name, notice,  origin = defaultOrigin, path = '/', target='_blank', params = {}} = props;
         let formerValue: any = {...(this.props.recordValue || {}),...(this.props.former ? this.props.former.getSafeValue() :  {}), ...this.state};
+        
+        let props: any = this.props['props'] || this.props['x-type-props'];
+
+        if (props.patch && formerValue) {
+            if (formerValue[props.patch.watch]) {
+                Object.assign(props, props.patch.value[formerValue[props.patch.watch]])
+            }
+        }
+
+        let { icon, dir,  name, notice,  origin = defaultOrigin, path = '/', target='_blank', params = {}} = props;
         
         let url: string = (utils.template(String(value).match(/^https?:\/\//) ? value : origin + path + encodeURIComponent(value), formerValue) || '');
 

@@ -73,7 +73,8 @@ export default class MircoAvatar extends React.Component<IMircoAvatar> {
                  shape = {props.shape}
                  key={icon}
                  className={classnames({
-                    'ui-avatar-type-avatar': this.props.type == 'avatar'
+                    'ui-avatar-type-avatar': this.props.type == 'avatar',
+                    'ui-avatar-reverseColor': this.props.reverseColor
                  })}
                  size = {props.size} style={{
                     background: this.props.reverseColor ? trueFontColor :trueBackgroundColor, 

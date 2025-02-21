@@ -52,6 +52,7 @@ export interface TablerState {
     selectedKey?: any;
     scrollTop?: boolean;
     mode?: string;
+    selectedRow?: any;
 }
 
 
@@ -93,6 +94,7 @@ interface TablerListProps extends TablerProps {
 
     selectedRowKeys?: any;
     selectedKey:any; 
+    selectedRow?: any;
 }
 
 export default class TablerList extends React.Component<TablerListProps, TablerState> {
@@ -143,7 +145,8 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             scrollTop: true,
             reflush: props.reflush,
             mode: props.mode,
-            optional: props.optional
+            optional: props.optional,
+            selectedRow: props.selectedRow
         };
         
         this.id = utils.uniq('id');
@@ -262,6 +265,12 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
            this.setState({
                total: newProps.total
            })
+        }
+
+        if (newProps.selectedRow != this.state.selectedRow) {
+            this.setState({
+                selectedRow: newProps.selectedRow
+            })
         }
 
         if (newProps.loading !== this.state.loading) {
@@ -563,11 +572,12 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
         
         let { pageMeta = {} } = this.props;
         let { props = {}} = pageMeta;
+        let rowoperate: any = this.getRowOperates();
         
         if (this.state.mode !== 'pick') {
             if (props.rowClickOperate) {
-                if (Array.isArray(pageMeta.rowoperate)) {
-                    let find: any = pageMeta.rowoperate.find(it => it.name == props.rowClickOperate);
+                if (Array.isArray(rowoperate)) {
+                    let find: any = rowoperate.find(it => it.name == props.rowClickOperate);
                     if (find) {
                         operate = find;
                     }
@@ -575,7 +585,6 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 
             }
         }
-        
         if (this.props.onRowClick) {
             this.props.onRowClick(operate, rowData, rowIndex)
         }
@@ -589,11 +598,28 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     private canRowClick () {
         let { pageMeta = {} } = this.props;
         let { props = {}} = pageMeta;
-
-        return this.state.optional || props.rowClickOperate ;
+        
+        return this.state.optional || (props.rowClickOperate && this.getRowOperates().length > 0);
     }
     private isSelectedRow(rowData: any) {
         return rowData[this.props.rowKey] == this.state.selectedKey
+    }
+    private getRowOperates() {
+        let { pageMeta = {} } = this.props;
+        let { props = {}} = pageMeta;
+        let rowvalue: any = this.state.selectedRow || {};
+        if (Array.isArray(pageMeta.rowoperate)) {
+            return pageMeta.rowoperate.filter(row => {
+                // 过滤权限
+                if (row.control) {
+                    return !Object.keys(row.control).some(it => {
+                        return row.control[it] != rowvalue[it]
+                    })
+                }
+                return true;
+            })
+        }
+        return []
     }
     private renderListItem = (rowData: any, index: number) => {
 
@@ -626,7 +652,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             return (
                 <List.Item
                     actions={[this.renderExtra(rowData, index)]}
-                    onClick={() => { this.onClickItem({ type: 'rowclick' }, rowData, index) }}
+                    onClick={() => {console.log(31); this.onClickItem({ type: 'rowclick' }, rowData, index) }}
                     id={rowData.id}
                     key={'item' + rowData.id + index}
                     extra={this.props.layout!= 'card' && this.renderDataExtra(rowData, index, 'itemExtra', 'renderRowItemExtra')}
@@ -716,10 +742,12 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
     }
     public renderEmpty() {
         let { pageMeta, onGetRequestParams } = this.props;
+        let { selectedRow } = this.state;
         
         if (pageMeta && pageMeta.block) {
+            
             let params: any = Object.assign(onGetRequestParams && onGetRequestParams() || {}, {name: 'empty'})
-            let block: any = pageMeta.block.filter(it => TableUtils.isMatchValue(it.filter, params))
+            let block: any = pageMeta.block.filter(it => TableUtils.isMatchValue(it.filter, selectedRow ? {...params, ...selectedRow} : params))
             
             if (block.length == 0) {
                 block = [pageMeta.block[0]];

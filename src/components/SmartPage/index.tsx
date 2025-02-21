@@ -95,6 +95,7 @@ export interface SmartPageProps {
 
     onValidationSuccess?: Function;
     onValidationFailed?: Function;
+    selectedRow?: any;
 }
 
 export interface SmartPageState {
@@ -131,6 +132,7 @@ export interface SmartPageState {
     noClassify?: boolean;
 
     rowSelection?: boolean;
+    selectedRow?:any;
     mode?: string;
 
     optional?: boolean;
@@ -218,7 +220,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             layout: '',
             id: props.id,
             props: props.props,
-            readonly: props.readonly
+            readonly: props.readonly,
+            selectedRow: props.selectedRow
         }
 
         this.requestHelper = SmartRequest.makeGetRequest(props.pageURI);
@@ -452,6 +455,12 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             })
         }
 
+        if (newProps.selectedRow != this.state.selectedRow) {
+            this.setState({
+                selectedRow: newProps.selectedRow
+            })
+        }
+
     }
     private needInitSchema() {
 
@@ -549,6 +558,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             schema: this.state.schema,
             pageMeta: { ...this.state.pageMeta, ...pageInfo, title: meta.title },
             autoInit: !this.state.folderField,
+            selectedRow: this.state.selectedRow,
             router: this.props.router,
             viewer: this.props.isViewer,
             password: meta.password,
@@ -586,7 +596,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             },
 
             onGetRequestParams: this.getQueryParams,
-            onOptionalOpen: this.state.optional ? (close) => {
+            onOptionalOpen: this.state.optional ? (close, value: any) => {
                 
                 this.setState({
                     optionalOpen: !close ? true : false

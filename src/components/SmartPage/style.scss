@@ -437,6 +437,7 @@
             height: 100%;
             .ui-classify-group-wrapper {
                height: 100%;
+               
                .ant-table {
                   border-radius: 12px;
                }
@@ -446,7 +447,10 @@
                .ui-classify-content-wrapper {
                   height: 100%;
                   overflow-y: auto;
-                  overflow-x:hidden;
+                  overflow-x: hidden;
+                  .ui-mircotable {
+                     padding: 8px;
+                  }
                }
             }
          }

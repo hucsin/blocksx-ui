@@ -265,6 +265,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                 return !it.disabled && ( it.place == 'article')
             })
             
+            
             if (rowoperate.length) {
                 return (
                     <>
@@ -315,7 +316,9 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
         )
     }
     private renderItemContent =(item: any, index)=> {
+        
         switch (item.type) {
+            
             case 'smartpage':
                     return (
                         <WithRouterSmartPage 
@@ -325,6 +328,7 @@ export default class SmartPageArticle extends React.Component<SmartPageActiclePr
                             noFolder={true}
                             noHeader={true}
                             noClassify={true}
+                            selectedRow={this.state.value}
                             noTitle={true}
                             noToolbar={false}
                             rowSelection={true}

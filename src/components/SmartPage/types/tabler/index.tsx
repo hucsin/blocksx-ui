@@ -36,6 +36,7 @@ export interface SmartPageTablerProps {
     router: routerParams;
     size?: any;
     rowKey?: any;
+    
 
     onOptionalOpen?: Function;
     selectedRow?: any;
@@ -85,6 +86,12 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
             this.setState({
                 reflush: newProps.reflush,
                 mode: newProps.mode
+            })
+        }
+
+        if (newProps.selectedRow != this.state.selectedRow) {
+            this.setState({
+                selectedRow: newProps.selectedRow
             })
         }
 
@@ -219,6 +226,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                     onGetRequestParams={this.getRequestParams}
 
                     selectedRowKeys={selectedRowKeys}
+                    selectedRow={selectedRow}
                     noSearcher={this.props.noSearcher}
                     searchRef={this.props.searchRef}
                     toolbarRef={this.props.toolbarRef}
@@ -237,7 +245,8 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                                 this.props.onSelectedValue && this.props.onSelectedValue(rowData);
                             } else {
                                 if (this.props.optional) {
-                                    this.props.onOptionalOpen && this.props.onOptionalOpen();
+
+                                    this.props.onOptionalOpen && this.props.onOptionalOpen(undefined, rowData);
                                 }
                             }
                         } else {

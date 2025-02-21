@@ -7,8 +7,13 @@ import * as Icons from '../../../Icons';
 import { Space, Typography, Button, Tag } from 'antd';
 import { BoxItem, BoxAction, BoxTag } from '../../interface';
 import BoxManger from '../../BoxManger';
+import withRouter from '../../../utils/withRouter';
 
 import './style.scss';
+
+interface OutlineItem extends BoxItem {
+    router: any;
+}
 /**
  * 概览，
  * 显示：图标
@@ -17,7 +22,7 @@ import './style.scss';
  *      buttons
  *      tags
  */
-export default class Outline extends React.Component<BoxItem, any> {
+export default class Outline extends React.Component<OutlineItem, any> {
     private avatarSizeMap: any = {
         small: 64,
         default: 98,
@@ -58,12 +63,16 @@ export default class Outline extends React.Component<BoxItem, any> {
                         return (
                             <Button 
                                 key={index} 
-                                size={(this.props.size || item.size || 'large') as any} 
+                                size={( item.size || this.props.size || 'large') as any} 
                                 type={item.type || 'primary'} 
                                 icon={this.renderIcon(item.icon as any)}
                                 onClick = {() => {
-                                    if (item.action && events[item.action]) {
-                                        events[item.action](item.params)
+                                    if (item.action =='router') {
+                                        this.props.router.utils.goPath(item.link)
+                                    } else {
+                                        if (item.action && events[item.action]) {
+                                            events[item.action](item.params)
+                                        }
                                     }
                                 }}
                             >{item.text}</Button>
@@ -109,4 +118,4 @@ export default class Outline extends React.Component<BoxItem, any> {
     }
 }
 
-BoxManger.set('outline', Outline)
+BoxManger.set('outline', withRouter(Outline))

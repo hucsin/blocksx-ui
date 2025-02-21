@@ -101,7 +101,7 @@ export interface IFormerBase {
     value?:any,
     runtimeValue?: any;
     viewer?: boolean;
-    getProps: Function;
+    getProps?: Function;
     
     // 只有存在值的时候才显示
     conditionalDisplay?: boolean;

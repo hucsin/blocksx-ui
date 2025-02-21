@@ -19,6 +19,7 @@ export interface BoxBehavior {
 export interface BoxAction {
     text: string;
     icon?: string;
+    link?: string;
     size?: 'large' | 'small' | 'default',
     type?: 'primary' | 'default' | 'link' | 'dashed' | 'text';
     action: string;

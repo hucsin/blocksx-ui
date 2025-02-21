@@ -4,12 +4,7 @@ import { List ,Tag, Typography, Avatar, Space, Popover} from 'antd';
 
 import * as Icons from '../../../Icons';
 
-import BoxSettingInput from './components/input';
-import BoxSettingSelect from './components/select';
-import BoxSettingAvatar from './components/avatar';
-import BoxSettingSwitch from './components/switch';
-import BoxSettingButton from './components/button';
-import BoxSettingQrcode from './components/qrcode';
+import * as BoxTypes from './components'
 
 import BoxManger from '../../BoxManger';
 
@@ -94,36 +89,18 @@ class BoxSetting extends React.Component<BoxSettingProps> {
         return null;
     }
     public renderAction(setting: any, value?: any, valueKey?: string, item?: any) {
-        
-        switch (setting.type) {
-            case 'qrcode':
-                return <BoxSettingQrcode {...setting} value={value} object={this.props.value} />
-            case 'button':
-                return <BoxSettingButton {...setting} value={value} object={this.props.value}  />
-            case 'switch':
-                return <BoxSettingSwitch {...setting} value={value} object={this.props.value} onSubmit={(key, value)=> {
-                   return this.onSave(key, value, item)
-                }} valueKey={valueKey} />
-            case 'avatar':
-                return <BoxSettingAvatar {...setting} value={value} object={this.props.value} onSubmit={(key, value) => {
-                   return this.onSave(key, value, item);
-                }} valueKey={valueKey} />
-            case 'select':
-                return (
-                    <BoxSettingSelect {...setting} value={value} object={this.props.value} onSubmit={(key,value) => {
-                       return this.onSave(key, value, item);
-                    }} valueKey={valueKey} />
-                )
-            case 'input':
-                return (
-                    <BoxSettingInput {...setting} value={value} object={this.props.value} onSubmit={(key,value)=> {
-                       return this.onSave(key,value, item)
-                    }} valueKey={valueKey} />
-                )
-            default:
-                if (setting.type) {
-                    return <Typography.Paragraph copyable>{value}</Typography.Paragraph>;
-                }
+
+
+        if (BoxTypes[setting.type]) {
+            let View: any = BoxTypes[setting.type];
+            
+            return <View {...setting} value={value || setting.defaultValue } valueKey={valueKey} object={this.props.value} onSubmit={(key, value)=> {
+                return this.onSave(key, value, item)
+            }}  />
+        } else {
+            if (setting.type) {
+                return <Typography.Paragraph copyable>{value}</Typography.Paragraph>;
+            }
         }
         
     }

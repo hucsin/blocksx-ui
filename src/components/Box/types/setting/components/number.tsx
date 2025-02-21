@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Icons from '../../../../Icons';
-import { Input, Space, Button, Popover,Typography, Tooltip } from 'antd';
+import { InputNumber, Space, Button, Popover,Typography, Tooltip } from 'antd';
 
 export default class BoxSettingInput extends React.Component<any, {object: any,error:string,rebind: boolean,loading: boolean, value: string }> {
     public constructor(props: any) {
@@ -14,22 +14,10 @@ export default class BoxSettingInput extends React.Component<any, {object: any,e
         }
     }
     public onChange = (e: any) => {
-        this.setState({ value: e.target.value.trim() })
+        
+        this.setState({ value: e })
     }
     public onSubmit = () => {
-        switch(this.props.format) {
-            case 'email':
-                if (!this.state.value.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
-                    return this.showError('Invalid email')
-                }
-                break;
-            default:
-                if (!this.state.value.match(/^[a-zA-Z0-9_\-\.\s]+$/)) {
-                    return this.showError('Invalid characters')
-                }
-
-                break;
-        }
 
         // 提交
         if (this.props.onSubmit) {
@@ -87,10 +75,9 @@ export default class BoxSettingInput extends React.Component<any, {object: any,e
                 this.renderBindStatus(object, bind, bindStatus)
             )
         } else { 
-            
             return (
                 <Space.Compact>
-                    <Input  size='large'  onChange={this.onChange} suffix={this.props.suffix} placeholder={this.props.placeholder} value={this.state.value} />
+                    <InputNumber  style={{width: 180}} min={this.props.min || 0} max={this.props.max || 1000} size='large' onChange={this.onChange} suffix={this.props.suffix} placeholder={this.props.placeholder} value={this.state.value} />
                     <Popover open ={!!this.state.error} content={this.state.error}>
                         <Button size='large' loading={this.state.loading} onClick={this.onSubmit} disabled={value ? (this.props.value == this.state.value) : true} type='default'>{this.props.buttonText || 'Submit'}</Button>
                     </Popover>

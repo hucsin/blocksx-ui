@@ -1,7 +1,6 @@
 import React from 'react';
 import { Spin } from 'antd';
 import classnames from 'classnames';
-import Notice from '../Former/types/notice';
 
 import withRouter, { routerParams } from '../utils/withRouter';
 import ClassifyPanel from '../ClassifyPanel';
@@ -29,6 +28,7 @@ interface SmartPageGroupState {
     current?: any;
     optionalOpen: any;
     icon?: string;
+    selectedRow?: any;
 }
 
 export default class SmartPageGroup extends React.Component<SmartPageGroupProps, SmartPageGroupState > {
@@ -165,14 +165,17 @@ export default class SmartPageGroup extends React.Component<SmartPageGroupProps,
                                                     notice: dict.notice,
                                                     icon: dict.icon
                                                 },
+                                                selectedRow: this.state.selectedRow,
                                                 toolbarRef: dict.toolbarContainerRef,
                                                 optionalContainerRef: dict.optionalContainerRef,
                                                 searchRef: dict.searcherContainerRef,
-                                                onOptionalOpen:(isClose?:boolean)=>{
+                                                onOptionalOpen:(isClose?:boolean, value?: any)=>{
+                                                    
                                                     let { optionalOpen = {} } = this.state;
                                                     optionalOpen[dict.name] = !isClose ? dict.name : false
                                                     
                                                     this.setState({
+                                                        selectedRow: value,
                                                         optionalOpen
                                                     })
                                                 }

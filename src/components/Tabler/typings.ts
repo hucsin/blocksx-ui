@@ -18,6 +18,7 @@ export interface SearcherWhere {
   [prop: string]: SearcherWhereKey
 }
 export interface RowOperate {
+  control?: any;
   batch?: boolean | 'only'; // 是否支持批量, true | 'only'
   type: string; // edit/ view/ monont
   key: string; // 标识

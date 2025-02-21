@@ -3,6 +3,7 @@ import { utils } from '@blocksx/core';
 import { Tag } from 'antd'
 import * as Icons from '../Icons';
 import CombineIcon from '../Icons/CombineIcon';
+import Session from '../core/Session';
 
 
 export default class TablerUtils {
@@ -14,12 +15,19 @@ export default class TablerUtils {
 
     public static isMatchValue(target: any, value: any) {
         let keys: any = Object.keys(target);
+        let matchvalue: any = {
+            ...value,
+            'session.plan': Session.getUserPlan()
+        }
 
         let match = keys.filter(key => {
             // console.log(key, value[key], target[key], 88777777)
-            return value[key] === target[key]
+            if (Array.isArray(target[key])) {
+                return target[key].includes(matchvalue[key])
+            }
+            return matchvalue[key] === target[key]
         })
-        return (match.length == keys.length) && (keys.length === Object.keys(value).length);
+        return (match.length == keys.length) //&& (keys.length === Object.keys(value).length);
     }
 
     public static renderIconComponent(field: any) {
