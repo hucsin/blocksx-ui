@@ -1421,10 +1421,9 @@ export default class MiniFlow extends EventEmitter {
 
                         } else {
 
-
+                            console.log('updateNode-11', 333)
                         // TODO update
-                            this.doChangeSave('updateNode', utils.pick(node, ['name', 'id', 'left', 'top']));
-
+                            this.doChangeSave('movePosition', utils.pick(node, ['name', 'id', 'left', 'top']));
                         }
                     }
                 })

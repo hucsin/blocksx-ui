@@ -504,7 +504,6 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             rowOperate.forEach((it: RowOperate) => {
                 if (it.control) {
                     if (Object.keys(it.control).some(key => {
-                        console.log(contextValue[key], it.control[key], 33)
                         return contextValue[key] != it.control[key] 
                     })) {
                         return;

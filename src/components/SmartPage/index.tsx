@@ -349,7 +349,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                 if (data.value) {
 
                     data.value = utils.merge(this.state.value || {}, data.value);
-                    this.onChangeValue(data.value)
+                    this.onChangeValue(data.value, 'init')
                 }
                 data.pageMeta.title = meta.title || this.state.title;
                 //data.title = meta.title;
@@ -530,7 +530,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
         return params;
     }
-    private onChangeValue = (value: any) => {
+    private onChangeValue = (value: any, type?: string) => {
         
         this.setState({
             value,
@@ -538,7 +538,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         })
 
         if (this.props.onChangeValue) {
-            return this.props.onChangeValue(value)
+            return this.props.onChangeValue(value, type)
         }
     }
     private onSelectedValue = (value: any) => {

@@ -651,7 +651,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             this.state.value
         )
     }
-    private onChangeValue(value: any) {
+    private onChangeValue(value: any, type?: string) {
         // 清洗下labelvalue
         if (this.state.isStepMode && this.state.isStepOne) {
           //  return this.setState({
@@ -668,7 +668,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             value: value
         })
         if (this.props.onChangeValue) {
-            this.props.onChangeValue(this.cleanLabelValueToValue(value));
+            this.props.onChangeValue(this.cleanLabelValueToValue(value),type);
         }
     }
     private hide(value?: any) {
@@ -847,7 +847,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                     this.onChangeValue({
                         ...this.state.value,
                         ...value
-                    })
+                    }, type)
                 }}
                 
                 disabled = {this.state.isStepMode && !this.state.setpOneValue}
