@@ -97,7 +97,7 @@ export default class FormerDateTime extends React.Component<FormerDateProps, For
         if (value) {
             dayjsValue = value.includes('/') ? value : '1970/01/01 '  + value;
         }
-        console.log(dayjsValue)
+        
         return(<Tooltip title={this.state.errorMessage} placement='topLeft'>
             <TimePicker 
                 disabled={disabled}  

@@ -585,6 +585,8 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
                 
             }
         }
+
+        
         if (this.props.onRowClick) {
             this.props.onRowClick(operate, rowData, rowIndex)
         }
@@ -652,7 +654,7 @@ export default class TablerList extends React.Component<TablerListProps, TablerS
             return (
                 <List.Item
                     actions={[this.renderExtra(rowData, index)]}
-                    onClick={() => {console.log(31); this.onClickItem({ type: 'rowclick' }, rowData, index) }}
+                    onClick={() => { this.onClickItem({ type: 'rowclick' }, rowData, index) }}
                     id={rowData.id}
                     key={'item' + rowData.id + index}
                     extra={this.props.layout!= 'card' && this.renderDataExtra(rowData, index, 'itemExtra', 'renderRowItemExtra')}

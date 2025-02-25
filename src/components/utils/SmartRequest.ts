@@ -202,9 +202,37 @@ class SmartRequest {
     public getTrueMessage(message: any) {
 
         if (utils.isPlainObject(message)) {
-            return message.message || message.error_description || message.error || message.errorMessage;
+            message =  message.message || message.error_description || message.error || message.errorMessage;
         }
-        return String(message);
+
+        message = String(message);
+
+        // D1_ERROR: UNIQUE constraint failed: Thinking.tenantID, Thinking.title: SQLITE_CONSTRAINT
+
+        // 特殊处理D1 错误
+        if (message.includes('D1_ERROR')) {
+            console.log(message)
+
+            if (message.includes('UNIQUE constraint')) {
+                // UNIUE 错误
+                let match : any = message.match(/failed\:\s*([a-z0-9A-Z\.\s\,]+)\:/);
+                if (match && match[1]) {
+                    let unique: any = match[1].split(/\s*,\s*/).map(it => {
+                        let val: any = it.split('.');
+                        return val[1]
+                    }).filter(it => it !=='tenantID')
+
+                    if (unique.length) {
+                        message = `The field ${unique.join(',')} must be unique. Please modify and try again.`
+                    }
+                    
+                }
+            }
+
+        }
+
+
+        return message;
     }
 
     public makeGetRequest(url: string,  fields?: any) {

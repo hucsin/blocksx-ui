@@ -81,6 +81,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
     }   
     public UNSAFE_componentWillReceiveProps(newProps: SmartPageTablerProps) {
 
+        
         if (newProps.reflush!= this.state.reflush) {
             
             this.setState({
@@ -88,7 +89,7 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                 mode: newProps.mode
             })
         }
-
+        
         if (newProps.selectedRow != this.state.selectedRow) {
             this.setState({
                 selectedRow: newProps.selectedRow
@@ -240,23 +241,25 @@ export default class SmartPageTabler extends React.Component<SmartPageTablerProp
                     onRowAction={(operate:any, rowData: any, _)=>{
 
                         //return ;
-                        if (operate.type == 'rowclick') {
-                            if (this.state.mode == 'pick') {
-                                this.props.onSelectedValue && this.props.onSelectedValue(rowData);
-                            } else {
-                                if (this.props.optional) {
-
-                                    this.props.onOptionalOpen && this.props.onOptionalOpen(undefined, rowData);
-                                }
-                            }
-                        } else {
-                            this.props.onSelectedValue && this.props.onSelectedValue(rowData);
-                        }
-
-
                         this.setState({
                             selectedRow: rowData
+                        }, ()=> {
+
+                            if (operate.type == 'rowclick') {
+                                if (this.state.mode == 'pick' && this.props.onSelectedValue) {
+                                     return  this.props.onSelectedValue(rowData);
+                                } else {
+                                    if (this.props.optional && this.props.onOptionalOpen ) {
+    
+                                        return  this.props.onOptionalOpen(undefined, rowData);
+                                    }
+                                }
+                            } 
+                            
+                            this.props.onSelectedValue && this.props.onSelectedValue(rowData);
+                            
                         })
+
                     }}
                     okText={this.props.okText}
                     okIcon={this.props.okIcon}

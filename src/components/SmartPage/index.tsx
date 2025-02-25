@@ -456,6 +456,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         }
 
         if (newProps.selectedRow != this.state.selectedRow) {
+            
             this.setState({
                 selectedRow: newProps.selectedRow
             })
@@ -544,7 +545,9 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
     private onSelectedValue = (value: any) => {
         
         if (this.props.onSelectedValue) {
-            
+            this.setState({
+                selectedRow: value
+            })
             return this.props.onSelectedValue(value)
         }
     }
@@ -817,7 +820,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         
         if (this.props.onClose) {
             if (this.instance && this.instance.validationValue && !open) {
-
+                
                 return this.instance.validationValue((value: any) => {
                     this.setShowStatus(open)
                     let messg: any = this.instance.stepFormer.validationValue();
@@ -829,7 +832,6 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
                     }
                 }, null, (errorMessage: any) => {
                     this.setShowStatus(open);
-                    
                     this.props.onValidationFailed && this.props.onValidationFailed(errorMessage);
                 })
 
