@@ -88,12 +88,20 @@ import {
     NumberOutlined,
     InfoOutlined,
     SettingFilled,
-    FieldTimeOutlined
+    FieldTimeOutlined,
+    ShoppingCartOutlined,
+    StarOutlined,
+    GiftOutlined,
+    ReadOutlined
     
 } from '@ant-design/icons';
 
 // 重新导出需要的图标
 export { 
+    ReadOutlined,
+    StarOutlined,
+    GiftOutlined,
+    ShoppingCartOutlined,
     FieldTimeOutlined,
     SettingFilled,
     InfoOutlined,
