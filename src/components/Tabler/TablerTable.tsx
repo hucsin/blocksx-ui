@@ -548,7 +548,7 @@ export default class TablerTable extends React.Component<TablerTableProps, Table
                     rowClassName={(record: any) => {
                         let { selectedRowKeys } = this.state;
                         if (selectedRowKeys) {
-                            if (selectedRowKeys.indexOf(record[this.props.rowKey || 'id']) > -1) {
+                            if ((selectedRowKeys +'').indexOf(record[this.props.rowKey || 'id']) > -1) {
                                 return 'ui-tabler-selected'
                             }
                         }

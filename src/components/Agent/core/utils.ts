@@ -178,16 +178,8 @@ export default class AgentUtils {
     try {
       let value: any = localStorage.getItem(key) || defaultValue;
 
-      let result: any = value ? utils.decompress(JSON.parse( value )) : null;
+      return value ? utils.decompress(JSON.parse( value )) : null;
       
-      // TODO 
-      
-      return result.map(it => {
-        return {
-          ...it, 
-          context: 'DrunkPerson'
-        }
-      });
     } catch (e) {
       console.error(e);
       return null;

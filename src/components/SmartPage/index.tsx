@@ -562,6 +562,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             pageMeta: { ...this.state.pageMeta, ...pageInfo, title: meta.title },
             autoInit: !this.state.folderField,
             selectedRow: this.state.selectedRow,
+            
             router: this.props.router,
             viewer: this.props.isViewer,
             password: meta.password,
@@ -602,7 +603,8 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
             onOptionalOpen: this.state.optional ? (close, value: any) => {
                 
                 this.setState({
-                    optionalOpen: !close ? true : false
+                    optionalOpen: !close ? true : false,
+                    selectedRow: value
                 }, ()=> {
                     if (!close && utils.isMobileDevice()) {
                         let topdom: any = document.getElementById('top');
