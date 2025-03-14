@@ -160,6 +160,14 @@
             font-size: 20px;
             vertical-align: middle;
         }
+        &[data-name=Workflows]::after {
+            content: "beta";
+            display:inline-block;
+            color:var(--main-bg-color);
+            border-radius: 3px;
+            padding: 4px;
+            transform: scale(.5);
+        }
     }
     
 
@@ -167,6 +175,9 @@
         width: 80px;
        
         dd {
+            &:nth-child(2)::after {
+                display: none;
+            }
             .hoofs-sidebar-menu-text  {
                 opacity: 0;
             }

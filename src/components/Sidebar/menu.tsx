@@ -108,6 +108,7 @@ export default class SidebarMenu extends React.Component<SiderbarMenuProps, Side
                         return (
                             <dd 
                                 key={it.key}
+                                data-name={it.name}
                                 className={classnames({
                                     'ui-select': isSelected
                                 })}

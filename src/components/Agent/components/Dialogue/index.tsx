@@ -433,7 +433,10 @@ export default class Dialogure extends React.Component<DialogueProps, DialogueSt
             case 'value':
                 return <DialogueTypes.value value={display.value || item.value} />
             case 'link':
+            
                 return <DialogueTypes.link {...display.value} />
+            case 'image': 
+                return <DialogueTypes.image {...(display.value || display)} />;
             case 'oauth':
                 return (<DialogueTypes.oauth 
                     onOAuthStart={()=>{
