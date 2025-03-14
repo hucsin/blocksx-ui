@@ -72,6 +72,7 @@ export const map:any = {
         "ConfigurationUtilityFilled",
         "ConnectUtilityFilled",
         "ContactsUtilityFilled",
+        "DallEUtilityFilled",
         "DatasourceSettingUtilityFilled",
         "EditUtilityFilled",
         "EnlargeUtilityFilled",

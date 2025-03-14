@@ -30,6 +30,7 @@ export { default as CollectionUtilityFilled } from './CollectionUtilityFilled';
 export { default as ConfigurationUtilityFilled } from './ConfigurationUtilityFilled';
 export { default as ConnectUtilityFilled } from './ConnectUtilityFilled';
 export { default as ContactsUtilityFilled } from './ContactsUtilityFilled';
+export { default as DallEUtilityFilled } from './DallEUtilityFilled';
 export { default as DamengBrandFilled } from './DamengBrandFilled';
 export { default as DatasourceDataFilled } from './DatasourceDataFilled';
 export { default as DatasourceDefaultDataFilled } from './DatasourceDefaultDataFilled';
