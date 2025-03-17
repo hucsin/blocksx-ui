@@ -189,10 +189,10 @@
         margin-right: 2px
     }
     &.ui-scope-textarea {
-        height: 64px;
+       min-height: 68px;
         .ui-scope-inner {
-            height: 64px;
-            min-height: 64px;
+            height: 68px;
+            min-height: 68px;
         }
     }
     &.ui-scope-visibility {
@@ -342,7 +342,8 @@
 
     .ui-scope-placeholder {
         position: absolute;
-        height: 24px;
+        min-height: 24px;
+        line-height: 20px;
         top: 50%;
         width: 100%;
         left: 0px;

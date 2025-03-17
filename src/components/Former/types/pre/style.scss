@@ -1,0 +1,14 @@
+.pre-former-wrapper {
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    border-radius: 6px;
+    white-space: pre-wrap; /* 允许换行 */
+    word-wrap: break-word; /* 兼容旧浏览器 */
+    word-break: break-all; 
+    overflow-wrap: break-word;
+    max-height: 140px;
+    overflow: auto;
+    padding: 8px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}

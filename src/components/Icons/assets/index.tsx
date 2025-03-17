@@ -26,6 +26,7 @@ export { default as Avator23AvatorFilled } from './Avator23AvatorFilled';
 export { default as Avator24AvatorFilled } from './Avator24AvatorFilled';
 export { default as BraveBrandFilled } from './BraveBrandFilled';
 export { default as CalendarUtilityFilled } from './CalendarUtilityFilled';
+export { default as ClassifyUtilityFilled } from './ClassifyUtilityFilled';
 export { default as CollectionUtilityFilled } from './CollectionUtilityFilled';
 export { default as ConfigurationUtilityFilled } from './ConfigurationUtilityFilled';
 export { default as ConnectUtilityFilled } from './ConnectUtilityFilled';
@@ -76,6 +77,7 @@ export { default as StartCircleUtilityFilled } from './StartCircleUtilityFilled'
 export { default as StopCircleUtilityFilled } from './StopCircleUtilityFilled';
 export { default as StripeBrandFilled } from './StripeBrandFilled';
 export { default as TableAddDataFilled } from './TableAddDataFilled';
+export { default as TagsUtilityFilled } from './TagsUtilityFilled';
 export { default as ThinkingUtilityFilled } from './ThinkingUtilityFilled';
 export { default as TicketUtilityFilled } from './TicketUtilityFilled';
 export { default as TodoUtilityFilled } from './TodoUtilityFilled';
@@ -127,6 +129,7 @@ export { default as DatasourceSmallDataOutlined } from './DatasourceSmallDataOut
 export { default as DbqueryBrandOutlined } from './DbqueryBrandOutlined';
 export { default as DestroyUtilityOutlined } from './DestroyUtilityOutlined';
 export { default as DetailsUtilityOutlined } from './DetailsUtilityOutlined';
+export { default as DetectionUtilityOutlined } from './DetectionUtilityOutlined';
 export { default as DocumentAddUtilityOutlined } from './DocumentAddUtilityOutlined';
 export { default as DocumentUtilityOutlined } from './DocumentUtilityOutlined';
 export { default as DotSuggestionOutlined } from './DotSuggestionOutlined';
@@ -134,6 +137,7 @@ export { default as DownDirectivityOutlined } from './DownDirectivityOutlined';
 export { default as EfficiencyUtilityOutlined } from './EfficiencyUtilityOutlined';
 export { default as EllipsisSuggestionOutlined } from './EllipsisSuggestionOutlined';
 export { default as EmailUtilityOutlined } from './EmailUtilityOutlined';
+export { default as EmotionUtilityOutlined } from './EmotionUtilityOutlined';
 export { default as EmptyUtilityOutlined } from './EmptyUtilityOutlined';
 export { default as EndsWithUtilityOutlined } from './EndsWithUtilityOutlined';
 export { default as EngagingUtilityOutlined } from './EngagingUtilityOutlined';
@@ -190,6 +194,7 @@ export { default as NoStartsWithUtilityOutlined } from './NoStartsWithUtilityOut
 export { default as NotEmptyUtilityOutlined } from './NotEmptyUtilityOutlined';
 export { default as NotEqualtoUtilityOutlined } from './NotEqualtoUtilityOutlined';
 export { default as NotionBrandOutlined } from './NotionBrandOutlined';
+export { default as OcrUtilityOutlined } from './OcrUtilityOutlined';
 export { default as OneNotOfUtilityOutlined } from './OneNotOfUtilityOutlined';
 export { default as OneOfUtilityOutlined } from './OneOfUtilityOutlined';
 export { default as OpenWindowUtilityOutlined } from './OpenWindowUtilityOutlined';
@@ -244,6 +249,7 @@ export { default as TableColumnUtilityOutlined } from './TableColumnUtilityOutli
 export { default as TableDataOutlined } from './TableDataOutlined';
 export { default as TableRowCommonOutlined } from './TableRowCommonOutlined';
 export { default as TableUtilityOutlined } from './TableUtilityOutlined';
+export { default as TagsUtilityOutlined } from './TagsUtilityOutlined';
 export { default as TemplateUtilityOutlined } from './TemplateUtilityOutlined';
 export { default as ThinkingUtilityOutlined } from './ThinkingUtilityOutlined';
 export { default as TidbBrandOutlined } from './TidbBrandOutlined';

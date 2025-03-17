@@ -651,6 +651,10 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
             if (hotPatch.uiType) {
                 hotPatch['x-type'] = hotPatch.uiType;
             }
+            
+            if (hotPatch.defaultValue) {
+                hotPatch['defaultValue'] = hotPatch.defaultValue;
+            }
         }
 
         return patch;
@@ -867,6 +871,7 @@ export default class Leaf extends React.PureComponent<ILeaf, TLeaf> {
         let props = this.properties[prop];
 
         // 如果存在hot patch的时候
+        
         if (controlPatch[prop]) {
             return Object.assign(this.clone(props), controlPatch[prop]);
         }

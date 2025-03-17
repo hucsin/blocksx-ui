@@ -50,29 +50,45 @@ export default class FormerTextarea extends React.Component<IFormerTextarea, { d
     public static Viewer: any = FormerTextareaViewer;
     public constructor(props: IFormerTextarea) {
         super(props);
-
+        
         this.state = {
             value: props.value || '',
             errorMessage: props.errorMessage || '',
-            disabled: props.readonly
+            disabled: this.getPropsDisabled(props) ||  props.readonly
         };
     }
     public UNSAFE_componentWillReceiveProps(newProps: any) {
+        
         if (newProps.value != this.state.value) {
             this.setState({
                 value: newProps.value || ''
             })
         }
+       
         if (newProps.errorMessage != this.state.errorMessage) {
             this.setState({
                 errorMessage: newProps.errorMessage
             })
         }
-        if (newProps.readonly != this.state.disabled) {
+
+        let disabled: any =  this.getPropsDisabled(newProps) ;
+        if (!utils.isUndefined(newProps.readonly)) {
+            if (newProps.readonly != this.state.disabled) {
+                this.setState({
+                    disabled:disabled || newProps.readonly
+                })
+            }
+        }
+        if (disabled != this.state.disabled) {
             this.setState({
-                disabled: newProps.readonly
+                disabled: disabled
             })
         }
+        
+    }
+    private getPropsDisabled(props: any) {
+        let xprops: any = props['x-type-props'] || props['props'] || {};
+        return xprops.disabled;
     }
     private onChange =(e: any)=> {
         const { value } = e.target;
@@ -85,6 +101,7 @@ export default class FormerTextarea extends React.Component<IFormerTextarea, { d
 
     public render() {
         let props: any = this.props['x-type-props'] || this.props['props'] || {};
+        
         return (
             <Tooltip title={this.state.errorMessage} placement='topLeft'>
                 <Input.TextArea status={this.getStatus()} autoSize={{
