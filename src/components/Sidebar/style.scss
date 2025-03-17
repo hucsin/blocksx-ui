@@ -163,10 +163,12 @@
         &[data-name=Workflows]::after {
             content: "beta";
             display:inline-block;
-            color:var(--main-bg-color);
+            color:#aaa;
             border-radius: 3px;
             padding: 4px;
-            transform: scale(.5);
+            transform: scale(.4);
+            margin-top: -8px;
+            margin-left: -8px;
         }
     }
     
