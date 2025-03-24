@@ -495,7 +495,7 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
     private getRowAction(rowData: any) {
         let { rowOperate = [] } = this.props;
         let actionList: RowOperate[] = DEFAULT_COLUMNS_ACTION.slice(0, DEFAULT_COLUMNS_ACTION.length);
-        let contextValue: any = this.state.selectedRow || {}
+        let contextValue: any = rowData || this.state.selectedRow || {}
         // 加入自定义数据
         if (rowOperate.length > 0) {
             actionList = actionList.filter(it => {
@@ -504,11 +504,16 @@ export default class Tabler extends React.Component<TablerValueProps, TablerStat
             rowOperate.forEach((it: RowOperate) => {
                 if (it.control) {
                     if (Object.keys(it.control).some(key => {
+                        //console.log(contextValue[key], contextValue,key, it.control, contextValue[key] != it.control[key])
                         return contextValue[key] != it.control[key] 
                     })) {
-                        return;
+                       // console.log(233323)
+                       //  return;
                     }
+                
                 }
+
+                //console.log(it, it.control, 32233)
 
                 if (it.batch !== 'only') {
                     if (!it.disabled) {

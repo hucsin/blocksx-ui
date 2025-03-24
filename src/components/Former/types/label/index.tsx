@@ -85,8 +85,8 @@ export default class FormerLabel extends React.Component<IFormerLabel, SFormerLa
         if (typeof _value == 'boolean') {
             return _value ? 'True' : 'False'
         }
-
-        return utils.isNullValue(_value) || _value == ''
+        
+        return utils.isNullValue(_value) || _value === ''
             ? <span className='ui-label-empty'>{'<null>'}</span> : this.getValue(_value);
     }
     private getValue(val: any) {
