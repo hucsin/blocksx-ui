@@ -85,6 +85,7 @@ export const map:any = {
         "MaintenanceUtilityFilled",
         "MarkReadUtilityFilled",
         "MarkUnreadUtilityFilled",
+        "MistakeBookUtilityFilled",
         "NarrowUtilityFilled",
         "NoteUtilityFilled",
         "PersonaUtilityFilled",

@@ -61,6 +61,7 @@ export { default as LockUtilityFilled } from './LockUtilityFilled';
 export { default as MaintenanceUtilityFilled } from './MaintenanceUtilityFilled';
 export { default as MarkReadUtilityFilled } from './MarkReadUtilityFilled';
 export { default as MarkUnreadUtilityFilled } from './MarkUnreadUtilityFilled';
+export { default as MistakeBookUtilityFilled } from './MistakeBookUtilityFilled';
 export { default as NarrowUtilityFilled } from './NarrowUtilityFilled';
 export { default as NoteUtilityFilled } from './NoteUtilityFilled';
 export { default as OceanbaseBrandFilled } from './OceanbaseBrandFilled';
