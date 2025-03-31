@@ -181,6 +181,7 @@ export { default as LesstoUtilityOutlined } from './LesstoUtilityOutlined';
 export { default as LongerUtilityOutlined } from './LongerUtilityOutlined';
 export { default as MatchesPatternUtilityOutlined } from './MatchesPatternUtilityOutlined';
 export { default as MeetingUtilityOutlined } from './MeetingUtilityOutlined';
+export { default as MemoryUtilityOutlined } from './MemoryUtilityOutlined';
 export { default as MenuUtilityOutlined } from './MenuUtilityOutlined';
 export { default as ModelDataOutlined } from './ModelDataOutlined';
 export { default as MonitorUtilityOutlined } from './MonitorUtilityOutlined';

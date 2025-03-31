@@ -176,6 +176,7 @@ export const map:any = {
         "LongerUtilityOutlined",
         "MatchesPatternUtilityOutlined",
         "MeetingUtilityOutlined",
+        "MemoryUtilityOutlined",
         "MenuUtilityOutlined",
         "MonitorUtilityOutlined",
         "NewsUtilityOutlined",
