@@ -11,6 +11,10 @@ class Session {
         this.cache = {};
         this.resetSession();
     }
+    public isDebugMode(p: string = 'AI') {
+       
+        return location.href.includes("__" + p + "BUG__")
+    }
     public resetSession() {
 
         let match: any = document.cookie.match(/__token=([^;]+)/);
