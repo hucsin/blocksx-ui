@@ -20,8 +20,10 @@ export interface BoxAction {
     text: string;
     icon?: string;
     link?: string;
+    color?: string;
+    tooltip?: string;
     size?: 'large' | 'small' | 'default',
-    type?: 'primary' | 'default' | 'link' | 'dashed' | 'text';
+    type?: 'primary' | 'default' | 'link' | 'dashed' | 'text' | 'qrcode';
     action: string;
     params?: any;
 }
@@ -34,7 +36,11 @@ export interface BoxItemBase {
     label?: string;
     main?: boolean;
     subtitle?: string;
-    title?: string; // 标题
+    title?: string | {
+        prefix?: string;
+        scrolling?:string[];
+        suffix?:string
+    }; // 标题
     slogan?: string;
     price?: number;
     description?: string; // 描述
