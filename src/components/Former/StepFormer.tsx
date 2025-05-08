@@ -8,7 +8,7 @@ import { Space, Button } from 'antd';
 import Former from './index';
 
 
-import RelationshipExtendEnum from '@blocksx/bulk/es/constant/RelationshipExtendEnum';
+import RelationshipExtendEnum from '@blocksx/bulk/src/constant/RelationshipExtendEnum';
 import TablerUtils from '../utils/tool';
 import SmartRequest from '../utils/SmartRequest';
 
