@@ -33,7 +33,7 @@ export default class BoxBanner extends React.Component<BoxBannerProps> {
             <div className={classnames({
                 'box-banner': true
             })}>
-                {props.title && <h1>{this.renderTitle(props.title)}</h1>}
+                {props.title && <h1 style={{fontSize: props.fontSize || ''}}>{this.renderTitle(props.title)}</h1>}
                 {props.subtitle && <h2>{props.subtitle}</h2>}
                 <p>{props.slogan || props.description}</p>
                 {props.actions &&<div className='box-banner-actions'>{props.actions.map(it => {

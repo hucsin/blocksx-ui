@@ -18,6 +18,7 @@ export interface BoxProps {
     meta?: any;
     size?: 'small' | 'default' | 'large';
     events?: any;
+    
     dataSource: BoxItem[];
     value?: any;
 }

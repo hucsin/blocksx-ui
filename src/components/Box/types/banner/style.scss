@@ -25,9 +25,27 @@
         }
     }
 }
+.section-size-small {
+    padding-bottom: 10px;
+    +section {
+        padding-top: 0px;
+    }
+}
+.ui-block-item-theme-mini {
+    .box-banner {
+        .box-banner-media {
+            img {
+                width: 800px;
+                margin: 0 auto;
+                box-shadow:none;
+            }
+        }
+    }
+}
 .box-banner {
     text-align: center;
     margin: 0 auto;
+
     h1 {
         max-width: 800px;
         font-size: 40px;

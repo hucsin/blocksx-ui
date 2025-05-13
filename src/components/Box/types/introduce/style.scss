@@ -1,3 +1,24 @@
+.box-introduce-content {
+
+    padding-left: 32px;
+    
+    table {
+        border: 1px solid #f2f2f2;
+        border-radius: 8px;
+        width: 100%;
+        text-align: center;
+        line-height: 2em;
+        th {
+            line-height: 3.5em;
+            background-color: #f2f2f2;
+        }
+        tr {
+            &:Hover {
+                background-color: #f2f2f2;
+            }
+        }
+    }
+}
 .box-introduce {
     display:flex;
     align-items: center;
@@ -6,8 +27,20 @@
         padding-left: 5%;
         img {
             width: 100%;
+            border-radius: 32px;
         }
     }
+
+    &.box-noimage {
+        .box-introduce-media {
+            display:none;
+        }
+        .box-introduce-desc {
+            width: 100%;
+            text-align: center;
+        }
+    }
+   
     .box-introduce-desc {
         width: 52%;
         padding-left: 32px;

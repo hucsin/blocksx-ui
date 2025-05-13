@@ -45,7 +45,13 @@ export default class Card extends React.Component<BoxItem,{}> {
             case 'index':
             case 'item':
             default:
-                return <FormerAvatar size={this.getDefaultAvatarSize()} color={item.color as string || '#fdfdfd'} icon={item.avatar as string} />
+                return <FormerAvatar
+                     size={this.getDefaultAvatarSize()} 
+                     color={item.color as string || '#fff'} 
+                   
+                     icon={item.avatar as string} 
+                     reverseColor= {true}
+                />
         }
     }
     private getDefaultAvatarSize() {

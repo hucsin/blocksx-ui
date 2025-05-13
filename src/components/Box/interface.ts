@@ -70,9 +70,11 @@ export interface BoxItem extends BoxItemBase {
     size?: 'large' | "middle" | "small",
     colspan?: number;
     layout?: "left" | "center",
+    type?: string;
     events?: any;
     motion?: any;
-
+    fontSize?: string;
+    content?: string;
     features?: any;
     plans?: any;
     
