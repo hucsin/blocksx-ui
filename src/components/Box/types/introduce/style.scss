@@ -51,11 +51,13 @@
             font-size:24px;
             opacity: .5;
         }
+        li {
+            padding-bottom: 8px;
+        }
         .box-actions {
             a{
             display: inline-block;
-            color:#fff;
-            background-color: var(--main-bg-color);
+            color: var(--main-bg-color);
             text-decoration: none;
             font-size:18px;
             padding: 8px 16px;

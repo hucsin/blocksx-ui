@@ -57,7 +57,7 @@ export interface BoxItemBase {
     
     color?: string;
     
-    image?: BoxValue; // 主图
+    image?: BoxValue | BoxValue[]; // 主图
     video?: BoxValue; // 视频
 
     actions?: BoxAction[];

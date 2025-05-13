@@ -33,7 +33,7 @@ export default class BoxBanner extends React.Component<BoxBannerProps> {
             <div className={classnames({
                 'box-banner': true
             })}>
-                {props.title && <h1 style={{fontSize: props.fontSize || ''}}>{this.renderTitle(props.title)}</h1>}
+                {props.title && <h1 style={{fontSize: props.fontSize || '',color:props.color}}>{this.renderTitle(props.title)}</h1>}
                 {props.subtitle && <h2>{props.subtitle}</h2>}
                 <p>{props.slogan || props.description}</p>
                 {props.actions &&<div className='box-banner-actions'>{props.actions.map(it => {
@@ -60,9 +60,40 @@ export default class BoxBanner extends React.Component<BoxBannerProps> {
                         </span>
                     )
                 })}</div>}
-                <div className='box-banner-media'>{props.image && <img  src={props.image}/>}</div>
+                <div className='box-banner-media'>{this.renderMedia(props.image)}</div>
             </div>
         )
+    }
+
+    private renderMedia(image: any) {
+        if (image) {
+            if (Array.isArray(image)) {
+                return (
+                    <div className={classnames('box-banner-swaper', {
+                        [`box-banner-swaper-items-${image.length}`]: image.length
+                    })}>
+                        <div className='box-banner-carousel'>
+                            {image.map((it, index) => {
+                                return (
+                                    <div key={index} className='box-banner-slide'>
+                                        <img src={it} />
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        <div className='box-banner-indicators'>
+                            
+                            {image.map((it, index) => {
+                                return (
+                                    <span className="indicator" data-index={index}></span>
+                                )
+                            })}
+                        </div>
+                    </div>
+                )
+            }
+            return  <img src={image} />
+        }
     }
     private renderTitle(title: any) {
         if (utils.isPlainObject(title)) {
