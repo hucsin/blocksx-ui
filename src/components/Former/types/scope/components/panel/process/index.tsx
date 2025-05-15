@@ -125,7 +125,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
 
     }
     public UNSAFE_componentWillReceiveProps(nextProps: Readonly<PanelProcessProps>, nextContext: any): void {
-        
+            
         if (nextProps.total != this.state.total ) {
             
             this.setState({
@@ -304,6 +304,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         //this.defaultExpandedKeys = [];
         if (Array.isArray(schema)) {
             return schema.map((it, index) => {
+                
                 if (!this.props.iterator && it.iterator && schema.length > 1) {
                     return false;
                 }
@@ -328,6 +329,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
         
         let currentSource: string = treeDisplay[0] ? treeDisplay[0].source : selected.originalName;
         
+
         return (<Tree
             multiple
             blockNode
@@ -371,7 +373,7 @@ export default class PanelProcess extends React.Component<PanelProcessProps, Pan
     }
     public renderTreeBody() {
         let { treeData, schema, selected={} } = this.state;
-
+        
         if (Array.isArray(schema)) {
             return (
                 <Tabs
