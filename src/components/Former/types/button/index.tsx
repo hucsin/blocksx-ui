@@ -164,14 +164,14 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
                     })
                 }
             }
-
+            console.log(current, 233223)
             former.setCache(this.getCacheKey(), {
                 value: current,
                 values
             })
             former.loading(false);
             
-            this.onSelectedItem(current, 'man')
+            this.onSelectedItem(current)
         }).catch(()=> {
             former.loading(false);
         })
@@ -316,7 +316,7 @@ export default class FormerButton extends React.Component<IFormerInput,  FormerI
             })
             // TODO 
             if (this.props.former) {
-              
+              console.log(value, this.props.fieldKey, 222211111)
                 this.props.former.resetSafeValue({
                     ...value,
                     [`${this.props.fieldKey}`]: value[rowKey]

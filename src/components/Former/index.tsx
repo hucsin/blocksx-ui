@@ -391,6 +391,7 @@ export default class Former extends React.Component<FormerProps, FormerState> {
                 this.emitter.emit('changeValue')
             }, 200);
         }
+        console.log(value, type, 2000000001010101)
         // man 是人工触发的
         if (this.props.onChangeValue && type == 'man') {
 
@@ -422,16 +423,14 @@ export default class Former extends React.Component<FormerProps, FormerState> {
     }
     public resetSafeValue(data: any, type: string = 'man', callback?: Function) {
         let { value } = this.state;
-        let safeValue: any = this.getSafeValue(data);
-
+        let safeValue: any = {...value, ...this.getSafeValue(data)};
+        
         this.setState({
-            value: {
-                ...value,
-                ...safeValue
-            }
+            value: safeValue
         }, () => {
-            this.onChangeValue(this.state.value, type);
-            callback && callback(this.state.value);
+            
+            this.onChangeValue(safeValue, type);
+            callback && callback(safeValue);
         })
 
     }

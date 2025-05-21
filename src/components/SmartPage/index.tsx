@@ -390,6 +390,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
 
     public UNSAFE_componentWillReceiveProps(newProps: any) {
 
+        
         if (newProps.pageMeta) {
             let newMetaKey: string = this.getMetaKey(newProps.pageMeta || {});
 
@@ -408,7 +409,7 @@ export default class SmartPage extends React.Component<SmartPageProps, SmartPage
         }
 
         if (newProps.name != this.state.name || newProps.id != this.state.id) {
-
+            console.log(newProps, 32322332)
             this.setState({
                 id: newProps.id,
                 name: newProps.name,

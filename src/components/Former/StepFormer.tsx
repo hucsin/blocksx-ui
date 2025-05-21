@@ -127,6 +127,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         
         if (this.isStepDynamicFormer()) {
             
+            
             this.nextDyamicRequest = SmartRequest.makePostRequest(this.getStepDynamicFormer())
         }
     }
@@ -239,6 +240,8 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
             ...value,
             ...this.props.onGetRequestParams && this.props.onGetRequestParams(value, 'next')
         };
+
+        
         this.nextDyamicRequest(params).then((result) => {
             let trueValue: any =  {
                 ...this.state.setpOneValue,
@@ -536,7 +539,7 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
         let { schema, value, isStepOne } = this.state;
         let { firstFields } = schema;
         let hasfirtready: boolean = !!isStepOne &&  this.isFistMustValue(firstFields, value);
-        
+
         return (
             <div className='ui-header'>
                 <Space>
@@ -809,9 +812,11 @@ export default class StepFormer extends React.Component<IFormerType, SFormerType
                     }
                 }}
                 onChangeValue={(value, type)=> {
+                    console.log(value, type,222222000191919)
                     if (this.state.isStepMode 
                             && this.state.isStepOne ) 
                     {
+                        
 
                         //let currentField: any = schema.firstField;
                         //let setpOneValue: any = this.state.setpOneValue || {};
