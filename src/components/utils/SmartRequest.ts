@@ -89,16 +89,17 @@ class SmartRequest {
     }
     public getRequestURI(url: string) {
 
-        let host: string = location.hostname.replace(/^(www|console)\./,'');
+        let host: string = location.hostname.replace(/^(www|console|dev_www|dev_console)\./,'');
+        let devPrex: string = location.hostname.includes('dev_') ? 'dev_' : '';
 
         if (url.match(/^https:\/\//)) {
             return url;
         } else {
             if(url.match(/^\/api/)) {
                 let zone: string[] = this.getUserZone();
-                return `https://${zone[0]}.${host}/${zone[1]}${url}`
+                return `https://${devPrex}${zone[0]}.${host}/${zone[1]}${url}`
             } else {
-                return `https://uc.${host}${url}`;
+                return `https://${devPrex}uc.${host}${url}`;
             }
         }
     }
