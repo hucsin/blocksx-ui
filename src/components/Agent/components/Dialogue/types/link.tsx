@@ -22,6 +22,8 @@ export default class Link extends React.Component<LinkProps> {
                 window['RouterUtils'].go(pathmap.path, pathmap.query)
             }
             
+        } else {
+            window.open(url);
         }
     }
     private getRouterMap(url:string) {
@@ -47,7 +49,7 @@ export default class Link extends React.Component<LinkProps> {
         };
     }
     private isSelfURL(url: string) {
-        return !!url.match(/(anyhubs.com|izao.cc)/)
+        return !!url.match(/(console.anyhubs.com)/)
     }
     public render() {
         
