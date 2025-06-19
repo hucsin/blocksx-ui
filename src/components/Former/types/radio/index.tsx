@@ -164,14 +164,17 @@
                         <List.Item 
                             key={item.icon}
                             onClick={()=> {
-                                this.onChangeValue({
-                                    target: {
-                                        value: item.value
-                                    }
-                                })
+                                if (!item.disabled){
+                                    this.onChangeValue({
+                                        target: {
+                                            value: item.value
+                                        }
+                                    })
+                                }
                             }}
                             className={
                                 classnames({
+                                    'ui-disabled': item.disabled,
                                     'ui-selected': value == item.value
                                 })
                             }

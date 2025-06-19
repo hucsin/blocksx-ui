@@ -5,6 +5,7 @@ import { utils } from '@blocksx/core'
 class Session {
     private sessionKey: string = '_info';
     private cache: any;
+    private sessionValue: any;
     private session: any;
     public constructor() {
 
@@ -46,11 +47,16 @@ class Session {
             this.session = null;
         }
     }
+
+    public resetSessionValue(value: any) {
+        this.sessionValue = Object.assign(this.session || {}, value)
+    }
     public hasLogin() {
         
         this.resetSession();
+        let sessionValue: any = this.sessionValue || this.session;
         
-        if (this.session && this.session.user && this.session.zone) {
+        if (sessionValue && sessionValue.user && sessionValue.zone) {
             return true;
         }
     }
@@ -63,10 +69,10 @@ class Session {
     }
     public getUserSession() {
         this.resetSession();
-        return this.session;
+        return this.getUserInfo();
     }
     public getUserInfo() {
-        return this.session;
+        return this.sessionValue || this.session;
     }
     public doLogin(info) {
         localStorage.setItem(this.sessionKey, JSON.stringify(info))

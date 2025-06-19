@@ -141,6 +141,10 @@
         border-radius: 12px;;
     }
     .ant-list-item {
+        &.ui-disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
         .former-radio-block-right {
             color: var(--main-bg-color);
             font-size: 32px;
@@ -166,7 +170,7 @@
         }
         cursor: pointer;
         transition: all .2s;
-        &:hover {
+        &:not(.ui-disabled):hover {
 
             transform: scale(1.01);
             max-width: calc(100% + 10px);

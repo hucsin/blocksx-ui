@@ -83,7 +83,7 @@ class SmartRequest {
         } else {
             // 跳转到登陆页
             if (!utils.isMobileDevice()) {
-                window.location.href= "/login"
+               // window.location.href= "/login?nozone=1"
             }
         }
     }
@@ -155,7 +155,7 @@ class SmartRequest {
                     , this.getHeaders()
                     , this.dealHeader
                 ).then(({code, message,title, result}) => {
-
+                    Session.resetSession();
                     // 正常响应
                     if (code == 200) {
                        // call && call(inputParams, result);
@@ -251,7 +251,7 @@ class SmartRequest {
                     , this.getHeaders() 
                     , this.dealHeader
                 ).then(({code, message, title, result}) => {
-                    
+                    Session.resetSession();
                     // 正常响应
                     if (code == 200) {
                         resolve(result)
