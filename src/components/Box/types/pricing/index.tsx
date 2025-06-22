@@ -152,6 +152,7 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
         let { features } = this.state;
 
         return (
+            <div className='ui-box-pricing-wrapper'>
             <table className='ui-box-pricing'>
                 <thead>
                     <tr>
@@ -162,6 +163,7 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
                     {features.map((it, index) => this.renderLine(it, index))}
                 </tbody>
             </table>
+            </div>
         )
     }
     private renderSubmitPrice(it: any) {

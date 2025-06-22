@@ -249,7 +249,7 @@ export default class InputForm extends React.Component<InputFormProps, InputForm
                         </div>
                         <div className='input-checkbox'>
                             <Checkbox name="stay" checked={this.state.stay} onChange={this.onChangeStay}>Stay logged in</Checkbox>
-                            <Checkbox name="agree" checked={this.state.agree} onChange={this.onChangeAgree}>Agree <a href="https://www.anyhubs.com/article/privacy">Privacy Policy</a></Checkbox>
+                            <Checkbox name="agree" checked={this.state.agree} onChange={this.onChangeAgree}>Agree <a href="https://www.anyhubs.com/article/privacy-policy">Privacy Policy</a></Checkbox>
                         </div>
                     </Spin> 
                 </div>
