@@ -188,6 +188,17 @@
                 }
             }
         }
+        .ant-list-item-meta-content .ant-list-item-meta-title {
+            line-height: 1em !important;
+        }
+        .ui-mircotable-extra {
+            .ant-space-compact {
+                button {
+                    font-size:12px !important;
+                    padding: 0 6px !important;
+                }
+            }
+        }
         .ui-smartpage-wrapper .ui-classify-wrapper {
             padding: 0 12px;
         }
