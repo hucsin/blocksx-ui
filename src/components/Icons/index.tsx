@@ -92,12 +92,14 @@ import {
     ShoppingCartOutlined,
     StarOutlined,
     GiftOutlined,
-    ReadOutlined
+    ReadOutlined,
+    CloseOutlined
     
 } from '@ant-design/icons';
 
 // 重新导出需要的图标
 export { 
+    CloseOutlined,
     ReadOutlined,
     StarOutlined,
     GiftOutlined,

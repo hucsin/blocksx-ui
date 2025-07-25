@@ -6,6 +6,8 @@ import { Encode } from '@blocksx/encrypt';
 import * as Icons from '../../../Icons';
 import Session  from '../../../core/Session';
 
+import GeneralConfiguration from '../../../utils/GeneralConfiguration';
+
 import SmartRequest from '../../../utils/SmartRequest';
 import TablerUtils from '../../../utils/tool'
 import { BoxItem } from '../../interface';
@@ -149,8 +151,7 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
 
 
     public renderPricingTable() {
-        let { features } = this.state;
-
+        let features: any = this.getFilterFeatures();
         return (
             <div className='ui-box-pricing-wrapper'>
             <table className='ui-box-pricing'>
@@ -165,6 +166,21 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
             </table>
             </div>
         )
+    }
+    public getFilterFeatures() {
+
+        let { features } = this.state;
+        let PricingWhere: any = GeneralConfiguration.get('PRICING_WHERE');
+        let WhereKeys: any = PricingWhere ? Object.keys(PricingWhere) : [];
+      
+        return features.filter(item => {
+            if (PricingWhere) {
+                return WhereKeys.some(it => {
+                    return PricingWhere[it] == item[it]
+                })
+            }
+            return true;
+        })
     }
     private renderSubmitPrice(it: any) {
 
@@ -292,7 +308,7 @@ export default class BoxPricing extends React.Component<PricingProps, { selected
             'ui-box-pricing-inner': true,
             [`ui-box-pricing-${this.props.theme}`]: this.props.theme
         })}>
-            {this.props.title && !this.props.sample && <Typography.Title level={1}>{this.props.title}</Typography.Title>}
+            {this.props.title && !this.props.sample && <Typography.Title level={1}>{this.props.title||''}</Typography.Title>}
             {this.props.description &&!this.props.sample && <Typography.Paragraph className='block-subtitle'>{this.props.description}</Typography.Paragraph>}
             { !this.props.sample && <Typography.Title className='all-features' level={3}>{this.renderSwitch()}</Typography.Title>}
             

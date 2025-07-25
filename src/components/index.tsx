@@ -11,9 +11,12 @@ export { StateComponent, StateModel, StateX } from './StateX';
 export * from './core';
 
 export { default as Box } from './Box'
+export { default as GeneralConfiguration }  from './utils/GeneralConfiguration';
+
 export { default as Sidebar } from './Sidebar';
 export { default as SearchBar } from './SearchBar';
-export { default as SmartPage } from './SmartPage';
+export { default as SmartPage, WithRouterSmartPage } from './SmartPage';
+
 export { default as PopoverMenu } from './PopoverMenu';
 export { default as ContextMenu } from './ContextMenu';
 export { default as SplitPane } from './SplitPane';

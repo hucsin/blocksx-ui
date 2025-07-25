@@ -36,13 +36,13 @@ export interface LoginPageFormProps {
     image: string;
     icon?: string;
     logo?: any;
-    subLogo?: string;
+    subLogo?: string | Function;
     title: string;
     subTitle: TitleMap;
     light?: any;
 
     // 第三方登录
-    oauths: LoginPageThreeParty[];
+    oauths: LoginPageThreeParty[] | null[];
 
     onPollcheck: Function;
     onSingup: Function;
@@ -208,6 +208,9 @@ export default class LoginPageForm extends React.Component<LoginPageFormProps, L
         }
     }
     private renderLoginLogo() {
+        if (typeof this.props.subLogo == 'function')  {
+            return this.props.subLogo();
+        }
         if (this.props.subLogo) {
             return (
                 <img src={this.props.subLogo}/>

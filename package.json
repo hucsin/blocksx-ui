@@ -38,6 +38,7 @@
     "react-router-dom": "^6.23.0",
     "react-sparklines": "^1.7.0",
     "react-style-proptype": "^3.2.2",
+    "react-text-loop": "^2.3.0",
     "remark-gfm": "^4.0.0",
     "sass": "^1.79.4",
     "sql-formatter": "^12.2.4",

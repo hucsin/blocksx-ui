@@ -16,16 +16,23 @@ class Session {
        
         return location.href.includes("__" + p + "BUG__")
     }
-    public resetSession() {
-
+    public getSessionToken() {
         let match: any = document.cookie.match(/__token=([^;]+)/);
         if (match && match[1]) {
+            return match[1];
+        }
+        return null;
+    }
+    public resetSession() {
+        let token: any = this.getSessionToken();
+        //let match: any = document.cookie.match(/__token=([^;]+)/);
+        if (token) {
 
             try {
                 let sekey: any = localStorage.getItem(this.sessionKey);
                 let info: any = sekey ? JSON.parse(sekey) : {};
 
-                let tokenstring: any = Decode.decode(decodeURIComponent(match[1]));
+                let tokenstring: any = Decode.decode(decodeURIComponent(token));
                 let tokenvalue: any = utils.quickUnZIP(tokenstring.split('#')[0])
 
                 this.session = {
@@ -92,6 +99,10 @@ class Session {
 
     public getCache(key: string) {
         return this.cache[key]
+    }
+    public logout() {
+        this.session = null;
+        document.cookie = '__token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;domain=.anyhubs.com;';
     }
 }
 // @ts-ignore
